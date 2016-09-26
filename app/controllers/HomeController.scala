@@ -24,8 +24,10 @@ import helpers.NotificationType._
 import models.ApplicationData.ApplicationStatus
 import models.page.{ DashboardPage, Phase1TestsPage }
 import models.{ CachedData, CachedDataWithApp }
+import play.api.mvc.Result
 import security.Roles
 import security.Roles._
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -36,7 +38,7 @@ class HomeController(applicationClient: ApplicationClient) extends BaseControlle
 
   val present = CSRSecureAction(ActiveUserRole) { implicit request => implicit cachedData =>
     cachedData.application.map { application =>
-      val dashboard = for {
+      (for {
         phase1TestsWithNames <- applicationClient.getPhase1TestProfile(application.applicationId)
         allocationDetails <- applicationClient.getAllocationDetails(application.applicationId)
         // TODO Work out a better way to invalidate the cache across the site
@@ -45,31 +47,23 @@ class HomeController(applicationClient: ApplicationClient) extends BaseControlle
       } yield {
         val dashboardPage = DashboardPage(updatedData, allocationDetails, Some(Phase1TestsPage.apply(phase1TestsWithNames)))
         Ok(views.html.home.dashboard(updatedData, dashboardPage, allocationDetails))
-      }
-
-      dashboard recover {
+      }).recover {
         case e: OnlineTestNotFound =>
-          val applicationSubmitted = !cachedData.application.forall { app =>
-            app.applicationStatus == ApplicationStatus.CREATED || app.applicationStatus == ApplicationStatus.IN_PROGRESS
-          }
-          val isDashboardEnabled = faststreamConfig.applicationsSubmitEnabled || applicationSubmitted
+          val applicationSubmitted = !CreatedOrInProgressRole.isAuthorized(cachedData)
 
-          if (isDashboardEnabled) {
-            val dashboardPage = DashboardPage(cachedData, None, None)
-            Ok(views.html.home.dashboard(cachedData, dashboardPage, None))
-          } else {
-            Ok(views.html.home.submit_disabled(cachedData))
-          }
+          getDashboard(faststreamConfig.applicationsSubmitEnabled || applicationSubmitted)
       }
     }.getOrElse {
-      val isDashboardEnabled = faststreamConfig.applicationsSubmitEnabled
+      Future.successful(getDashboard(faststreamConfig.applicationsSubmitEnabled))
+    }
+  }
 
-      if (isDashboardEnabled) {
-        val dashboardPage = DashboardPage(cachedData, None, None)
-        Future.successful(Ok(views.html.home.dashboard(cachedData, dashboardPage, None)))
-      } else {
-        Future.successful(Ok(views.html.home.submit_disabled(cachedData)))
-      }
+  private def getDashboard(dashBoardEnabled: Boolean)(implicit cachedData: CachedData, request: SecuredRequest[_]) = {
+    if (dashBoardEnabled) {
+      val dashboardPage = DashboardPage(cachedData, None, None)
+      Ok(views.html.home.dashboard(cachedData, dashboardPage, None))
+    } else {
+      Ok(views.html.home.submit_disabled(cachedData))
     }
   }
 
