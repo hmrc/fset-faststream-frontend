@@ -34,33 +34,45 @@ object HomeController extends HomeController(ApplicationClient, CSRCache)
 
 class HomeController(applicationClient: ApplicationClient, cacheClient: CSRCache) extends BaseController(applicationClient, cacheClient) {
   val Withdrawer = "Candidate"
+  val baseTimeForEtrayTest = 80
 
   val present = CSRSecureAction(ActiveUserRole) { implicit request => implicit cachedData =>
     cachedData.application.map { application =>
 
       def getPhase2Test: Future[Option[Phase2TestGroupWithActiveTest]] = if (application.applicationStatus == ApplicationStatus.PHASE2_TESTS) {
         applicationClient.getPhase2TestProfile(application.applicationId).map(Some(_))
-      } else { Future.successful(None) }
+      } else {
+        Future.successful(None)
+      }
 
       def getPhase3Test: Future[Option[Phase3TestGroup]] = if (application.applicationStatus == ApplicationStatus.PHASE3_TESTS) {
         applicationClient.getPhase3TestGroup(application.applicationId).map(Some(_))
-      } else { Future.successful(None) }
+      } else {
+        Future.successful(None)
+      }
 
       def getPhase2TimeToCompleteTest: Future[Option[Int]] = if (application.progress.phase2TestProgress.phase2TestsInvited) {
         applicationClient.findAdjustments(application.applicationId).map(
           adjustmentsOpt => adjustmentsOpt.flatMap(adjustments =>
-            adjustments.etray.flatMap(etray => etray.timeNeeded)))
-      } else { Future.successful(Some(80))}
+            adjustments.etray.flatMap(etray =>
+              etray.timeNeeded.map { extraTimeNeeded =>
+                (extraTimeNeeded * baseTimeForEtrayTest / 100) + baseTimeForEtrayTest
+              })))
+      } else {
+        Future.successful(Some(baseTimeForEtrayTest))
+      }
 
       val dashboard = for {
         phase1TestsWithNames <- applicationClient.getPhase1TestProfile(application.applicationId)
         phase2TestsWithNames <- getPhase2Test
         phase3Tests <- getPhase3Test
-        phase2TimeToCompleteTest  <- getPhase2TimeToCompleteTest
+        phase2TimeToCompleteTest <- getPhase2TimeToCompleteTest
         allocationDetails <- applicationClient.getAllocationDetails(application.applicationId)
         updatedData <- env.userService.refreshCachedUser(cachedData.user.userID)(hc, request)
       } yield {
-        val dashboardPage = DashboardPage(updatedData, allocationDetails, Some(Phase1TestsPage.apply(phase1TestsWithNames)),
+        val dashboardPage = DashboardPage(updatedData,
+          allocationDetails,
+          Some(Phase1TestsPage.apply(phase1TestsWithNames)),
           phase2TestsWithNames.map(Phase2TestsPage.apply),
           phase3Tests.map(Phase3TestsPage.apply),
           phase2TimeToCompleteTest

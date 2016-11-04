@@ -204,7 +204,7 @@ trait ApplicationClient {
   }
 
   def findAdjustments(appId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Option[Adjustments]] = {
-    http.GET(s"${url.host}${url.base}/adjustment/$appId").map { response =>
+    http.GET(s"${url.host}${url.base}/adjustments/$appId").map { response =>
       Some(response.json.as[Adjustments])
     } recover {
       case _: NotFoundException => None
