@@ -1,7 +1,8 @@
 @import connectors.exchange.{ AllocationDetails, Phase1TestGroup }
 @import security.RoleUtils._
 @import models.page.{ DashboardPage, Phase1TestsPage, CubiksTestPage }
-@(cachedUserData: CachedData, dashboardPage: DashboardPage,
+@(cachedUserData: CachedData,
+        dashboardPage: DashboardPage,
         allocationDetails: Option[AllocationDetails])(implicit request: Request[_])
 
 @import models.ApplicationData.ApplicationStatus._
@@ -174,7 +175,7 @@
                         <p class="med-btm-margin" id="etrayHeading"><i class="fa the-icon fa-minus"></i>E-tray </p>
                         <div id="etrayBlurb">
                             <p id="etrayDescription" class="">This section is timed, after starting the section you'll
-                                have 80 minutes to complete it.</p>
+                                have @{dashboardPage.phase2TimeToCompleteTest.getOrElse(80) } minutes to complete it.</p>
                             <p id="etrayTime" class="">You have <strong>@{
                                 phase2Test.getDuration
                             }</strong> to finish
@@ -190,11 +191,17 @@
                                             Continue section</button>
                                     }
                                 }
-                                <p>(You'll have 80 minutes to finish)</p>
+                                <p>(You'll have @{dashboardPage.phase2TimeToCompleteTest.getOrElse(80) } minutes to finish)</p>
                             </div>
                         </div>
                     </li>
                 }
+                <li id="videoSection">
+                    <p class="med-btm-margin" id="videoHeading"><i class="fa fa-lock the-icon"></i>Video interview
+                        <span class="font-xsmall" data-locked>- locked</span>
+                    </p>
+                    <p data-locked>Unlocked if you're successful in the E-tray</p>
+                </li>
             }
 
             case (true, Some(phase2Test), _) => {
@@ -202,7 +209,7 @@
                     <p class="med-btm-margin" id="warningOnlineExercises"><i class="fa the-icon fa-exclamation-triangle"></i>
                         E-tray</p>
                     <div id="groupTestExpired">
-                        <p>Unfortunately the time you had to finish the e-tray has expired.</p>
+                        <p>Unfortunately the time you had to finish the E-tray has expired.</p>
                         <p>If you believe there's been a mistake, please <a href="@routes.ApplicationController.helpdesk()">contact us</a>
                             .</p>
                         <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil Service jobs</a>
@@ -216,17 +223,17 @@
         @(dashboardPage.isPhase3TestGroupExpired, dashboardPage.phase3TestsPage, dashboardPage.phase2TestsPage) match {
             case (_, None, Some(tests)) => {
                 <li id="videoSection">
-                    <p class="med-btm-margin" id="videoHeading"><i class="fa fa-lock the-icon"></i>Video interview
+                    <p class="med-btm-margin" id="videoHeading"><i class="fa fa-lock the-icon"></i>E-tray
                         <span class="font-xsmall" data-locked>- locked</span>
                     </p>
-                    <p data-locked>Unlocked if you're successful in e-tray</p>
+                    <p data-locked>Unlocked if you're successful in Etray</p>
                 </li>
             }
             case (false, Some(phase3Test), _) => {
                 @if(phase3Test.isCompleted) {
                     <li id="videoSection">
                         <p class="med-btm-margin" id="videoHeading"><i class="fa the-icon fa-check"></i>E-tray</p>
-                        <div id="videoBlurb">
+                        <div id="etrayBlurb">
                             <p>You've completed this section, we'll send you an email when we have your results.
                                 Make sure you check your junk inbox.</p>
                         </div>

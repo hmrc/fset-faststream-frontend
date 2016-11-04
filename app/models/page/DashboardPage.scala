@@ -25,25 +25,26 @@ import security.RoleUtils._
 import security.Roles._
 
 case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
-  secondStepVisibility: ProgressStepVisibility,
-  thirdStepVisibility: ProgressStepVisibility,
-  fourthStepVisibility: ProgressStepVisibility,
-  isApplicationSubmittedAndNotWithdrawn: Boolean,
-  isApplicationWithdrawn: Boolean,
-  isApplicationInProgress: Boolean,
-  isUserWithNoApplication: Boolean,
-  isPhase1TestsPassed: Boolean,
-  isTestGroupExpired: Boolean,
-  isPhase2TestGroupExpired: Boolean,
-  isPhase3TestGroupExpired: Boolean,
-  isPhase1TestFailed: Boolean,
-  fullName: String,
-  phase1TestsPage: Option[Phase1TestsPage],
-  phase2TestsPage: Option[Phase2TestsPage],
-  phase3TestsPage: Option[Phase3TestsPage],
-  assessmentStageStatus: AssessmentStageStatus,
-  postAssessmentStageStatus: PostAssessmentStageStatus
-)
+                         secondStepVisibility: ProgressStepVisibility,
+                         thirdStepVisibility: ProgressStepVisibility,
+                         fourthStepVisibility: ProgressStepVisibility,
+                         isApplicationSubmittedAndNotWithdrawn: Boolean,
+                         isApplicationWithdrawn: Boolean,
+                         isApplicationInProgress: Boolean,
+                         isUserWithNoApplication: Boolean,
+                         isPhase1TestsPassed: Boolean,
+                         isTestGroupExpired: Boolean,
+                         isPhase2TestGroupExpired: Boolean,
+                         isPhase3TestGroupExpired: Boolean,
+                         isPhase1TestFailed: Boolean,
+                         fullName: String,
+                         phase1TestsPage: Option[Phase1TestsPage],
+                         phase2TestsPage: Option[Phase2TestsPage],
+                         phase3TestsPage: Option[Phase3TestsPage],
+                         phase2TimeToCompleteTest: Option[Int],
+                         assessmentStageStatus: AssessmentStageStatus,
+                         postAssessmentStageStatus: PostAssessmentStageStatus
+                        )
 
 object DashboardPage {
 
@@ -52,12 +53,12 @@ object DashboardPage {
   import models.ApplicationData.ApplicationStatus.ApplicationStatus
 
   def apply(user: CachedData, allocationDetails: Option[AllocationDetails], phase1TestGroup: Option[Phase1TestsPage],
-    phase2TestGroup: Option[Phase2TestsPage], phase3TestGroup: Option[Phase3TestsPage]
-  )(implicit request: RequestHeader, lang: Lang): DashboardPage = {
+            phase2TestGroup: Option[Phase2TestsPage], phase3TestGroup: Option[Phase3TestsPage], phase2TimeToCompleteTest: Option[Int]
+           )(implicit request: RequestHeader, lang: Lang): DashboardPage = {
 
     val (firstStepVisibility, secondStepVisibility, thirdStepVisibility,
-      fourthStepVisibility
-    ) = visibilityForUser(user)
+    fourthStepVisibility
+      ) = visibilityForUser(user)
 
     DashboardPage(
       firstStepVisibility,
@@ -77,6 +78,7 @@ object DashboardPage {
       phase1TestGroup,
       phase2TestGroup,
       phase3TestGroup,
+      phase2TimeToCompleteTest,
       getAssessmentInProgressStatus(user, allocationDetails),
       getPostAssessmentStatus(user, allocationDetails)
     )
@@ -166,6 +168,7 @@ object DashboardPage {
         step.getOrElse(Step1)
       }
     }
+
   }
 
   private def isApplicationSubmittedAndNotWithdrawn(user: CachedData)(implicit request: RequestHeader, lang: Lang) =
@@ -193,10 +196,10 @@ object DashboardPage {
     Phase3TestExpiredRole.isAuthorized(user)
 
   private def getAssessmentInProgressStatus(user: CachedData,
-    allocationDetails: Option[AllocationDetails])
-  (implicit request: RequestHeader, lang: Lang): AssessmentStageStatus = {
+                                            allocationDetails: Option[AllocationDetails])
+                                           (implicit request: RequestHeader, lang: Lang): AssessmentStageStatus = {
 
-    if(hasReceivedFastPass(user)) {
+    if (hasReceivedFastPass(user)) {
       ASSESSMENT_FAST_PASS_CERTIFICATE
     } else if (ConfirmedAllocatedCandidateRole.isAuthorized(user)) {
       ASSESSMENT_BOOKED_CONFIRMED
@@ -218,8 +221,8 @@ object DashboardPage {
   }
 
   private def getPostAssessmentStatus(user: CachedData,
-    allocationDetails: Option[AllocationDetails])
-  (implicit request: RequestHeader, lang: Lang): PostAssessmentStageStatus = {
+                                      allocationDetails: Option[AllocationDetails])
+                                     (implicit request: RequestHeader, lang: Lang): PostAssessmentStageStatus = {
     if (AssessmentCentreFailedNotifiedRole.isAuthorized(user) || AssessmentCentreFailedToAttendRole.isAuthorized(user)) {
       POSTASSESSMENT_FAILED_APPLY_AGAIN
     } else if (AssessmentCentrePassedNotifiedRole.isAuthorized(user)) {
@@ -250,7 +253,11 @@ object DashboardPage {
       //val isStatusOnlineTestFailedNotified = user.application.exists(_.applicationStatus == ApplicationStatus.PHASE1_TESTS)
       val isStatusOnlineTestFailedNotified = false
 
-      val firstStep = if (activeUserWithApp(user)) { ProgressActive } else { ProgressInactive }
+      val firstStep = if (activeUserWithApp(user)) {
+        ProgressActive
+      } else {
+        ProgressInactive
+      }
       val secondStep = if (DisplayOnlineTestSectionRole.isAuthorized(user) || hasReceivedFastPass(user)) {
         ProgressActive
       } else {
@@ -277,6 +284,7 @@ object DashboardPage {
       case _ => activeUserVisibility(user)
     }
   }
+
   // scalastyle:on cyclomatic.complexity
 
   private def status(user: CachedData)(implicit request: RequestHeader, lang: Lang): Option[ApplicationStatus] =
@@ -287,4 +295,6 @@ object DashboardPage {
       case Some(AllocationDetails(_, _, _, Some(expirationDate))) if LocalDate.now().isAfter(expirationDate) => true
       case _ => false
     }
+
 }
+

@@ -46,16 +46,24 @@ class HomeController(applicationClient: ApplicationClient, cacheClient: CSRCache
         applicationClient.getPhase3TestGroup(application.applicationId).map(Some(_))
       } else { Future.successful(None) }
 
+      def getPhase2TimeToCompleteTest: Future[Option[Int]] = if (application.progress.phase2TestProgress.phase2TestsInvited) {
+        applicationClient.findAdjustments(application.applicationId).map(
+          adjustmentsOpt => adjustmentsOpt.flatMap(adjustments =>
+            adjustments.etray.flatMap(etray => etray.timeNeeded)))
+      } else { Future.successful(Some(80))}
+
       val dashboard = for {
         phase1TestsWithNames <- applicationClient.getPhase1TestProfile(application.applicationId)
         phase2TestsWithNames <- getPhase2Test
         phase3Tests <- getPhase3Test
+        phase2TimeToCompleteTest  <- getPhase2TimeToCompleteTest
         allocationDetails <- applicationClient.getAllocationDetails(application.applicationId)
         updatedData <- env.userService.refreshCachedUser(cachedData.user.userID)(hc, request)
       } yield {
         val dashboardPage = DashboardPage(updatedData, allocationDetails, Some(Phase1TestsPage.apply(phase1TestsWithNames)),
           phase2TestsWithNames.map(Phase2TestsPage.apply),
-          phase3Tests.map(Phase3TestsPage.apply)
+          phase3Tests.map(Phase3TestsPage.apply),
+          phase2TimeToCompleteTest
         )
         Ok(views.html.home.dashboard(updatedData, dashboardPage, allocationDetails))
       }
@@ -68,7 +76,7 @@ class HomeController(applicationClient: ApplicationClient, cacheClient: CSRCache
           val isDashboardEnabled = faststreamConfig.applicationsSubmitEnabled || applicationSubmitted
 
           if (isDashboardEnabled) {
-            val dashboardPage = DashboardPage(cachedData, None, None, None, None)
+            val dashboardPage = DashboardPage(cachedData, None, None, None, None, None)
             Ok(views.html.home.dashboard(cachedData, dashboardPage, None))
           } else {
             Ok(views.html.home.submit_disabled(cachedData))
@@ -78,7 +86,7 @@ class HomeController(applicationClient: ApplicationClient, cacheClient: CSRCache
       val isDashboardEnabled = faststreamConfig.applicationsSubmitEnabled
 
       if (isDashboardEnabled) {
-        val dashboardPage = DashboardPage(cachedData, None, None, None, None)
+        val dashboardPage = DashboardPage(cachedData, None, None, None, None, None)
         Future.successful(Ok(views.html.home.dashboard(cachedData, dashboardPage, None)))
       } else {
         Future.successful(Ok(views.html.home.submit_disabled(cachedData)))

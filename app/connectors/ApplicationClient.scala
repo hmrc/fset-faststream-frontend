@@ -20,7 +20,7 @@ import config.CSRHttp
 import connectors.exchange.PartnerGraduateProgrammes._
 import connectors.exchange.Questionnaire._
 import connectors.exchange._
-import models.{ ApplicationRoute, UniqueIdentifier }
+import models.{ Adjustments, ApplicationRoute, UniqueIdentifier }
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.http._
@@ -202,6 +202,14 @@ trait ApplicationClient {
   def confirmAllocation(appId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Unit] = {
     http.POST(s"${url.host}${url.base}/allocation-status/confirm/$appId", "").map(_ => ())
   }
+
+  def findAdjustments(appId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Option[Adjustments]] = {
+    http.GET(s"${url.host}${url.base}/adjustment/$appId").map { response =>
+      Some(response.json.as[Adjustments])
+    } recover {
+      case _: NotFoundException => None
+    }
+  }
 }
 
 trait TestDataClient {
@@ -246,4 +254,6 @@ object ApplicationClient extends ApplicationClient with TestDataClient {
   sealed class OnlineTestNotFound extends Exception
 
   sealed class PdfReportNotFoundException extends Exception
+
+  sealed class AdjustmentsNotFound extends Exception
 }
