@@ -169,6 +169,7 @@ class QuestionnaireController(applicationClient: ApplicationClient, cacheClient:
 
   private def universityMessageKey(implicit app: CachedDataWithApp) = app.application.applicationRoute match {
     case ApplicationRoute.Edip => "currentUniversity"
+    case ApplicationRoute.Sdip => "currentUniversity" // TODO: Temporary fix to finish the submission
     case ApplicationRoute.Faststream => "university"
   }
 }
