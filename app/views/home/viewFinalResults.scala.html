@@ -22,6 +22,14 @@
     finalSchemeResults.zipWithIndex.filter(_._1.result == "Red")
 }
 
+@disableForRoles = @{
+    if ( WithdrawnApplicationRole.isAuthorized(cachedUser) || TransferredToParityRole.isAuthorized(cachedUser) ) {
+        " disabled"
+    } else {
+        ""
+    }
+}
+
 @main_template(title = "Home") {
 
     <div class="grid-wrapper">
@@ -49,7 +57,7 @@
 
     @withdrawInformation(cachedUsr)
 
-    <section class="section-border @if(WithdrawnApplicationRole.isAuthorized(cachedUsr)){disabled}" id="mainProgressPage">
+    <section class="section-border @disableFoRoles id="mainProgressPage">
         <h2 class="heading-large"><i class="fa fa-check"></i>You've passed the video interview</h2>
         <div class="text">
             <section>
