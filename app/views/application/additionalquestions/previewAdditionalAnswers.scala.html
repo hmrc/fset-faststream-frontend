@@ -17,7 +17,7 @@
                 <h4 class="bold-small">What country is named on your current passport?</h4>
                 <p>@ga.passportCountry</p>
                 <h4 class="bold-small">Do you currently hold a second passport?</h4>
-                <p>@SiftPreviewPage.booleanToYesNo(ga.multiplePassports</p>
+                <p>@SiftPreviewPage.booleanToYesNo(ga.multiplePassports)</p>
 
                 @ga.secondPassportCountry.map { sp =>
                     <h4 class="bold-small">What country is named on your second passport?</h4>
@@ -109,6 +109,7 @@
             @if(!answer.rawText.isEmpty) {
                 <div class="text">
                     <h4 class="bold-small">Your response</h4>
+                    <p>@Html(HtmlFormat.escape(answer.rawText).toString.replace("\n", "<br />"))</p>
                 </div>
             }
         </section>
