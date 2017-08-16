@@ -8,7 +8,7 @@ application.cannotbe.withdrawn = You can''nt withdraw an application before you 
 error.cannot.withdraw = We can''t find an application to withdraw
 error.reason.required = Select a reason for withdrawing your application
 error.required.reason.more_info = Tell us why you''re withdrawing your application
-application.withdrawn = You''ve successfully withdrawn your application. <a href="{0}" target="_blank" rel="external">Give feedback?</a> (30 second survey)
+application.withdrawn = You''ve successfully withdrawn your application. <a href="{0}" target="_blank">Give feedback?</a> (30 second survey)
 error.otherReason.maxLength = Information must not exceed 300 characters
 withdraw.scheme.required = You must select a scheme to withdraw from.
 withdraw.scheme.invalid = {0} is not a valid scheme for withdrawal.
@@ -16,7 +16,7 @@ withdraw.scheme.success = You''ve successfully withdrawn from the selected schem
 withdraw.scheme.last = You only have one scheme remaining. To withdraw you must withdraw your application.
 
 # Signin form
-signIn.giveFeedback = You''ve successfully signed out.<p><a href="{0}" target="_blank" rel="external">Give feedback?</a> (30 second survey)</p>
+signIn.giveFeedback = You''ve successfully signed out.<p><a href="{0}" target="_blank">Give feedback?</a> (30 second survey)</p>
 signIn.invalid = Invalid email or password
 
 # Verify token form
