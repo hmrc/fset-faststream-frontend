@@ -41,6 +41,63 @@ $(function() {
 
   isAndroid();
 
+  if($('textarea').length) {
+    var $thisForm = $('textarea').closest('form');
+
+    $.each($('textarea'), function() {
+      var $this = $(this),
+          thisID = $this.attr('id');
+
+      $this.after('<span class="hidden" data-base64id="'+ thisID +'"></span>');
+
+      if($($this).val().indexOf('base64:') > -1){
+        var original64 = $($this).val(),
+            replaced64 = $($this).val().replace('base64:', ''),
+            thisNot64 = atob(replaced64);
+
+        $this.css('color', 'transparent');
+        $('[data-base64id="'+ thisID +'"]').text(thisNot64);
+
+        $this.val(thisNot64).removeAttr('style');
+        $('[data-base64id="'+ thisID +'"]').text(original64);
+      }
+    });
+
+    $('textarea').on('input', function() {
+      var $this = $(this),
+          thisID = $this.attr('id'),
+          $spanID = $('[data-base64id="' + thisID + '"]'),
+          this64 = btoa($this.val());
+
+      $spanID.text('base64:' + this64);
+    });
+
+    $thisForm.submit(function() {
+
+      $.each($('[data-base64id]'), function() {
+        var $this = $(this),
+            $previousTextarea = $this.prev('textarea');
+
+        $previousTextarea.css('color', 'transparent');
+        $previousTextarea.val($this.text());
+      });
+
+      if(!$('[data-base64id]').length) {
+        return false;
+      }
+    })
+  }
+
+  $.each($('p:contains("base64:")'), function() {
+    var $this = $(this),
+        thisNormal = $this.text().replace('base64:', '');
+        thisDecoded = atob(thisNormal);
+
+    $this.css('color', 'transparent');
+
+    $this.text(thisDecoded).removeAttr('style');
+  });
+
   // Fixes intermittent bug where a form submitted with errors sometimes takes the user back
   // to last place on page rather than to error summary
   if($('#validation-summary').is(':visible')) {
