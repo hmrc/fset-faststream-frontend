@@ -196,7 +196,8 @@ class ApplicationClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(imp
 
   def getPhase1TestProfile(appId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Phase1TestGroupWithNames] = {
     http.GET[Phase1TestGroupWithNames](s"$apiBaseUrl/online-test/psi/phase1/candidate/$appId").recover {
-      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new OnlineTestNotFound
+      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND =>
+        throw new OnlineTestNotFound
     }
   }
 
