@@ -31,7 +31,6 @@ object AppDependencies {
     "uk.gov.hmrc"               %% "http-caching-client"                      % "10.0.0-play-28",
     "uk.gov.hmrc"               %% "bootstrap-frontend-play-28"               % bootstrapVersion,
     "com.typesafe.play"         %% "play-json-joda"                           % "2.9.2",
-    "uk.gov.hmrc"               %% "url-builder"                              % "3.6.0-play-28",
     "org.apache.httpcomponents" %  "httpclient"                               % "4.5.3",
     "org.apache.httpcomponents" %  "httpcore"                                 % "4.4.5",
     "com.mohiva"                %% "play-silhouette"                          % silhouetteVersion,

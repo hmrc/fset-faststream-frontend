@@ -75,7 +75,7 @@ class ConsiderForSdipControllerSpec extends BaseControllerSpec {
 
       status(result) mustBe OK
       val content = contentAsString(result)
-      content must include("I agree and want to be considered for SDIP")
+      content must include("I agree and want to be considered for SIP")
     }
 
     "display dashboard with no ability to continue the faststream application as SDIP " +
