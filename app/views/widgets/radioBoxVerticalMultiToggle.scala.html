@@ -19,7 +19,7 @@
 @import helpers.CSRSkinnyFieldConstructor._
 @import models.FieldNameHelpers._
 
-@helper.input(field, '_class -> (if(isCompound) "form-group-compound" else "no-btm-margin")) { (id, name, value, args) =>
+@helper.input(field, Symbol("_class") -> (if(isCompound) "form-group-compound" else "no-btm-margin")) { (id, name, value, args) =>
     @for((key, displayText, shouldTrigger)  <- options){
         <div>
             <label for="@createId(id, key)" class="block-label" data-target="@shouldTrigger">

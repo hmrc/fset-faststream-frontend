@@ -32,17 +32,17 @@
     @helper.form(routes.WithdrawController.withdrawScheme) {
         @helper.CSRF.formField
         @yesNoRadioWithTogglePanel(page.form("not-used"),
-            'id -> "withdraw",
-            '_label -> "Do you still want to withdraw?"
+            Symbol("id") -> "withdraw",
+            Symbol("_label") -> "Do you still want to withdraw?"
         ) {
             <div id="withdraw-panel-yes" class="toggle-content" >
                 <div>
                     @selectValueDifferentFromDisplayedText(page.form("scheme"), page.schemes.toList)("Select scheme")(Html("Which scheme do you want to withdraw from?"))
                     @helper.textarea(page.form("reason"),
-                        'id -> "reason",
-                        '_label -> "Reason for withdrawal (optional)",
-                        'class -> "form-control",
-                        'rows -> 5
+                        Symbol("id") -> "reason",
+                        Symbol("_label") -> "Reason for withdrawal (optional)",
+                        Symbol("class") -> "form-control",
+                        Symbol("rows") -> 5
                     )
                 </div>
                 <button id="submit" type="submit" name="action" value="@routes.WithdrawController.withdrawScheme" class="button">Withdraw from scheme</button>

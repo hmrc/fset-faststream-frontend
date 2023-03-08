@@ -19,8 +19,8 @@
 
 @(field: play.api.data.Field, options: Seq[String], optionTrigger: String, args: (Symbol, Any)*)(implicit messages: Messages)
 <fieldset>
-    <legend><h2 class="form-label">@args.map(x => if(x._1 == '_label) x._2 )</h2></legend>
-    @helper.input(field, args.map { x => if(x._1 == '_label) '_name -> x._2 else x }: _*) { (id, name, value, htmlArgs) =>
+    <legend><h2 class="form-label">@args.map(x => if(x._1 == Symbol("_label")) x._2 )</h2></legend>
+    @helper.input(field, args.map { x => if(x._1 == Symbol("_label")) Symbol("_name") -> x._2 else x }: _*) { (id, name, value, htmlArgs) =>
         <div class="form-group" class="@id">
         @defining(field.indexes.flatMap(i => field("[%s]".format(i)).value).toSet) { values =>
             @options.map { disabilityCategory =>

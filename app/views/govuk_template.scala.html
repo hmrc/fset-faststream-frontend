@@ -179,8 +179,8 @@
             </div>
             <!-- end of modal dialog -->
 
-            <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-1.11.1.min.js")'></script>
-            <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-ui-1.10.4.custom.min.js")'></script>
+            <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-3.6.3.min.js")'></script>
+            <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-ui-1.13.2.custom.min.js")'></script>
             @for(additionalJavascriptFilename <- additionalJavascriptFilenames) {
                 <script @CSPNonce.attr src='@routes.Assets.versioned("js/" + additionalJavascriptFilename)'></script>
             }

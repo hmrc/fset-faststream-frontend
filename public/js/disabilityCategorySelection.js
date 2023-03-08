@@ -18,12 +18,12 @@ $(function() {
         var preferNotToSay = 'prefer not to say';
         var thisDisabilityValue = $(this).attr('value');
         var containerClass = '.disability-container';
-
+        // If the user clicks the preferNotToSay checkbox then uncheck all the other options
         if (thisDisabilityValue.toLowerCase() === preferNotToSay) {
             if (this.checked) {
                 // Here we need to uncheck all the other checkboxes
                 $(this).closest(containerClass).siblings()
-                    .find(':checkbox').attr('checked', false);
+                    .find(':checkbox').prop('checked', false);
                 // We also need to hide the text area for the other disability category
                 // The id is in the target attribute in the parent label
                 var target = $(this).parent().attr('target');
@@ -36,7 +36,7 @@ $(function() {
                 checkboxes.each(function () {
                     var disabilityValue = $(this).attr('value');
                     if (disabilityValue.toLowerCase() === preferNotToSay) {
-                        $(this).attr('checked', false)
+                        $(this).prop('checked', false)
                     }
                 });
             }

@@ -347,7 +347,9 @@ $(function() {
     $('input:checked').parent().addClass('selected');
 
     if($(this).hasClass('selected')) {
-      $('#' + $target).show();
+      if($target !== '') {
+        $('#' + $target).show();
+      }
     }
   });
 
@@ -357,7 +359,8 @@ $(function() {
         $target = $this.parent().attr('data-target'),
         $siblingArray = [],
         $siblingTarget = '',
-        $disTarget = $.trim($this.parent().attr('data-distarget')).split(" "),
+        // If this is not specified in the html it defaults to an array with 1 empty string: ['']
+        $multiTarget = $.trim($this.parent().attr('data-distarget')).split(" "),
         $theTargetControl = '';
 
     $this.closest('.form-group').find('.block-label').not($this.parent()).each(function() {
@@ -365,11 +368,16 @@ $(function() {
       $siblingTarget = $siblingArray.join(", ");
     });
 
-    if($disTarget.length > 1) {
-      var multipleTargets = $($disTarget.join(", "));
+    if($multiTarget.length > 1) {
+      var multipleTargets = $($multiTarget.join(", "));
       $theTargetControl = multipleTargets;
+    } else if($multiTarget.length == 1 && $multiTarget[0] == '') {
+      // Breaks in jquery 3.6.3 if $multiTarget is an array with an empty string
+      // in jquery 1.11.1 it points to the jquery object m.fn.init {context: document, selector: "#"}
+      // so this is a workaround to explicitly point it to the document object
+      $theTargetControl = $("document");
     } else {
-      $theTargetControl = $('#' + $disTarget);
+      $theTargetControl = $('#' + $multiTarget);
     }
 
     $('input:not(:checked)').parent().removeClass('selected');
@@ -382,7 +390,7 @@ $(function() {
         $('#' + $target).hide().attr('aria-hidden', true);
       }
     } else {
-      if($target == undefined) {
+      if($target == undefined || $target == "") {
         $this.closest('.form-group').siblings('.toggle-content').hide().attr('aria-hidden', true);
         $this.closest('.form-group').find('[aria-expanded]').attr('aria-expanded', false);
       } else {
@@ -395,17 +403,16 @@ $(function() {
       }
     }
 
-    if($disTarget && $this.is(':checked')) {
+    if($multiTarget && $this.is(':checked')) {
       $theTargetControl.attr('disabled', true);
       if($theTargetControl.attr('type') == 'text') {
         $theTargetControl.val('');
       } else if($theTargetControl.is('select')) {
         $theTargetControl.find('> option:first-of-type').attr('selected', true);
       }
-    } else if($disTarget && !$this.is(':checked')) {
+    } else if($multiTarget && !$this.is(':checked')) {
       $theTargetControl.attr('disabled', false);
     }
-
   });
 
   function toggleTargetDisplayOnOptionSelection(selectBox){
@@ -512,11 +519,16 @@ $(function() {
 
     if(!$this.parent().hasClass('selected')) {
       if($this.is('[aria-expanded="false"]')) {
-        $('#' + $controls).attr('aria-hidden', false);
-        $this.attr('aria-expanded', true);
+        // jquery 3.6.3 workaround when migrating from 1.11.1
+        if($controls !== "") {
+          $('#' + $controls).attr('aria-hidden', false);
+          $this.attr('aria-expanded', true);
+        }
       } else {
-        $('#' + $controls).attr('aria-hidden', true);
-        $this.attr('aria-expanded', false);
+        if($controls !== "") {
+          $('#' + $controls).attr('aria-hidden', true);
+          $this.attr('aria-expanded', false);
+        }
       }
     }
 

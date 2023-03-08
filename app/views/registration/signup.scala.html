@@ -54,7 +54,7 @@
 
         @existingAccountPanel
 
-        @helper.form(action = routes.SignUpController.signUp(afterDeadlineSignupCode), 'novalidate -> "novalidate") {
+        @helper.form(action = routes.SignUpController.signUp(afterDeadlineSignupCode), Symbol("novalidate") -> "novalidate") {
             @helper.CSRF.formField
 
             <!-- The following will stop browsers from trying to autofill the username and password fields in the create account page -->
@@ -65,32 +65,32 @@
             <section class="section-border">
                 <h2 class="heading-large">Name and email</h2>
                 @helper.inputText(signUpForm("firstName"),
-                    '_label -> "First name",
-                    'class -> "form-control",
-                    '_class -> "form-group-compound",
-                    '_showConstraints -> false)
+                    Symbol("_label") -> "First name",
+                    Symbol("class") -> "form-control",
+                    Symbol("_class") -> "form-group-compound",
+                    Symbol("_showConstraints") -> false)
                 @helper.inputText(signUpForm("lastName"),
-                    '_label -> "Last name",
-                    'class -> "form-control",
-                    '_showConstraints -> false)
+                    Symbol("_label") -> "Last name",
+                    Symbol("class") -> "form-control",
+                    Symbol("_showConstraints") -> false)
                 @helper.inputText(signUpForm("email"),
-                    '_label -> "Email",
-                    '_help -> "You'll need this to sign in to your account",
-                    'class -> "form-control",
-                    '_class -> "form-group-compound",
-                    'type -> "email",
-                    '_showConstraints -> false,
-                    'spellcheck -> "false")
+                    Symbol("_label") -> "Email",
+                    Symbol("_help") -> "You'll need this to sign in to your account",
+                    Symbol("class") -> "form-control",
+                    Symbol("_class") -> "form-group-compound",
+                    Symbol("type") -> "email",
+                    Symbol("_showConstraints") -> false,
+                    Symbol("spellcheck") -> "false")
                 <div class="panel-indent">
                     <p>You'll need access to this email address over the next year.</p>
                     <p>If you're currently a civil servant, use your personal email address.</p>
                 </div>
                 @helper.inputText(signUpForm("email_confirm"),
-                    '_label -> "Confirm your email",
-                    'class -> "form-control",
-                    'type -> "email",
-                    '_showConstraints -> false,
-                    'spellcheck -> "false")
+                    Symbol("_label") -> "Confirm your email",
+                    Symbol("class") -> "form-control",
+                    Symbol("type") -> "email",
+                    Symbol("_showConstraints") -> false,
+                    Symbol("spellcheck") -> "false")
             </section>
             <section class="section-border">
                 <h2 class="heading-large">Set your password</h2>
@@ -108,11 +108,11 @@
                     </div>
                     <div class="form-group password-wrapper">
                     @helper.inputPassword(signUpForm("password"),
-                        '_label -> "",
-                        'class -> "form-control new-password",
-                        '_showConstraints -> false,
-                        '_showErrors -> false,
-                        '_help -> ""
+                        Symbol("_label") -> "",
+                        Symbol("class") -> "form-control new-password",
+                        Symbol("_showConstraints") -> false,
+                        Symbol("_showErrors") -> false,
+                        Symbol("_help") -> ""
                     )
                     </div>
                     <div class="password-second form-group">
@@ -146,9 +146,9 @@
                 </div>
                 <div class="form-group toggle-content" id="hearAboutUsDetail" data-requiredifshown data-optional>
                     @helper.inputText(signUpForm("campaignOther"),
-                    '_label -> "Provide more information (optional)",
-                    'class -> "form-control",
-                    '_showConstraints -> false)
+                    Symbol("_label") -> "Provide more information (optional)",
+                    Symbol("class") -> "form-control",
+                    Symbol("_showConstraints") -> false)
                 </div>
             </section>
             <section>

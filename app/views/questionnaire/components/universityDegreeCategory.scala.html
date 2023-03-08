@@ -23,7 +23,7 @@
     @selectValueDifferentFromDisplayedText(
         form("universityDegreeCategory"),
         models.view.questionnaire.UniversityDegreeCategories.seq.toList,
-        '_disabled -> (form("preferNotSay_universityDegreeCategory").value.getOrElse("false"))
+        Symbol("_disabled") -> (form("preferNotSay_universityDegreeCategory").value.getOrElse("false"))
     )(
         "Select one") {
         @Messages("universityDegreeCategory.question")

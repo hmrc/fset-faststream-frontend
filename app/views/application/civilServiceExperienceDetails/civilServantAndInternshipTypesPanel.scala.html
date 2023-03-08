@@ -29,8 +29,8 @@
 
 <div id="civilServiceExperienceDetails_applicable-panel-yes" class="toggle-content" aria-hidden="true">
     @checkboxGroupWithFourInlineTogglePanels(form("civilServiceExperienceDetails.civilServantAndInternshipTypes"), FastPassForm.civilServantAndInternshipTypes,
-    'id -> "civilServiceExperienceDetails.civilServantAndInternshipTypes",
-    '_label -> "Select all that apply") {
+    Symbol("id") -> "civilServiceExperienceDetails.civilServantAndInternshipTypes",
+    Symbol("_label") -> "Select all that apply") {
         @panel1
     } {
         @panel2

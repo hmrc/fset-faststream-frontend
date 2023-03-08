@@ -23,10 +23,10 @@
     <div class="form-group form-group-compound">
         @if(questionnaireForm("preferNotSay_postcodeQ").value.getOrElse("false")=="true") {
             @helper.input(questionnaireForm("postcodeQ"),
-                '_label -> Messages("postcode.question"),
-                'class -> "form-control",
-                '_showConstraints -> false,
-                'disabled -> "disabled"
+                Symbol("_label") -> Messages("postcode.question"),
+                Symbol("class") -> "form-control",
+                Symbol("_showConstraints") -> false,
+                Symbol("disabled") -> "disabled"
             ) {(id, name, value, args) =>
                 <label class="form-label" for="postcodeQ">@Messages("postcode.question")</label>
                 <span class="form-hint text">
@@ -36,9 +36,9 @@
             }
         } else {
             @helper.inputText(questionnaireForm("postcodeQ"),
-                '_label -> Messages("postcode.question"),
-                'class -> "form-control",
-                '_showConstraints -> false
+                Symbol("_label") -> Messages("postcode.question"),
+                Symbol("class") -> "form-control",
+                Symbol("_showConstraints") -> false
             )
         }
     </div>

@@ -35,20 +35,20 @@
         <p>If you've applied previously or have an account on Civil Service Jobs, you will need to create a new account to apply this year.</p>
     </section>
 
-    @helper.form(action = routes.SignInController.signIn, 'novalidate -> "novalidate") {
+    @helper.form(action = routes.SignInController.signIn, Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @helper.inputText(signInForm("signIn"),
-            '_label -> "Email",
-            'type -> "email",
-            'class -> "form-control",
-            '_class -> "form-group-compound",
-            '_showConstraints -> false)
+            Symbol("_label") -> "Email",
+            Symbol("type") -> "email",
+            Symbol("class") -> "form-control",
+            Symbol("_class") -> "form-group-compound",
+            Symbol("_showConstraints") -> false)
         @helper.inputPassword(signInForm("signInPassword"),
-            '_label -> "Password",
-            'class -> "form-control",
-            '_hasLink -> true,
-            '_showConstraints -> false)
+            Symbol("_label") -> "Password",
+            Symbol("class") -> "form-control",
+            Symbol("_hasLink") -> true,
+            Symbol("_showConstraints") -> false)
 
         <input type="hidden" id="route" name="route" value='@signInForm("route").value.getOrElse("")' />
 

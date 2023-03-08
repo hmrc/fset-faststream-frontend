@@ -23,9 +23,9 @@
 <section>
 
     @helper.input(form("universityAttended"),
-        '_label -> "",
-        'class -> "form-control",
-        '_showConstraints -> false
+        Symbol("_label") -> "",
+        Symbol("class") -> "form-control",
+        Symbol("_showConstraints") -> false
     ) { (id, name, value, args) =>
         <label for="@id" class="form-label">
             @if(isFaststream(user)) {
@@ -43,9 +43,9 @@
 
     <div class="form-group">
     @helper.input(form("university"),
-        '_label -> "",
-        'class -> "form-control",
-        '_showConstraints -> false
+        Symbol("_label") -> "",
+        Symbol("class") -> "form-control",
+        Symbol("_showConstraints") -> false
     ) { (id, name, value, args) =>
         <input id="@id" name="@name" type="hidden" class="form-control" value="@value">
     }

@@ -35,9 +35,9 @@
             @helper.CSRF.formField
 
             @helper.inputText(resetForm("email"),
-                '_label -> "Enter email",
-                'class -> "form-control",
-                '_showConstraints -> false)
+                Symbol("_label") -> "Enter email",
+                Symbol("class") -> "form-control",
+                Symbol("_showConstraints") -> false)
             <div class="form-group">
                 <button id="btnReset" type="submit" value="submit" class="button">Send code</button>
             </div>
