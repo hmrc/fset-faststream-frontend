@@ -30,11 +30,11 @@
                 <label for="needsSupportAtVenueDescription" class="form-label">What adjustments will you need <span
                 class='visuallyhidden'>at the assessment centre</span>?</label>
                 @helper.textarea(form("needsSupportAtVenueDescription"),
-                    '_label -> "",
-                    'class -> "form-control",
-                    'rows -> 4,
-                    'dataValLengthMax -> "2048",
-                    '_showConstraints -> false)
+                    Symbol("_label") -> "",
+                    Symbol("class") -> "form-control",
+                    Symbol("rows") -> 4,
+                    Symbol("dataValLengthMax") -> "2048",
+                    Symbol("_showConstraints") -> false)
                 <span class="visuallyhidden aria-limit" aria-live="polite"></span>
             </div>
             <div class="panel-indent text">

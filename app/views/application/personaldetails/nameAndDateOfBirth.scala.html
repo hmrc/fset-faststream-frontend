@@ -23,18 +23,18 @@
     <h2 class="heading-medium">Name and date of birth</h2>
 
     @helper.inputText(form("firstName"),
-        '_label -> "First name",
-        'class -> "form-control",
-        '_class -> "form-group-compound",
-        '_showConstraints -> false)
+        Symbol("_label") -> "First name",
+        Symbol("class") -> "form-control",
+        Symbol("_class") -> "form-group-compound",
+        Symbol("_showConstraints") -> false)
     @helper.inputText(form("lastName"),
-        '_label -> "Last name",
-        'class -> "form-control",
-        '_showConstraints -> false)
+        Symbol("_label") -> "Last name",
+        Symbol("class") -> "form-control",
+        Symbol("_showConstraints") -> false)
     @helper.inputText(form("preferredName"),
-        '_label -> "Preferred name",
-        'class -> "form-control",
-        '_showConstraints -> false)
+        Symbol("_label") -> "Preferred name",
+        Symbol("class") -> "form-control",
+        Symbol("_showConstraints") -> false)
 
     <div class="clearfix">
         @date(form, "dateOfBirth", "Date of birth")

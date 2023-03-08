@@ -36,7 +36,7 @@
   </div>
     </div>
 
-    @helper.form(action = routes.QuestionnaireController.submitSecondPage, 'novalidate -> "novalidate") {
+    @helper.form(action = routes.QuestionnaireController.submitSecondPage, Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         <fieldset class="form-group">
@@ -70,5 +70,5 @@
     }
 }
 
-<script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-ui-1.10.4.custom.min.js")' type="text/javascript"></script>
+<script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-ui-1.13.2.custom.min.js")' type="text/javascript"></script>
 <script @CSPNonce.attr src='@routes.Assets.versioned("js/universities.js")' type="text/javascript"></script>

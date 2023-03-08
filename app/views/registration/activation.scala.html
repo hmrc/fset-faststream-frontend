@@ -31,15 +31,15 @@
             We've sent an email to <b class="break-word">@email</b> with a <span class="inl-block">7-character</span> code you'll need to activate your account.
         </p>
 
-        @helper.form(action = routes.ActivationController.submit, 'id -> "activateForm", 'novalidate -> "novalidate") {
+        @helper.form(action = routes.ActivationController.submit, Symbol("id") -> "activateForm", Symbol("novalidate") -> "novalidate") {
             @helper.CSRF.formField
             @helper.inputText(activationForm("activation"),
-            '_label -> "Activation code",
-            '_hasLink -> true,
-             'autocapitalize -> "characters",
-            'autocorrect -> "off",
-            'class -> "form-control",
-            '_showConstraints -> false)
+            Symbol("_label") -> "Activation code",
+            Symbol("_hasLink") -> true,
+            Symbol("autocapitalize") -> "characters",
+            Symbol("autocorrect") -> "off",
+            Symbol("class") -> "form-control",
+            Symbol("_showConstraints") -> false)
             <p class="hide-nojs"><a class="hide-nojs" id="resend" href="#">Resend code</a></p>
             <div class="form-group">
                 <button id="submit" type="submit" class="button activate-page-btn">Activate account</button>
@@ -50,7 +50,7 @@
             document.getElementById('resend').onclick = function(event) { document.getElementById('resendForm').submit(); };
         </script>
 
-        @helper.form(action = routes.ActivationController.resendCode, 'id -> "resendForm", 'novalidate -> "novalidate") {
+        @helper.form(action = routes.ActivationController.resendCode, Symbol("id") -> "resendForm", Symbol("novalidate") -> "novalidate") {
             @helper.CSRF.formField
             <noscript>
             <p><button id="resend" type="submit" class="button-link">Resend code</button></p>
@@ -65,5 +65,4 @@
                 If you haven't received the email within a few minutes, check your spam, bulk or junk email folder – it may have been mistakenly blocked by your email system.
             </p>
         </div>
-
     }

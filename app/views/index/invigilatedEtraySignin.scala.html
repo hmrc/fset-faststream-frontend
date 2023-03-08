@@ -31,20 +31,20 @@
         @helper.CSRF.formField
         <div class="form-group form-group-compound">
             @helper.inputText(verifyTokenForm("email"),
-            '_label -> "Email",
-            'type -> "email",
-            'class -> "form-control",
-            '_class -> "form-group-compound",
-            '_showConstraints -> false)
+            Symbol("_label") -> "Email",
+            Symbol("type") -> "email",
+            Symbol("class") -> "form-control",
+            Symbol("_class") -> "form-group-compound",
+            Symbol("_showConstraints") -> false)
         </div>
         <div class="form-group">
             @helper.inputText(verifyTokenForm("token"),
-            '_label -> "Access code",
-            '_hasLink -> true,
-            'autocapitalize -> "characters",
-            'autocorrect -> "off",
-            'class -> "form-control",
-            '_showConstraints -> false)
+            Symbol("_label") -> "Access code",
+            Symbol("_hasLink") -> true,
+            Symbol("autocapitalize") -> "characters",
+            Symbol("autocorrect") -> "off",
+            Symbol("class") -> "form-control",
+            Symbol("_showConstraints") -> false)
         </div>
         <div class="form-group small-btm-margin">
             <button id="btnSignIn" type="submit" value="submit" class="button">Start Work based scenarios</button>

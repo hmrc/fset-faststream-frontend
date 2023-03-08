@@ -23,7 +23,7 @@
     <label for="@id" class="form-label">@labelContent</label>
     @hint
     <span class="has-error">@{maybeDisplayError(field)}</span>
-    <select name="@name" id="@id" @{if(args.toMap.exists(_._1 == '_disabled) && args.toMap.getOrElse('_disabled, "false")=="true") "disabled='disabled'"} class="form-control-select">
+    <select name="@name" id="@id" @{if(args.toMap.exists(_._1 == Symbol("_disabled")) && args.toMap.getOrElse(Symbol("_disabled"), "false")=="true") "disabled='disabled'"} class="form-control-select">
         <option value="">@defaultChoice</option>
         @for((optionTextDisplayed, optionValue) <- options) {
             <option value="@optionValue"@if(value.contains(optionValue)) { selected="selected"}>@optionTextDisplayed</option>

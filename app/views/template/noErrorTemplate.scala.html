@@ -16,6 +16,6 @@
 
 @(elements: helper.FieldElements)
 
-<div id="@{elements.id}_field" class="form-group @elements.args.get('_class) @if(elements.hasErrors) {has-an-error input-validation-error}">
+<div id="@{elements.id}_field" class="form-group @elements.args.get(Symbol("_class")) @if(elements.hasErrors) {has-an-error input-validation-error}">
 @elements.input
 </div>
