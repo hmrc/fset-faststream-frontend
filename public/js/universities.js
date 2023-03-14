@@ -423,17 +423,25 @@ $(function() {
     $( "#universityAttended" ).autocomplete({
         source: universities,
 
+        // Triggered when an item is selected from the menu.
         select: function(e, ui) {
             setData(ui.item.label, ui.item.hiddenValue);
+            console.log("select - data set to " + ui.item.label + ", " + ui.item.hiddenValue);
         },
+        // Triggered after a search completes, before the menu is shown.
         response: function(event, ui) {
+            console.log("response");
             if (ui.content.length === 0) {
                 setData(otherLabel, otherValue);
+                console.log("response - data set to other");
             }
         },
+        // Triggered when the field is blurred, if the value has changed.
         change: function (event, ui) {
-            if(!ui.item){
+            console.log("change - ui.item.label = " + ui.item.label);
+            if (ui.item == null) {
                 setData('', '');
+                console.log("change - data cleared");
             }
         }
     });
