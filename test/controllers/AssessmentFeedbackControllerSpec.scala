@@ -22,7 +22,7 @@ import connectors.exchange.GeneralDetails
 import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, CompetencyAverageResult}
 import mappings.Address
 import models.UniqueIdentifier
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import play.api.test.Helpers._
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
 
   "presentWithdrawApplication" should {
-    "display withdraw page" in new TestFixture {
+    "display assessment feedback" in new TestFixture {
       val result = controller.present(applicationId)(fakeRequest)
       status(result) mustBe OK
     }
@@ -70,7 +70,7 @@ class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
         lastName = "BLoggs",
         preferredName = "Joe",
         email = "joe@bloggs.com",
-        dateOfBirth = new LocalDate(),
+        dateOfBirth = LocalDate.now(),
         outsideUk = false,
         address = Address(line1 = "line1", line2 = None, line3 = None, line4 = None),
         postCode = None,

@@ -17,12 +17,13 @@
 package connectors.exchange
 
 import java.util.UUID
+import org.joda.time.{DateTime, LocalDate}
 
-import org.joda.time.{DateTime, DateTimeZone, LocalDate}
+import java.time.OffsetDateTime
 
 object Phase3TestGroupExamples {
 
-  val Now =  DateTime.now(DateTimeZone.UTC)
+  val Now =  OffsetDateTime.now
   val DatePlus7Days = Now.plusDays(7)
   val Token = newToken
   val sampleCandidateId = UUID.randomUUID().toString

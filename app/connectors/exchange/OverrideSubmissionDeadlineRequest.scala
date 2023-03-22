@@ -16,13 +16,13 @@
 
 package connectors.exchange
 
-import org.joda.time.DateTime
-import play.api.libs.json.{ Json, OFormat }
+import play.api.libs.json.{Json, OFormat}
 
-case class OverrideSubmissionDeadlineRequest(submissionDeadline: DateTime)
+import java.time.OffsetDateTime
+
+case class OverrideSubmissionDeadlineRequest(submissionDeadline: OffsetDateTime)
 
 object OverrideSubmissionDeadlineRequest {
-  import models.FaststreamImplicits._
   implicit val overrideSubmissionDeadlineRequestFormat: OFormat[OverrideSubmissionDeadlineRequest] =
     Json.format[OverrideSubmissionDeadlineRequest]
 }

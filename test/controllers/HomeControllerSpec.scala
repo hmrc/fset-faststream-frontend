@@ -19,7 +19,6 @@ package controllers
 import java.io.File
 import java.nio.file.Path
 import java.util.UUID
-
 import connectors.ApplicationClient.{CandidateAlreadyHasAnAnalysisExerciseException, OnlineTestNotFound}
 import connectors.ReferenceDataExamples.Schemes
 import connectors._
@@ -33,7 +32,6 @@ import models.CachedDataExample.SubmittedApplication
 import models.SecurityUserExamples._
 import models._
 import models.events.AllocationStatuses
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import play.api.libs.Files
@@ -45,6 +43,7 @@ import testkit.MockitoImplicits._
 import testkit.TestableSecureActions
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.OffsetDateTime
 import scala.concurrent.Future
 
 class HomeControllerSpec extends BaseControllerSpec {
@@ -468,7 +467,6 @@ class HomeControllerSpec extends BaseControllerSpec {
     }
 
     "not display fast pass rejected message when phase1 tests are started" in new TestFixture {
-
       val userId = ActiveCandidate.user.userID
       val fastPassRejectedPhase1StartedApplication = CachedDataWithApp(ActiveCandidate.user,
         CachedDataExample.fastPassRejectedPhase1StartedApplication.copy(userId = userId))
@@ -679,11 +677,11 @@ class HomeControllerSpec extends BaseControllerSpec {
 
     def mockPhaseOneTwoThreeData(phase1Tests: List[PsiTest] = Nil, phase2Tests: List[PsiTest] = Nil) = {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase1TestGroupWithNames(expirationDate = DateTime.now, activeTests = phase1Tests)))
+        .thenReturn(Future.successful(Phase1TestGroupWithNames(expirationDate = OffsetDateTime.now, activeTests = phase1Tests)))
       when(mockApplicationClient.getPhase2TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase2TestGroupWithActiveTest(expirationDate = DateTime.now, activeTests = phase2Tests)))
+        .thenReturn(Future.successful(Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTests = phase2Tests)))
       when(mockApplicationClient.getPhase3TestGroup(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase3TestGroup(expirationDate = DateTime.now, tests = Nil)))
+        .thenReturn(Future.successful(Phase3TestGroup(expirationDate = OffsetDateTime.now, tests = Nil)))
     }
 
     // There are titles in the postOnlineTestsDashboard template
@@ -696,22 +694,22 @@ class HomeControllerSpec extends BaseControllerSpec {
     val phase1Test1InventoryId = "45c7aee3-4d23-45c7-a09d-276df7db3e4c"
     val phase1Test1 = PsiTest(inventoryId = phase1Test1InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test1Url.com"))))
+      invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test1Url.com"))))
 
     val phase1Test2InventoryId = "940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7"
     val phase1Test2 = PsiTest(inventoryId = phase1Test2InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test2Url.com"))))
+      invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test2Url.com"))))
 
     val phase1Test3InventoryId = "59a9a3a4-aa1d-4439-a5a0-68602e8e08e0"
     val phase1Test3 = PsiTest(inventoryId = phase1Test3InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test3Url.com"))))
+      invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test3Url.com"))))
 
     val phase2Test1InventoryId = "60b423e5-75d6-4d31-b02c-97b8686e22e6"
     val phase2Test1 = PsiTest(inventoryId = phase2Test1InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase2Test1Url.com"))))
+      invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase2Test1Url.com"))))
 
     val phase1Test1ResultsReportLink = "<a href=\"http://phase1Test1Url.com\"" +
       " target=\"_blank\" id=\"tests.inventoryid.name." + phase1Test1InventoryId + "LinkResultsReport\">Feedback report"

@@ -25,7 +25,7 @@ import controllers.routes
 import helpers.NotificationType._
 import helpers.NotificationTypeHelper
 import models.{ CachedData, CachedDataWithApp, SecurityUser, UniqueIdentifier }
-import play.api.{ Logger, Logging }
+import play.api.Logging
 import play.api.i18n.{ I18nSupport, Messages }
 import play.api.mvc._
 import security.Roles.CsrAuthorization

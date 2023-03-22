@@ -17,7 +17,9 @@
 package connectors.events
 
 import models.UniqueIdentifier
-import org.joda.time.LocalTime
+
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import play.api.libs.json.{ Json, OFormat }
 
 case class Session(
@@ -29,11 +31,10 @@ case class Session(
   startTime: LocalTime,
   endTime: LocalTime) {
 
-  def startTimeAsString = startTime.toString("h:mm a")
-  def endTimeAsString = endTime.toString("h:mm a")
+  def startTimeAsString = startTime.format(DateTimeFormatter.ofPattern("h:mm a"))
+  def endTimeAsString = endTime.format(DateTimeFormatter.ofPattern("h:mm a"))
 }
 
 object Session {
-  import models.FaststreamImplicits._
   implicit val eventFormat: OFormat[Session] = Json.format[Session]
 }

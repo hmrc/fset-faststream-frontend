@@ -17,9 +17,9 @@
 package models.page
 
 import connectors.exchange.Phase1TestGroupWithNames
-import org.joda.time.DateTime
+import java.time.OffsetDateTime
 
-case class Phase1TestsPage2(expirationDate: DateTime,
+case class Phase1TestsPage2(expirationDate: OffsetDateTime,
                             tests: Seq[PsiTestPage]) extends DurationFormatter {
 
   def areStarted: Boolean = tests.exists(_.started)

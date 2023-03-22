@@ -30,6 +30,7 @@ object AppDependencies {
     "com.iheart"                %% "ficus"                                    % "1.5.0",
     "uk.gov.hmrc"               %% "http-caching-client"                      % "10.0.0-play-28",
     "uk.gov.hmrc"               %% "bootstrap-frontend-play-28"               % bootstrapVersion,
+    // We still need play-json-joda for Phase3TestGroup, check that file for more information
     "com.typesafe.play"         %% "play-json-joda"                           % "2.9.2",
     "org.apache.httpcomponents" %  "httpclient"                               % "4.5.3",
     "org.apache.httpcomponents" %  "httpcore"                                 % "4.4.5",

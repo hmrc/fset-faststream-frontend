@@ -17,16 +17,15 @@
 package controllers
 
 import java.util.UUID
-
 import connectors.exchange.{Phase2TestGroupWithActiveTest, PsiTest}
 import models.UniqueIdentifier
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import play.api.test.Helpers._
 import testkit.TestableSecureActions
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.OffsetDateTime
 import scala.concurrent.Future
 
 class PsiTestControllerSpec extends BaseControllerSpec {
@@ -34,7 +33,7 @@ class PsiTestControllerSpec extends BaseControllerSpec {
   "Complete phase 2 tests" should {
     "throw an exception if no active test is found for the given order id" in new TestFixture {
       val orderId = UniqueIdentifier(UUID.randomUUID().toString)
-      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = DateTime.now(), activeTests = Nil)
+      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now(), activeTests = Nil)
       when(mockApplicationClient.getPhase2TestProfileByOrderId(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(p2TestGroup))
 
@@ -52,14 +51,14 @@ class PsiTestControllerSpec extends BaseControllerSpec {
 
       val test1 = PsiTest(inventoryId = "inventoryId1", usedForResults = true,
         testUrl = "http://testurl.com", orderId = test1OrderId,
-        invitationDate = DateTime.now(), startedDateTime = Some(DateTime.now()),
-        completedDateTime = Some(DateTime.now()))
+        invitationDate = OffsetDateTime.now(), startedDateTime = Some(OffsetDateTime.now()),
+        completedDateTime = Some(OffsetDateTime.now()))
       val test2 = PsiTest(inventoryId = "inventoryId2", usedForResults = true,
         testUrl = "http://testurl.com", orderId = test2OrderId,
-        invitationDate = DateTime.now(), startedDateTime = None,
+        invitationDate = OffsetDateTime.now(), startedDateTime = None,
         completedDateTime = None)
 
-      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = DateTime.now(), activeTests = Seq(test1, test2))
+      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now(), activeTests = Seq(test1, test2))
 
       when(mockApplicationClient.getPhase2TestProfileByOrderId(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(p2TestGroup))
@@ -77,14 +76,14 @@ class PsiTestControllerSpec extends BaseControllerSpec {
 
       val test1 = PsiTest(inventoryId = "inventoryId1", usedForResults = true,
         testUrl = "http://testurl.com", orderId = test1OrderId,
-        invitationDate = DateTime.now(), startedDateTime = Some(DateTime.now()),
-        completedDateTime = Some(DateTime.now()))
+        invitationDate = OffsetDateTime.now(), startedDateTime = Some(OffsetDateTime.now()),
+        completedDateTime = Some(OffsetDateTime.now()))
       val test2 = PsiTest(inventoryId = "inventoryId2", usedForResults = true,
         testUrl = "http://testurl.com", orderId = test2OrderId,
-        invitationDate = DateTime.now(), startedDateTime = Some(DateTime.now()),
-        completedDateTime = Some(DateTime.now()))
+        invitationDate = OffsetDateTime.now(), startedDateTime = Some(OffsetDateTime.now()),
+        completedDateTime = Some(OffsetDateTime.now()))
 
-      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = DateTime.now(), activeTests = Seq(test1, test2))
+      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now(), activeTests = Seq(test1, test2))
 
       when(mockApplicationClient.getPhase2TestProfileByOrderId(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(p2TestGroup))

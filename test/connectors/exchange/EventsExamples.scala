@@ -21,7 +21,8 @@ import java.util.UUID
 import connectors.events.{ Event, Location, Session, Venue }
 import models.UniqueIdentifier
 import models.events.EventType
-import org.joda.time.{ LocalDate, LocalTime }
+import java.time.LocalDate
+import java.time.LocalTime
 
 object EventsExamples {
 

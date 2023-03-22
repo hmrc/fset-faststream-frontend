@@ -18,11 +18,10 @@ package controllers
 
 import config.ApplicationRouteFrontendConfig
 import models.ApplicationRoute._
-import org.joda.time.DateTime
 import play.api.Logging
 
 import java.time.format.DateTimeFormatter
-import java.time.{ LocalDateTime, ZoneId }
+import java.time.{LocalDateTime, OffsetDateTime, ZoneId}
 
 trait ApplicationRouteState {
   def newAccountsStarted: Boolean
@@ -67,11 +66,11 @@ trait CampaignAwareController {
   def isNewAccountsEnabled(implicit applicationRoute: ApplicationRoute = Faststream): Boolean =
     appRouteConfigMap.get(applicationRoute).forall(_.newAccountsEnabled)
 
-  def canApplicationBeSubmitted(overriddenSubmissionDeadline: Option[DateTime])
+  def canApplicationBeSubmitted(overriddenSubmissionDeadline: Option[OffsetDateTime])
                                (implicit applicationRoute: ApplicationRoute = Faststream): Boolean = {
     isSubmitApplicationsEnabled match {
       case true => true
-      case false if overriddenSubmissionDeadline.isDefined => overriddenSubmissionDeadline.get.isAfter(DateTime.now)
+      case false if overriddenSubmissionDeadline.isDefined => overriddenSubmissionDeadline.get.isAfter(OffsetDateTime.now)
       case _ => false
     }
   }

@@ -17,8 +17,9 @@
 package connectors.exchange.candidatescores
 
 import models.UniqueIdentifier
-import org.joda.time.DateTime
 import play.api.libs.json.Json
+
+import java.time.OffsetDateTime
 
 case class AssessmentScoresExercise(
                                      attended: Boolean,
@@ -40,12 +41,11 @@ case class AssessmentScoresExercise(
                                      workingTogetherDevelopingSelfAndOthersFeedback: Option[String] = None,
 
                                      updatedBy: UniqueIdentifier,
-                                     savedDate: Option[DateTime] = None,
-                                     submittedDate: Option[DateTime] = None,
+                                     savedDate: Option[OffsetDateTime] = None,
+                                     submittedDate: Option[OffsetDateTime] = None,
                                      version: Option[String] = None
 )
 
 object AssessmentScoresExercise {
-  import models.FaststreamImplicits._
   implicit val scoresAndFeedbackFormat = Json.format[AssessmentScoresExercise]
 }

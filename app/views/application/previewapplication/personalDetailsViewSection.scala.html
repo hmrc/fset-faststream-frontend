@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import java.time.format.DateTimeFormatter
 @(personalDetails: connectors.exchange.GeneralDetails)(edit: Html)(implicit user: Option[CachedData], messages: Messages)
 
 @import forms.FastPassForm
@@ -49,7 +50,7 @@
     </section>
     <section>
         <h3 class="heading-small">Date of birth</h3>
-        <p id="dateOfBirth">@personalDetails.dateOfBirth.toString("dd MMMM yyyy")</p>
+        <p id="dateOfBirth">@personalDetails.dateOfBirth.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))</p>
     </section>
     <section>
         <h3 class="heading-small">Address</h3>

@@ -16,10 +16,10 @@
 
 package connectors.exchange
 
-import models.{ ApplicationRoute, UniqueIdentifier }
-import org.joda.time.DateTime
+import models.{ApplicationRoute, UniqueIdentifier}
 import play.api.libs.json.Json
-import models.FaststreamImplicits._
+
+import java.time.OffsetDateTime
 
 case class ApplicationResponse(
   applicationId: UniqueIdentifier,
@@ -28,7 +28,7 @@ case class ApplicationResponse(
   userId: UniqueIdentifier,
   progressResponse: ProgressResponse,
   civilServiceExperienceDetails: Option[CivilServiceExperienceDetails],
-  overriddenSubmissionDeadline: Option[DateTime]
+  overriddenSubmissionDeadline: Option[OffsetDateTime]
 )
 
 object ApplicationResponse {

@@ -21,9 +21,9 @@ import connectors.exchange.CivilServiceExperienceDetails
 import models.ApplicationData.ApplicationStatus
 import models.ApplicationData.ApplicationStatus.ApplicationStatus
 import models.ApplicationRoute.ApplicationRoute
-import org.joda.time.DateTime
 import play.api.libs.json._
 
+import java.time.OffsetDateTime
 import scala.language.implicitConversions
 
 case class ApplicationData(
@@ -34,7 +34,7 @@ case class ApplicationData(
     progress: Progress,
     civilServiceExperienceDetails: Option[CivilServiceExperienceDetails],
     edipCompleted: Option[Boolean],
-    overriddenSubmissionDeadline: Option[DateTime]) {
+    overriddenSubmissionDeadline: Option[OffsetDateTime]) {
 
   import ApplicationData.ApplicationStatus._
 

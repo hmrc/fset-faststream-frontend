@@ -18,9 +18,11 @@ package forms
 
 import connectors.exchange.CivilServiceExperienceDetails
 import connectors.exchange.CivilServiceExperienceDetails.toData
-import mappings.{ AddressExamples, DayMonthYear }
+import mappings.{AddressExamples, DayMonthYear}
 import models.ApplicationRoute
-import org.joda.time.{ DateTime, LocalDate }
+import java.time.LocalDate
+
+import java.time.OffsetDateTime
 
 object PersonalDetailsFormExamples {
   val ValidOutsideUKDetails = Map[String, String](
@@ -150,9 +152,9 @@ object PersonalDetailsFormExamples {
     "civilServiceExperienceDetails.applicable" -> ValidUKAddressForm.civilServiceExperienceDetails.get.applicable.toString
   )
 
-  private def yearInTheFuture = DateTime.now().plusYears(2).year().get().toString
+  private def yearInTheFuture = OffsetDateTime.now().plusYears(2).getYear.toString
 
-  def birthYear = LocalDate.now.minusYears(18).year().get().toString
+  def birthYear = java.time.LocalDate.now().minusYears(18).getYear.toString
 
   def now = LocalDate.now
 }

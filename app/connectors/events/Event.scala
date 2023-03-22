@@ -18,7 +18,8 @@ package connectors.events
 
 import models.UniqueIdentifier
 import models.events.EventType.EventType
-import org.joda.time.{ LocalDate, LocalTime }
+
+import java.time.{LocalDate, LocalTime}
 import play.api.libs.json.{ Json, OFormat }
 
 case class Event(
@@ -38,6 +39,5 @@ case class Event(
 )
 
 object Event {
-  import models.FaststreamImplicits._
   implicit val eventFormat: OFormat[Event] = Json.format[Event]
 }

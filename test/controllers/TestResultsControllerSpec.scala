@@ -17,18 +17,17 @@
 package controllers
 
 import java.util.UUID
-
 import connectors.ApplicationClient.OnlineTestNotFound
 import connectors.exchange._
 import models.ApplicationData.ApplicationStatus.WITHDRAWN
 import models._
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import testkit.TestableSecureActions
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.OffsetDateTime
 import scala.concurrent.Future
 
 class TestResultsControllerSpec extends BaseControllerSpec {
@@ -128,11 +127,11 @@ class TestResultsControllerSpec extends BaseControllerSpec {
 
     def mockPhaseOneTwoThreeData(phase1Tests: List[PsiTest] = Nil, phase2Tests: List[PsiTest] = Nil) = {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase1TestGroupWithNames(expirationDate = DateTime.now, activeTests = phase1Tests)))
+        .thenReturn(Future.successful(Phase1TestGroupWithNames(expirationDate = OffsetDateTime.now, activeTests = phase1Tests)))
       when(mockApplicationClient.getPhase2TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase2TestGroupWithActiveTest(expirationDate = DateTime.now, activeTests = phase2Tests)))
+        .thenReturn(Future.successful(Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTests = phase2Tests)))
       when(mockApplicationClient.getPhase3TestGroup(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase3TestGroup(expirationDate = DateTime.now, tests = Nil)))
+        .thenReturn(Future.successful(Phase3TestGroup(expirationDate = OffsetDateTime.now, tests = Nil)))
     }
 
     def checkAllResultsTitlesAndLinks(content: String) = {
@@ -149,13 +148,13 @@ class TestResultsControllerSpec extends BaseControllerSpec {
     val phase1Test1InventoryId = "45c7aee3-4d23-45c7-a09d-276df7db3e4c"
     val phase1Test1NoResults = PsiTest(inventoryId = phase1Test1InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = DateTime.now, testResult = None)
+      invitationDate = OffsetDateTime.now, testResult = None)
     val phase1Test1 = phase1Test1NoResults.copy(testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test1Url.com"))))
 
     val phase2Test1InventoryId = "60b423e5-75d6-4d31-b02c-97b8686e22e6"
     val phase2Test1 = PsiTest(inventoryId = phase2Test1InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase2Test1Url.com"))))
+      invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase2Test1Url.com"))))
 
 
     val phase1Test1ResultsReportLink = "<a href=\"http://phase1Test1Url.com\"" +
