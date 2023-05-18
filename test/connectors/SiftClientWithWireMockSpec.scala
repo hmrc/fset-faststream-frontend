@@ -88,7 +88,7 @@ class SiftClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
   }
 
   "updateSchemeSpecificAnswer" should {
-    val schemeId = SchemeId("Generalist")
+    val schemeId = SchemeId("OperationalDelivery")
     val endpoint = s"/$base/sift-answers/$applicationId/${schemeId.value}"
 
     val schemeSpecificAnswer = SchemeSpecificAnswer("Test answer")
