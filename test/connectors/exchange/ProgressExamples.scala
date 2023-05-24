@@ -24,6 +24,7 @@ object ProgressExamples {
   val SubmittedProgress = Progress(
     personalDetails = true,
     schemePreferences = true,
+    assistanceDetails = true,
     preview = true,
     startedQuestionnaire = true,
     diversityQuestionnaire = true,

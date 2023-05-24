@@ -36,8 +36,8 @@ object CachedDataExample {
     ApplicationRoute.Faststream,
     ProgressExamples.InitialProgress,
     Some(CivilServiceExperienceDetails(applicable = false)),
-    None,
-    None
+    edipCompleted = None,
+    overriddenSubmissionDeadline = None
   )
 
   val fastPassRejectedInvitedToPhase1Application = ApplicationData(
@@ -47,8 +47,8 @@ object CachedDataExample {
     ApplicationRoute.Faststream,
     ProgressExamples.Phase1TestsInvitedNotStarted,
     Some(CivilServiceExperienceDetails(applicable = true, fastPassReceived = Some(true), fastPassAccepted = Some(false))),
-    None,
-    None
+    edipCompleted = None,
+    overriddenSubmissionDeadline = None
   )
 
   val fastPassRejectedPhase1StartedApplication = ApplicationData(
@@ -58,8 +58,8 @@ object CachedDataExample {
     ApplicationRoute.Faststream,
     ProgressExamples.Phase1TestsStarted,
     Some(CivilServiceExperienceDetails(applicable = true, fastPassReceived = Some(true), fastPassAccepted = Some(false))),
-    None,
-    None
+    edipCompleted = None,
+    overriddenSubmissionDeadline = None
   )
 
   val InProgressInPersonalDetailsApplication = CreatedApplication.copy(applicationStatus = ApplicationStatus.IN_PROGRESS,

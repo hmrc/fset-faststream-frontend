@@ -71,6 +71,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
       mockPostOnlineTestsDashboardCalls()
       mockPhaseOneTwoThreeData(List(phase1Test1), List(phase2Test1))
 
@@ -94,6 +95,10 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
+      when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
+
       mockPostOnlineTestsDashboardCalls()
       mockPhaseOneTwoThreeData(List(phase1Test1))
 
@@ -107,7 +112,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       content must not include phase3ResultsReportLink
     }
 
-    "display the P1 error message when candidate has been invited to more than 4 P1 tests" in new TestFixture {
+    "display the P1 error message when candidate has been invited to more than 3 P1 tests" in new TestFixture {
       val candidateState = CachedDataWithApp(ActiveCandidate.user,
         CachedDataExample.Phase1TestsPassedApplication.copy(userId = ActiveCandidate.user.userID))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(List(
@@ -120,8 +125,12 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
+      when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
+
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3, phase1Test4, phase1Test4))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3, phase1Test3))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -133,6 +142,7 @@ class HomeControllerSpec extends BaseControllerSpec {
     "display the P1 error message when GIS candidate has been invited to more than 2 P1 tests" in new TestFixture {
       val candidateState = CachedDataWithApp(ActiveCandidate.user,
         CachedDataExample.Phase1TestsPassedApplication.copy(userId = ActiveCandidate.user.userID))
+
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(List(
         ReferenceDataExamples.Schemes.Dip
       ))
@@ -143,10 +153,12 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
       when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(AssistanceDetailsExamples.DisabilityGisAndAdjustments))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.DisabilityGisAndAdjustments2))
+
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test2))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test3, phase1Test3))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -168,8 +180,12 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
+      when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
+
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3, phase1Test4))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -194,8 +210,12 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
+      when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
+
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3, phase1Test4), List(phase2Test1))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3), List(phase2Test1))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -220,8 +240,12 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
+      when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
+
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3, phase1Test4), List(phase2Test1))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3), List(phase2Test1))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -249,8 +273,12 @@ class HomeControllerSpec extends BaseControllerSpec {
       when(mockUserService.refreshCachedUser(eqTo(ActiveCandidate.user.userID))(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(ActiveCandidate))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
+
+      when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
+
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3, phase1Test4), List(phase2Test1))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3), List(phase2Test1))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -440,10 +468,21 @@ class HomeControllerSpec extends BaseControllerSpec {
     }
 
     "not display fast pass rejected message when phase1 tests are started" in new TestFixture {
+
+      val userId = ActiveCandidate.user.userID
       val fastPassRejectedPhase1StartedApplication = CachedDataWithApp(ActiveCandidate.user,
-        CachedDataExample.fastPassRejectedPhase1StartedApplication.copy(userId = ActiveCandidate.user.userID))
-      when(mockApplicationClient.getPhase1TestProfile(eqTo(fastPassRejectedPhase1StartedApplication.application.applicationId)
+        CachedDataExample.fastPassRejectedPhase1StartedApplication.copy(userId = userId))
+
+      val appId = fastPassRejectedPhase1StartedApplication.application.applicationId
+
+      when(mockApplicationClient.getPhase1TestProfile(eqTo(appId)
       )(any[HeaderCarrier])).thenReturn(Future.failed(new OnlineTestNotFound))
+
+      when(mockApplicationClient.findAdjustments(eqTo(appId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(None))
+
+      when(mockApplicationClient.getAssistanceDetails(eqTo(userId), eqTo(appId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
 
       val result = controller(fastPassRejectedPhase1StartedApplication, commonApplicationRouteState).present()(fakeRequest)
 
@@ -669,16 +708,10 @@ class HomeControllerSpec extends BaseControllerSpec {
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
       invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test3Url.com"))))
 
-    val phase1Test4InventoryId = "5f59eff8-5ef6-463a-a085-9e5c730936dc"
-    val phase1Test4 = PsiTest(inventoryId = phase1Test4InventoryId, usedForResults = true,
-      testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test4Url.com"))))
-
     val phase2Test1InventoryId = "60b423e5-75d6-4d31-b02c-97b8686e22e6"
     val phase2Test1 = PsiTest(inventoryId = phase2Test1InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
       invitationDate = DateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase2Test1Url.com"))))
-
 
     val phase1Test1ResultsReportLink = "<a href=\"http://phase1Test1Url.com\"" +
       " target=\"_blank\" id=\"tests.inventoryid.name." + phase1Test1InventoryId + "LinkResultsReport\">Feedback report"
@@ -737,9 +770,6 @@ class HomeControllerSpec extends BaseControllerSpec {
           .thenReturnAsync(List(SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Green)))
         when(mockUserService.refreshCachedUser(any[UniqueIdentifier])(any[HeaderCarrier], any[Request[_]]))
           .thenReturn(Future.successful(CachedData(ActiveCandidate.user, Some(CreatedApplication.copy(userId = ActiveCandidate.user.userID)))))
-
-        when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
-          .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
 
         when(mockApplicationClient.getSiftState(eqTo(currentApplicationId))(any[HeaderCarrier]))
           .thenReturnAsync(None)
