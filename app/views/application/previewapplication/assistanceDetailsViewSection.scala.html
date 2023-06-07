@@ -59,20 +59,6 @@
             @maybeDisplayOtherDisabilityDescription
         }
     </section>
-    @assistanceDetails.needsSupportForOnlineAssessment.map { needsSupportForOnlineAssessment =>
-        <section>
-            <h3 class="heading-small">Will you need any support for your work based scenarios or numerical test?</h3>
-            @needsSupportForOnlineAssessment match {
-                case true => {
-                    <p id="needsSupportForOnlineAssessment">Yes</p>
-                    <p id="needsSupportForOnlineAssessmentDescription">@assistanceDetails.needsSupportForOnlineAssessmentDescription</p>
-                }
-                case false => {
-                    <p>No</p>
-                }
-            }
-        </section>
-    }
     @assistanceDetails.needsSupportAtVenue.map { needsSupportAtVenue =>
         <section>
             <h3 class="heading-small">Will you need any support at the assessment centre?</h3>

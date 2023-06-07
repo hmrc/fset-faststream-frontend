@@ -23,12 +23,10 @@ final case class AssistanceDetails(
                                     disabilityImpact: Option[String],
                                     disabilityCategories: Option[List[String]],
                                     otherDisabilityDescription: Option[String],
-                                    needsSupportForOnlineAssessment: Option[Boolean],
-                                    needsSupportForOnlineAssessmentDescription: Option[String],
                                     needsSupportAtVenue: Option[Boolean],
                                     needsSupportAtVenueDescription: Option[String],
-                                    needsSupportForPhoneInterview: Option[Boolean],
-                                    needsSupportForPhoneInterviewDescription: Option[String],
+                                    needsSupportForPhoneInterview: Option[Boolean], // Used by Edip & Sdip
+                                    needsSupportForPhoneInterviewDescription: Option[String], // Used by Edip & Sdip
                                     gis: Option[Boolean] = None //GIS is currently disabled
 ) {
   override def toString =
@@ -36,8 +34,6 @@ final case class AssistanceDetails(
       s"disabilityImpact=$disabilityImpact," +
       s"disabilityCategories=$disabilityCategories," +
       s"otherDisabilityDescription=$otherDisabilityDescription," +
-      s"needsSupportForOnlineAssessment=$needsSupportForOnlineAssessment," +
-      s"needsSupportForOnlineAssessmentDescription=$needsSupportForOnlineAssessmentDescription," +
       s"needsSupportAtVenue=$needsSupportAtVenue," +
       s"needsSupportAtVenueDescription=$needsSupportAtVenueDescription," +
       s"needsSupportForPhoneInterview=$needsSupportForPhoneInterview," +
@@ -46,7 +42,6 @@ final case class AssistanceDetails(
 
   def requiresAdjustments: Boolean = {
     List(
-      needsSupportForOnlineAssessment.contains(true),
       needsSupportAtVenue.contains(true),
       needsSupportForPhoneInterview.contains(true)
     ).contains(true)

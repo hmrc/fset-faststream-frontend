@@ -39,7 +39,7 @@ lazy val playSettings : Seq[Setting[_]] = Seq(routesImport ++= Seq("binders.Cust
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(plugins : _*)
+  .enablePlugins(plugins: _*)
   .enablePlugins(Seq(play.sbt.PlayScala, SbtWeb, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins : _*)
   .settings(majorVersion := 0)
   .settings(playSettings : _*)

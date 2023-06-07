@@ -16,3 +16,5 @@ addSbtPlugin("com.typesafe.sbt"   %  "sbt-gzip"               % "1.0.2")
 
 // Use the Scalastyle plugin to check the code adheres to coding standards
 addSbtPlugin("org.scalastyle"     %% "scalastyle-sbt-plugin"  % "1.0.0")
+
+addDependencyTreePlugin

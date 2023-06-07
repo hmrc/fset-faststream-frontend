@@ -21,10 +21,13 @@
 
 <section>
     <fieldset>
-        <legend><h2 class="form-label">Will you need any support for your work based scenarios or numerical test?</h2></legend>
+        <legend><h2 class="form-label">PLACEHOLDER: Will you need any support for your work based scenarios or numerical test?</h2></legend>
         @*        <p class="form-hint text">For example, a request for reasonable adjustments such as extra time for those
         with dyslexia.*@
-        <p class="form-hint text">Please note that work based scenarios and numerical tests are untimed tests.</p>
+        <p class="form-hint text">PLACEHOLDER: Please note that work based scenarios and numerical tests are untimed tests.</p>
+        <p class="form-hint text">PLACEHOLDER: If you want to talk about your adjustment needs in more detail,
+            <a id="contactUsForOnlineAssessment" href="@routes.ApplicationController.helpdesk" class="">please contact us</a>.</p>
+        @*
         @radioBoxHorizontal(form("needsSupportForOnlineAssessment"), options = List(("yes", "Yes", true), ("no", "No", false)),
             optionTrigger = "needsSupportForOnlineAssessment-describe", isCompound = true)
         <div id="needsSupportForOnlineAssessment-describe" class="toggle-content" aria-hidden="true">
@@ -44,5 +47,6 @@
                     be another opportunity to do this unless your situation changes.</p>
             </div>
         </div>
+        *@
     </fieldset>
 </section>

@@ -34,7 +34,7 @@
 
     <h1 class="heading-xlarge" id="personalDetailsHeading">Personal details</h1>
 
-    @helper.form(action = redirectUrl, 'novalidate -> "novalidate") {
+    @helper.form(action = redirectUrl, Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
         @applicationRoute(optCachedData)
         @applicationStatus(optCachedData)

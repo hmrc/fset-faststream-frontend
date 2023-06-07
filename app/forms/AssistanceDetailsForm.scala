@@ -51,11 +51,6 @@ class AssistanceDetailsForm {
       "disabilityImpact" -> of(disabilityImpactFormatter),
       "disabilityCategories" -> of(disabilityCategoriesFormatter),
       "otherDisabilityDescription" -> of(otherDisabilityDescriptionFormatter(otherDisabilityCategoryMaxSize)),
-      "needsSupportForOnlineAssessment" -> of(
-        mayBeOptionalString("error.needsSupportForOnlineAssessment.required", 31, isFastStreamOrSdipFastStream)),
-      "needsSupportForOnlineAssessmentDescription" -> of(requiredFormatterWithMaxLengthCheck(
-        "needsSupportForOnlineAssessment",
-        "needsSupportForOnlineAssessmentDescription", Some(2048))),
       "needsSupportAtVenue" -> of(mayBeOptionalString("error.needsSupportAtVenue.required", 31, isFastStreamOrSdipFastStream)),
       "needsSupportAtVenueDescription" -> of(requiredFormatterWithMaxLengthCheck("needsSupportAtVenue", "needsSupportAtVenueDescription",
         Some(2048))),
@@ -179,11 +174,11 @@ class AssistanceDetailsForm {
     def otherDisabilityDescriptionParam = param(otherDisabilityDescription).getOrElse("")
 
     // If Other is selected then the description must not be empty
-    def isOtherDisabilityDescriptionFilled = disabilityCategoriesParam.contains(other) && !otherDisabilityDescriptionParam.isEmpty
+    def isOtherDisabilityDescriptionFilled = disabilityCategoriesParam.contains(other) && otherDisabilityDescriptionParam.nonEmpty
 
     // If Other is selected then the description must not be empty and not exceed the max size
     def isOtherDisabilityDescriptionSizeValid(max: Int) = disabilityCategoriesParam.contains(other) &&
-      !otherDisabilityDescriptionParam.isEmpty && otherDisabilityDescriptionParam.length <= max
+      otherDisabilityDescriptionParam.nonEmpty && otherDisabilityDescriptionParam.length <= max
   }
 }
 
@@ -211,8 +206,6 @@ object AssistanceDetailsForm {
     disabilityImpact: Option[String],
     disabilityCategories: Option[List[String]],
     otherDisabilityDescription: Option[String],
-    needsSupportForOnlineAssessment: Option[String],
-    needsSupportForOnlineAssessmentDescription: Option[String],
     needsSupportAtVenue: Option[String],
     needsSupportAtVenueDescription: Option[String],
     needsSupportForPhoneInterview: Option[String],
@@ -223,8 +216,6 @@ object AssistanceDetailsForm {
         s"disabilityImpact=$disabilityImpact," +
         s"disabilityCategories=$disabilityCategories," +
         s"otherDisabilityDescription=$otherDisabilityDescription," +
-        s"needsSupportForOnlineAssessment=$needsSupportForOnlineAssessment," +
-        s"needsSupportForOnlineAssessmentDescription=$needsSupportForOnlineAssessmentDescription," +
         s"needsSupportAtVenue=$needsSupportAtVenue," +
         s"needsSupportAtVenueDescription=$needsSupportAtVenueDescription," +
         s"needsSupportForPhoneInterview=$needsSupportForPhoneInterview," +
@@ -236,8 +227,6 @@ object AssistanceDetailsForm {
         disabilityImpact,
         disabilityCategories,
         otherDisabilityDescription,
-        AssistanceDetailsForm.Data.toOptBoolean(needsSupportForOnlineAssessment),
-        needsSupportForOnlineAssessmentDescription,
         AssistanceDetailsForm.Data.toOptBoolean(needsSupportAtVenue),
         needsSupportAtVenueDescription,
         AssistanceDetailsForm.Data.toOptBoolean(needsSupportForPhoneInterview),
@@ -252,8 +241,6 @@ object AssistanceDetailsForm {
         if (hasDisabilityCheck) disabilityImpact else None,
         if (hasDisabilityCheck) disabilityCategories else None,
         if (hasDisabilityCheck) otherDisabilityDescription else None,
-        needsSupportForOnlineAssessment,
-        if (needsSupportForOnlineAssessment.contains("Yes")) needsSupportForOnlineAssessmentDescription else None,
         needsSupportAtVenue,
         if (needsSupportAtVenue.contains("Yes")) needsSupportAtVenueDescription else None,
         needsSupportForPhoneInterview,
@@ -269,8 +256,6 @@ object AssistanceDetailsForm {
         ad.disabilityImpact,
         ad.disabilityCategories,
         ad.otherDisabilityDescription,
-        toOptString(ad.needsSupportForOnlineAssessment),
-        ad.needsSupportForOnlineAssessmentDescription,
         toOptString(ad.needsSupportAtVenue),
         ad.needsSupportAtVenueDescription,
         toOptString(ad.needsSupportForPhoneInterview),

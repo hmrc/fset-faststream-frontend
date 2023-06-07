@@ -96,7 +96,7 @@
     }
 
     @appNotReadOnly {
-        @helper.form(action = routes.PreviewApplicationController.submit, 'novalidate -> "novalidate") {
+        @helper.form(action = routes.PreviewApplicationController.submit, Symbol("novalidate") -> "novalidate") {
             @helper.CSRF.formField
             <div>
                 <button id="submit" type="submit" value="submit" class="button">Save and continue</button>
