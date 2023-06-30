@@ -61,6 +61,10 @@ lazy val microservice = Project(appName, file("."))
     // Currently don't enable warning in value discard in tests until ScalaTest 3
     Compile / compile / scalacOptions += "-Ywarn-value-discard"//,
   )
+  // Even though log4j does not appear in the dependency graph, sbt still downloads it into the Coursier cache
+  // when we compile. It is version log4j-1.2.17.jar, which contains the security vulnerabilities so as a workaround
+  // we exclude any log4j library here
+  .settings(excludeDependencies += "log4j" % "log4j")
   .settings(Compile / doc / sources := Seq.empty)
   .configs(IntegrationTest)
   .settings(pipelineStages := Seq(digest, gzip))
