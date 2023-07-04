@@ -237,7 +237,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
   "withdrawScheme" should {
     val applicationId = UniqueIdentifier(UUID.randomUUID())
     val endpoint = s"/$base/application/$applicationId/scheme/withdraw"
-    val request = WithdrawScheme(SchemeId("Generalist"), reason = "My reason")
+    val request = WithdrawScheme(SchemeId("OperationalDelivery"), reason = "My reason")
 
     "return unit when OK is received" in new TestFixture {
       stubFor(put(urlPathEqualTo(endpoint))
@@ -860,7 +860,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
     val endpoint = s"/$base/application/$applicationId/phase3/results"
 
     "return phase3 results when OK is received" in new TestFixture {
-      val response = Some(List(SchemeEvaluationResult(SchemeId("Generalist"), result = "Green")))
+      val response = Some(List(SchemeEvaluationResult(SchemeId("OperationalDelivery"), result = "Green")))
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -946,7 +946,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
     val endpoint = s"/$base/application/$applicationId/sift/results"
 
     "return scheme evaluation results when OK is received" in new TestFixture {
-      val response = Some(List(SchemeEvaluationResult(SchemeId("Generalist"), result = "Green")))
+      val response = Some(List(SchemeEvaluationResult(SchemeId("OperationalDelivery"), result = "Green")))
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -973,7 +973,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
     val endpoint = s"/$base/application/$applicationId/currentSchemeStatus"
 
     "return scheme evaluation results when OK is received" in new TestFixture {
-      val response = Seq(SchemeEvaluationResultWithFailureDetails(SchemeId("Generalist"), result = "Green", failedAt = Some("PHASE1")))
+      val response = Seq(SchemeEvaluationResultWithFailureDetails(SchemeId("OperationalDelivery"), result = "Green", failedAt = Some("PHASE1")))
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)

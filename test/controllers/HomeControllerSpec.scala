@@ -364,7 +364,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       val withdrawnSiftApp = CachedDataWithApp(ActiveCandidate.user,
         CachedDataExample.WithdrawnSiftApplication.copy(userId = ActiveCandidate.user.userID))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(List(
-        ReferenceDataExamples.Schemes.Generalist
+        ReferenceDataExamples.Schemes.OperationalDelivery
       ))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
       when(mockSiftClient.getSiftAnswersStatus(eqTo(currentApplicationId))(any[HeaderCarrier]))

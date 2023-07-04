@@ -19,6 +19,7 @@ package models
 import play.api.libs.json.{ Format, JsString, JsSuccess, JsValue }
 
 object SchemeType extends Enumeration {
+/*
   type SchemeType = Value
 
   val Commercial, DigitalDataTechnologyAndCyber, DiplomaticAndDevelopment, DiplomaticAndDevelopmentEconomics,
@@ -32,4 +33,5 @@ object SchemeType extends Enumeration {
 
     def writes(myEnum: SchemeType) = JsString(myEnum.toString)
   }
+ */
 }
