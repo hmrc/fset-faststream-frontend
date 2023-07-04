@@ -28,8 +28,22 @@ final case class AssistanceDetails(
                                     needsSupportAtVenue: Option[Boolean],
                                     needsSupportAtVenueDescription: Option[String],
                                     needsSupportForPhoneInterview: Option[Boolean],
-                                    needsSupportForPhoneInterviewDescription: Option[String]
+                                    needsSupportForPhoneInterviewDescription: Option[String],
+                                    gis: Option[Boolean] = None //GIS is currently disabled
 ) {
+  override def toString =
+    s"hasDisability=$hasDisability," +
+      s"disabilityImpact=$disabilityImpact," +
+      s"disabilityCategories=$disabilityCategories," +
+      s"otherDisabilityDescription=$otherDisabilityDescription," +
+      s"needsSupportForOnlineAssessment=$needsSupportForOnlineAssessment," +
+      s"needsSupportForOnlineAssessmentDescription=$needsSupportForOnlineAssessmentDescription," +
+      s"needsSupportAtVenue=$needsSupportAtVenue," +
+      s"needsSupportAtVenueDescription=$needsSupportAtVenueDescription," +
+      s"needsSupportForPhoneInterview=$needsSupportForPhoneInterview," +
+      s"needsSupportForPhoneInterviewDescription=$needsSupportForPhoneInterviewDescription," +
+      s"gis=$gis"
+
   def requiresAdjustments: Boolean = {
     List(
       needsSupportForOnlineAssessment.contains(true),
@@ -39,8 +53,10 @@ final case class AssistanceDetails(
   }
 
   def isDisabledCandidate = hasDisability.toLowerCase == "yes"
-  def hasSelectedOtherDisabilityCategory =
+  def hasSelectedOtherDisabilityCategory = {
     disabilityCategories.exists(disabilityCategoryList => disabilityCategoryList.contains("Other"))
+  }
+  def isGis: Boolean = gis.contains(true)
 }
 
 object AssistanceDetails {

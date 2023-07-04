@@ -21,10 +21,10 @@ object SecurityUserExamples {
   val CreatedApplication = CachedDataExample.CreatedApplication
   val ActiveCandidateUser = CachedUser(CreatedApplication.userId, "firstName", "lastName", Some("preferredName"),
     "email@test.com", isActive = true, "lockStatus")
-  val ActiveCandidate = CachedData(ActiveCandidateUser, None)
+  val ActiveCandidate = CachedData(ActiveCandidateUser, application = None)
 
   val InactiveCandidateUser = ActiveCandidateUser.copy(isActive = false)
-  val InactiveCandidate = CachedData(InactiveCandidateUser, None)
+  val InactiveCandidate = CachedData(InactiveCandidateUser, application = None)
 
   val CandidateWithApp = CachedDataWithApp(ActiveCandidateUser, CreatedApplication)
 }

@@ -106,7 +106,28 @@ case class Progress(
     updateExported: Boolean = false,
     assessmentCentre: AssessmentCentre = AssessmentCentre(),
     fsb: Fsb = Fsb()
-)
+) {
+  override def toString =
+    s"personalDetails=$personalDetails," +
+      s"schemePreferences=$schemePreferences," +
+      s"assistanceDetails=$assistanceDetails," +
+      s"preview=$preview," +
+      s"startedQuestionnaire=$startedQuestionnaire," +
+      s"diversityQuestionnaire=$diversityQuestionnaire," +
+      s"educationQuestionnaire=$educationQuestionnaire," +
+      s"occupationQuestionnaire=$occupationQuestionnaire," +
+      s"submitted=$submitted," +
+      s"withdrawn=$withdrawn," +
+      s"jobOffer=$jobOffer," +
+      s"phase1TestProgress=$phase1TestProgress," +
+      s"phase2TestProgress=$Phase2TestProgress," +
+      s"phase3TestProgress=$Phase3TestProgress," +
+      s"siftProgress=$SiftProgress," +
+      s"exported=$exported," +
+      s"updateExported=$updateExported," +
+      s"assessmentCentre=$AssessmentCentre," +
+      s"fsb=$fsb"
+}
 
 object Progress {
   implicit val assessmentCentreFormat = Json.format[AssessmentCentre]
