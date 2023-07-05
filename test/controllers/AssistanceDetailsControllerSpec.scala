@@ -63,7 +63,7 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       content must include("<title>Disability and health conditions")
       content must include(onlineTestText)
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
-      content must include("Some adjustment")
+      content must include("Some fsac adjustments")
     }
 
     "load edip assistance details page for the new user" in new TestFixture {
@@ -90,7 +90,7 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       content must include("<title>Disability and health conditions")
       content must include(phoneText)
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
-      content must include("Some adjustment")
+      content must include("Some phone adjustments")
     }
   }
 

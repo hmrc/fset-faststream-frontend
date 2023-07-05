@@ -47,7 +47,6 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
       content must include(s"""<p id="fastPassApplicable">No</p>""")
       content must include("""<ul id="schemePreferenceList" class="list-text">""")
-      content must include(onlineTestText)
     }
 
     "load preview page for existing edip application" in new TestFixture {

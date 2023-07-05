@@ -25,10 +25,8 @@ object AssistanceDetailsFormExamples {
     "disabilityImpact" -> "No",
     "disabilityCategories[0]" -> AssistanceDetailsForm.disabilityCategoriesList.head,
     "otherDisabilityDescription" -> "Epilepsy",
-    "needsSupportForOnlineAssessment" -> "Yes",
-    "needsSupportForOnlineAssessmentDescription" -> "Some adjustment",
     "needsSupportAtVenue" -> "Yes",
-    "needsSupportAtVenueDescription" -> "Some other adjustments")
+    "needsSupportAtVenueDescription" -> "Some fsac adjustments")
 
   val DisabilityGisAndAdjustmentsEdipMap = Map[String, String](
     "applicationRoute" -> ApplicationRoute.Edip.toString,
@@ -54,8 +52,6 @@ object AssistanceDetailsFormExamples {
     "disabilityImpact" -> "No",
     "disabilityCategories[0]" -> AssistanceDetailsForm.disabilityCategoriesList.head,
     "otherDisabilityDescription" -> "Epilepsy",
-    "needsSupportForOnlineAssessment" -> "Yes",
-    "needsSupportForOnlineAssessmentDescription" -> "Some adjustment",
     "needsSupportAtVenue" -> "Yes",
-    "needsSupportAtVenueDescription" -> "Some other adjustments")
+    "needsSupportAtVenueDescription" -> "Some fsac adjustments")
 }
