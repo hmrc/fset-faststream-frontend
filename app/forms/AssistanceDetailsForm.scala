@@ -157,7 +157,7 @@ class AssistanceDetailsForm {
 
     def isHasDisabilitySelected = hasDisabilityParam == "Yes"
 
-    def disabilityCategoriesParam = request.filterKeys(_.contains(disabilityCategories)).values.toList
+    def disabilityCategoriesParam = request.view.filterKeys(_.contains(disabilityCategories)).values.toList
 
     def isDisabilityCategoriesValid = {
       val preferNotToSayValid = if (disabilityCategoriesParam.contains(preferNotToSay)) {
@@ -183,23 +183,24 @@ class AssistanceDetailsForm {
 }
 
 object AssistanceDetailsForm {
-  val preferNotToSay = "Prefer Not to Say"
+  val preferNotToSay = "Prefer not to say"
   val other = "Other"
 
+  //scalastyle:off line.size.limit
   val disabilityCategoriesList = List(
-    "Deaf or Hard of Hearing",
-    "Learning disability such as Downs Syndrome & Fragile X",
-    "Long-standing, chronic or fluctuating condition or disability",
-    "Mental Health Condition such as depression, anxiety, bipolar, schizophrenia",
-    "Neurodiverse conditions: Autism Spectrum",
-    "Other neurodiverse conditions such as dyslexia, dyspraxia or AD(H)D",
-    "Physical or Mobility limiting condition or disability",
-    "Speech Impairment",
-    "Visible Difference such as facial disfigurement, skin condition, or alopecia",
-    "Visual Impairment or Sight Loss",
+    "Learning difference such as dyslexia, dyspraxia or AD(H)D",
+    "Social/communication conditions such as a speech and language impairment or an autistic spectrum condition",
+    "Long-term illness or health condition such as cancer, HIV, diabetes, chronic heart disease, or epilepsy",
+    "Mental health condition, challenge or disorder, such as depression, schizophrenia or anxiety",
+    "Physical impairment (a condition that substantially limits one or more basic physical activities such as walking, climbing stairs, lifting or carrying)",
+    "D/deaf or have a hearing impairment",
+    "Blind or have a visual impairment uncorrected by glasses",
+    "Development condition that you have had since childhood which affects motor, cognitive, social and emotional skills, and speech and language",
+    "No known impairment, health condition or learning difference",
+    "An impairment, health condition or learning difference not listed above",
     preferNotToSay,
     other
-  )
+  ) //scalastyle:on
 
   case class Data(
     hasDisability: String,
