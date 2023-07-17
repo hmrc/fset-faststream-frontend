@@ -422,4 +422,6 @@ object Universities {
   def getName(code: String) = {
     reverseMap(code)
   }
+
+  val validUniversities = map.values
 }

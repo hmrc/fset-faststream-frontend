@@ -23,7 +23,8 @@
           <ul>
           @for(error <- errors) {
               <li>
-                  <a id="@{error.key}_errorSummaryItem" href="#@{error.key}_field">
+                  @* postgradUniversity.university becomes postgradUniversity_university to match what Play does when setting the id field*@
+                  <a id="@{error.key}_errorSummaryItem" href="#@{error.key.replaceAll("\\.", "_")}_field">
                   @Messages(error.messages.head, error.args: _*)
                   </a>
               </li>

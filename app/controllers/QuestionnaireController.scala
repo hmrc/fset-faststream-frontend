@@ -141,7 +141,7 @@ class QuestionnaireController @Inject() (config: FrontendAppConfig,
 
           },
           data => {
-            submitQuestionnaire(data.sanitizeData.exchange, "education_questionnaire")(
+            submitQuestionnaire(data.sanitizeData.toExchange, "education_questionnaire")(
               Redirect(routes.QuestionnaireController.presentThirdPage))
           }
         )
@@ -176,9 +176,7 @@ class QuestionnaireController @Inject() (config: FrontendAppConfig,
   }
 
   private def submitQuestionnaire(data: Questionnaire, sectionId: String)(onSuccess: Result)(
-    implicit
-    user: CachedDataWithApp, hc: HeaderCarrier, request: Request[_]
-  ) = {
+    implicit user: CachedDataWithApp, hc: HeaderCarrier) = {
     applicationClient.updateQuestionnaire(user.application.applicationId, sectionId, data).map { _ => onSuccess }
   }
 
