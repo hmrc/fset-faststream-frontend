@@ -52,15 +52,15 @@
 
         @if(isCandidateCivilServant=="Yes") {
             <fieldset>
-                <legend><h2 class="form-label text">@Messages("haveDegree.question")</h2></legend>
-                @radioBoxHorizontal(questionnaireForm("haveDegree"), options = List(("yes", "Yes", true), ("no", "No", false)),
-                    optionTrigger = "haveDegree-panel")
-                <div id="haveDegree-panel" class="toggle-content" aria-hidden="true">
+                <legend><h2 class="form-label text">@Messages("hasDegree.question")</h2></legend>
+                @radioBoxHorizontal(questionnaireForm("hasDegree"), options = List(("yes", "Yes", true), ("no", "No", false)),
+                    optionTrigger = "hasDegree-panel")
+                <div id="hasDegree-panel" class="toggle-content" aria-hidden="true">
                     @universitySection(questionnaireForm)
                 </div>
             </fieldset>
         } else {
-            <input type="hidden" id="haveDegree" name="haveDegree" value="Yes">
+            <input type="hidden" id="hasDegree" name="hasDegree" value="Yes">
             @universitySection(questionnaireForm)
         }
 

@@ -22,7 +22,7 @@ package object forms {
 
   implicit class sanitizeOptions(value: Option[String]) {
     def sanitize = value match {
-      case Some(v) if !v.trim.isEmpty => Some(v)
+      case Some(v) if v.trim.nonEmpty => Some(v)
       case _ => None
     }
   }
@@ -47,6 +47,50 @@ package object forms {
     override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
   }
 
+  // TODO: Ian remove this and change the one above by removing the unused key argument
+  def requiredFormatterWithMaxLengthCheck2(requiredKey: String, maxLength: Option[Int])(
+    implicit messages: Messages) = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)
+      val keyField: Option[String] = if (data.isEmpty) None else data.get(key).map(_.trim)
+
+      (requiredField, keyField) match {
+        case (Some("Yes"), None) => Left(List(FormError(key, Messages(s"error.$key.required"))))
+        case (Some("Yes"), Some("")) => Left(List(FormError(key, Messages(s"error.$key.required"))))
+        case _ => if (maxLength.isDefined && keyField.isDefined && keyField.get.length > maxLength.get) {
+          Left(List(FormError(key, Messages(s"error.$key.maxLength"))))
+        } else {
+          Right(keyField)
+        }
+      }
+    }
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
+  }
+
+  // This is the opposite to the one above to handle this:
+  // if the candidate in NOT civil servant then this has to be answered
+  //TODO: if candidate is civil servant we may have to default to NO
+  def requiredFormatterWithMaxLengthCheck3(requiredKey: String, maxLength: Option[Int])(
+    implicit messages: Messages) = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)
+      val keyField: Option[String] = if (data.isEmpty) None else data.get(key).map(_.trim)
+
+      (requiredField, keyField) match {
+        case (Some("No"), None) => Left(List(FormError(key, Messages(s"error.$key.required"))))
+        case (Some("No"), Some("")) => Left(List(FormError(key, Messages(s"error.$key.required"))))
+        case _ => if (maxLength.isDefined && keyField.isDefined && keyField.get.length > maxLength.get) {
+          Left(List(FormError(key, Messages(s"error.$key.maxLength"))))
+        } else {
+          Right(keyField)
+        }
+      }
+    }
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
+  }
+
   // scalastyle:off cyclomatic.complexity
   def requiredFormatterWithValidationCheckAndSeparatePreferNotToSay(
         requiredKey: String,
@@ -56,7 +100,7 @@ package object forms {
         msgRequiredError: Option[String] = None
       )(
         implicit messages: Messages, invalidFn: (String => Boolean) = inputValue => maxLength.exists(_ < inputValue.trim.length),
-        validationErrorKey:String = s"error.$key.maxLength"
+        validationErrorKey: String = s"error.$key.maxLength"
       ) = new Formatter[Option[String]] {
           override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
             val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)

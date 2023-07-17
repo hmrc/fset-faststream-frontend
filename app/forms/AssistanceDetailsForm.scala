@@ -125,7 +125,6 @@ class AssistanceDetailsForm {
     def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
-
   private def bindOptionalParam[T](dependencyCheck: Boolean, validityCheck: Boolean, errMsg: String)
                                   (key: String, value: => T):Either[Seq[FormError], Option[T]] = {
     (dependencyCheck, validityCheck) match {

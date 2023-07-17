@@ -34,7 +34,7 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
     }
 
     "be valid when not lived in UK and have degree" in new Fixture {
-      val (data, form) = NoUkAndHaveDegreeValid
+      val (data, form) = NoUkAndHasDegreeValid
       form.get mustBe data
     }
 
@@ -77,15 +77,53 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
     }
 
     "fail when all values are correct and not lived in UK and have degree but no university, with Fast Stream message" in new Fixture {
-      val invalidForm = fastStreamForm.bind(NotUkLivedAndHaveDegreeValidFormMap - "university")
+      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap - "university")
       invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
       invalidForm.error("university") mustBe Some(
         FormError("university", List(Messages("error.university.required"))
       ))
     }
 
+    "fail when all values are correct and not lived in UK and have degree but no degree type specified" in new Fixture {
+      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap - "degreeType")
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("degreeType") mustBe Some(
+        FormError("degreeType", List(Messages("error.degreeType.required"))
+      ))
+    }
+
+    "fail when the degree type value posted is invalid" in new Fixture {
+      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap + ("degreeType" -> "BOOM"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("degreeType") mustBe Some(
+        FormError("degreeType", List(Messages("error.degreeType.invalid"))
+      ))
+    }
+
+    "fail when the degree type is Other but no other details are submitted" in new Fixture {
+      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap + ("degreeType" -> "Other"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("otherDegreeType") mustBe Some(
+        FormError("otherDegreeType", List(Messages("error.otherDegreeType.required"))
+      ))
+    }
+
+    "fail when the degree type is Other and the other details provided exceed the max size" in new Fixture {
+      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap
+        + ("degreeType" -> "Other", "otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1)))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("otherDegreeType") mustBe Some(
+        FormError("otherDegreeType", List(Messages("error.otherDegreeType.maxLength"))
+      ))
+    }
+
     "fail when all values are correct and not lived in UK and have degree but no university, with EDIP message" in new Fixture {
-      val invalidForm = edipForm.bind(NotUkLivedAndHaveDegreeValidFormMap - "university")
+      val invalidForm = edipForm.bind(NotUkLivedAndHasDegreeValidFormMap - "university")
       invalidForm.hasErrors mustBe true
       invalidForm.error("university") mustBe Some(
         FormError("university", List(Messages("error.currentUniversity.required"))
@@ -96,9 +134,11 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       assertFieldRequired(LivedInUKAndNoDegreeValidFormMap, "schoolName14to16", "schoolName14to16")
     }
 
+    // NotUkLivedHasDegreeHasPostgradUniversityValidFormMap
+
     "transform form when form is full valid (has degree and lived in uk) to a question list" in new Fixture {
-      val questionList = FullValidForm.exchange(mockMessages).questions
-      questionList.size mustBe 9
+      val questionList = FullValidForm.toExchange(mockMessages).questions
+      questionList.size mustBe 11
       questionList.head.answer.answer mustBe Some("Yes")
       questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("AAA 111")
@@ -115,13 +155,17 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       questionList(6).answer.unknown mustBe None
       questionList(7).answer.answer mustBe Some("1")
       questionList(7).answer.unknown mustBe None
-      questionList(8).answer.answer mustBe Some("(3)")
+      questionList(8).answer.answer mustBe Some("Chemistry")
       questionList(8).answer.unknown mustBe None
+      questionList(9).answer.answer mustBe Some("BSc/MSc/Eng")
+      questionList(9).answer.unknown mustBe None
+      questionList(10).answer.answer mustBe Some("No")
+      questionList(10).answer.unknown mustBe None
     }
 
     "transform form when has degree with all possible fields with prefer not to say" in new Fixture {
-      val questionList = AllPreferNotToSayValidForm.exchange(mockMessages).questions
-      questionList.size mustBe 9
+      val questionList = AllPreferNotToSayValidForm.toExchange(mockMessages).questions
+      questionList.size mustBe 11
       questionList.head.answer.answer mustBe Some("Yes")
       questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe None
@@ -139,35 +183,43 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       questionList(7).answer.unknown mustBe Some(true)
       questionList(8).answer.answer mustBe None
       questionList(8).answer.unknown mustBe Some(true)
+      questionList(9).answer.answer mustBe Some("BSc/MSc/Eng")
+      questionList(9).answer.unknown mustBe None
+      questionList(10).answer.answer mustBe Some("No")
+      questionList(10).answer.unknown mustBe None
     }
 
     "transform form with no lived in uk and has not degree with valid fields to a question list" in new Fixture {
-      val questionList = NotUkLivedAndNoDegreeValidForm.exchange(mockMessages).questions
+      val questionList = NotUkLivedAndNoDegreeValidForm.toExchange(mockMessages).questions
       questionList.size mustBe 2
-      questionList(0).answer.answer mustBe Some("No")
-      questionList(0).answer.unknown mustBe None
+      questionList.head.answer.answer mustBe Some("No")
+      questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("No")
       questionList(1).answer.unknown mustBe None
     }
 
     "transform form when has degree and no uk lived with all valid fields to a question list" in new Fixture {
-      val questionList = NotUkLivedAndHaveDegreeValidForm.exchange(mockMessages).questions
-      questionList.size mustBe 4
-      questionList(0).answer.answer mustBe Some("No")
-      questionList(0).answer.unknown mustBe None
+      val questionList = NotUkLivedAndHasDegreeValidForm.toExchange(mockMessages).questions
+      questionList.size mustBe 6
+      questionList.head.answer.answer mustBe Some("No")
+      questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("Yes")
       questionList(1).answer.unknown mustBe None
       questionList(2).answer.answer mustBe Some("1")
       questionList(2).answer.unknown mustBe None
-      questionList(3).answer.answer mustBe Some("(3)")
+      questionList(3).answer.answer mustBe Some("Chemistry")
       questionList(3).answer.unknown mustBe None
+      questionList(4).answer.answer mustBe Some("BSc/MSc/Eng")
+      questionList(4).answer.unknown mustBe None
+      questionList(5).answer.answer mustBe Some("No")
+      questionList(5).answer.unknown mustBe None
     }
 
     "transform form when no degree but lived in UK with all valid fields to a question list" in new Fixture {
-      val questionList = LivedInUKAndNoDegreeValidForm.exchange(mockMessages).questions
+      val questionList = LivedInUKAndNoDegreeValidForm.toExchange(mockMessages).questions
       questionList.size mustBe 7
-      questionList(0).answer.answer mustBe Some("Yes")
-      questionList(0).answer.unknown mustBe None
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("AAA 111")
       questionList(1).answer.unknown mustBe None
       questionList(2).answer.answer mustBe Some("my school at 15")
@@ -182,12 +234,12 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       questionList(6).answer.unknown mustBe None
     }
 
-    "sanitize data should respect values when liveInUKBetween14and18 is Yes and haveDegree is Yes" in new Fixture {
+    "sanitize data should respect values when liveInUKBetween14and18 is Yes and hasDegree is Yes" in new Fixture {
       EducationQuestionnaireFormExamples.FullValidForm.sanitizeData mustBe EducationQuestionnaireFormExamples.FullValidForm
     }
 
-    "sanitize data should sanitize values when liveInUKBetween14and18 is No and haveDegree is No" in new Fixture {
-      EducationQuestionnaireFormExamples.NotUkLivedAndNoHaveDegreeFullInvalidForm.sanitizeData mustBe
+    "sanitize data should sanitize values when liveInUKBetween14and18 is No and hasDegree is No" in new Fixture {
+      EducationQuestionnaireFormExamples.NotUkLivedAndNotHasDegreeFullInvalidForm.sanitizeData mustBe
         EducationQuestionnaireFormExamples.NotUkLivedAndNoDegreeValidForm
     }
   }
@@ -204,8 +256,8 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
     val AllPreferNotToSayValid = (EducationQuestionnaireFormExamples.AllPreferNotToSayValidForm, fastStreamForm.fill(
       EducationQuestionnaireFormExamples.AllPreferNotToSayValidForm))
 
-    val NoUkAndHaveDegreeValid = (EducationQuestionnaireFormExamples.NotUkLivedAndHaveDegreeValidForm, fastStreamForm.fill(
-      EducationQuestionnaireFormExamples.NotUkLivedAndHaveDegreeValidForm))
+    val NoUkAndHasDegreeValid = (EducationQuestionnaireFormExamples.NotUkLivedAndHasDegreeValidForm, fastStreamForm.fill(
+      EducationQuestionnaireFormExamples.NotUkLivedAndHasDegreeValidForm))
 
     val LiveInUKAndNoDegreeValid = (EducationQuestionnaireFormExamples.LivedInUKAndNoDegreeValidForm, fastStreamForm.fill(
       EducationQuestionnaireFormExamples.LivedInUKAndNoDegreeValidForm))

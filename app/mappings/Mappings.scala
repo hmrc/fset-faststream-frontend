@@ -59,11 +59,11 @@ object Mappings {
 
   // Max error key not always required: may only be intended to prevent attackers, so helpful error message not required.
   def optionalTrimmedText(maxLength: Int): Mapping[Option[String]] =
-    optional(trimmedText(Some(maxLength), None, None, None, None))
+    optional(trimmedText(Some(maxLength), maxErrorKey = None, minLength = None, minErrorKey = None, emptyErrorKey = None))
 
   // When user is expected to exceed max length under normal usage.
   def optionalTrimmedText(maxLength: Int, maxErrorKey: String): Mapping[Option[String]] =
-    optional(trimmedText(Some(maxLength), Some(maxErrorKey), None, None, None))
+    optional(trimmedText(Some(maxLength), Some(maxErrorKey), minLength = None, minErrorKey = None, emptyErrorKey = None))
 
   def optionalTrimmedText(
     maxLength: Int,
@@ -71,7 +71,7 @@ object Mappings {
     minLength: Int,
     minErrorKey: String
   ): Mapping[Option[String]] =
-    optional(trimmedText(Some(maxLength), Some(maxErrorKey), Some(minLength), Some(minErrorKey), None))
+    optional(trimmedText(Some(maxLength), Some(maxErrorKey), Some(minLength), Some(minErrorKey), emptyErrorKey = None))
 
   private def trimmedText(
     maxLength: Option[Int],

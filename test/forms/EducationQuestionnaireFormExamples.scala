@@ -30,12 +30,22 @@ object EducationQuestionnaireFormExamples {
     schoolId16to18 = None,
     preferNotSaySchoolName16to18 = None,
     freeSchoolMeals = Some("No"),
-    isCandidateCivilServant = "Yes",
-    haveDegree = Some("Yes"),
+    isCandidateCivilServant = "Yes", // Not persisted
+    hasDegree = Some("Yes"),
     university = Some("1"),
     preferNotSayUniversity = None,
-    universityDegreeCategory = Some("(3)"),
-    preferNotSayUniversityDegreeCategory = None)
+    universityDegreeCategory = Some("Chemistry"),
+    preferNotSayUniversityDegreeCategory = None,
+    degreeType = Some("BSc/MSc/Eng"),
+    otherDegreeType = None,
+    hasPostgradDegree = Some("No"),
+    postgradUniversity = EducationQuestionnaireForm.PostgradUniversity(
+      university = Some("K12-KEELE"),
+      degreeType = Some("BSc/MSc/Eng"),
+      otherDegreeType = None,
+      degreeCategory = Some("Computing")
+    )
+  )
 
   val AllPreferNotToSayValidForm = EducationQuestionnaireForm.Data(
     liveInUKBetween14and18 = "Yes",
@@ -50,11 +60,16 @@ object EducationQuestionnaireFormExamples {
     preferNotSaySchoolName16to18 = Some(true),
     freeSchoolMeals = Some("I don't know/prefer not to say"),
     isCandidateCivilServant = "Yes",
-    haveDegree = Some("Yes"),
+    hasDegree = Some("Yes"),
     university = None,
-    preferNotSayUniversity = Some(true),
+    preferNotSayUniversity = Some(true), // TODO this is no longer an option
     universityDegreeCategory = None,
-    preferNotSayUniversityDegreeCategory = Some(true))
+    preferNotSayUniversityDegreeCategory = Some(true), // TODO this is no longer an option
+    degreeType = Some("BSc/MSc/Eng"),
+    otherDegreeType = None,
+    hasPostgradDegree = Some("No"),
+    postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
+  )
 
   val NotUkLivedAndNoDegreeValidForm = EducationQuestionnaireForm.Data(
     liveInUKBetween14and18 = "No",
@@ -69,13 +84,18 @@ object EducationQuestionnaireFormExamples {
     preferNotSaySchoolName16to18 = None,
     freeSchoolMeals = None,
     isCandidateCivilServant = "No",
-    haveDegree = Some("No"),
+    hasDegree = Some("No"),
     university = None,
     preferNotSayUniversity = None,
     universityDegreeCategory = None,
-    preferNotSayUniversityDegreeCategory = None)
+    preferNotSayUniversityDegreeCategory = None,
+    degreeType = None,
+    otherDegreeType = None,
+    hasPostgradDegree = Some("No"),
+    postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
+  )
 
-  val NotUkLivedAndHaveDegreeValidForm = EducationQuestionnaireForm.Data(
+  val NotUkLivedAndHasDegreeValidForm = EducationQuestionnaireForm.Data(
     liveInUKBetween14and18 = "No",
     postcode = None,
     preferNotSayPostcode = None,
@@ -87,12 +107,17 @@ object EducationQuestionnaireFormExamples {
     schoolId16to18 = None,
     preferNotSaySchoolName16to18 = None,
     freeSchoolMeals = None,
-    isCandidateCivilServant = "Yes",
-    haveDegree = Some("Yes"),
+    isCandidateCivilServant = "Yes", // Not persisted
+    hasDegree = Some("Yes"),
     university = Some("1"),
     preferNotSayUniversity = None,
-    universityDegreeCategory = Some("(3)"),
-    preferNotSayUniversityDegreeCategory = None)
+    universityDegreeCategory = Some("Chemistry"),
+    preferNotSayUniversityDegreeCategory = None,
+    degreeType = Some("BSc/MSc/Eng"),
+    otherDegreeType = None,
+    hasPostgradDegree = Some("No"),
+    postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
+  )
 
   val LivedInUKAndNoDegreeValidForm = EducationQuestionnaireForm.Data(
     liveInUKBetween14and18 = "Yes",
@@ -106,14 +131,19 @@ object EducationQuestionnaireFormExamples {
     schoolId16to18 = None,
     preferNotSaySchoolName16to18 = None,
     freeSchoolMeals = Some("No"),
-    isCandidateCivilServant = "No",
-    haveDegree = Some("No"),
+    isCandidateCivilServant = "No", // Not persisted
+    hasDegree = Some("No"),
     university = None,
     preferNotSayUniversity = None,
     universityDegreeCategory = None,
-    preferNotSayUniversityDegreeCategory = None)
+    preferNotSayUniversityDegreeCategory = None,
+    degreeType = None,
+    otherDegreeType = None,
+    hasPostgradDegree = Some("No"), // Not persisted because the answer to hasDegree is No
+    postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
+  )
 
-  val NotUkLivedAndNoHaveDegreeFullInvalidForm = EducationQuestionnaireForm.Data(
+  val NotUkLivedAndNotHasDegreeFullInvalidForm = EducationQuestionnaireForm.Data(
     liveInUKBetween14and18 = "No",
     postcode = Some("AAA 111"),
     preferNotSayPostcode = None,
@@ -126,11 +156,16 @@ object EducationQuestionnaireFormExamples {
     preferNotSaySchoolName16to18 = None,
     freeSchoolMeals = Some("No"),
     isCandidateCivilServant = "No",
-    haveDegree = Some("No"),
+    hasDegree = Some("No"),
     university = Some("1"),
     preferNotSayUniversity = None,
-    universityDegreeCategory = Some("(3)"),
-    preferNotSayUniversityDegreeCategory = None)
+    universityDegreeCategory = Some("Chemistry"),
+    preferNotSayUniversityDegreeCategory = None,
+    degreeType = Some("BSc/MSc/Eng"),
+    otherDegreeType = None,
+    hasPostgradDegree = Some("No"),
+    postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
+  )
 
   val FullValidFormMap = Map(
     "liveInUKBetween14and18" -> "Yes",
@@ -140,9 +175,14 @@ object EducationQuestionnaireFormExamples {
     "schoolName16to18" -> "my school at 17",
     "freeSchoolMeals" -> "No",
     "isCandidateCivilServant" -> "Yes",
-    "haveDegree" -> "Yes",
+    "hasDegree" -> "Yes",
     "university" -> "1",
-    "universityDegreeCategory" -> "(3)"
+    "universityDegreeCategory" -> "Chemistry",
+    "degreeType" -> "BSc/MSc/Eng",
+    "hasPostgradDegree" -> "Yes",
+    "postgradUniversity.university" -> "K12-KEELE",
+    "postgradUniversity.degreeType" -> "BSc/MSc/Eng",
+    "postgradUniversity.degreeCategory" -> "Engineering"
   )
 
   val AllPreferNotToSayFormMap = Map(
@@ -153,7 +193,7 @@ object EducationQuestionnaireFormExamples {
     "preferNotSaySchoolName16to18" -> "true",
     "freeSchoolMeals" -> "I don't know/prefer not to say",
     "isCandidateCivilServant" -> "Yes",
-    "haveDegree" -> "Yes",
+    "hasDegree" -> "Yes",
     "preferNotSay_university" -> "true",
     "preferNotSayUniversityDegreeCategory" -> "true"
   )
@@ -161,16 +201,31 @@ object EducationQuestionnaireFormExamples {
   val NotUkLivedAndNoDegreeValidFormMap = Map(
     "liveInUKBetween14and18" -> "No",
     "isCandidateCivilServant" -> "No",
-    "haveDegree" -> "No"
+    "hasDegree" -> "No"
   )
 
-  val NotUkLivedAndHaveDegreeValidFormMap = Map(
+  val NotUkLivedAndHasDegreeValidFormMap = Map(
     "liveInUKBetween14and18" -> "No",
     "isCandidateCivilServant" -> "Yes",
-    "haveDegree" -> "Yes",
+    "hasDegree" -> "Yes",
     "university" -> "1",
-    "universityDegreeCategory" -> "(E)"
+    "universityDegreeCategory" -> "Chemistry",
+    "degreeType" -> "BSc/MSc/Eng",
+    "hasPostgradDegree" -> "No"
   )
+
+//  val NotUkLivedHasDegreeHasPostgradUniversityValidFormMap = Map(
+//    "liveInUKBetween14and18" -> "No",
+//    "isCandidateCivilServant" -> "Yes",
+//    "hasDegree" -> "Yes",
+//    "university" -> "K12-KEELE",
+//    "universityDegreeCategory" -> "Chemistry",
+//    "degreeType" -> "BSc/MSc/Eng",
+//    "hasPostgradDegree" -> "Yes",
+//    "postgradUniversity.university" -> "K12-KEELE",
+//    "postgradUniversity.degreeType" -> "BSc/MSc/Eng",
+//    "postgradUniversity.degreeCategoryType" -> "Engineering"
+//  )
 
   val LivedInUKAndNoDegreeValidFormMap = Map(
     "liveInUKBetween14and18" -> "Yes",
@@ -180,6 +235,7 @@ object EducationQuestionnaireFormExamples {
     "schoolName16to18" -> "school2",
     "freeSchoolMeals" -> "Yes",
     "isCandidateCivilServant" -> "No",
-    "haveDegree" -> "No"
+    "hasDegree" -> "No",
+    "hasPostgradDegree" -> "No"
   )
 }

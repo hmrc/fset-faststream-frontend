@@ -415,7 +415,7 @@ $(function() {
         {"label":otherLabel, "hiddenValue":otherValue}
     ];
 
-    function setData(label, value) {
+    function setUniversityData(label, value) {
         $('#universityAttended').val(label);
         $('#university').val(value);
     }
@@ -425,14 +425,14 @@ $(function() {
 
         // Triggered when an item is selected from the menu.
         select: function(e, ui) {
-            setData(ui.item.label, ui.item.hiddenValue);
+            setUniversityData(ui.item.label, ui.item.hiddenValue);
             console.log("select - data set to " + ui.item.label + ", " + ui.item.hiddenValue);
         },
         // Triggered after a search completes, before the menu is shown.
         response: function(event, ui) {
             console.log("response");
             if (ui.content.length === 0) {
-                setData(otherLabel, otherValue);
+                setUniversityData(otherLabel, otherValue);
                 console.log("response - data set to other");
             }
         },
@@ -440,7 +440,39 @@ $(function() {
         change: function (event, ui) {
             console.log("change - ui.item.label = " + ui.item.label);
             if (ui.item == null) {
-                setData('', '');
+                setUniversityData('', '');
+                console.log("change - data cleared");
+            }
+        }
+    });
+
+    function setPostgradUniversityData(label, value) {
+        $('#postgradUniversityAttended').val(label);
+        // When setting the id field, Play replaces dots with underscores so reflect that here
+        $('#postgradUniversity_university').val(value);
+    }
+
+    $( "#postgradUniversityAttended" ).autocomplete({
+        source: universities,
+
+        // Triggered when an item is selected from the menu.
+        select: function(e, ui) {
+            setPostgradUniversityData(ui.item.label, ui.item.hiddenValue);
+            console.log("select - data set to " + ui.item.label + ", " + ui.item.hiddenValue);
+        },
+        // Triggered after a search completes, before the menu is shown.
+        response: function(event, ui) {
+            console.log("response");
+            if (ui.content.length === 0) {
+                setPostgradUniversityData(otherLabel, otherValue);
+                console.log("response - data set to other");
+            }
+        },
+        // Triggered when the field is blurred, if the value has changed.
+        change: function (event, ui) {
+            console.log("change - ui.item.label = " + ui.item.label);
+            if (ui.item == null) {
+                setPostgradUniversityData('', '');
                 console.log("change - data cleared");
             }
         }
