@@ -32,7 +32,7 @@
                 @Messages("university.question")
                 <span class="form-hint">Your current university if you haven't finished yet</span>
             } else {@if(isEdip(user) || isSdip(user)) {
-                @Messages("edip.university.question")
+                @Messages("edipOrSdip.university.question")
             }}
         </label>
         <div id="university_field_wrapper" class="form-group @if(form("university").hasErrors) {has-an-error input-validation-error}">

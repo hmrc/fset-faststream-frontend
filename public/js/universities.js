@@ -19,6 +19,7 @@ $(function() {
     var otherLabel = "Other";
     var otherValue = "Others";
 
+    // If you need to make any changes to this list note the list is also defined in Scala and also needs to be changed there
     var universities = [
         {"label":"Abingdon and Witney College", "hiddenValue":"A14-AWC"},
         {"label":"University of Aberdeen", "hiddenValue":"A20-ABRDN"},

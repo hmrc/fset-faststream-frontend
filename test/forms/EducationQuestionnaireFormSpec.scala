@@ -76,6 +76,26 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       assertFieldRequired(FullValidFormMap, "universityDegreeCategory", "universityDegreeCategory")
     }
 
+    "fail when all values are correct but no degreeType" in new Fixture {
+      assertFieldRequired(FullValidFormMap, "degreeType", "degreeType")
+    }
+
+    "fail when all values are correct but no hasPostgradDegree" in new Fixture {
+      assertFieldRequired(FullValidFormMap, "hasPostgradDegree", "hasPostgradDegree")
+    }
+
+    "fail when all values are correct but no postgradUniversity.university" in new Fixture {
+      assertFieldRequired(FullValidFormMap, "postgradUniversity.university", "postgradUniversity.university")
+    }
+
+    "fail when all values are correct but no postgradUniversity.degreeType" in new Fixture {
+      assertFieldRequired(FullValidFormMap, "postgradUniversity.degreeType", "postgradUniversity.degreeType")
+    }
+
+    "fail when all values are correct but no postgradUniversity.degreeCategory" in new Fixture {
+      assertFieldRequired(FullValidFormMap, "postgradUniversity.degreeCategory", "postgradUniversity.degreeCategory")
+    }
+
     "fail when all values are correct and not lived in UK and have degree but no university, with Fast Stream message" in new Fixture {
       val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap - "university")
       invalidForm.hasErrors mustBe true
@@ -85,12 +105,57 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       ))
     }
 
+    "fail when submitted university is invalid" in new Fixture {
+      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap + ("university" -> "BOOM"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("university") mustBe Some(
+        FormError("university", List(Messages("error.university.invalid"))
+      ))
+    }
+
+    "fail when submitted postgrad university is invalid" in new Fixture {
+      val invalidForm = fastStreamForm.bind(FullValidFormMap + ("postgradUniversity.university" -> "BOOM"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("postgradUniversity.university") mustBe Some(
+        FormError("postgradUniversity.university", List(Messages("error.postgradUniversity.university.invalid"))
+      ))
+    }
+
+    "fail when submitted university degree category is invalid" in new Fixture {
+      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap + ("universityDegreeCategory" -> "BOOM"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("universityDegreeCategory") mustBe Some(
+        FormError("universityDegreeCategory", List(Messages("error.universityDegreeCategory.invalid"))
+        ))
+    }
+
+    "fail when submitted postgrad university degree category is invalid" in new Fixture {
+      val invalidForm = fastStreamForm.bind(FullValidFormMap + ("postgradUniversity.degreeCategory" -> "BOOM"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("postgradUniversity.degreeCategory") mustBe Some(
+        FormError("postgradUniversity.degreeCategory", List(Messages("error.postgradUniversity.degreeCategory.invalid"))
+        ))
+    }
+
     "fail when all values are correct and not lived in UK and have degree but no degree type specified" in new Fixture {
       val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap - "degreeType")
       invalidForm.hasErrors mustBe true
       invalidForm.errors.size mustBe 1
       invalidForm.error("degreeType") mustBe Some(
         FormError("degreeType", List(Messages("error.degreeType.required"))
+      ))
+    }
+
+    "fail when all values are correct and not lived in UK and have postgrad degree but no postgrad degree type specified" in new Fixture {
+      val invalidForm = fastStreamForm.bind(FullValidFormMap - "postgradUniversity.degreeType")
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("postgradUniversity.degreeType") mustBe Some(
+        FormError("postgradUniversity.degreeType", List(Messages("error.postgradUniversity.degreeType.required"))
       ))
     }
 
@@ -103,12 +168,30 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       ))
     }
 
+    "fail when the postgrad degree type value posted is invalid" in new Fixture {
+      val invalidForm = fastStreamForm.bind(FullValidFormMap + ("postgradUniversity.degreeType" -> "BOOM"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("postgradUniversity.degreeType") mustBe Some(
+        FormError("postgradUniversity.degreeType", List(Messages("error.postgradUniversity.degreeType.invalid"))
+      ))
+    }
+
     "fail when the degree type is Other but no other details are submitted" in new Fixture {
       val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap + ("degreeType" -> "Other"))
       invalidForm.hasErrors mustBe true
       invalidForm.errors.size mustBe 1
       invalidForm.error("otherDegreeType") mustBe Some(
         FormError("otherDegreeType", List(Messages("error.otherDegreeType.required"))
+      ))
+    }
+
+    "fail when the postgrad degree type is Other but no other details are submitted" in new Fixture {
+      val invalidForm = fastStreamForm.bind(FullValidFormMap + ("postgradUniversity.degreeType" -> "Other"))
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("postgradUniversity.otherDegreeType") mustBe Some(
+        FormError("postgradUniversity.otherDegreeType", List(Messages("error.postgradUniversity.otherDegreeType.required"))
       ))
     }
 
@@ -122,11 +205,23 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       ))
     }
 
+    "fail when the postgrad degree type is Other and the other details provided exceed the max size" in new Fixture {
+      val invalidForm = fastStreamForm.bind(FullValidFormMap
+        + ("postgradUniversity.degreeType" -> "Other",
+        "postgradUniversity.otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1))
+      )
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.size mustBe 1
+      invalidForm.error("postgradUniversity.otherDegreeType") mustBe Some(
+        FormError("postgradUniversity.otherDegreeType", List(Messages("error.postgradUniversity.otherDegreeType.maxLength"))
+      ))
+    }
+
     "fail when all values are correct and not lived in UK and have degree but no university, with EDIP message" in new Fixture {
       val invalidForm = edipForm.bind(NotUkLivedAndHasDegreeValidFormMap - "university")
       invalidForm.hasErrors mustBe true
       invalidForm.error("university") mustBe Some(
-        FormError("university", List(Messages("error.currentUniversity.required"))
+        FormError("university", List(Messages("error.university.required"))
       ))
     }
 
@@ -134,11 +229,9 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       assertFieldRequired(LivedInUKAndNoDegreeValidFormMap, "schoolName14to16", "schoolName14to16")
     }
 
-    // NotUkLivedHasDegreeHasPostgradUniversityValidFormMap
-
     "transform form when form is full valid (has degree and lived in uk) to a question list" in new Fixture {
       val questionList = FullValidForm.toExchange(mockMessages).questions
-      questionList.size mustBe 11
+      questionList.size mustBe 14
       questionList.head.answer.answer mustBe Some("Yes")
       questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("AAA 111")
@@ -153,14 +246,20 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       questionList(5).answer.unknown mustBe None
       questionList(6).answer.answer mustBe Some("Yes")
       questionList(6).answer.unknown mustBe None
-      questionList(7).answer.answer mustBe Some("1")
+      questionList(7).answer.answer mustBe Some("A14-AWC")
       questionList(7).answer.unknown mustBe None
       questionList(8).answer.answer mustBe Some("Chemistry")
       questionList(8).answer.unknown mustBe None
       questionList(9).answer.answer mustBe Some("BSc/MSc/Eng")
       questionList(9).answer.unknown mustBe None
-      questionList(10).answer.answer mustBe Some("No")
+      questionList(10).answer.answer mustBe Some("Yes")
       questionList(10).answer.unknown mustBe None
+      questionList(11).answer.answer mustBe Some("K12-KEELE")
+      questionList(11).answer.unknown mustBe None
+      questionList(12).answer.answer mustBe Some("Computing")
+      questionList(12).answer.unknown mustBe None
+      questionList(13).answer.answer mustBe Some("BSc/MSc/Eng")
+      questionList(13).answer.unknown mustBe None
     }
 
     "transform form when has degree with all possible fields with prefer not to say" in new Fixture {
@@ -180,9 +279,9 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       questionList(6).answer.answer mustBe Some("Yes")
       questionList(6).answer.unknown mustBe None
       questionList(7).answer.answer mustBe None
-      questionList(7).answer.unknown mustBe Some(true)
+      questionList(7).answer.unknown mustBe None
       questionList(8).answer.answer mustBe None
-      questionList(8).answer.unknown mustBe Some(true)
+      questionList(8).answer.unknown mustBe None
       questionList(9).answer.answer mustBe Some("BSc/MSc/Eng")
       questionList(9).answer.unknown mustBe None
       questionList(10).answer.answer mustBe Some("No")
@@ -205,7 +304,7 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("Yes")
       questionList(1).answer.unknown mustBe None
-      questionList(2).answer.answer mustBe Some("1")
+      questionList(2).answer.answer mustBe Some("A14-AWC")
       questionList(2).answer.unknown mustBe None
       questionList(3).answer.answer mustBe Some("Chemistry")
       questionList(3).answer.unknown mustBe None

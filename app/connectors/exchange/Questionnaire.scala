@@ -18,7 +18,9 @@ package connectors.exchange
 
 import play.api.libs.json.Json
 
-case class Answer(answer: Option[String], otherDetails: Option[String], unknown: Option[Boolean])
+case class Answer(answer: Option[String], otherDetails: Option[String], unknown: Option[Boolean]) {
+  override def toString = s"answer=$answer,otherDetails=$otherDetails,unknown=$unknown"
+}
 
 case class Question(question: String, answer: Answer)
 
