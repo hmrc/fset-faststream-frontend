@@ -16,6 +16,7 @@
 
 package models.view.questionnaire
 
+// If you need to make any changes to this list note the list is also defined in javascript and also needs to be changed there
 object Universities {
   val map = Map(
     ("Abingdon and Witney College", "A14-AWC"),
@@ -423,5 +424,5 @@ object Universities {
     reverseMap(code)
   }
 
-  val validUniversities = map.values
+  val validUniversities = map.values.view.toSeq
 }

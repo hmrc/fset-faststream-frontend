@@ -22,13 +22,11 @@ import forms.EducationQuestionnaireForm.{PostgradUniversity, TextMaxSize}
 import javax.inject.Singleton
 import mappings.Mappings._
 import mappings.PostCodeMapping._
-import models.view.questionnaire.{DegreeTypes, UniversityDegreeCategories}
+import models.view.questionnaire.{DegreeTypes, Universities, UniversityDegreeCategories}
 import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
-
-import scala.util.Right
 
 @Singleton
 class EducationQuestionnaireForm {
@@ -43,39 +41,27 @@ class EducationQuestionnaireForm {
         "schoolName14to16", "preferNotSay_schoolName14to16", Some(TextMaxSize))),
       "schoolId14to16" -> of(schoolIdFormatter("schoolName14to16")),
       "preferNotSay_schoolName14to16" -> optional(checked(Messages("error.required.schoolName14to16"))),
-      "schoolType14to16" -> of(requiredFormatterWithMaxLengthCheck2("liveInUKBetween14and18", Some(TextMaxSize))),
+      "schoolType14to16" -> of(requiredFormatterWithMaxLengthCheck("liveInUKBetween14and18", Some(TextMaxSize))),
       "schoolName16to18" -> of(requiredFormatterWithValidationCheckAndSeparatePreferNotToSay("liveInUKBetween14and18",
         "schoolName16to18", "preferNotSay_schoolName16to18", Some(TextMaxSize))),
       "schoolId16to18" -> of(schoolIdFormatter("schoolName16to18")),
       "preferNotSay_schoolName16to18" -> optional(checked(Messages("error.required.schoolName16to18"))),
-      "freeSchoolMeals" -> of(requiredFormatterWithMaxLengthCheck2("liveInUKBetween14and18", Some(TextMaxSize))),
+      "freeSchoolMeals" -> of(requiredFormatterWithMaxLengthCheck("liveInUKBetween14and18", Some(TextMaxSize))),
       "isCandidateCivilServant" -> nonEmptyTrimmedText("error.isCandidateCivilServant.required", 31),
-
-      "hasDegree" -> of(requiredFormatterWithMaxLengthCheck2("isCandidateCivilServant", Some(3))),
-
-      // TODO: test what if the posted value is not in the list
-      "university" -> of(requiredFormatterWithValidationCheckAndSeparatePreferNotToSay("hasDegree",
-        "universityQuestionKey", "preferNotSay_university", Some(TextMaxSize), Some(Messages(s"error.$universityQuestionKey.required")))),
-      "preferNotSay_university" -> optional(checked(Messages(s"error.$universityQuestionKey.required"))), //TODO - remove
+      "hasDegree" -> of(requiredFormatterWithMaxLengthCheck("isCandidateCivilServant", Some(3))),
+      "university" -> of(universityFormatter("hasDegree")),
       "universityDegreeCategory" -> of(universityDegreeCategoryFormatter("hasDegree")),
-      "preferNotSay_universityDegreeCategory" -> optional(checked(Messages("error.universityDegreeCategory.required"))), // TODO - remove
       "degreeType" -> of(degreeTypeFormatter("hasDegree", "degreeType")),
-//      "otherDegreeType" -> of(otherDegreeTypeFormatter("hasDegree", "otherDegreeType", TextMaxSize)),
-      "otherDegreeType" -> of(otherDegreeTypeFormatter2("hasDegree", "degreeType", "otherDegreeType", TextMaxSize)),
+      "otherDegreeType" -> of(otherDegreeTypeFormatter("hasDegree", "degreeType", "otherDegreeType", TextMaxSize)),
 
-      // If the candidate is NOT a civil servant then this must be answered
-//      "hasPostgradDegree" -> nonEmptyTrimmedText("error.hasPostgradDegree.required", 3),
-      "hasPostgradDegree" -> of(requiredFormatterWithMaxLengthCheck3("isCandidateCivilServant", Some(3))),
-
+      // If the candidate hasDegree then this must also be answered
+      "hasPostgradDegree" -> of(requiredFormatterWithMaxLengthCheck("hasDegree", Some(3))),
       "postgradUniversity" -> mapping(
-        // TODO: test what if the posted value is not in the list
-        "university" -> of(requiredFormatterWithMaxLengthCheck2("hasPostgradDegree", Some(TextMaxSize))),
+        "university" -> of(universityFormatter("hasPostgradDegree")),
+        "degreeCategory" -> of(universityDegreeCategoryFormatter("hasPostgradDegree")),
         "degreeType" -> of(degreeTypeFormatter("hasPostgradDegree", "postgradUniversity.degreeType")),
-//        "otherDegreeType" -> of(otherDegreeTypeFormatter("hasPostgradDegree", "postgradUniversity.otherDegreeType", TextMaxSize))
-        "otherDegreeType" -> of(otherDegreeTypeFormatter2(
-          "hasPostgradDegree", "postgradUniversity.degreeType", "postgradUniversity.otherDegreeType", TextMaxSize)),
-        // TODO: what happens if a value that is not in the degree category list is posted? - we now handle that
-        "degreeCategory" -> of(universityDegreeCategoryFormatter("hasPostgradDegree"))
+        "otherDegreeType" -> of(otherDegreeTypeFormatter(
+          "hasPostgradDegree", "postgradUniversity.degreeType", "postgradUniversity.otherDegreeType", TextMaxSize))
       )(PostgradUniversity.apply)(PostgradUniversity.unapply)
     )(EducationQuestionnaireForm.Data.apply)(EducationQuestionnaireForm.Data.unapply)
   )
@@ -100,16 +86,16 @@ class EducationQuestionnaireForm {
     }
   }
 
-  private def degreeTypeFormatter(requiredKey: String, errorKey: String)(implicit messages: Messages) = new Formatter[Option[String]] {
+  private def universityFormatter(requiredKey: String)(implicit messages: Messages) = new Formatter[Option[String]] {
     def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val requiredField: Option[String] = if (request.isEmpty) None else request.get(requiredKey)
       val keyField: Option[String] = if (request.isEmpty) None else request.get(key).map(_.trim)
-      val requiredErrorMsg = messages(s"error.$errorKey.required")
+      val requiredErrorMsg = messages(s"error.$key.required")
 
       (requiredField, keyField) match {
         case (Some("Yes"), None) => Left(List(FormError(key, requiredErrorMsg)))
         case (Some("Yes"), Some(keyValue)) if keyValue.trim.isEmpty => Left(List(FormError(key, requiredErrorMsg)))
-        case (Some("Yes"), Some(_)) if !request.isDegreeTypeValid => Left(List(FormError(key, messages(s"error.$errorKey.invalid"))))
+        case (Some("Yes"), Some(_)) if !request.isUniversityValid(key) => Left(List(FormError(key, messages(s"error.$key.invalid"))))
         case _ => Right(keyField)
       }
     }
@@ -117,75 +103,6 @@ class EducationQuestionnaireForm {
     def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
-  private def otherDegreeTypeFormatter(requiredKey: String, errorKey: String, maxSize: Int)(
-    implicit messages: Messages) = new Formatter[Option[String]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-      val dependencyCheck = request.isOtherDegreeSelected
-      val isFilled = request.isOtherDegreeTypeFilled
-      val isCorrectSize = request.isOtherDegreeTypeSizeValid(maxSize)
-
-      (dependencyCheck, isFilled, isCorrectSize) match {
-        case (true, false, _) => Left(List(FormError(key, messages(s"error.$errorKey.required"))))
-        case (true, true, false) => Left(List(FormError(key, messages(s"error.$errorKey.maxLength", maxSize))))
-        case (true, true, true) => Right(Some(request.otherDegreeTypeParam))
-        case (false, _, _) => Right(None)
-      }
-    }
-
-    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
-  }
-
-  // requiredKey: "hasDegree" or "hasPostgradDegree"
-  // degreeTypeKey: "degreeType" or "postgradUniversity.degreeType"
-  // otherDegreeTypeKey: "otherDegreeType" or "postgradUniversity.otherDegreeType"
-  private def otherDegreeTypeFormatter2(requiredKey: String, degreeTypeKey: String, otherDegreeTypeKey: String, maxSize: Int)(
-    implicit messages: Messages) = new Formatter[Option[String]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-      val isDegreeSelected = request.isDegreeOrPostgradDegreeSelected(requiredKey)
-//      val dependencyCheck = request.isOtherDegreeSelected
-      val dependencyCheck = request.isOtherSelected(degreeTypeKey: String)
-
-//      val isFilled = request.isOtherDegreeTypeFilled // Is other type filled
-      val isFilled = request.isOtherFilled(otherDegreeTypeKey) // Is other type filled
-//      val isCorrectSize = request.isOtherDegreeTypeSizeValid(maxSize) // Is other type less than the max
-      val isCorrectSize = request.isOtherSizeValid(otherDegreeTypeKey, maxSize) // Is other type less than the max
-
-      (isDegreeSelected && dependencyCheck, isFilled, isCorrectSize) match {
-        case (true, false, _) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.required"))))
-        case (true, true, false) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.maxLength", maxSize))))
-        case (true, true, true) => Right(Some(request.otherDegreeTypeParam(otherDegreeTypeKey)))
-        case (false, _, _) => Right(None)
-      }
-    }
-
-    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
-  }
-
-  private def otherDegreeTypeFormatter3(requiredKey: String, degreeTypeKey: String, otherDegreeTypeKey: String, maxSize: Int)(
-    implicit messages: Messages) = new Formatter[Option[String]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-      val isDegreeSelected = request.isDegreeOrPostgradDegreeSelected(requiredKey)
-//      val dependencyCheck = request.isOtherDegreeSelected
-      val dependencyCheck = request.isOtherSelected(degreeTypeKey: String)
-
-//      val isFilled = request.isOtherDegreeTypeFilled // Is other type filled
-      val isFilled = request.isOtherFilled(otherDegreeTypeKey) // Is other type filled
-//      val isCorrectSize = request.isOtherDegreeTypeSizeValid(maxSize) // Is other type less than the max
-      val isCorrectSize = request.isOtherSizeValid(otherDegreeTypeKey, maxSize) // Is other type less than the max
-
-
-      (isDegreeSelected && dependencyCheck, isFilled, isCorrectSize) match {
-        case (true, false, _) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.required"))))
-        case (true, true, false) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.maxLength", maxSize))))
-        case (true, true, true) => Right(Some(request.otherDegreeTypeParam))
-        case (false, _, _) => Right(None)
-      }
-    }
-
-    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
-  }
-
-  //scalastyle:off
   def universityDegreeCategoryFormatter(requiredKey: String)(implicit messages: Messages) = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)
@@ -203,21 +120,52 @@ class EducationQuestionnaireForm {
     override def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
+  private def degreeTypeFormatter(requiredKey: String, errorKey: String)(implicit messages: Messages) = new Formatter[Option[String]] {
+    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val requiredField: Option[String] = if (request.isEmpty) None else request.get(requiredKey)
+      val keyField: Option[String] = if (request.isEmpty) None else request.get(key).map(_.trim)
+      val requiredErrorMsg = messages(s"error.$errorKey.required")
+
+      (requiredField, keyField) match {
+        case (Some("Yes"), None) => Left(List(FormError(key, requiredErrorMsg)))
+        case (Some("Yes"), Some(keyValue)) if keyValue.trim.isEmpty => Left(List(FormError(key, requiredErrorMsg)))
+        case (Some("Yes"), Some(_)) if !request.isDegreeTypeValid(key) => Left(List(FormError(key, messages(s"error.$errorKey.invalid"))))
+        case _ => Right(keyField)
+      }
+    }
+
+    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
+  }
+
+  // requiredKey: "hasDegree" or "hasPostgradDegree"
+  // degreeTypeKey: "degreeType" or "postgradUniversity.degreeType"
+  // otherDegreeTypeKey: "otherDegreeType" or "postgradUniversity.otherDegreeType"
+  private def otherDegreeTypeFormatter(requiredKey: String, degreeTypeKey: String, otherDegreeTypeKey: String, maxSize: Int)(
+    implicit messages: Messages) = new Formatter[Option[String]] {
+    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val isDegreeSelected = request.isDegreeOrPostgradDegreeSelected(requiredKey)
+      val dependencyCheck = request.isOtherSelected(degreeTypeKey: String)
+
+      val isFilled = request.isOtherFilled(otherDegreeTypeKey)
+      val isCorrectSize = request.isOtherSizeValid(otherDegreeTypeKey, maxSize)
+
+      (isDegreeSelected && dependencyCheck, isFilled, isCorrectSize) match {
+        case (true, false, _) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.required"))))
+        case (true, true, false) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.maxLength", maxSize))))
+        case (true, true, true) => Right(Some(request.otherDegreeTypeParam(otherDegreeTypeKey)))
+        case (false, _, _) => Right(None)
+      }
+    }
+
+    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
+  }
 
   implicit class RequestValidation(request: Map[String, String]) {
     def param(name: String) = request.collectFirst { case (key, value) if key == name => value }
 
-    def degreeTypeParam = param("degreeType").getOrElse("")
+    def isDegreeTypeValid(key: String) = DegreeTypes.validDegreeTypes.contains(param(key).getOrElse(""))
 
-    def isDegreeTypeValid = DegreeTypes.validDegreeTypes.contains(degreeTypeParam)
-
-    def isOtherDegreeSelected = degreeTypeParam.contains("Other")
-
-    def otherDegreeTypeParam = param("otherDegreeType").getOrElse("")
-
-    def isOtherDegreeTypeFilled = isOtherDegreeSelected && otherDegreeTypeParam.nonEmpty
-
-    def isOtherDegreeTypeSizeValid(max: Int) = isOtherDegreeTypeFilled && otherDegreeTypeParam.length <= max
+    def isUniversityValid(key: String) = Universities.validUniversities.contains(param(key).getOrElse(""))
 
     // degreeKey: "hasDegree" or "hasPostgradDegree"
     def isDegreeOrPostgradDegreeSelected(degreeKey: String) = param(degreeKey).getOrElse("").contains("Yes")
@@ -232,8 +180,6 @@ class EducationQuestionnaireForm {
 
     def otherDegreeTypeParam(key: String) = param(key).getOrElse("")
 
-    def degreeCategoryParam = param("degreeCategory").getOrElse("")
-
     // key is either universityDegreeCategory or postgradUniversity.degreeCategory
     def isDegreeCategoryValid(key: String) = UniversityDegreeCategories.validDegreeCategories.contains(param(key).getOrElse(""))
   }
@@ -243,12 +189,12 @@ object EducationQuestionnaireForm {
   val TextMaxSize = 256
   case class PostgradUniversity(
                                  university: Option[String],
+                                 degreeCategory: Option[String],
                                  degreeType: Option[String],
-                                 otherDegreeType: Option[String],
-                                 degreeCategory: Option[String]
+                                 otherDegreeType: Option[String]
                                )
   object  PostgradUniversity {
-    val empty = PostgradUniversity(university = None, degreeType = None, otherDegreeType = None, degreeCategory = None)
+    val empty = PostgradUniversity(university = None, degreeCategory = None, degreeType = None, otherDegreeType = None)
   }
   case class Data(
                    liveInUKBetween14and18: String,
@@ -263,11 +209,9 @@ object EducationQuestionnaireForm {
                    preferNotSaySchoolName16to18: Option[Boolean],
                    freeSchoolMeals: Option[String],
                    isCandidateCivilServant: String,
-                   hasDegree: Option[String], // TODO: change to hasDegree? remember to check backend changes for this in reports etc
+                   hasDegree: Option[String],
                    university: Option[String],
-                   preferNotSayUniversity: Option[Boolean], // TODO: delete
                    universityDegreeCategory: Option[String],
-                   preferNotSayUniversityDegreeCategory: Option[Boolean], // TODO: delete,
                    degreeType: Option[String],
                    otherDegreeType: Option[String],
                    hasPostgradDegree: Option[String],
@@ -304,10 +248,10 @@ object EducationQuestionnaireForm {
       def getOptionalUniversityList(implicit messages: Messages): List[Question] = {
         val degreeQuestions = hasDegree match {
           case Some("Yes") => List(
-            Question(Messages("university.question"), getAnswer(university, preferNotSayUniversity)),
+            Question(Messages("university.question"), getAnswer(university, preferNotToSayField = None)),
             Question(Messages("universityDegreeCategory.question"), getAnswer(
               universityDegreeCategory,
-              preferNotSayUniversityDegreeCategory)
+              preferNotToSayField = None)
             ),
             Question(Messages("degreeType.question"), getAnswer(degreeType, preferNotToSayField = None, otherDetails = otherDegreeType)),
             Question(
@@ -324,12 +268,12 @@ object EducationQuestionnaireForm {
               getAnswer(postgradUniversity.university, preferNotToSayField = None, otherDetails = None)
             ),
             Question(
-              Messages("postgradDegree.degreeType.question"),
-              getAnswer(postgradUniversity.degreeType, preferNotToSayField = None, otherDetails = postgradUniversity.otherDegreeType)
-            ),
-            Question(
               Messages("postgradDegree.degreeCategory.question"),
               getAnswer(postgradUniversity.degreeCategory, preferNotToSayField = None, otherDetails = None)
+            ),
+            Question(
+              Messages("postgradDegree.degreeType.question"),
+              getAnswer(postgradUniversity.degreeType, preferNotToSayField = None, otherDetails = postgradUniversity.otherDegreeType)
             )
           )
           case _ => List.empty
@@ -376,20 +320,15 @@ object EducationQuestionnaireForm {
     }
 
     private def sanitizeUniversity = {
-      if (hasDegree.contains("Yes")) {
-        this.copy(
-          university = sanitizeValueWithPreferNotToSay(university, preferNotSayUniversity),
-          universityDegreeCategory = sanitizeValueWithPreferNotToSay(universityDegreeCategory, preferNotSayUniversityDegreeCategory)
-        )
-      } else {
+      if (hasDegree.contains("No")) {
         this.copy(
           university = None,
-          preferNotSayUniversity = None,
           universityDegreeCategory = None,
-          preferNotSayUniversityDegreeCategory = None,
           degreeType = None,
           otherDegreeType = None
         )
+      } else {
+        this
       }
     }
 

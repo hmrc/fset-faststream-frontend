@@ -32,18 +32,16 @@ object EducationQuestionnaireFormExamples {
     freeSchoolMeals = Some("No"),
     isCandidateCivilServant = "Yes", // Not persisted
     hasDegree = Some("Yes"),
-    university = Some("1"),
-    preferNotSayUniversity = None,
+    university = Some("A14-AWC"),
     universityDegreeCategory = Some("Chemistry"),
-    preferNotSayUniversityDegreeCategory = None,
     degreeType = Some("BSc/MSc/Eng"),
     otherDegreeType = None,
-    hasPostgradDegree = Some("No"),
+    hasPostgradDegree = Some("Yes"),
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity(
       university = Some("K12-KEELE"),
+      degreeCategory = Some("Computing"),
       degreeType = Some("BSc/MSc/Eng"),
-      otherDegreeType = None,
-      degreeCategory = Some("Computing")
+      otherDegreeType = None
     )
   )
 
@@ -62,9 +60,7 @@ object EducationQuestionnaireFormExamples {
     isCandidateCivilServant = "Yes",
     hasDegree = Some("Yes"),
     university = None,
-    preferNotSayUniversity = Some(true), // TODO this is no longer an option
     universityDegreeCategory = None,
-    preferNotSayUniversityDegreeCategory = Some(true), // TODO this is no longer an option
     degreeType = Some("BSc/MSc/Eng"),
     otherDegreeType = None,
     hasPostgradDegree = Some("No"),
@@ -86,9 +82,7 @@ object EducationQuestionnaireFormExamples {
     isCandidateCivilServant = "No",
     hasDegree = Some("No"),
     university = None,
-    preferNotSayUniversity = None,
     universityDegreeCategory = None,
-    preferNotSayUniversityDegreeCategory = None,
     degreeType = None,
     otherDegreeType = None,
     hasPostgradDegree = Some("No"),
@@ -109,10 +103,8 @@ object EducationQuestionnaireFormExamples {
     freeSchoolMeals = None,
     isCandidateCivilServant = "Yes", // Not persisted
     hasDegree = Some("Yes"),
-    university = Some("1"),
-    preferNotSayUniversity = None,
+    university = Some("A14-AWC"),
     universityDegreeCategory = Some("Chemistry"),
-    preferNotSayUniversityDegreeCategory = None,
     degreeType = Some("BSc/MSc/Eng"),
     otherDegreeType = None,
     hasPostgradDegree = Some("No"),
@@ -134,9 +126,7 @@ object EducationQuestionnaireFormExamples {
     isCandidateCivilServant = "No", // Not persisted
     hasDegree = Some("No"),
     university = None,
-    preferNotSayUniversity = None,
     universityDegreeCategory = None,
-    preferNotSayUniversityDegreeCategory = None,
     degreeType = None,
     otherDegreeType = None,
     hasPostgradDegree = Some("No"), // Not persisted because the answer to hasDegree is No
@@ -157,10 +147,8 @@ object EducationQuestionnaireFormExamples {
     freeSchoolMeals = Some("No"),
     isCandidateCivilServant = "No",
     hasDegree = Some("No"),
-    university = Some("1"),
-    preferNotSayUniversity = None,
+    university = Some("A14-AWC"),
     universityDegreeCategory = Some("Chemistry"),
-    preferNotSayUniversityDegreeCategory = None,
     degreeType = Some("BSc/MSc/Eng"),
     otherDegreeType = None,
     hasPostgradDegree = Some("No"),
@@ -176,13 +164,13 @@ object EducationQuestionnaireFormExamples {
     "freeSchoolMeals" -> "No",
     "isCandidateCivilServant" -> "Yes",
     "hasDegree" -> "Yes",
-    "university" -> "1",
+    "university" -> "A14-AWC",
     "universityDegreeCategory" -> "Chemistry",
     "degreeType" -> "BSc/MSc/Eng",
     "hasPostgradDegree" -> "Yes",
     "postgradUniversity.university" -> "K12-KEELE",
-    "postgradUniversity.degreeType" -> "BSc/MSc/Eng",
-    "postgradUniversity.degreeCategory" -> "Engineering"
+    "postgradUniversity.degreeCategory" -> "Engineering",
+    "postgradUniversity.degreeType" -> "BSc/MSc/Eng"
   )
 
   val AllPreferNotToSayFormMap = Map(
@@ -194,8 +182,6 @@ object EducationQuestionnaireFormExamples {
     "freeSchoolMeals" -> "I don't know/prefer not to say",
     "isCandidateCivilServant" -> "Yes",
     "hasDegree" -> "Yes",
-    "preferNotSay_university" -> "true",
-    "preferNotSayUniversityDegreeCategory" -> "true"
   )
 
   val NotUkLivedAndNoDegreeValidFormMap = Map(
@@ -208,24 +194,11 @@ object EducationQuestionnaireFormExamples {
     "liveInUKBetween14and18" -> "No",
     "isCandidateCivilServant" -> "Yes",
     "hasDegree" -> "Yes",
-    "university" -> "1",
+    "university" -> "A14-AWC",
     "universityDegreeCategory" -> "Chemistry",
     "degreeType" -> "BSc/MSc/Eng",
     "hasPostgradDegree" -> "No"
   )
-
-//  val NotUkLivedHasDegreeHasPostgradUniversityValidFormMap = Map(
-//    "liveInUKBetween14and18" -> "No",
-//    "isCandidateCivilServant" -> "Yes",
-//    "hasDegree" -> "Yes",
-//    "university" -> "K12-KEELE",
-//    "universityDegreeCategory" -> "Chemistry",
-//    "degreeType" -> "BSc/MSc/Eng",
-//    "hasPostgradDegree" -> "Yes",
-//    "postgradUniversity.university" -> "K12-KEELE",
-//    "postgradUniversity.degreeType" -> "BSc/MSc/Eng",
-//    "postgradUniversity.degreeCategoryType" -> "Engineering"
-//  )
 
   val LivedInUKAndNoDegreeValidFormMap = Map(
     "liveInUKBetween14and18" -> "Yes",
