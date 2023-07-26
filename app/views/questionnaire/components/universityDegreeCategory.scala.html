@@ -17,12 +17,11 @@
 @import views.html.questionnaire.components.postgradUniversityName
 @import views.html.widgets.radioBoxHorizontal
 @import helpers.TemplateHelper.maybeDisplayError
-@(form: Form[_root_.forms.EducationQuestionnaireForm.Data])(implicit messages: Messages)
+@import views.html.questionnaire.components.postgradUniversity
+@(form: Form[_root_.forms.EducationQuestionnaireForm.Data])(implicit user: Option[CachedData], messages: Messages)
 
-@import views.html.questionnaire.components.universityDegreeCategoryDetails
-@import views.html.widgets.{ checkbox, selectValueDifferentFromDisplayedText }
+@import views.html.widgets.selectValueDifferentFromDisplayedText
 @import views.html.widgets.radioBoxVertical
-@import views.html.widgets.yesNoRadioWithTogglePanel
 @import models.view.questionnaire.DegreeTypes
 
 <section>
@@ -34,19 +33,8 @@
         "Select one") {
         @Messages("universityDegreeCategory.question")
     }
-    @*
-    <div class="form-group">
-    @checkbox(form("preferNotSay_universityDegreeCategory"), Some("universityDegreeCategory")) {
-        I don't know/prefer not to say
-    }
-    </div>
-    *@
-
-    @*
-    @universityDegreeCategoryDetails()
-    *@
 </section>
-@* Maybe move this to a new file*@
+
 <section>
     <fieldset class="form-group">
         <legend><h2 class="form-label" id="degreeType">@Messages("degreeType.question")</h2></legend>
@@ -62,51 +50,5 @@
         </div>
     </fieldset>
 </section>
-@*
-<section class="clearfix" id="postgradQuestion">
-    <fieldset>
-        @yesNoRadioWithTogglePanel(form("hasPostgradDegree"),
-            Symbol("id") -> "hasPostgradDegree",
-            Symbol("_label") -> Messages("hasPostgradDegree.question"),
-            Symbol("_legendClass") -> "form-label") {
-        }
-        <div id="hasPostgradDegree-panel-yes" class="toggle-content" aria-hidden="true">
-            @postgradUniversityName(form)
-        </div>
-    </fieldset>
-</section>
-    *@
 
-<section class="clearfix" id="postgradQuestion">
-    <fieldset>
-        <legend><h2 class="form-label text">@Messages("hasPostgradDegree.question")</h2></legend>
-        @radioBoxHorizontal(form("hasPostgradDegree"), options = List(("yes", "Yes", true), ("no", "No", false)),
-            optionTrigger = "hasPostgradDegree-panel")
-        <div id="hasPostgradDegree-panel" class="toggle-content" aria-hidden="true">
-            @postgradUniversityName(form)
-
-            @selectValueDifferentFromDisplayedText(
-                form("postgradUniversity.degreeCategory"),
-                models.view.questionnaire.UniversityDegreeCategories.list.toList
-            )("Select one") {
-                @Messages("postgradDegree.degreeCategory.question")
-            }
-
-            <section>
-                <fieldset class="form-group">
-                    <legend><h2 class="form-label" id="degreeType">@Messages("postgradDegree.degreeType.question")</h2></legend>
-                    @radioBoxVertical(form("postgradUniversity.degreeType"), options = DegreeTypes.list, optionTrigger = "postgrad-degree-describe")
-                    <div class="toggle-content form-group form-group-compound @if(form("postgradUniversity.otherDegreeType").hasErrors) {has-an-error input-validation-error}" id="postgrad-degree-describe">
-                        <span class="has-error">@maybeDisplayError(form("postgradUniversity.otherDegreeType"))</span>
-                        @helper.inputText(form("postgradUniversity.otherDegreeType"),
-                            Symbol("_label") -> "Please describe your degree",
-                            Symbol("_labelClass") -> "form-hint",
-                            Symbol("class") -> "form-control",
-                            Symbol("_showConstraints") -> false,
-                            Symbol("optional") -> "")
-                    </div>
-                </fieldset>
-            </section>
-        </div>
-    </fieldset>
-</section>
+@postgradUniversity(form)

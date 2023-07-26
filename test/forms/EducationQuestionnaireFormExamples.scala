@@ -111,6 +111,28 @@ object EducationQuestionnaireFormExamples {
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
   )
 
+  val EdipNotUkLivedAndHasDegreeValidForm = EducationQuestionnaireForm.Data(
+    liveInUKBetween14and18 = "No",
+    postcode = None,
+    preferNotSayPostcode = None,
+    schoolName14to16 = None,
+    schoolId14to16 = None,
+    preferNotSaySchoolName14to16 = None,
+    schoolType14to16 = None,
+    schoolName16to18 = None,
+    schoolId16to18 = None,
+    preferNotSaySchoolName16to18 = None,
+    freeSchoolMeals = None,
+    isCandidateCivilServant = "Yes", // Not persisted
+    hasDegree = Some("Yes"),
+    university = Some("A14-AWC"),
+    universityDegreeCategory = Some("Chemistry"),
+    degreeType = Some("BSc/MSc/Eng"),
+    otherDegreeType = None,
+    hasPostgradDegree = None, // This question is not displayed for edip/sdip so set to None
+    postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
+  )
+
   val LivedInUKAndNoDegreeValidForm = EducationQuestionnaireForm.Data(
     liveInUKBetween14and18 = "Yes",
     postcode = Some("AAA 111"),

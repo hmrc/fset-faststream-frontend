@@ -30,7 +30,8 @@ import play.api.i18n.Messages
 
 @Singleton
 class EducationQuestionnaireForm {
-  def form(universityQuestionKey: String)(implicit messages: Messages) = Form(
+  // TODO: the universityQuestionKey looks to now be redundant
+  def form(isFsOrSdipFs: Boolean, universityQuestionKey: String)(implicit messages: Messages) = Form(
     mapping(
       "liveInUKBetween14and18" -> nonEmptyTrimmedText("error.liveInUKBetween14and18.required", 31),
       "postcodeQ" -> of(requiredFormatterWithValidationCheckAndSeparatePreferNotToSay("liveInUKBetween14and18",
@@ -54,8 +55,8 @@ class EducationQuestionnaireForm {
       "degreeType" -> of(degreeTypeFormatter("hasDegree", "degreeType")),
       "otherDegreeType" -> of(otherDegreeTypeFormatter("hasDegree", "degreeType", "otherDegreeType", TextMaxSize)),
 
-      // If the candidate hasDegree then this must also be answered
-      "hasPostgradDegree" -> of(requiredFormatterWithMaxLengthCheck("hasDegree", Some(3))),
+      // If the candidate hasDegree then this must also be answered if the candidate is Faststream or SdipFaststream
+      "hasPostgradDegree" -> of(requiredFormatterWithMaxLengthCheck(isFsOrSdipFs, "hasDegree", Some(3))),
       "postgradUniversity" -> mapping(
         "university" -> of(universityFormatter("hasPostgradDegree")),
         "degreeCategory" -> of(universityDegreeCategoryFormatter("hasPostgradDegree")),
@@ -219,7 +220,7 @@ object EducationQuestionnaireForm {
   ) {
 
     //scalastyle:off method.length
-    def toExchange(implicit messages: Messages): Questionnaire = {
+    def toExchange(isFsOrSdipFs: Boolean)(implicit messages: Messages): Questionnaire = {
       def getAnswer(field: Option[String], preferNotToSayField: Option[Boolean], otherDetails: Option[String] = None) = {
         preferNotToSayField match {
           case Some(true) => Answer(answer = None, otherDetails, unknown = Some(true))
@@ -247,17 +248,24 @@ object EducationQuestionnaireForm {
 
       def getOptionalUniversityList(implicit messages: Messages): List[Question] = {
         val degreeQuestions = hasDegree match {
-          case Some("Yes") => List(
-            Question(Messages("university.question"), getAnswer(university, preferNotToSayField = None)),
-            Question(Messages("universityDegreeCategory.question"), getAnswer(
-              universityDegreeCategory,
-              preferNotToSayField = None)
-            ),
-            Question(Messages("degreeType.question"), getAnswer(degreeType, preferNotToSayField = None, otherDetails = otherDegreeType)),
-            Question(
+          case Some("Yes") =>
+            val postgradDegreeQuestion = Question(
               Messages("hasPostgradDegree.question"), getAnswer(hasPostgradDegree, preferNotToSayField = None, otherDetails = None)
             )
-          )
+            val degreeQuestions = List(
+              Question(Messages("university.question"), getAnswer(university, preferNotToSayField = None)),
+              Question(Messages("universityDegreeCategory.question"), getAnswer(
+                universityDegreeCategory,
+                preferNotToSayField = None)
+              ),
+              Question(Messages("degreeType.question"), getAnswer(degreeType, preferNotToSayField = None, otherDetails = otherDegreeType))
+            )
+            if (isFsOrSdipFs) {
+              // The postgrad degree question is only relevant for faststream or sdipFaststream candidates
+              degreeQuestions ++ List(postgradDegreeQuestion)
+            } else {
+              degreeQuestions
+            }
           case _ => List.empty
         }
 
