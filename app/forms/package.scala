@@ -69,6 +69,27 @@ package object forms {
     override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
   }
 
+  def requiredFormatterWithMaxLengthCheck(isRequired: Boolean, requiredKey: String, maxLength: Option[Int])(
+    implicit messages: Messages) = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)
+      val keyField: Option[String] = if (data.isEmpty) None else data.get(key).map(_.trim)
+
+      (isRequired, requiredField, keyField) match {
+        case (true, Some("Yes"), None) => Left(List(FormError(key, Messages(s"error.$key.required"))))
+        case (true, Some("Yes"), Some("")) => Left(List(FormError(key, Messages(s"error.$key.required"))))
+        case (true, _, _) => if (maxLength.isDefined && keyField.isDefined && keyField.get.length > maxLength.get) {
+          Left(List(FormError(key, Messages(s"error.$key.maxLength"))))
+        } else {
+          Right(keyField)
+        }
+        case _ => Right(keyField)
+      }
+    }
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
+  }
+
   // scalastyle:off cyclomatic.complexity
   def requiredFormatterWithValidationCheckAndSeparatePreferNotToSay(
         requiredKey: String,

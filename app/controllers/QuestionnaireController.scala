@@ -24,7 +24,7 @@ import helpers.{NotificationType, NotificationTypeHelper}
 import javax.inject.{Inject, Singleton}
 import models.{ApplicationRoute, CachedDataWithApp}
 import play.api.i18n.Messages
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, RequestHeader, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader, Result}
 import security.QuestionnaireRoles._
 import security.Roles.{ CsrAuthorization, PreviewApplicationRole, SubmitApplicationRole }
 import security.SilhouetteComponent
@@ -70,7 +70,7 @@ class QuestionnaireController @Inject() (config: FrontendAppConfig,
   def presentSecondPage: Action[AnyContent] = CSRSecureAppAction(EducationQuestionnaireRole) { implicit request =>
     implicit user =>
       presentPageIfNotFilledInPreviously(EducationQuestionnaireCompletedRole,
-        Ok(views.html.questionnaire.secondpage(educationFormWrapper.form(universityMessageKey),
+        Ok(views.html.questionnaire.secondpage(educationFormWrapper.form(isFsOrSdipFs, universityMessageKey),
           if (user.application.civilServiceExperienceDetails.exists(_.isCivilServant)) "Yes" else "No")))
   }
 
@@ -135,13 +135,13 @@ class QuestionnaireController @Inject() (config: FrontendAppConfig,
       if (EducationQuestionnaireCompletedRole.isAuthorized(user)) {
         Future.successful(Redirect(routes.QuestionnaireController.presentStartOrContinue).flashing(questionnaireCompletedBanner))
       } else {
-        educationFormWrapper.form(universityMessageKey).bindFromRequest().fold(
+        educationFormWrapper.form(isFsOrSdipFs, universityMessageKey).bindFromRequest().fold(
           errorForm => {
             Future.successful(Ok(views.html.questionnaire.secondpage(errorForm, isCivilServantString)))
 
           },
           data => {
-            submitQuestionnaire(data.sanitizeData.toExchange, "education_questionnaire")(
+            submitQuestionnaire(data.sanitizeData.toExchange(isFsOrSdipFs), "education_questionnaire")(
               Redirect(routes.QuestionnaireController.presentThirdPage))
           }
         )
@@ -184,4 +184,6 @@ class QuestionnaireController @Inject() (config: FrontendAppConfig,
     case ApplicationRoute.Edip | ApplicationRoute.Sdip | ApplicationRoute.SdipFaststream => "currentUniversity"
     case ApplicationRoute.Faststream => "university"
   }
+
+  private def isFsOrSdipFs(implicit user: CachedDataWithApp) = user.application.isFaststream || user.application.isSdipFaststream
 }
