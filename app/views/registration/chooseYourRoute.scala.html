@@ -30,7 +30,9 @@
 @sdipUrl = @{ "https://www.faststream.gov.uk/sip-am-i-eligible/index.html" }
 
 @sdipDiversityHintText = @{ Some("To be considered for the Diversity SIP, confirm one or more of the following statements are true:" +
-        "<ul><li>I am from an ethnic minority background.</li><li>I am from a socially or economically disadvantaged background.</li></ul>") }
+        "<ul><li>I’m not currently a civil servant</li>" +
+        "<li>I am from an ethnic minority background.</li>" +
+        "<li>I am from a socially or economically disadvantaged background.</li></ul>") }
 
 <section class="section-border clearfix" id="routeElig">
     <div class="text">
@@ -78,6 +80,7 @@
             @if(appRouteConfigMap.get(Sdip).forall(_.newAccountsStarted) && appRouteConfigMap.get(Sdip).forall(_.newAccountsEnabled)) {
                 <h3 class="heading-medium">To be considered for SIP, you will need to confirm the following statements are true</h3>
                 <ul id="sdipFaststream-eligibility-list" class="para-btm-margin text">
+                    <li>I'm not currently a civil servant</li>
                     <li>I'm in the final 2 years at university</li>
                     <li>I qualify to apply according to the
                         <a href="@sdipUrl" rel="external" target="_blank">
@@ -108,6 +111,7 @@
                 <h2 class="heading-medium">Confirm the following statements are true</h2>
             </div>
             <ul id="edip-eligibility-list" class="para-btm-margin text">
+                <li>I'm not currently a civil servant</li>
                 <li>I'm either from a Black, Asian and Minority Ethnic (BAME) or socially/economically disadvantaged background, or have a disability</li>
                 <li>I'm in the first year at university</li>
                 <li>
@@ -131,6 +135,7 @@
                 <h3 class="heading-medium">To be considered for SIP, you will need to confirm the following statements are true</h3>
             </div>
             <ul id="sip-eligibility-list" class="para-btm-margin text">
+                <li>I'm not currently a civil servant</li>
                 <li>I'm in the final 2 years at university</li>
                 <li>I qualify to apply according to the
                     <a href="@sdipUrl" rel="external" target="_blank">

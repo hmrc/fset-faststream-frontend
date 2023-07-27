@@ -18,13 +18,13 @@
 @import _root_.connectors.exchange.referencedata.Scheme
 @import models.FieldNameHelpers._
 
-@(isCandidateCivilServant: Boolean, field: play.api.data.Field, options: Seq[Scheme], args: (Symbol, Any)*)(implicit messages: Messages)
+@(isCandidateCivilServant: Boolean, field: play.api.data.Field, schemes: Seq[Scheme], args: (Symbol, Any)*)(implicit messages: Messages)
 
 @helper.input(field, args.map { x => if(x._1 == Symbol("_label")) Symbol("_name") -> x._2 else x }: _*) { (id, name, value, htmlArgs) =>
         <div class="inner-block-padr" id="@id">
             <ul class="schemes-list">
             @defining(field.indexes.flatMap(i => field("[%s]".format(i)).value).toSet) { values =>
-                @options.map { case scheme =>
+                @schemes.map { case scheme =>
                 <li class="scheme-container">
                     <span class="selected-preference invisible" aria-live="polite">N/A</span>
                     <label class="block-label block-label-slim" for="@createId(id, scheme)">
@@ -32,8 +32,13 @@
                         }" value="@{scheme.id.value}" @if(values.contains(scheme.id.value)) {
                             checked="checked"
                         } @toHtmlArgs(htmlArgs) data-schemename/>
-                        @Messages("scheme."+scheme.id.value+".description")
+                        @Html(Messages("scheme."+scheme.id.value+".description"))
                     </label>
+                    @if(scheme.id.value == "HousesOfParliament"){
+                        <span class="alwayshidden" data-hop>The Houses of Parliament Graduate Programme is no longer a Fast Stream scheme, although it
+                            will be treated as one of your 4 preferences if you choose to select this option.</span>
+                    }
+
                     <span class="alwayshidden" data-scheme-req
                       @scheme.degree.map { degree =>
                         @if(degree.specificRequirement){data-spec-scheme} @if(isCandidateCivilServant && scheme.civilServantEligible){data-civil-servant-scheme}>

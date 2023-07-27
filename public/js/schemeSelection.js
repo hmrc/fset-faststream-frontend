@@ -18,6 +18,11 @@ $(function () {
     var isCivilServant = $this.closest('.scheme-container').find('[data-civil-servant-scheme]').length;
     var civilServant = isCivilServant > 0;
     var isSpecial = $this.closest('.scheme-container').find('[data-spec-scheme]').length;
+    var hopHtml = $this.closest('.scheme-container').find('[data-hop]').html();
+
+    var noContent = '';
+    var specialHop = thisSchemeValue === 'HousesOfParliament' ?
+      '<div class="scheme-warning text"><p class="font-xsmall">' + hopHtml + '</p></div>' : noContent;
 
     var specialEligibility = isSpecial === 0 ? '<p class="font-xsmall no-btm-margin">Requires at least a ' + schemeReq + '</p>' :
       '<div class="scheme-warning text"><p class="font-xsmall">Requires at least a ' + schemeReq + '</p></div>';
@@ -53,7 +58,7 @@ $(function () {
           thisSchemeID + '"><span data-schemeorder>' +
           getGetOrdinal(arrayPositionNow + 1) +
           ' preference</span><div class="text scheme-elegrepeat"><span class="bold-small" data-schemenameinlist>' +
-          thisScheme + '</span>' + specialEligibility +
+          thisScheme + '</span>' + specialHop + specialEligibility +
           '<a href="#" class="link-unimp scheme-remove"><i class="fa fa-times" aria-hidden="true"></i>Remove <span class="visuallyhidden">' + thisScheme + '</span></a>' +
           '</div>'
         );
@@ -93,7 +98,6 @@ $(function () {
         'toggle-content');
     }
   });
-
 
   $('#selectedPrefList').on('click', '.scheme-remove', function (e) {
     var thisScheme = $(this).closest('.scheme-prefcontainer').attr('data-scheme-id'),
