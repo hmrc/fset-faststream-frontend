@@ -42,13 +42,19 @@ class SchemePreferencesController @Inject() (
   referenceDataClient: ReferenceDataClient
 )(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
-
   def present = CSRSecureAppAction(SchemesRole) { implicit request =>
     implicit cachedData =>
       referenceDataClient.allSchemes.flatMap { schemes =>
-        val page = SelectedSchemesPage(schemes)
+        val schemesWithHopLast = {
+          val HousesOfParliament = "HousesOfParliament"
+          val withoutHop = schemes.filterNot(s => s.id == SchemeId(HousesOfParliament))
+          val hop = schemes.filter(s => s.id == SchemeId(HousesOfParliament))
+          withoutHop ++ hop
+        }
+        val page = SelectedSchemesPage(schemesWithHopLast)
         val formObj = new SelectedSchemesForm(schemes, cachedData.application.isSdipFaststream)
         val civilServant = cachedData.application.civilServiceExperienceDetails.exists(_.isCivilServant)
+
         schemeClient.getSchemePreferences(cachedData.application.applicationId).map { selectedSchemes =>
           Ok(views.html.application.schemePreferences.schemeSelection(page, civilServant, formObj.form.fill(selectedSchemes)))
         }.recover {

@@ -21,8 +21,12 @@
 
 <section>
     <fieldset>
-        <legend><h2 class="form-label">Will you need any support at the assessment centre?</h2></legend>
-        <p class="form-hint text">For example, a request for reasonable adjustments such as a qualified signer for those with hearing difficulties</p>
+        <legend><h2 class="form-label">Will you need any support at the virtual assessment centre?</h2></legend>
+        <p class="form-hint text">
+            For example, a request for reasonable adjustments such as a qualified signer for those with hearing difficulties.
+            Find out more about the virtual assessment centre <a href="https://www.faststream.gov.uk/faqs/index.html" target="_blank" rel="external">here
+                <span class="visuallyhidden">link opens new window</span></a>.
+        </p>
         @radioBoxHorizontal(form("needsSupportAtVenue"), options = List(("yes", "Yes", true), ("no", "No", false)),
             optionTrigger = "needsSupportAtVenue-describe", isCompound = true)
         <div id="needsSupportAtVenue-describe" class="toggle-content" aria-hidden="true">

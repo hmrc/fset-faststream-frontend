@@ -40,7 +40,7 @@
         <div class="detail-content">
             @for((schemeResult, index) <- page.userDataWithSchemes.failedSchemesForDisplay.zipWithIndex) {
             <div class="panel-indent">
-                <p>@schemeResult.scheme.name
+                <p>@{Html(Messages("scheme." + schemeResult.scheme.id.value + ".description"))}
                     <br>(unsuccessful at @schemeResult.failedAtStage)
                 </p>
             </div>
@@ -57,7 +57,7 @@
         <div class="detail-content">
             @for(schemeResult <- page.userDataWithSchemes.withdrawnSchemes) {
             <div class="panel-indent">
-                <p>@schemeResult.name</p>
+                <p>@{Html(Messages("scheme." + schemeResult.id.value + ".description"))}</p>
             </div>
             }
         </div>
@@ -82,7 +82,7 @@
                 to offer you a role on the Civil Service Fast Stream, for your
                 chosen scheme:</p>
             @page.userDataWithSchemes.greenSchemesForDisplay.headOption.map { schemeResult =>
-                <h2 class="heading-medium">@{schemeResult.scheme.name}</h2>
+                <h2 class="heading-medium">@{Html(Messages("scheme." + schemeResult.scheme.id.value + ".description"))}</h2>
             }
 
             <h3 class="heading-small">Next steps</h3>
@@ -177,7 +177,7 @@
     @for((schemeResult, index) <- page.userDataWithSchemes.greenAndAmberSchemesForDisplay.zipWithIndex) {
         <section>
             <h3 class="bold-small">@getOrder(index + 1) preference</h3>
-            <p>@{schemeResult.scheme.name}</p>
+            <p>@Html(Messages("scheme." + schemeResult.scheme.id.value + ".description"))</p>
         </section>
     }
 }
