@@ -47,8 +47,8 @@ $(function () {
           thisSchemeID + '"><span data-schemeorder>' +
           getGetOrdinal(arrayPositionNow + 1) +
           '</span><div class="text scheme-elegrepeat"><span class="bold-small" data-schemenameinlist>' +
-          thisScheme +
-          '</span><p>You\'re eligible as a current civil servant</p>' +
+          thisScheme + '</span>' + specialHop +
+          '<p>You\'re eligible as a current civil servant</p>' +
           '<a href="#" class="link-unimp scheme-remove"><i class="fa fa-times" aria-hidden="true"></i>Remove <span class="visuallyhidden">' + thisScheme + '</span></a>' +
           '</div>'
         );
