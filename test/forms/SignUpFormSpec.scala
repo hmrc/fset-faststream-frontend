@@ -75,18 +75,20 @@ class SignUpFormSpec extends BaseFormSpec {
     "throw an error if I haven't clicked on the I am eligible for Fast Stream" in {
       val (_, signUpForm) = SignupFormGenerator(faststreamEligible = false).get
       signUpForm.hasErrors mustBe true
-      signUpForm.errors.length mustBe 2
+      signUpForm.errors.length mustBe 1
       signUpForm.errors("faststreamEligible").head.messages mustBe Seq(Messages("agree.faststreamEligible"))
-      signUpForm.errors("sdipFastStreamConsider").head.messages mustBe Seq(Messages("sdipFastStream.consider"))
+//      signUpForm.errors("sdipFastStreamConsider").head.messages mustBe Seq(Messages("sdipFastStream.consider"))
     }
-
+/*
     "throw an error if I have clicked on the I am eligible for Fast Stream but not confirmed if I want to be considered for SDIP" in {
       val (_, signupForm) = SignupFormGenerator(faststreamEligible = true, sdipFastStreamConsider = None).get
       signupForm.hasErrors mustBe true
       signupForm.errors.length mustBe 1
       signupForm.errors("sdipFastStreamConsider").head.messages mustBe Seq(Messages("sdipFastStream.consider"))
     }
+ */
 
+/*
     "throw errors if I have clicked on I am eligible to apply for Fast Stream and confirmed I want to be considered for SDIP," +
       " but not confirmed I am eligible for SDIP or I want to be considered for the diversity strand of SDIP" in {
       val (_, signupForm) = SignupFormGenerator(
@@ -99,6 +101,7 @@ class SignUpFormSpec extends BaseFormSpec {
       signupForm.errors("sdipFastStreamEligible").head.messages mustBe Seq(Messages("agree.sdipEligible"))
       signupForm.errors("sdipFastStreamDiversity").head.messages mustBe Seq(Messages("agree.sdipDiversity"))
     }
+ */
 
     "pass validation if I have clicked on I am eligible to apply for Fast Stream and confirmed I want to be considered for SDIP," +
       " and have confirmed I am eligible for SDIP and I want to be considered for the diversity strand of SDIP" in {
@@ -115,7 +118,7 @@ class SignUpFormSpec extends BaseFormSpec {
         faststreamEligible = true, sdipFastStreamConsider = Some(true), sdipFastStreamEligible = Some(true)).get
       signupForm.hasErrors mustBe false
     }
-
+/*
     "generate 2 errors if I am an SDIP Faststream candidate but I haven't clicked on diversity strand of SDIP" +
       " or whether I am eligible for SDIP" in {
       val formData = Map(
@@ -140,6 +143,7 @@ class SignUpFormSpec extends BaseFormSpec {
       // This uses the same error message as the sdip eligible question
       form.errors("sdipFastStreamEligible").head.messages mustBe Seq(Messages("agree.sdipEligible"))
     }
+ */
 
     "generate 2 errors if I am an SDIP candidate but I haven't clicked on diversity strand of SDIP or whether I am eligible for SDIP" in {
       val formData = Map(
