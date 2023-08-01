@@ -78,11 +78,8 @@ class SignUpForm {
         case Some(appRoute) if appRoute.nonEmpty =>
           ApplicationRoute.withName(appRoute) match {
             case ApplicationRoute.Faststream => fastStreamCheck(appRoute, data)
-
             case ApplicationRoute.Edip => edipEligibilityCheck(data)
-
             case ApplicationRoute.Sdip => sdipCheck(data)
-
             case unknown => Left(List(FormError("eligible", s"Unrecognised application route $unknown")))
           }
 
@@ -103,14 +100,10 @@ class SignUpForm {
   private def fastStreamCheck(appRoute: String, data: Map[String, String])
     (implicit messages: Messages): Either[Seq[FormError], String] = {
     val fastStreamEligible = data.get("faststreamEligible").map(_.toLowerCase)
-    val sdipFastStreamConsider = data.get("sdipFastStreamConsider").map(_.toLowerCase)
-    (fastStreamEligible, sdipFastStreamConsider) match {
-      case (Some("true"), Some("false")) => Right(appRoute)
-      case (Some("true"), Some("true")) => sdipFsCheck(data)
-      case (Some("true"), None) => Left(List(FormError("sdipFastStreamConsider", Messages("sdipFastStream.consider"))))
-      case (_, _) => Left(List(
-        FormError("faststreamEligible", Messages("agree.faststreamEligible")),
-        FormError("sdipFastStreamConsider", Messages("sdipFastStream.consider"))
+    fastStreamEligible match {
+      case Some("true") => Right(appRoute)
+      case _ => Left(List(
+        FormError("faststreamEligible", Messages("agree.faststreamEligible"))
       ))
     }
   }
