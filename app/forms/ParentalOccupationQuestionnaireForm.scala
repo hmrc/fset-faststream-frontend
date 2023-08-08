@@ -16,23 +16,47 @@
 
 package forms
 
-import connectors.exchange.{ Answer, Question, Questionnaire }
+import connectors.exchange.{Answer, Question, Questionnaire}
+
 import javax.inject.Singleton
-import mappings.Mappings._
+import models.view.{SimpleAnswerOptions, ValidAnswers}
+import models.view.questionnaire.{Employees, Occupations, OrganizationSizes, ParentQualifications}
 import play.api.data.Forms._
 import play.api.data.format.Formatter
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 
 @Singleton
 class ParentalOccupationQuestionnaireForm {
-  def employedDependentFormatter(implicit messages: Messages) = new Formatter[Option[String]] {
+  private object ValidEmploymentAnswers extends ValidAnswers {
+    override val values = List("Employed", "Unemployed", "Long term unemployed", "Retired", "Unknown")
+  }
+
+  private def requiredValidValuesFormatter(errorKey: String, validAnswers: ValidAnswers)(implicit messages: Messages) = new Formatter[String] {
+    override def bind(key: String, request: Map[String, String]): Either[Seq[FormError], String] = {
+      val requiredErrorMsg = messages(s"error.required.$errorKey")
+      val invalidErrorMsg = messages(s"error.$errorKey.invalid")
+
+      request.getOrElse(key, "").trim match {
+        case param if param.isEmpty => Left(List(FormError(key, requiredErrorMsg)))
+        case param if !validAnswers.values.contains(param) => Left(List(FormError(key, invalidErrorMsg)))
+        case param => Right(param)
+      }
+    }
+
+    override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
+  }
+
+  def employedDependentFormatter(validAnswers: ValidAnswers)(implicit messages: Messages) = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val check = data.get("employedParent")
       val value = data.get(key).filterNot(_.isEmpty)
 
+      val invalidErrorMsg = messages (s"error.$key.invalid")
+
       (check, value) match {
-        case (Some("Employed"), Some(v)) => Right(value)
+        case (Some("Employed"), Some(param)) if !validAnswers.values.contains(param) => Left(List(FormError(key, invalidErrorMsg)))
+        case (Some("Employed"), Some(_)) => Right(value)
         case (Some("Employed"), None) => Left(List(FormError(key, Messages(s"error.required.$key"))))
         case _ => Right(None)
       }
@@ -43,13 +67,13 @@ class ParentalOccupationQuestionnaireForm {
 
   def form(implicit messages: Messages) = Form(
     mapping(
-      "socioEconomicBackground" -> nonEmptyTrimmedText("error.required.socioEconomicBackground", 256),
-      "parentsDegree" -> nonEmptyTrimmedText("error.required.parentsDegree", 256),
-      "employedParent" -> nonEmptyTrimmedText("error.required.employmentStatus", 256),
-      "parentsOccupation" -> of(employedDependentFormatter),
-      "employee" -> of(employedDependentFormatter),
-      "organizationSize" -> of(employedDependentFormatter),
-      "supervise" -> of(employedDependentFormatter)
+      "socioEconomicBackground" -> of(requiredValidValuesFormatter("socioEconomicBackground", SimpleAnswerOptions)),
+      "parentsDegree" -> of(requiredValidValuesFormatter("parentsDegree", ParentQualifications)),
+      "employedParent" -> of(requiredValidValuesFormatter("employmentStatus", ValidEmploymentAnswers)),
+      "parentsOccupation" -> of(employedDependentFormatter(Occupations)),
+      "employee" -> of(employedDependentFormatter(Employees)),
+      "organizationSize" -> of(employedDependentFormatter(OrganizationSizes)),
+      "supervise" -> of(employedDependentFormatter(SimpleAnswerOptions))
     )(ParentalOccupationQuestionnaireForm.Data.apply)(ParentalOccupationQuestionnaireForm.Data.unapply)
   )
 }
@@ -68,12 +92,19 @@ object ParentalOccupationQuestionnaireForm {
       val occupation = if (employedParent == "Employed") parentsOccupation else Some(employedParent)
 
       Questionnaire(List(
-        Question(Messages("socioEconomic.question"), Answer(Some(socioEconomicBackground), None, None)),
-        Question(Messages("parentsDegree.question"), Answer(Some(parentsDegree), None, None)),
-        Question(Messages("parentsOccupation.question"), Answer(occupation.sanitize, None, None)),
-        Question(Messages("employee.question"), Answer(employee, None, None)),
-        Question(Messages("organizationSize.question"), Answer(organizationSize, None, None)),
-        Question(Messages("supervise.question"), Answer(supervise, None, None))
+        Question(Messages("socioEconomic.question"), Answer(Some(socioEconomicBackground), otherDetails = None, unknown = None)),
+        Question(Messages("parentsDegree.question"), Answer(Some(parentsDegree), otherDetails = None, unknown = None)),
+        Question(Messages("parentsOccupation.question"), Answer(occupation.sanitize, otherDetails = None, unknown = None))
+      ).concat(
+        if (employedParent == "Employed") {
+          List(
+            Question(Messages("employee.question"), Answer(employee, otherDetails = None, unknown = None)),
+            Question(Messages("organizationSize.question"), Answer(organizationSize, otherDetails = None, unknown = None)),
+            Question(Messages("supervise.question"), Answer(supervise, otherDetails = None, unknown = None))
+          )
+        } else {
+          List.empty
+        }
       ))
     }
   }

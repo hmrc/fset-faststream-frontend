@@ -17,13 +17,14 @@
 package forms
 
 import forms.ParentalOccupationQuestionnaireForm.Data
+import play.api.data.FormError
+import play.api.i18n.Messages
 
 class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
 
   val form = new ParentalOccupationQuestionnaireForm().form
 
   "the occupation form" should {
-
     "be valid when all values are correct" in new Fixture {
       val validForm = form.bind(validFormValues)
       val expectedData = validFormData
@@ -35,24 +36,56 @@ class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
       assertFieldRequired(expectedError = "socioEconomicBackground", "socioEconomicBackground")
     }
 
+    "fail when the socioEconomicBackground value posted is invalid" in new Fixture {
+      assertFieldInvalid("socioEconomicBackground", "socioEconomicBackground", "BOOM")
+    }
+
     "fail when no parents degree" in new Fixture {
       assertFieldRequired(expectedError = "parentsDegree", "parentsDegree")
+    }
+
+    "fail when the parentsDegree value posted is invalid" in new Fixture {
+      assertFieldInvalid("parentsDegree", "parentsDegree", "BOOM")
     }
 
     "fail when no employedParent" in new Fixture {
       assertFieldRequired(expectedError = "employedParent", "employedParent")
     }
 
+    "fail when the employedParent value posted is invalid" in new Fixture {
+      assertFieldInvalid("employedParent", "employedParent", "BOOM")
+    }
+
+    "fail when no parentsOccupation" in new Fixture {
+      assertFieldRequired(expectedError = "parentsOccupation", "parentsOccupation")
+    }
+
+    "fail when the parentsOccupation value posted is invalid" in new Fixture {
+      assertFieldInvalid("parentsOccupation", "parentsOccupation", "BOOM")
+    }
+
     "fail when no employee" in new Fixture {
       assertFieldRequired(expectedError = "employee", "employee")
+    }
+
+    "fail when the employee value posted is invalid" in new Fixture {
+      assertFieldInvalid("employee", "employee", "BOOM")
     }
 
     "fail when no organizationSize" in new Fixture {
       assertFieldRequired(expectedError = "organizationSize", "organizationSize")
     }
 
+    "fail when the organizationSize value posted is invalid" in new Fixture {
+      assertFieldInvalid("organizationSize", "organizationSize", "BOOM")
+    }
+
     "fail when no supervise" in new Fixture {
       assertFieldRequired(expectedError = "supervise", "supervise")
+    }
+
+    "fail when the supervise value posted is invalid" in new Fixture {
+      assertFieldInvalid("supervise", "supervise", "BOOM")
     }
 
     "be valid when parents were unemployed" in new Fixture {
@@ -64,45 +97,63 @@ class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
 
     "transform properly to a question list" in new Fixture {
       val questionList = validFormData.exchange.questions
-      questionList.size must be(6)
-      questionList(0).answer.answer must be(Some("Yes"))
-      questionList(1).answer.answer must be(Some("Degree level qualification"))
-      questionList(2).answer.answer must be(Some("Some occupation"))
-      questionList(3).answer.answer must be(Some("Some employee"))
-      questionList(4).answer.answer must be(Some("Org size"))
-      questionList(5).answer.answer must be(Some("Yes"))
+      questionList.size mustBe 6
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList(1).answer.answer mustBe Some("Degree level qualification")
+      questionList(2).answer.answer mustBe Some("Traditional professional")
+      questionList(3).answer.answer mustBe Some("Employee")
+      questionList(4).answer.answer mustBe Some("Small (1 to 24 employees)")
+      questionList(5).answer.answer mustBe Some("Yes")
+    }
+
+    "transform correctly to a question list when the parent is not employed" in new Fixture {
+      val retiredParentFormData = Data(
+        socioEconomicBackground = "Yes",
+        parentsDegree = "Degree level qualification",
+        employedParent = "Retired",
+        parentsOccupation = None,
+        employee = None,
+        organizationSize = None,
+        supervise = None
+      )
+
+      val questionList = retiredParentFormData.exchange.questions
+      questionList.size mustBe 3
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList(1).answer.answer mustBe Some("Degree level qualification")
+      questionList(2).answer.answer mustBe Some("Retired")
     }
   }
 
   trait Fixture {
     val validFormData = Data(
-      "Yes",
-      "Degree level qualification",
-      "Employed",
-      Some("Some occupation"),
-      Some("Some employee"),
-      Some("Org size"),
-      Some("Yes")
+      socioEconomicBackground = "Yes",
+      parentsDegree =  "Degree level qualification",
+      employedParent = "Employed",
+      parentsOccupation = Some("Traditional professional"),
+      employee = Some("Employee"),
+      organizationSize = Some("Small (1 to 24 employees)"),
+      supervise = Some("Yes")
     )
 
     val validFormValues = Map(
       "socioEconomicBackground" -> "Yes",
       "parentsDegree" -> "Degree level qualification",
       "employedParent" -> "Employed",
-      "parentsOccupation" -> "Some occupation",
-      "employee" -> "Some employee",
-      "organizationSize" -> "Org size",
+      "parentsOccupation" -> "Traditional professional",
+      "employee" -> "Employee",
+      "organizationSize" -> "Small (1 to 24 employees)",
       "supervise" -> "Yes"
     )
 
     val validFormDataUnemployed = Data(
-      "No",
-      "No formal qualifications",
-      "Unemployed",
-      None,
-      None,
-      None,
-      None
+      socioEconomicBackground = "No",
+      parentsDegree = "No formal qualifications",
+      employedParent = "Unemployed",
+      parentsOccupation = None,
+      employee = None,
+      organizationSize = None,
+      supervise = None
     )
 
     val validFormValuesUnemployed = Map(
@@ -115,8 +166,12 @@ class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
       "supervise" -> ""
     )
 
-    def assertFieldRequired(expectedError: String, fieldKey: String*) =
-      assertFormError(expectedError, validFormValues ++ fieldKey.map(k => k -> ""))
+    // This sets the required field to an empty string and verifies the expected error is generated
+    def assertFieldRequired(expectedError: String, fieldKeys: String*) =
+      assertFormError(expectedError, validFormValues ++ fieldKeys.map(k => k -> ""))
+
+    def assertFieldInvalid(expectedError: String, key: String, value: String) =
+      assertFormError(expectedError, validFormValues ++ Map(key -> value))
 
     def assertFormError(expectedKey: String, invalidFormValues: Map[String, String]) = {
       val invalidForm = form.bind(invalidFormValues)
