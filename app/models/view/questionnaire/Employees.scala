@@ -16,11 +16,14 @@
 
 package models.view.questionnaire
 
-object Employees {
+import models.view.ValidAnswers
+
+object Employees extends ValidAnswers {
   val list = List(
     ("employee", "Employee", false),
     ("self-with-employees", "Self-employed with employees", false),
     ("self-without-employees", "Self-employed/freelancer without employees", false),
     ("unknown", "I don't know/prefer not to say", false)
   )
+  override val values = list.map { case (_, value, _) => value }
 }

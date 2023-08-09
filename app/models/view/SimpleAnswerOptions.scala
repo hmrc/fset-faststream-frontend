@@ -16,10 +16,11 @@
 
 package models.view
 
-object SimpleAnswerOptions {
+object SimpleAnswerOptions extends ValidAnswers {
   val list = List(
     ("yes", "Yes", false),
     ("no", "No", false),
     ("unknown", "I don't know/prefer not to say", false)
   )
+  override val values = list.map { case (_, value, _) => value }
 }

@@ -16,8 +16,10 @@
 
 package models.view.questionnaire
 
+import models.view.ValidAnswers
+
 // scalastyle:off line.size.limit
-object Occupations {
+object Occupations extends ValidAnswers {
   val seq = Seq(
     ("Traditional professional", "Accountant, solicitor, medical practitioner, scientist, civil/mechanical engineer"),
     ("Modern professional", "Teacher/lecturer, nurse, physiotherapist, social worker, welfare officer, artist, musician, police officer (sergeant or above), software designer"),
@@ -28,4 +30,5 @@ object Occupations {
     ("Semi-routine manual and service", "Postal worker, machine operative, security guard, caretaker, farm worker, catering assistant, receptionist, sales assistant"),
     ("Middle or junior managers", "Office manager, retail manager, bank manager, restaurant manager, warehouse manager, publican")
   )
+  override val values = seq.map { case (value, _) => value }.toList
 }

@@ -23,7 +23,6 @@ import javax.inject.{ Inject, Singleton }
 import play.api.mvc.Results.{ Forbidden, NotImplemented, Redirect }
 import play.api.mvc.{ Call, EssentialFilter, RequestHeader, Result }
 import play.api.{ Configuration, Logging }
-import uk.gov.hmrc.allowlist.AkamaiAllowlistFilter
 
 import scala.concurrent.Future
 

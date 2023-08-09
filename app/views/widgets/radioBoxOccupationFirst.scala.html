@@ -29,16 +29,21 @@
     <div>
         <label for="occupation-unemployed-seeking" class="block-label">
             <input type="radio" name="@name" id="occupation-unemployed-seeking" value="Unemployed but seeking work" class="hidesContent hidesOccupations"
-                @(if(value.contains("Unemployed but seeking work")) "checked" else "")>No, unemployed and seeking work
+                @(if(value.contains("Unemployed but seeking work")) "checked" else "")>No, unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for less than a year)
         </label>
     </div>
     <div>
         <label for="occupation-unemployed" class="block-label">
-            <input type="radio" name="@name" id="occupation-unemployed" value="Unemployed" class="hidesContent hidesOccupations"
-                @(if(value.contains("Unemployed")) "checked" else "")>No, unemployed and not seeking work
+            <input type="radio" name="@name" id="occupation-unemployed" value="Long term unemployed" class="hidesContent hidesOccupations"
+                @(if(value.contains("Long term unemployed")) "checked" else "")>No, long term unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for more than a year)
         </label>
     </div>
-
+    <div>
+        <label for="occupation-retired" class="block-label">
+            <input type="radio" name="@name" id="occupation-retired" value="Retired" class="hidesContent hidesOccupations"
+                @(if(value.contains("Retired")) "checked" else "")>No, retired
+        </label>
+    </div>
     <div>
         <label for="occupation-unknown" class="block-label">
             <input type="radio" name="@name" id="occupation-unknown" value="Unknown" class="hidesContent hidesOccupations"

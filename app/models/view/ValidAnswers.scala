@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package models.view.questionnaire
+package models.view
 
-import models.view.ValidAnswers
-
-object OrganizationSizes extends ValidAnswers {
-  val list = List(
-    ("small", "Small (1 to 24 employees)", false),
-    ("large", "Large (over 24 employees)", false),
-    ("unknown", "I don't know/prefer not to say", false)
-  )
-  override val values = list.map { case (_, value, _) => value }
+trait ValidAnswers {
+  val values: List[String]
 }

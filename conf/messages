@@ -249,12 +249,19 @@ error.postgradUniversity.degreeCategory.invalid = The postgraduate degree catego
 
 # Parental Questionnaire error messages
 error.required.socioEconomicBackground = You must tell us if you think you come from a lower socio-economic background, or choose ''prefer not to say''
-error.required.parentsDegree = You must tell us if your parent/guardian completed a university degree course, or qualifications below degree level, by the time you were 18, or choose ''prefer not to say''
+error.socioEconomicBackground.invalid = The socio-economic background is invalid
+error.required.parentsDegree = You must tell us what is the highest level of qualification achieved by either of your parent(s) or guardian(s) by the time you were 18, or choose ''prefer not to say''
+error.parentsDegree.invalid = The highest level of qualification by either of your parent(s) or guardian(s) is invalid
 error.required.employmentStatus = You must tell us the employment status of your highest-earning parent/guardian, or choose ''prefer not to say''
+error.employmentStatus.invalid = The employment status of your highest-earning parent/guardian is invalid
 error.required.parentsOccupation = You must tell us what type of work your highest-earning parent/guardian did
+error.parentsOccupation.invalid = The type of work your highest-earning parent/guardian did is invalid
 error.required.employee = You must tell us if your parent/guardian was either employed or self-employed, or choose ''prefer not to say''
+error.employee.invalid = The employment status for your parent/guardian is invalid
 error.required.organizationSize = You must tell us the size of your parent/guardian''s workplace, or choose ''prefer not to say''
+error.organizationSize.invalid = The size of your parent/guardian''s workplace is invalid
 error.required.supervise = You must tell us if your parent/guardian supervised employees, or choose ''prefer not to say''
+error.supervise.invalid = The parent/guardian supervised employees is invalid
 error.required.acceptance = Confirm you understand that the information you give here won''t affect your application
 
 #Questions section for questionnaire
@@ -278,13 +285,14 @@ postgradDegree.university.question = What is the name of the university you rece
 postgradDegree.degreeCategory.question = Which category best describes your postgraduate degree?
 postgradDegree.degreeType.question = Which of the following best describes your postgraduate degree?
 
-socioEconomic.question = Do you consider yourself to come from a lower socio-economic background?
+socioEconomic.question = Compared to people in general, would you describe yourself as coming from a lower socio-economic background?
+parentsDegree.question = What is the highest level of qualification achieved by either of your parent(s) or guardian(s) by the time you were 18?
 employedParent.question = When you were 14, was your highest-earning parent or guardian employed?
 parentsOccupation.question = When you were 14, what kind of work did your highest-earning parent or guardian do?
-parentsDegree.question = Do you have a parent or guardian that completed a university degree course, or qualifications below degree level, by the time you were 18?
 employee.question = Did they work as an employee or were they self-employed?
 organizationSize.question = Which size would best describe their place of work?
 supervise.question = Did they supervise employees?
+
 accept-terms.question = I understand this won''t affect my application
 
 success.allocation.confirmed = You''ve successfully confirmed your assessment date.

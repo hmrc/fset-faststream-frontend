@@ -16,10 +16,12 @@
 
 package models.view.questionnaire
 
-object ParentQualifications {
+import models.view.ValidAnswers
+
+object ParentQualifications extends ValidAnswers {
   // The first data item in the tuple specifies what the generated id will be for the widget
   // eg. id="parentsDegree-degree", id="parentsDegree-below-degree" etc
-  // The second data item is the text to display next to the field.
+  // The second data item is the text to display next to the field as well as the value posted
   // The third data item specifies whether selecting the field should trigger displaying another control
   val seq = Seq(
     ("degree", "Degree level qualification", false),
@@ -27,4 +29,5 @@ object ParentQualifications {
     ("none", "No formal qualifications", false),
     ("unknown", "I don't know/prefer not to say", false)
   )
+  override val values = seq.map { case (_, value, _) => value }.toList
 }
