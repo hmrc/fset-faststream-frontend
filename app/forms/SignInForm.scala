@@ -32,7 +32,6 @@ class SignInForm {
       "route" -> optional(text)
     )(SignInForm.Data.apply)(SignInForm.Data.unapply)
   )
-
 }
 
 object SignInForm {

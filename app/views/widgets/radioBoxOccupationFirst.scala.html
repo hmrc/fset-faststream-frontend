@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import forms.ParentEmploymentAnswers
 @(field : play.api.data.Field, isCompound: Boolean = false)(implicit messages: Messages)
 
 @import helpers.CSRSkinnyFieldConstructor._
@@ -22,32 +23,32 @@
 @helper.input(field) { (id, name, value, args) =>
     <div>
         <label for="occupation-employed" class="block-label inputTrigger" data-inputTrigger="occupations">
-            <input type="radio" name="@name" id="occupation-employed" value="Employed" class="showsContent showsOccupations"
-                @(if(value.contains("Employed")) "checked" else "")>Yes, employed or self-employed
+            <input type="radio" name="@name" id="occupation-employed" value="@ParentEmploymentAnswers.employed" class="showsContent showsOccupations"
+                @(if(value.contains(ParentEmploymentAnswers.employed)) "checked" else "")>Yes, employed or self-employed
         </label>
     </div>
     <div>
         <label for="occupation-unemployed-seeking" class="block-label">
-            <input type="radio" name="@name" id="occupation-unemployed-seeking" value="Unemployed but seeking work" class="hidesContent hidesOccupations"
-                @(if(value.contains("Unemployed but seeking work")) "checked" else "")>No, unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for less than a year)
+            <input type="radio" name="@name" id="occupation-unemployed-seeking" value="@ParentEmploymentAnswers.unemployedButSeekingWork" class="hidesContent hidesOccupations"
+                @(if(value.contains(ParentEmploymentAnswers.unemployedButSeekingWork)) "checked" else "")>No, unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for less than a year)
         </label>
     </div>
     <div>
         <label for="occupation-unemployed" class="block-label">
-            <input type="radio" name="@name" id="occupation-unemployed" value="Long term unemployed" class="hidesContent hidesOccupations"
-                @(if(value.contains("Long term unemployed")) "checked" else "")>No, long term unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for more than a year)
+            <input type="radio" name="@name" id="occupation-unemployed" value="@ParentEmploymentAnswers.longTermUnemployed" class="hidesContent hidesOccupations"
+                @(if(value.contains(ParentEmploymentAnswers.longTermUnemployed)) "checked" else "")>No, long term unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for more than a year)
         </label>
     </div>
     <div>
         <label for="occupation-retired" class="block-label">
-            <input type="radio" name="@name" id="occupation-retired" value="Retired" class="hidesContent hidesOccupations"
-                @(if(value.contains("Retired")) "checked" else "")>No, retired
+            <input type="radio" name="@name" id="occupation-retired" value="@ParentEmploymentAnswers.retired" class="hidesContent hidesOccupations"
+                @(if(value.contains(ParentEmploymentAnswers.retired)) "checked" else "")>No, retired
         </label>
     </div>
     <div>
         <label for="occupation-unknown" class="block-label">
-            <input type="radio" name="@name" id="occupation-unknown" value="Unknown" class="hidesContent hidesOccupations"
-                @(if(value.contains("Unknown")) "checked" else "")>I don't know/prefer not to say
+            <input type="radio" name="@name" id="occupation-unknown" value="@ParentEmploymentAnswers.unknown" class="hidesContent hidesOccupations"
+                @(if(value.contains(ParentEmploymentAnswers.unknown)) "checked" else "")>I don't know/prefer not to say
         </label>
     </div>
 }
