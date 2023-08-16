@@ -28,10 +28,6 @@ import play.api.i18n.Messages
 
 @Singleton
 class ParentalOccupationQuestionnaireForm {
-  private object ValidEmploymentAnswers extends ValidAnswers {
-    override val values = List("Employed", "Unemployed", "Long term unemployed", "Retired", "Unknown")
-  }
-
   private def requiredValidValuesFormatter(errorKey: String, validAnswers: ValidAnswers)(implicit messages: Messages) = new Formatter[String] {
     override def bind(key: String, request: Map[String, String]): Either[Seq[FormError], String] = {
       val requiredErrorMsg = messages(s"error.required.$errorKey")
@@ -69,7 +65,7 @@ class ParentalOccupationQuestionnaireForm {
     mapping(
       "socioEconomicBackground" -> of(requiredValidValuesFormatter("socioEconomicBackground", SimpleAnswerOptions)),
       "parentsDegree" -> of(requiredValidValuesFormatter("parentsDegree", ParentQualifications)),
-      "employedParent" -> of(requiredValidValuesFormatter("employmentStatus", ValidEmploymentAnswers)),
+      "employedParent" -> of(requiredValidValuesFormatter("employmentStatus", ParentEmploymentAnswers)),
       "parentsOccupation" -> of(employedDependentFormatter(Occupations)),
       "employee" -> of(employedDependentFormatter(Employees)),
       "organizationSize" -> of(employedDependentFormatter(OrganizationSizes)),
@@ -109,3 +105,13 @@ object ParentalOccupationQuestionnaireForm {
     }
   }
 }
+
+object ParentEmploymentAnswers extends ValidAnswers {
+  val employed = "Employed"
+  val unemployedButSeekingWork = "Unemployed but seeking work"
+  val longTermUnemployed = "Long term unemployed"
+  val retired = "Retired"
+  val unknown = "Unknown"
+  override val values = List(employed, unemployedButSeekingWork, longTermUnemployed, retired, unknown)
+}
+

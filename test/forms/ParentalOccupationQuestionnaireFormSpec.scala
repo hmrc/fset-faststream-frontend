@@ -106,22 +106,97 @@ class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
       questionList(5).answer.answer mustBe Some("Yes")
     }
 
-    "transform correctly to a question list when the parent is not employed" in new Fixture {
-      val retiredParentFormData = Data(
+    "transform correctly to a question list when the parent is employed" in new Fixture {
+      val formData = Data(
         socioEconomicBackground = "Yes",
         parentsDegree = "Degree level qualification",
-        employedParent = "Retired",
+        employedParent = ParentEmploymentAnswers.employed,
+        parentsOccupation = Some("Traditional professional"),
+        employee = Some("Employee"),
+        organizationSize = Some("Small (1 to 24 employees)"),
+        supervise = Some("Yes")
+      )
+
+      val questionList = formData.exchange.questions
+      questionList.size mustBe 6
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList(1).answer.answer mustBe Some("Degree level qualification")
+      questionList(2).answer.answer mustBe Some("Traditional professional")
+      questionList(3).answer.answer mustBe Some("Employee")
+      questionList(4).answer.answer mustBe Some("Small (1 to 24 employees)")
+      questionList(5).answer.answer mustBe Some("Yes")
+    }
+
+    "transform correctly to a question list when the parent is unemployed but seeking work" in new Fixture {
+      val formData = Data(
+        socioEconomicBackground = "Yes",
+        parentsDegree = "Degree level qualification",
+        employedParent = ParentEmploymentAnswers.unemployedButSeekingWork,
         parentsOccupation = None,
         employee = None,
         organizationSize = None,
         supervise = None
       )
 
-      val questionList = retiredParentFormData.exchange.questions
+      val questionList = formData.exchange.questions
       questionList.size mustBe 3
       questionList.head.answer.answer mustBe Some("Yes")
       questionList(1).answer.answer mustBe Some("Degree level qualification")
-      questionList(2).answer.answer mustBe Some("Retired")
+      questionList(2).answer.answer mustBe Some(ParentEmploymentAnswers.unemployedButSeekingWork)
+    }
+
+    "transform correctly to a question list when the parent is long term unemployed" in new Fixture {
+      val formData = Data(
+        socioEconomicBackground = "Yes",
+        parentsDegree = "Degree level qualification",
+        employedParent = ParentEmploymentAnswers.longTermUnemployed,
+        parentsOccupation = None,
+        employee = None,
+        organizationSize = None,
+        supervise = None
+      )
+
+      val questionList = formData.exchange.questions
+      questionList.size mustBe 3
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList(1).answer.answer mustBe Some("Degree level qualification")
+      questionList(2).answer.answer mustBe Some(ParentEmploymentAnswers.longTermUnemployed)
+    }
+
+    "transform correctly to a question list when the parent is retired" in new Fixture {
+      val formData = Data(
+        socioEconomicBackground = "Yes",
+        parentsDegree = "Degree level qualification",
+        employedParent = ParentEmploymentAnswers.retired,
+        parentsOccupation = None,
+        employee = None,
+        organizationSize = None,
+        supervise = None
+      )
+
+      val questionList = formData.exchange.questions
+      questionList.size mustBe 3
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList(1).answer.answer mustBe Some("Degree level qualification")
+      questionList(2).answer.answer mustBe Some(ParentEmploymentAnswers.retired)
+    }
+
+    "transform correctly to a question list when the parent's employment status is unknown" in new Fixture {
+      val formData = Data(
+        socioEconomicBackground = "Yes",
+        parentsDegree = "Degree level qualification",
+        employedParent = ParentEmploymentAnswers.unknown,
+        parentsOccupation = None,
+        employee = None,
+        organizationSize = None,
+        supervise = None
+      )
+
+      val questionList = formData.exchange.questions
+      questionList.size mustBe 3
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList(1).answer.answer mustBe Some("Degree level qualification")
+      questionList(2).answer.answer mustBe Some(ParentEmploymentAnswers.unknown)
     }
   }
 
@@ -149,7 +224,7 @@ class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
     val validFormDataUnemployed = Data(
       socioEconomicBackground = "No",
       parentsDegree = "No formal qualifications",
-      employedParent = "Unemployed",
+      employedParent = "Unemployed but seeking work",
       parentsOccupation = None,
       employee = None,
       organizationSize = None,
@@ -159,7 +234,7 @@ class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
     val validFormValuesUnemployed = Map(
       "socioEconomicBackground" -> "No",
       "parentsDegree" -> "No formal qualifications",
-      "employedParent" -> "Unemployed",
+      "employedParent" -> "Unemployed but seeking work",
       "parentsOccupation" -> "",
       "employee" -> "",
       "organizationSize" -> "",
