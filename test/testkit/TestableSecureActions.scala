@@ -32,6 +32,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
+// This class supports unit testing and creates a testable version of Secure Actions.
+// It needs to create some Silhoutte objects that still use the old Joda Date Time.
+// As migration from Silhoutte will take some time, we will leave this code as it is for the
+// time being.
 trait TestableSecureActions extends SecureActions {
   self: FrontendController =>
 
@@ -65,12 +69,16 @@ trait TestableSecureActions extends SecureActions {
       SecurityUser(UUID.randomUUID.toString),
       SessionAuthenticator(
         LoginInfo("fakeProvider", "fakeKey"),
-        DateTime.now(),
-        DateTime.now().plusDays(1),
+        now,
+        now.plusDays(1),
         idleTimeout = None, fingerprint = None
       ),
       request
     )
+
+  private def now[T] = {
+    DateTime.now()
+  }
 }
 
 // scalastyle:off method.name
@@ -88,14 +96,18 @@ trait TestableCSRSecureAction extends SecureActions {
         SecurityUser(UniqueIdentifier(UUID.randomUUID.toString).toString()),
         SessionAuthenticator(
           LoginInfo("fakeProvider", "fakeKey"),
-          DateTime.now(),
-          DateTime.now().plusDays(1),
+          now,
+          now.plusDays(1),
           idleTimeout = None, fingerprint = None
         ), request
       )
 //      implicit val carrier = PersonalDetailsController.hc(request)
       block(secReq)(CachedDataExample.ActiveCandidate)
     }
+  }
+
+  private def now[T] = {
+    DateTime.now()
   }
 }
 

@@ -16,7 +16,7 @@
 
 package mappings
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.Forms._
 import play.api.data.{FormError, Mapping}
 import play.api.data.format.Formatter
@@ -28,10 +28,10 @@ import scala.util.{Success, Try}
 case class DayMonthYear(day: String, month: String, year: String)
 
 object DayMonthYear {
-  implicit def toDate(dmy: DayMonthYear): LocalDate = new LocalDate(dmy.year.toInt, dmy.month.toInt, dmy.day.toInt)
+  implicit def toDate(dmy: DayMonthYear): LocalDate = LocalDate.of(dmy.year.toInt, dmy.month.toInt, dmy.day.toInt)
   implicit def fromLocalDate(dmy: LocalDate): DayMonthYear = DayMonthYear(
     dmy.getDayOfMonth.toString,
-    dmy.getMonthOfYear.toString,
+    dmy.getMonthValue.toString,
     dmy.getYear.toString
   )
 

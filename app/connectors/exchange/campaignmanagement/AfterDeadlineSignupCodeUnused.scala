@@ -16,12 +16,12 @@
 
 package connectors.exchange.campaignmanagement
 
-import org.joda.time.DateTime
-import play.api.libs.json.{ Json, OFormat }
+import play.api.libs.json.{Json, OFormat}
 
-case class AfterDeadlineSignupCodeUnused(unused: Boolean, expires: Option[DateTime] = None)
+import java.time.OffsetDateTime
+
+case class AfterDeadlineSignupCodeUnused(unused: Boolean, expires: Option[OffsetDateTime] = None)
 
 object AfterDeadlineSignupCodeUnused {
-  import models.FaststreamImplicits._
   implicit val afterDeadlineSignupCodeUnusedFormat: OFormat[AfterDeadlineSignupCodeUnused] = Json.format[AfterDeadlineSignupCodeUnused]
 }

@@ -76,6 +76,7 @@ class SignUpController @Inject() (
 
       def checkAppWindowBeforeProceeding (data: Map[String, String], fn: => Future[Result]): Future[Result] =
         signupCodeValid.map { sCodeValid =>
+
           if (sCodeValid) {
             fn
           } else {

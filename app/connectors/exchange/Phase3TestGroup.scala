@@ -20,6 +20,12 @@ import org.joda.time.DateTime
 import play.api.libs.json.Json
 import models.FaststreamImplicits._
 
+import java.time.OffsetDateTime
+
+// This file has not been migrated from Joda Time to Java time, because it is used by Phase3/ video tests stage and this
+// stage is disabled at this moment and can not be tested. We could have quickly migrated that to Java time but without
+// proper testing, it is not recommended. Once we enable Phase3/ video tests in the future we could proceed to migrate
+// to Java time and then do all the manual testing required.
 case class ReviewSectionCriteriaRequest(`type`: String, score: Option[Double])
 
 object ReviewSectionCriteriaRequest {
@@ -128,9 +134,9 @@ object LaunchpadTestCallbacks {
 case class Phase3Test(usedForResults: Boolean,
                       testUrl: String,
                       token: String,
-                      invitationDate: DateTime,
-                      startedDateTime: Option[DateTime] = None,
-                      completedDateTime: Option[DateTime] = None,
+                      invitationDate: OffsetDateTime,
+                      startedDateTime: Option[OffsetDateTime] = None,
+                      completedDateTime: Option[OffsetDateTime] = None,
   callbacks: LaunchpadTestCallbacks) {
   def started = startedDateTime.isDefined
   def completed = completedDateTime.isDefined
@@ -140,7 +146,7 @@ object Phase3Test {
   implicit def phase3TestFormat = Json.format[Phase3Test]
 }
 
-case class Phase3TestGroup(expirationDate: DateTime, tests: List[Phase3Test],
+case class Phase3TestGroup(expirationDate: OffsetDateTime, tests: List[Phase3Test],
                            evaluation: Option[PassmarkEvaluation] = None) {
   def activeTests = tests.filter(_.usedForResults)
 }

@@ -19,7 +19,7 @@ package connectors.exchange
 import mappings.Address
 import mappings.PhoneNumberMapping._
 import mappings.PostCodeMapping._
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.libs.json.{ Format, Json }
 
 case class GeneralDetails(firstName: String,
@@ -43,6 +43,5 @@ case class GeneralDetails(firstName: String,
                           )
 
 object GeneralDetails {
-  import models.FaststreamImplicits._
   implicit val generalDetailsFormat: Format[GeneralDetails] = Json.format[GeneralDetails]
 }

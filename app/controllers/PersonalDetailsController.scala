@@ -28,7 +28,7 @@ import helpers.NotificationTypeHelper
 import javax.inject.{ Inject, Singleton }
 import mappings.{ Address, DayMonthYear }
 import models.{ ApplicationRoute, CachedDataWithApp }
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.{ MessagesControllerComponents, Request, Result }
 import security.Roles.{ EditPersonalDetailsAndContinueRole, EditPersonalDetailsRole }

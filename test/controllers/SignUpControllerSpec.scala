@@ -16,15 +16,13 @@
 
 package controllers
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, OffsetDateTime}
 import java.time.format.DateTimeFormatter
-
 import connectors.exchange.campaignmanagement.AfterDeadlineSignupCodeUnused
 import forms.{SignUpForm, SignupFormGenerator}
 import models.ApplicationRoute._
 import models.SecurityUserExamples._
 import models.{CachedDataExample, CachedDataWithApp}
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import play.api.test.Helpers._
@@ -132,7 +130,7 @@ class SignUpControllerSpec extends BaseControllerSpec {
     "show the signup page when all application routes are closed but the user has a valid signup code" in new TestFixture {
       val validSignupCode = "abcd"
       when(mockApplicationClient.afterDeadlineSignupCodeUnusedAndValid(any())(any())).thenReturnAsync(
-        AfterDeadlineSignupCodeUnused(unused = true, expires = Some(DateTime.now.plusDays(2)))
+        AfterDeadlineSignupCodeUnused(unused = true, expires = Some(OffsetDateTime.now.plusDays(2)))
       )
 
       val appRouteState = new ApplicationRouteState {

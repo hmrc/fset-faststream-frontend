@@ -17,9 +17,9 @@
 package models.page
 
 import models.Adjustments
-import org.joda.time.DateTime
+import java.time.OffsetDateTime
 
-case class Phase2TestsPage(expirationDate: DateTime,
+case class Phase2TestsPage(expirationDate: OffsetDateTime,
                            tests: Seq[PsiTestPage],
                            adjustments: Option[Adjustments]) extends DurationFormatter {
 

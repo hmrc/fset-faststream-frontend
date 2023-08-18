@@ -17,17 +17,17 @@
 package connectors.exchange.candidatescores
 
 import models.UniqueIdentifier
-import org.joda.time.DateTime
 import play.api.libs.json.Json
+
+import java.time.OffsetDateTime
 
 case class AssessmentScoresFinalFeedback(
   feedback: String,
   updatedBy: UniqueIdentifier,
-  acceptedDate: DateTime,
+  acceptedDate: OffsetDateTime,
   version: Option[String] = None) {
 }
 
 object AssessmentScoresFinalFeedback {
-  import models.FaststreamImplicits._
   implicit val jsonFormat = Json.format[AssessmentScoresFinalFeedback]
 }

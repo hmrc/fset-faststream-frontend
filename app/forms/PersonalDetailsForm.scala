@@ -24,7 +24,7 @@ import mappings.PostCodeMapping._
 import mappings._
 import models.ApplicationRoute
 import models.ApplicationRoute._
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.{ Form, FormError }
@@ -33,7 +33,7 @@ import play.api.i18n.Messages
 @Singleton
 class PersonalDetailsForm {
   private val MinAge = 16
-  private val MinDob = new LocalDate(1900, 1, 1)
+  private val MinDob = LocalDate.of(1900, 1, 1)
 
   val firstName = "firstName"
   val lastName = "lastName"
@@ -50,7 +50,7 @@ class PersonalDetailsForm {
   val otherInternshipName = "otherInternshipName"
   val otherInternshipYear = "otherInternshipYear"
 
-  def ageReference(implicit now: LocalDate) = new LocalDate(now.getYear, 8, 31)
+  def ageReference(implicit now: LocalDate) = LocalDate.of(now.getYear, 8, 31)
 
   def maxDob(implicit now: LocalDate) = Some(ageReference.minusYears(MinAge))
 
@@ -256,7 +256,7 @@ object PersonalDetailsForm {
         lastName,
         preferredName,
         email,
-        LocalDate.parse(s"${dateOfBirth.year}-${dateOfBirth.month}-${dateOfBirth.day}"),
+        dateOfBirth,
         outsideUk.getOrElse(false),
         address,
         postCode.map(p => PostCodeMapping.formatPostcode(p)),

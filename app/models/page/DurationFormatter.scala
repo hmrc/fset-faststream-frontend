@@ -16,65 +16,38 @@
 
 package models.page
 
+import factories.DateTimeFactory
 import helpers.Timezones
-import org.joda.time.format.{ DateTimeFormatterBuilder, PeriodFormatterBuilder }
-import org.joda.time.{ DateTime, Period, PeriodType }
+import services.TimeFormattingService
 
-trait DurationFormatter {
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
-  def expirationDate: DateTime
+trait DurationFormatter extends TimeFormattingService {
 
-  private[page] def now = DateTime.now
+  def expirationDate: OffsetDateTime
 
-  def durationFromNow(date: DateTime): String = {
-    val period = new Period(now, date).normalizedStandard(PeriodType.yearMonthDayTime())
-    val periodFormat = new PeriodFormatterBuilder()
-      .appendYears()
-      .appendSuffix(" year", " years")
-      .appendSeparator(", ")
-      .appendMonths()
-      .appendSuffix(" month", " months")
-      .appendSeparator(", ")
-      .printZeroAlways()
-      .appendDays()
-      .appendSuffix(" day", " days")
-      .appendSeparator(", ")
-      .appendHours()
-      .appendSuffix(" hour", " hours")
-      .appendSeparator(" and ")
-      .appendMinutes()
-      .appendSuffix(" minute", " minutes")
-      .toFormatter
+  val dateTimeFactory: DateTimeFactory = DateTimeFactory
 
-    periodFormat print period
+  private[page] def now = OffsetDateTime.now
+
+  def getDuration: String = {
+    durationFromNowWithMoreZeros(expirationDate)
   }
 
-  def getDuration: String = durationFromNow(expirationDate)
+  private val expireTimeFormatter = DateTimeFormatter.ofPattern("h:mma")
 
-  private val expireTimeFormatter = new DateTimeFormatterBuilder()
-    .appendClockhourOfHalfday(1)
-    .appendLiteral(":")
-    .appendMinuteOfHour(2)
-    .appendHalfdayOfDayText()
+  private val expireDateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
 
-  private val expireDateFormatter = new DateTimeFormatterBuilder()
-    .appendDayOfMonth(1)
-    .appendLiteral(" ")
-    .appendMonthOfYearText()
-    .appendLiteral(" ")
-    .appendYear(4, 4)
+  private val expirationDateLondon = expirationDate.toZonedDateTime.withZoneSameInstant(Timezones.londonDateTimeZone).toOffsetDateTime
 
-  private val expirationDateLondon = expirationDate.withZone(Timezones.londonDateTimezone)
+  private def timeFormat(dateTime: OffsetDateTime) = expireTimeFormatter.format(dateTime).toLowerCase
 
-  private def timeFormat(dateTime: DateTime) = expireTimeFormatter.toFormatter.print(dateTime).toLowerCase
-
-  private def dateFormat(dateTime: DateTime) = expireDateFormatter.toFormatter.print(dateTime)
+  private def dateFormat(dateTime: OffsetDateTime) = expireDateFormatter.format(dateTime)
 
   def getExpireTime: String = timeFormat(expirationDate)
 
   def getExpireTimeLondon: String = timeFormat(expirationDateLondon)
-
-  def getExpireDateTime: String = expireTimeFormatter.append(expireDateFormatter.toFormatter).toFormatter.print(expirationDate)
 
   def getExpireDate: String = dateFormat(expirationDate)
 

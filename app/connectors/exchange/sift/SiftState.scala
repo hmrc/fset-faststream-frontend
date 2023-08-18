@@ -16,16 +16,15 @@
 
 package connectors.exchange.sift
 
-import org.joda.time._
 import play.api.libs.json.Json
 import services.TimeFormattingService
 
-case class SiftState(siftEnteredDate: DateTime, expirationDate: DateTime) {
+import java.time.OffsetDateTime
 
+case class SiftState(siftEnteredDate: OffsetDateTime, expirationDate: OffsetDateTime) {
   def expiryDateDurationRemaining: String = TimeFormattingService.durationFromNow(expirationDate)
 }
 
 object SiftState {
-  import models.FaststreamImplicits._
   implicit val siftStateFormat = Json.format[SiftState]
 }

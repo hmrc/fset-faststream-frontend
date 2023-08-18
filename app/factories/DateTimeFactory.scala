@@ -16,16 +16,16 @@
 
 package factories
 
-import org.joda.time.{ DateTime, LocalDate }
+import java.time.{ OffsetDateTime, LocalDate }
 
 trait DateTimeFactory {
-  def nowLocalTimeZone: DateTime // Uses `DateTimeZone.getDefault` (the timezone of the current machine).
+  def nowDateTime: OffsetDateTime // Uses `DateTimeZone.getDefault` (the timezone of the current machine).
 
   def nowLocalDate: LocalDate
 }
 
 object DateTimeFactory extends DateTimeFactory {
-  def nowLocalTimeZone = DateTime.now // Uses `DateTimeZone.getDefault` (the timezone of the current machine).
+  def nowDateTime = OffsetDateTime.now // Uses `DateTimeZone.getDefault` (the timezone of the current machine).
 
   def nowLocalDate = LocalDate.now
 }

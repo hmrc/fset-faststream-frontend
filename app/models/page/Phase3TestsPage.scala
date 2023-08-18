@@ -17,9 +17,9 @@
 package models.page
 
 import models.Adjustments
-import org.joda.time.DateTime
+import java.time.OffsetDateTime
 
-case class Phase3TestsPage(expirationDate: DateTime,
+case class Phase3TestsPage(expirationDate: OffsetDateTime,
                             started: Boolean,
                             completed: Boolean,
                             adjustments: Option[Adjustments]

@@ -18,19 +18,20 @@ package models.page
 
 import connectors.exchange.Phase2TestGroupWithActiveTest
 import models.AdjustmentsExamples._
-import org.joda.time.DateTime
 import testkit.UnitSpec
+
+import java.time.OffsetDateTime
 
 class Phase2TestsPageSpec extends UnitSpec {
 
   "Phase2TestsPage isInvigilatedETrayApproved" should {
     "return true when invigilated eTray has been approved" in {
-      val page = Phase2TestsPage(Phase2TestGroupWithActiveTest(DateTime.now(), Nil), Some(InvigilatedETrayAdjustment))
+      val page = Phase2TestsPage(Phase2TestGroupWithActiveTest(OffsetDateTime.now(), Nil), Some(InvigilatedETrayAdjustment))
       page.isInvigilatedETrayApproved mustBe true
     }
 
     "return false when invigilated eTray has not been approved" in {
-      val page = Phase2TestsPage(Phase2TestGroupWithActiveTest(DateTime.now(), Nil), Some(NoAdjustments))
+      val page = Phase2TestsPage(Phase2TestGroupWithActiveTest(OffsetDateTime.now(), Nil), Some(NoAdjustments))
       page.isInvigilatedETrayApproved mustBe false
     }
   }

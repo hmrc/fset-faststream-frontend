@@ -16,23 +16,23 @@
 
 package connectors.exchange
 
-import org.joda.time.DateTime
-import play.api.libs.json.{ Json, OFormat }
-import models.FaststreamImplicits._
+import play.api.libs.json.{Json, OFormat}
 
-case class Phase1TestGroupWithNames(expirationDate: DateTime, activeTests: Seq[PsiTest])
+import java.time.OffsetDateTime
+
+case class Phase1TestGroupWithNames(expirationDate: OffsetDateTime, activeTests: Seq[PsiTest])
 
 object Phase1TestGroupWithNames {
   implicit val format: OFormat[Phase1TestGroupWithNames] = Json.format[Phase1TestGroupWithNames]
 }
 
-case class Phase2TestGroupWithActiveTest(expirationDate: DateTime, activeTests: Seq[PsiTest])
+case class Phase2TestGroupWithActiveTest(expirationDate: OffsetDateTime, activeTests: Seq[PsiTest])
 
 object Phase2TestGroupWithActiveTest {
   implicit val phase2TestGroupWithNamesFormat = Json.format[Phase2TestGroupWithActiveTest]
 }
 
-case class SiftTestGroupWithActiveTest(expirationDate: DateTime, activeTest: PsiTest)
+case class SiftTestGroupWithActiveTest(expirationDate: OffsetDateTime, activeTest: PsiTest)
 
 object SiftTestGroupWithActiveTest {
   implicit val siftTestGroupFormat = Json.format[SiftTestGroupWithActiveTest]

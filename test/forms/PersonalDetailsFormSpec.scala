@@ -17,7 +17,7 @@
 package forms
 
 import forms.PersonalDetailsFormExamples._
-import org.joda.time.LocalDate
+import java.time.LocalDate
 
 class PersonalDetailsFormSpec extends BaseFormSpec {
   implicit val now = LocalDate.now
@@ -59,7 +59,7 @@ class PersonalDetailsFormSpec extends BaseFormSpec {
     }
 
     "be valid given a leap year 'date of birth'" in {
-      assertValidDateOfBirth(LocalDate.parse("1996-2-29"))
+      assertValidDateOfBirth(LocalDate.parse("1996-02-29"))
     }
 
     "be valid given a 'date of birth' exactly 16 years ago" in {
@@ -94,16 +94,16 @@ class PersonalDetailsFormSpec extends BaseFormSpec {
     }
 
     s"be invalid given a 'date of birth' before 01-01-1900" in {
-      assertValidDateOfBirth(new LocalDate(1900, 1, 1))
-      assertInvalidDateOfBirth(new LocalDate(1899, 12, 25))
+      assertValidDateOfBirth(LocalDate.of(1900, 1, 1))
+      assertInvalidDateOfBirth(LocalDate.of(1899, 12, 25), "error.dateOfBirth")
     }
 
     s"be invalid given a 'date of birth' less than 16 years ago" in {
-      assertInvalidDateOfBirth(ageReference.minusYears(16).plusDays(1))
+      assertInvalidDateOfBirth(ageReference.minusYears(16).plusDays(1), "error.dateOfBirth")
     }
 
     "be invalid given a 'date of birth' in the future" in {
-      assertInvalidDateOfBirth(now.plusDays(1))
+      assertInvalidDateOfBirth(now.plusDays(1), "error.dateOfBirthInFuture")
     }
 
     "be invalid without a postcode" in {
@@ -208,7 +208,7 @@ class PersonalDetailsFormSpec extends BaseFormSpec {
 
   def assertValidDateOfBirth(validDate: LocalDate) = {
     val day = validDate.getDayOfMonth.toString
-    val month = validDate.getMonthOfYear.toString
+    val month = validDate.getMonthValue.toString
     val year = validDate.getYear.toString
     val validForm = personalDetailsForm.bind(ValidUKAddress +
       ("dateOfBirth.day" -> day) +
@@ -221,15 +221,15 @@ class PersonalDetailsFormSpec extends BaseFormSpec {
     actualData.dateOfBirth.year mustBe year
   }
 
-  def assertInvalidDateOfBirth(invalidDate: LocalDate) = {
+  def assertInvalidDateOfBirth(invalidDate: LocalDate, expectedError: String) = {
     val day = invalidDate.getDayOfMonth.toString
-    val month = invalidDate.monthOfYear.toString
+    val month = invalidDate.getMonthValue.toString
     val year = invalidDate.getYear.toString
-    assertFormError("error.dateOfBirth", ValidUKAddress +
+    assertFormError(expectedError, ValidUKAddress +
       ("dateOfBirth.day" -> day) +
       ("dateOfBirth.month" -> month) +
       ("dateOfBirth.year" -> year))
   }
 
-  def ageReference(implicit now: LocalDate) = new LocalDate(now.getYear, 8, 31)
+  def ageReference(implicit now: LocalDate) = LocalDate.of(now.getYear, 8, 31)
 }

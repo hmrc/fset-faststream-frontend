@@ -17,7 +17,7 @@
 package connectors.exchange
 
 import mappings.AddressExamples._
-import org.joda.time.LocalDate
+import java.time.LocalDate
 
 object GeneralDetailsExamples {
   val FullDetails = GeneralDetails("firstName", "lastName", "preferredName", "email", dateOfBirth = LocalDate.now(), outsideUk = false,

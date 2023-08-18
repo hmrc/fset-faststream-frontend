@@ -18,7 +18,6 @@ package models.page
 
 import models.page.DashboardPage.Flags._
 import models.{ CachedData, Progress }
-import org.joda.time.LocalDate
 import play.api.mvc.RequestHeader
 import security.RoleUtils
 import security.ProgressStatusRoleUtils
@@ -54,7 +53,6 @@ case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
 
 object DashboardPage {
 
-  import connectors.exchange.AllocationDetails
   import models.ApplicationData.ApplicationStatus
   import models.ApplicationData.ApplicationStatus.ApplicationStatus
 
@@ -264,10 +262,4 @@ object DashboardPage {
 
   private def status(user: CachedData)(implicit request: RequestHeader, messages: Messages): Option[ApplicationStatus] =
     user.application.map(_.applicationStatus)
-
-  private def isConfirmationAllocationExpired(allocationDetails: Option[AllocationDetails]): Boolean =
-    allocationDetails match {
-      case Some(AllocationDetails(_, _, _, Some(expirationDate))) if LocalDate.now().isAfter(expirationDate) => true
-      case _ => false
-    }
 }

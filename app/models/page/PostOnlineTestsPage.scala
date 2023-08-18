@@ -22,15 +22,17 @@ import connectors.exchange.SchemeEvaluationResultWithFailureDetails
 import connectors.exchange.candidateevents.CandidateAllocationWithEvent
 import connectors.exchange.referencedata.Scheme
 import connectors.exchange.sift.SiftAnswersStatus.SiftAnswersStatus
-import connectors.exchange.sift.{ SiftAnswersStatus, SiftState }
-import helpers.{ CachedUserWithSchemeData, Timezones }
+import connectors.exchange.sift.{SiftAnswersStatus, SiftState}
+import helpers.{CachedUserWithSchemeData, Timezones}
 import models.events.EventType
 import models.page.DashboardPage.Flags
-import models.page.DashboardPage.Flags.{ ProgressActive, ProgressInactiveDisabled }
-import models.{ ApplicationRoute, SchemeStatus }
-import org.joda.time.{ DateTime, LocalTime }
-import security.{ ProgressStatusRoleUtils, RoleUtils }
+import models.page.DashboardPage.Flags.{ProgressActive, ProgressInactiveDisabled}
+import models.{ApplicationRoute, SchemeStatus}
+import java.time.LocalTime
+import security.{ProgressStatusRoleUtils, RoleUtils}
 
+import java.time.format.DateTimeFormatter
+import java.time.ZonedDateTime
 import scala.util.Try
 
 object PostOnlineTestsStage extends Enumeration {
@@ -129,12 +131,12 @@ case class PostOnlineTestsPage(
 
   private def dateTimeToStringWithOptionalMinutes(
     localTime: LocalTime): String = {
-    localTime.toString(if (localTime.toString("mm") == "00") "ha" else "h:mma")
+    localTime.format(DateTimeFormatter.ofPattern(if (localTime.format(DateTimeFormatter.ofPattern("mm")) == "00") "ha" else "h:mma"))
   }
 
   def eventStartDateAndTime(al: Option[CandidateAllocationWithEvent]): String =
     al.map { e =>
-      e.event.date.toString("EEEE d MMMM YYYY") + " at " + dateTimeToStringWithOptionalMinutes(
+      e.event.date.format(DateTimeFormatter.ofPattern("EEEE d MMMM YYYY")) + " at " + dateTimeToStringWithOptionalMinutes(
         e.event.sessions.head.startTime)
     }.getOrElse("No assessment centre")
 
@@ -205,8 +207,7 @@ case class PostOnlineTestsPage(
   val fsbAllocation = Try(
     allocationsWithEvent.filter(_.event.eventType == EventType.FSB).maxBy {
       allocation =>
-        allocation.event.date.toDateTime(
-          allocation.event.sessions.head.startTime)
+        allocation.event.date.atTime(allocation.event.sessions.head.startTime)
     }).toOption
 
   val assessmentCentreStartDateAndTime: String = eventStartDateAndTime(
@@ -217,16 +218,8 @@ case class PostOnlineTestsPage(
     allocationsWithEvent.map(_.event).exists { event =>
       val eventDate = event.date
       val sessionTime = event.sessions.head.startTime
-      val sessionDateTime = new DateTime(
-        eventDate.year.get,
-        eventDate.getMonthOfYear,
-        eventDate.getDayOfMonth,
-        sessionTime.getHourOfDay,
-        sessionTime.getMinuteOfHour,
-        sessionTime.getSecondOfMinute,
-        Timezones.londonDateTimezone
-      )
-      val timeNow = DateTime.now.toDateTime(Timezones.londonDateTimezone)
+      val sessionDateTime = ZonedDateTime.of(eventDate, sessionTime, Timezones.londonDateTimeZone)
+      val timeNow = ZonedDateTime.now.withZoneSameInstant(Timezones.londonDateTimeZone)
 
       timeNow.isAfter(sessionDateTime)
     }

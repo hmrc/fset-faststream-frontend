@@ -17,9 +17,9 @@
 package connectors.exchange
 
 import models.UniqueIdentifier
-import org.joda.time.DateTime
+
+import java.time.OffsetDateTime
 import play.api.libs.json.Json
-import models.FaststreamImplicits._
 
 // More data is sent by the backend but we only care about the report url
 case class PsiTestResult(testReportUrl: Option[String])
@@ -32,9 +32,9 @@ case class PsiTest(inventoryId: String,
                    usedForResults: Boolean,
                    testUrl: String,
                    orderId: UniqueIdentifier,
-                   invitationDate: DateTime,
-                   startedDateTime: Option[DateTime] = None,
-                   completedDateTime: Option[DateTime] = None,
+                   invitationDate: OffsetDateTime,
+                   startedDateTime: Option[OffsetDateTime] = None,
+                   completedDateTime: Option[OffsetDateTime] = None,
                    resultsReadyToDownload: Boolean = false,
                    testResult: Option[PsiTestResult] = None
 ) {

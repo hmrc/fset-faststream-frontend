@@ -31,12 +31,14 @@ import connectors.exchange.sift.SiftState
 import mappings.Address
 import models.events.{AllocationStatuses, EventType}
 import models.{Adjustments, ApplicationRoute, ProgressResponseExamples, UniqueIdentifier}
-import org.joda.time.{DateTime, LocalDate, LocalTime}
+import java.time.LocalDate
+import java.time.LocalTime
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
+import java.time.OffsetDateTime
 import java.util.UUID
 
 /*
@@ -57,7 +59,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
     val endpoint = s"/$base/campaign-management/afterDeadlineSignupCodeUnusedAndValid"
 
     "return afterDeadlineSignupCodeUnusedAndValid value" in new TestFixture {
-      val response = AfterDeadlineSignupCodeUnused(unused = true, expires = Some(DateTime.now()))
+      val response = AfterDeadlineSignupCodeUnused(unused = true, expires = Some(OffsetDateTime.now()))
 
       stubFor(get(urlPathEqualTo(endpoint))
         .withQueryParam("code", WireMock.equalTo(code))
@@ -113,7 +115,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
   "overrideSubmissionDeadline" should {
     val applicationId = UniqueIdentifier(UUID.randomUUID())
     val endpoint = s"/$base/application/overrideSubmissionDeadline/$applicationId"
-    val request = OverrideSubmissionDeadlineRequest(DateTime.now())
+    val request = OverrideSubmissionDeadlineRequest(OffsetDateTime.now())
 
     "return unit when OK is received" in new TestFixture {
       stubFor(put(urlPathEqualTo(endpoint))
@@ -654,7 +656,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         usedForResults = true,
         testUrl = "test@test.com",
         orderId = UniqueIdentifier(UUID.randomUUID()),
-        invitationDate = DateTime.now
+        invitationDate = OffsetDateTime.now
       ))
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
@@ -685,9 +687,9 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         usedForResults = true,
         testUrl = "test@test.com",
         orderId = UniqueIdentifier(UUID.randomUUID()),
-        invitationDate = DateTime.now
+        invitationDate = OffsetDateTime.now
       ))
-      val response = Phase1TestGroupWithNames(expirationDate = DateTime.now, activeTests)
+      val response = Phase1TestGroupWithNames(expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -717,9 +719,9 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         usedForResults = true,
         testUrl = "test@test.com",
         orderId = UniqueIdentifier(UUID.randomUUID()),
-        invitationDate = DateTime.now
+        invitationDate = OffsetDateTime.now
       ))
-      val response = Phase2TestGroupWithActiveTest(expirationDate = DateTime.now, activeTests)
+      val response = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -749,9 +751,9 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         usedForResults = true,
         testUrl = "test@test.com",
         orderId = UniqueIdentifier(UUID.randomUUID()),
-        invitationDate = DateTime.now
+        invitationDate = OffsetDateTime.now
       ))
-      val response = Phase1TestGroupWithNames(expirationDate = DateTime.now, activeTests)
+      val response = Phase1TestGroupWithNames(expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -781,9 +783,9 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         usedForResults = true,
         testUrl = "test@test.com",
         orderId = UniqueIdentifier(UUID.randomUUID()),
-        invitationDate = DateTime.now
+        invitationDate = OffsetDateTime.now
       ))
-      val response = Phase2TestGroupWithActiveTest(expirationDate = DateTime.now, activeTests)
+      val response = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -827,11 +829,11 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         usedForResults = true,
         testUrl = "test@test.com",
         token = "testtoken",
-        invitationDate = DateTime.now,
+        invitationDate = OffsetDateTime.now,
         callbacks = LaunchpadTestCallbacks(reviewed = Nil)
       ))
 
-      val response = Phase3TestGroup(expirationDate = DateTime.now, activeTests, evaluation = None)
+      val response = Phase3TestGroup(expirationDate = OffsetDateTime.now, activeTests, evaluation = None)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -888,9 +890,9 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         usedForResults = true,
         testUrl = "test@test.com",
         orderId = UniqueIdentifier(UUID.randomUUID()),
-        invitationDate = DateTime.now
+        invitationDate = OffsetDateTime.now
       )
-      val response = SiftTestGroupWithActiveTest(expirationDate = DateTime.now, activeTest)
+      val response = SiftTestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTest)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -915,7 +917,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
     val endpoint = s"/$base/sift-candidate/state/$applicationId"
 
     "return SiftState when OK is received" in new TestFixture {
-      val response = Some(SiftState(siftEnteredDate = DateTime.now, expirationDate = DateTime.now))
+      val response = Some(SiftState(siftEnteredDate = OffsetDateTime.now, expirationDate = OffsetDateTime.now))
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)

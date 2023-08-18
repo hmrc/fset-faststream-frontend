@@ -16,10 +16,8 @@
 
 package helpers
 
-import java.util.TimeZone
-
-import org.joda.time.DateTimeZone
+import java.time.ZoneId
 
 object Timezones {
-  val londonDateTimezone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/London"))
+  val londonDateTimeZone = ZoneId.of("Europe/London")
 }

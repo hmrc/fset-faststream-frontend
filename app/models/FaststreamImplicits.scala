@@ -16,8 +16,9 @@
 
 package models
 
-import org.joda.time.{ DateTime, LocalDate, LocalTime }
+import org.joda.time.{DateTime, LocalDate, LocalTime}
 import play.api.libs.json._
+
 
 object FaststreamImplicits {
   implicit val dateTimeFormatDefault = new Format[DateTime] {
