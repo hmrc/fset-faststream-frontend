@@ -48,7 +48,6 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Disability and health conditions")
-      content must include(onlineTestText)
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
     }
 
@@ -61,7 +60,6 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Disability and health conditions")
-      content must include(onlineTestText)
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
       content must include("Some fsac adjustments")
     }
@@ -129,7 +127,6 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
 
   trait TestFixture extends BaseControllerTestFixture {
     val phoneText = "Will you need any support for your phone interview?"
-    val onlineTestText = "Will you need any support for your work based scenarios or numerical test?"
 
     def controller(implicit candWithApp: CachedDataWithApp = currentCandidateWithApp) = {
       val formWrapper = new AssistanceDetailsForm

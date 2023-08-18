@@ -21,12 +21,17 @@
 
 <section>
     <fieldset>
-        <legend><h2 class="form-label">PLACEHOLDER: Will you need any support for your work based scenarios or numerical test?</h2></legend>
-        @*        <p class="form-hint text">For example, a request for reasonable adjustments such as extra time for those
-        with dyslexia.*@
-        <p class="form-hint text">PLACEHOLDER: Please note that work based scenarios and numerical tests are untimed tests.</p>
-        <p class="form-hint text">PLACEHOLDER: If you want to talk about your adjustment needs in more detail,
-            <a id="contactUsForOnlineAssessment" href="@routes.ApplicationController.helpdesk" class="">please contact us</a>.</p>
+        <legend><h2 class="form-label">Online tests and work based scenarios</h2></legend>
+        <p class="form-hint text">
+            The online tests and work based scenarios are untimed.</br>
+            We want to support you if you have an adjustment need.</br>
+            Further information on adjustments can be found
+            <a id="adjustmentsFurtherInformation"
+                href="https://www.gov.uk/government/publications/civil-service-fast-stream-promoting-diversity-and-inclusion" target="_blank" rel="external">here
+                <span class="visuallyhidden">link opens new window</span></a>.</br>
+
+            Please <a id="contactUsForOnlineAssessment" href="@routes.ApplicationController.helpdesk" class="">contact us</a> if you have an adjustment need.
+        </p>
         @*
         @radioBoxHorizontal(form("needsSupportForOnlineAssessment"), options = List(("yes", "Yes", true), ("no", "No", false)),
             optionTrigger = "needsSupportForOnlineAssessment-describe", isCompound = true)
