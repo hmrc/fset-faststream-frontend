@@ -28,8 +28,11 @@
 @panel4 = { @otherInternshipPanel(form) }
 
 <div id="civilServiceExperienceDetails_applicable-panel-yes" class="toggle-content" aria-hidden="true">
+    @* Note the use of underscore in the identifier used for the id field *@
+    @* This is needed to work with play's mechanism for hyperlinking to fields not passing validation *@
+    @* as play converts the dots to underscores *@
     @checkboxGroupWithFourInlineTogglePanels(form("civilServiceExperienceDetails.civilServantAndInternshipTypes"), FastPassForm.civilServantAndInternshipTypes,
-    Symbol("id") -> "civilServiceExperienceDetails.civilServantAndInternshipTypes",
+    Symbol("id") -> "civilServiceExperienceDetails_civilServantAndInternshipTypes",
     Symbol("_label") -> "Select all that apply") {
         @panel1
     } {

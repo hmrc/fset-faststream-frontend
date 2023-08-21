@@ -64,7 +64,7 @@
         * with underscore in it. This is making the validation error-link unclickable when address line 1 is omitted.
         * The rest of the fields with dotted id are not using this trick because they are not used in validation.
         *@
-        @helper.inputText(form("address.line1"), 'id -> "address.line1",
+        @helper.inputText(form("address.line1"), Symbol("id") -> "address_line1",
             Symbol("_label") -> "Address line 1 of 4",
             Symbol("_labelClass") -> "form-label visuallyhidden",
             Symbol("class") -> "form-control",
