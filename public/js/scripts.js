@@ -11,7 +11,7 @@ $(function () {
   var addressLookupUrlBase = '/fset-fast-stream/address-search/';
 
   var _this = this; // scope
-  _this.$addressLine1 = $('#address\\.line1');
+  _this.$addressLine1 = $('#address_line1');
   _this.$addressLine2 = $('#address_line2');
   _this.$addressLine3 = $('#address_line3');
   _this.$addressLine4 = $('#address_line4');
@@ -710,7 +710,7 @@ $(function() {
 
   $('#outsideUk').on('change', function() {
 
-    $('#address\\.line1').val("");
+    $('#address_line1').val("");
     $('#address_line2').val("");
     $('#address_line3').val("");
     $('#address_line4').val("");
