@@ -16,20 +16,21 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.SchemeClient.SchemePreferencesNotFound
-import connectors.exchange.referencedata.SchemeId
-import connectors.{ ReferenceDataClient, SchemeClient }
+import connectors.exchange.referencedata.{Scheme, SchemeId}
+import connectors.{ReferenceDataClient, SchemeClient}
 import forms.SelectedSchemesForm
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
+
+import javax.inject.{Inject, Singleton}
 import models.ApplicationRoute
 import models.page.SelectedSchemesPage
 import play.api.mvc.MessagesControllerComponents
 import security.Roles.SchemesRole
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SchemePreferencesController @Inject() (
@@ -45,13 +46,7 @@ class SchemePreferencesController @Inject() (
   def present = CSRSecureAppAction(SchemesRole) { implicit request =>
     implicit cachedData =>
       referenceDataClient.allSchemes.flatMap { schemes =>
-        val schemesWithHopLast = {
-          val HousesOfParliament = "HousesOfParliament"
-          val withoutHop = schemes.filterNot(s => s.id == SchemeId(HousesOfParliament))
-          val hop = schemes.filter(s => s.id == SchemeId(HousesOfParliament))
-          withoutHop ++ hop
-        }
-        val page = SelectedSchemesPage(schemesWithHopLast)
+        val page = SelectedSchemesPage(sortSchemes(schemes))
         val formObj = new SelectedSchemesForm(schemes, cachedData.application.isSdipFaststream)
         val civilServant = cachedData.application.civilServiceExperienceDetails.exists(_.isCivilServant)
 
@@ -64,13 +59,21 @@ class SchemePreferencesController @Inject() (
       }
   }
 
+  private def sortSchemes(schemes: List[Scheme]) = {
+    // Sort the schemes so HoP is last
+    val HousesOfParliament = "HousesOfParliament"
+    val withoutHop = schemes.filterNot(s => s.id == SchemeId(HousesOfParliament))
+    val hop = schemes.filter(s => s.id == SchemeId(HousesOfParliament))
+    withoutHop ++ hop
+  }
+
   def submit = CSRSecureAppAction(SchemesRole) { implicit request =>
     implicit cachedData =>
       referenceDataClient.allSchemes.flatMap { schemes =>
         val isCivilServant = cachedData.application.civilServiceExperienceDetails.exists(_.isCivilServant)
         new SelectedSchemesForm(schemes, cachedData.application.isSdipFaststream).form.bindFromRequest().fold(
           invalidForm => {
-            val page = SelectedSchemesPage(schemes)
+            val page = SelectedSchemesPage(sortSchemes(schemes))
             Future.successful(Ok(views.html.application.schemePreferences.schemeSelection(page, isCivilServant, invalidForm)))
           },
           selectedSchemes => {
