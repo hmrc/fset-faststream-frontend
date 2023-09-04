@@ -346,7 +346,7 @@ error.year.required=You must specify a year
 error.year.format=You must specify a valid 4 digit year
 
 # Phase1 tests
-tests.inventoryid.name.45c7aee3-4d23-45c7-a09d-276df7db3e4c=Work Style Questionnaire Part 1
+tests.inventoryid.name.45c7aee3-4d23-45c7-a09d-276df7db3e4c=Work Style Questionnaire
 tests.inventoryid.description.45c7aee3-4d23-45c7-a09d-276df7db3e4c=This test is untimed, but usually takes around 10-15 minutes to complete.
 tests.inventoryid.name.940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7=Situational Judgement Questionnaire - Interpersonal Skills
 tests.inventoryid.description.940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7=This test is untimed, but usually takes around 20 minutes to complete.
