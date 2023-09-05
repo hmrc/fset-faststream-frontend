@@ -41,4 +41,10 @@ case class SelectedSchemesPage(allSchemes: Seq[Scheme]) {
       .map { case (_, scheme) => scheme }
       .distinct
   }
+
+  def stemAndNonStemBothSelected(selectedSchemes: List[String]) = {
+    val governmentPolicyPair = List("GovernmentPolicy", "GovernmentPolicySTEM")
+    val operationalDeliveryPair = List("OperationalDelivery", "OperationalDeliverySTEM")
+    governmentPolicyPair.forall(selectedSchemes.contains) ||  operationalDeliveryPair.forall(selectedSchemes.contains)
+  }
 }

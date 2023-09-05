@@ -37,6 +37,10 @@ object ReferenceDataExamples {
       degree = None, Some(SiftRequirement.FORM), siftEvaluationRequired = true, fsbType = None, schemeGuide = None, schemeQuestion = None)
     val GovOps = Scheme("GovernmentOperationalResearchService", "GORS", "Government Operational Research Service", civilServantEligible = false,
       degree = None, Some(SiftRequirement.FORM), siftEvaluationRequired = true, fsbType = None, schemeGuide = None, schemeQuestion = None)
+    val GovPolicy = Scheme("GovernmentPolicy", "GP", "Government Policy", civilServantEligible = false,
+      degree = None, siftRequirement = None, siftEvaluationRequired = false, fsbType = None, schemeGuide = None, schemeQuestion = None)
+    val GovPolicySTEM = Scheme("GovernmentPolicySTEM", "GP_STEM", "Government Policy STEM", civilServantEligible = false,
+      degree = None, siftRequirement = None, siftEvaluationRequired = false, fsbType = None, schemeGuide = None, schemeQuestion = None)
     val GovSocialResearch = Scheme("GovernmentSocialResearchService", "GSR", "Government Social Research Service", civilServantEligible = false,
       degree = None, Some(SiftRequirement.FORM), siftEvaluationRequired = true, fsbType = None, schemeGuide = None, schemeQuestion = None)
     val GovStats = Scheme("GovernmentStatisticalService", "GSS", "Government Statistical Service", civilServantEligible = false,
@@ -47,6 +51,8 @@ object ReferenceDataExamples {
       siftEvaluationRequired = false, fsbType = None, schemeGuide = None, schemeQuestion = None)
     val OperationalDelivery = Scheme("OperationalDelivery", "OPD", "Operational Delivery", civilServantEligible = false, degree = None,
       siftRequirement = None, siftEvaluationRequired = false, fsbType = None, schemeGuide = None, schemeQuestion = None)
+    val OperationalDeliverySTEM = Scheme("OperationalDeliverySTEM", "OPD_STEM", "Operational Delivery STEM", civilServantEligible = false,
+      degree = None, siftRequirement = None, siftEvaluationRequired = false, fsbType = None, schemeGuide = None, schemeQuestion = None)
     val ProjectDelivery = Scheme("ProjectDelivery", "PDFS", "Project Delivery", civilServantEligible = false,
       degree = Some(Degree(required = "Degree_CharteredEngineer", specificRequirement = true)),
       Some(SiftRequirement.FORM), siftEvaluationRequired = true, fsbType = None, schemeGuide = None, schemeQuestion = None)
@@ -57,8 +63,9 @@ object ReferenceDataExamples {
     val Sdip = Scheme("Sdip", "SDIP", "Summer Diversity Internship Programme", civilServantEligible = false, degree = None,
       Some(SiftRequirement.FORM), siftEvaluationRequired = false, fsbType = None, schemeGuide = None, schemeQuestion = None)
 
-    val AllSchemes = (Commercial :: DDTaC :: Dip :: DipEcon :: Finance :: OperationalDelivery :: GovComms :: GovEconomics :: GovOps ::
-      GovSocialResearch :: GovStats :: HoP :: HR :: ProjectDelivery :: SciEng :: Edip :: Sdip :: Nil)
+    val AllSchemes = (Commercial :: DDTaC :: Dip :: DipEcon :: Finance :: OperationalDelivery :: OperationalDeliverySTEM :: GovComms ::
+      GovEconomics :: GovOps :: GovPolicy :: GovPolicySTEM :: GovSocialResearch :: GovStats :: HoP :: HR :: ProjectDelivery :: SciEng ::
+      Edip :: Sdip :: Nil)
       .filterNot( s => s.id == SchemeId("GovernmentCommunicationService")) // Filter out GFCS for 2021 campaign
 
     val SomeSchemes = Commercial :: DDTaC :: Dip :: Nil

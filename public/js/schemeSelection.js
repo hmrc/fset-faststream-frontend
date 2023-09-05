@@ -66,7 +66,7 @@ $(function () {
       $this.closest('.scheme-container').addClass('selected-scheme')
         .find('.selected-preference').text(getGetOrdinal(arrayPositionNow + 1)).removeClass('invisible');
 
-      if($('[data-schemename]:checked').length === maxSchemes) {
+      if($('[data-schemename]:checked').length === maxSchemes && $('#schemeWarning').length === 0) {
         $('[data-schemename]:not(:checked)').attr('disabled', true).closest('label').addClass('disabled');
         $('#selectedPrefList').after('<div id="schemeWarning" class="panel-info standard-panel"><p>You\'ve chosen the maximum number of schemes</p></div>');
       }
