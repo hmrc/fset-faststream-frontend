@@ -58,6 +58,8 @@ class SelectedSchemesForm(allSchemes: Seq[Scheme], isSdipFaststream: Boolean) {
           Left(List(FormError(formKey, Messages("schemes.required"))))
         case selectedSchemes if page.getInvalidSchemes(selectedSchemes).nonEmpty =>
           Left(List(FormError(formKey, Messages("schemes.required"))))
+        case selectedSchemes if page.stemAndNonStemBothSelected(selectedSchemes) =>
+          Left(List(FormError(formKey, Messages("schemes.stemAndNonStemBothSelected"))))
         case selectedSchemes =>
           Right(selectedSchemes)
       }
