@@ -34,10 +34,26 @@
         "<li>I am from an ethnic minority background.</li>" +
         "<li>I am from a socially or economically disadvantaged background.</li></ul>") }
 
+@rightToWorkBullet = {
+    <li>I have the
+        <a href="https://www.gov.uk/prove-right-to-work" rel="external" target="_blank">
+            right to work<span class="visuallyhidden">(link opens new window)</span>
+        </a>in the UK
+    </li>
+}
+
+@eligibleToWorkInCivilServiceBullet = {
+    <li>I am eligible to work in the UK Civil Service under the Civil Service
+        <a href="https://www.gov.uk/government/publications/nationality-rules" rel="external" target="_blank">
+            nationality rules<span class="visuallyhidden">(link opens new window)</span>
+        </a>
+    </li>
+}
+
 <section class="section-border clearfix" id="routeElig">
     <div class="text">
         <h2 class="heading-large">Choose your route</h2>
-        <p>If you want to apply for both the Fast Stream and SIP, please select the Civil Service Fast Stream option.</p>
+        @*<p>If you want to apply for both the Fast Stream and SIP, please select the Civil Service Fast Stream option.</p>*@
     </div>
     <fieldset class="form-group">
         <legend><h2 class="form-label">Which route do you want to choose?</h2></legend>
@@ -57,7 +73,11 @@
                 <h3 class="heading-medium">Confirm the following statements are true</h3>
             </div>
             <ul class="para-btm-margin text">
-                <li>I'm <a href="https://www.faststream.gov.uk/faqs/index.html" target="_blank" rel="external">eligible to work in the UK(link opens new window)</a></li>
+                <li>I'm
+                    <a href="https://www.faststream.gov.uk/faqs/index.html" target="_blank" rel="external">eligible to work in the UK
+                        <span class="visuallyhidden">(link opens new window)</span>
+                    </a>
+                </li>
                 <li>I have a relevant degree or qualify as a current civil servant</li>
                 <li>I meet my schemes eligibility requirements</li>
             </ul>
@@ -113,13 +133,15 @@
             </div>
             <ul id="edip-eligibility-list" class="para-btm-margin text">
                 <li>I'm not currently a civil servant</li>
-                <li>I'm either from a Black, Asian and Minority Ethnic (BAME) or socially/economically disadvantaged background, or have a disability</li>
+                <li>I'm either from a Black, Asian or Minority Ethnic background, or socially/economically disadvantaged background, or have a disability</li>
                 <li>I'm in the first year at university</li>
+                @rightToWorkBullet
+                @eligibleToWorkInCivilServiceBullet
                 <li>
                     I qualify to apply according to the
                         <a href="@edipUrl" rel="external" target="_blank">
-                            eligibility requirements<span class="visuallyhidden"> for EDIP (link opens new window)</span>
-                        </a>
+                            eligibility requirements<span class="visuallyhidden">(link opens new window)</span>
+                        </a>for EDIP
                 </li>
             </ul>
             @yesNoQuestion(form("edipEligible"), question = "Are you eligible to apply for the Early Diversity Internship Programme (EDIP)?",
@@ -138,10 +160,12 @@
             <ul id="sip-eligibility-list" class="para-btm-margin text">
                 <li>I'm not currently a civil servant</li>
                 <li>I'm in the final 2 years at university</li>
+                @rightToWorkBullet
+                @eligibleToWorkInCivilServiceBullet
                 <li>I qualify to apply according to the
                     <a href="@sdipUrl" rel="external" target="_blank">
-                        eligibility requirements<span class="visuallyhidden"> for SIP (link opens new window)</span>
-                    </a>
+                        eligibility requirements<span class="visuallyhidden">(link opens new window)</span>
+                    </a>for SIP
                 </li>
             </ul>
             @yesNoQuestion(form("sdipEligible"), question = "Are you eligible to apply for the Summer Internship Programme (SIP)?",
