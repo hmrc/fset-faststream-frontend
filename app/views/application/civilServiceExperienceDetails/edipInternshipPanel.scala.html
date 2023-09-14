@@ -20,8 +20,11 @@
 
 <div id="civilServiceExperienceDetails_civilServantAndInternshipTypes-EDIP-panel" class="toggle-content">
     <div class="panel-indent">
+        @* Note the use of underscore in the identifier used for the id field *@
+        @* This is needed to work with play's mechanism for hyperlinking to fields not passing validation *@
+        @* as play converts the dots to underscores *@
         @helper.inputText(form("civilServiceExperienceDetails.edipYear"),
-            Symbol("id") -> "civilServiceExperienceDetails.edipYear",
+            Symbol("id") -> "civilServiceExperienceDetails_edipYear",
             Symbol("_label") -> "What year did you complete the EDIP?",
             Symbol("class") -> "form-control form-control-1-3 med-btm-margin",
             Symbol("_showConstraints") -> false)
