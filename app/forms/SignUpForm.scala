@@ -78,7 +78,8 @@ class SignUpForm {
         case Some(appRoute) if appRoute.nonEmpty =>
           ApplicationRoute.withName(appRoute) match {
             case ApplicationRoute.Faststream => fastStreamCheck(appRoute, data)
-            case ApplicationRoute.Edip => edipEligibilityCheck(data)
+// Edip is disabled for 2023/24 campaign
+//            case ApplicationRoute.Edip => edipEligibilityCheck(data)
             case ApplicationRoute.Sdip => sdipCheck(data)
             case unknown => Left(List(FormError("eligible", s"Unrecognised application route $unknown")))
           }

@@ -185,6 +185,7 @@ object AssistanceDetailsForm {
   val preferNotToSay = "Prefer not to say"
   val other = "Other"
 
+  // NOTE: If these values change remember to also change them in fset-faststream-admin-frontend report code
   //scalastyle:off line.size.limit
   val disabilityCategoriesList = List(
     "Learning difference such as dyslexia, dyspraxia or AD(H)D",
