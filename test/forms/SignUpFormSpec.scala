@@ -245,12 +245,21 @@ class SignUpFormSpec extends BaseFormSpec {
       form.hasErrors mustBe false
     }
 
-    "throw an error if I haven't clicked on the I am eligible for EDIP" in {
+    // Edip is disabled for 2023/24 campaign
+    "throw an error if I haven't clicked on the I am eligible for EDIP" ignore {
       val (_, signUpForm) = SignupFormGenerator(applicationRoute = Some(ApplicationRoute.Edip),
         faststreamEligible = false, edipEligible = false).get
       signUpForm.hasErrors mustBe true
       signUpForm.errors.length mustBe 1
       signUpForm.errors("edipEligible").head.messages mustBe Seq(Messages("agree.edipEligible"))
+    }
+
+    "throw an error if I try to submit a form with the EDIP applicationRoute" in {
+      val (_, signUpForm) = SignupFormGenerator(applicationRoute = Some(ApplicationRoute.Edip),
+        faststreamEligible = false, edipEligible = true).get
+      signUpForm.hasErrors mustBe true
+      signUpForm.errors.length mustBe 1
+      signUpForm.errors("eligible").head.messages mustBe Seq("Unrecognised application route Edip")
     }
 
     "throw an error if I haven't clicked on the I am eligible for SDIP" in {

@@ -57,11 +57,18 @@
     </div>
     <fieldset class="form-group">
         <legend><h2 class="form-label">Which route do you want to choose?</h2></legend>
-
+@* Edip is disabled for 2023/24 campaign
         @radioBoxVerticalMultiToggle(form("applicationRoute"),
             options = List(
                 (ApplicationRoute.Faststream.toString, "Civil Service Fast Stream", "faststream-elig-describe"),
                 (ApplicationRoute.Edip.toString, "Early Diversity Internship Programme (EDIP)", "edip-elig-describe"),
+                (ApplicationRoute.Sdip.toString, "Summer Internship Programme (SIP)", "sip-elig-describe")
+            )
+        )
+*@
+        @radioBoxVerticalMultiToggle(form("applicationRoute"),
+            options = List(
+                (ApplicationRoute.Faststream.toString, "Civil Service Fast Stream", "faststream-elig-describe"),
                 (ApplicationRoute.Sdip.toString, "Summer Internship Programme (SIP)", "sip-elig-describe")
             )
         )
