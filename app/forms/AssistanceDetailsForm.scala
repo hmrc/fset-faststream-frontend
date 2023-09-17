@@ -115,9 +115,9 @@ class AssistanceDetailsForm {
       val isCorrectSize = request.isOtherDisabilityDescriptionSizeValid(maxSize)
 
       (dependencyCheck, isFilled, isCorrectSize) match {
-        case (true, false, _) => Left(List(FormError(key, "You must provide a disability description")))
         case (true, true, false) => Left(List(FormError(key, s"The disability description must not exceed $maxSize characters")))
         case (true, true, true) => Right(Some(request.otherDisabilityDescriptionParam))
+        case (true, false, _) => Right(None)
         case (false, _, _) => Right(None)
       }
     }
@@ -172,7 +172,6 @@ class AssistanceDetailsForm {
 
     def otherDisabilityDescriptionParam = param(otherDisabilityDescription).getOrElse("")
 
-    // If Other is selected then the description must not be empty
     def isOtherDisabilityDescriptionFilled = disabilityCategoriesParam.contains(other) && otherDisabilityDescriptionParam.nonEmpty
 
     // If Other is selected then the description must not be empty and not exceed the max size
