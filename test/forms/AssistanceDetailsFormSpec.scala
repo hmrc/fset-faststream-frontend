@@ -126,7 +126,7 @@ class AssistanceDetailsFormSpec extends BaseFormSpec {
       form.hasGlobalErrors mustBe false
     }
 
-    "be invalid when the fast stream candidate indicates they have disabilities, chooses other disability category but " +
+    "be valid when the fast stream candidate indicates they have disabilities, chooses other disability category but " +
       "does not fill in the description" in new Fixture {
       val form = formWrapper.bind(Map(
         "hasDisability" -> "Yes",
@@ -135,9 +135,7 @@ class AssistanceDetailsFormSpec extends BaseFormSpec {
         "needsSupportAtVenue" -> "Yes",
         "needsSupportAtVenueDescription" -> "Some fsac adjustments"
       ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "otherDisabilityDescription", message = "You must provide a disability description"))
-      form.errors mustBe expectedFormErrors
+      form.hasErrors mustBe false
       form.hasGlobalErrors mustBe false
     }
 
