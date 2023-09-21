@@ -127,7 +127,7 @@ error.certificateNumber.required = Enter your 7-digit certificate number
 
 civilServantAndInternshipType.civilServant = I am currently a civil servant
 civilServantAndInternshipType.EDIP = I completed the EDIP
-civilServantAndInternshipType.SDIP = I completed the SDIP
+civilServantAndInternshipType.SDIP = I completed the SIP/SDIP
 civilServantAndInternshipType.another = I completed another internship
 
 #assistance
