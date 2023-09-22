@@ -112,7 +112,7 @@ error.civilServantAndInternshipTypes.required = Tell us whether you''ve been par
 error.edipCompleted.required = Tell us if you have completed EDIP
 
 error.edipInternshipYear.required = You must provide the year of the EDIP internship
-error.sdipInternshipYear.required = You must provide the year of the SDIP internship
+error.sdipInternshipYear.required = You must provide the year of the SIP/SDIP internship
 
 error.edipCandidate.otherInternshipCompleted.required = Tell us if you completed an internship programme
 error.otherInternshipCompleted.required = Tell us if you completed another internship programme
