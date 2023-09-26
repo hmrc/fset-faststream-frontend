@@ -30,8 +30,7 @@ class DevFaststreamFilters @Inject() (
   val materializer: Materializer)
   extends DefaultHttpFilters(
     defaultFilters.filters.updated(defaultFilters.filters.indexWhere(_.toString.contains("AuditFilter")), auditFilter): _*) with Logging {
-  // Remember to set the logging at the correct level as this code is executed for EVERY request
-  logger.info("Allow list filter is NOT enabled")
+  logger.warn("Allow list filter is NOT enabled")
 }
 
 class ProductionFaststreamFilters @Inject() (
@@ -43,5 +42,5 @@ class ProductionFaststreamFilters @Inject() (
   extends DefaultHttpFilters((Seq(allowlistFilter) ++
     defaultFilters.filters.updated(defaultFilters.filters.indexWhere(_.toString.contains("AuditFilter")), auditFilter)
   ): _*) with Logging {
-  logger.info("Allow list filter is enabled")
+  logger.warn("Allow list filter is enabled")
 }
