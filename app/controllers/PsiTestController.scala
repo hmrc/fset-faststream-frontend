@@ -84,7 +84,8 @@ class PsiTestController @Inject() (config: FrontendAppConfig,
           if (incompleteTestsExists(testGroup.activeTests)) {
             Ok(views.html.application.onlineTests.continueTests(testCompletedName))
           } else {
-            Ok(views.html.application.onlineTests.phase1TestsComplete())
+            // The applicationId is needed for the survey url
+            Ok(views.html.application.onlineTests.phase1TestsComplete(testGroup.applicationId))
           }
         }
       }.recover {
@@ -107,7 +108,8 @@ class PsiTestController @Inject() (config: FrontendAppConfig,
           if (incompleteTestsExists(testGroup.activeTests)) {
             Ok(views.html.application.onlineTests.continueTests(testCompletedName))
           } else {
-            Ok(views.html.application.onlineTests.workBasedScenariosTestsComplete())
+            // The applicationId is needed for the survey url
+            Ok(views.html.application.onlineTests.workBasedScenariosTestsComplete(testGroup.applicationId))
           }
         }
       }.recover {

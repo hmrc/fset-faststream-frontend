@@ -33,7 +33,7 @@ class PsiTestControllerSpec extends BaseControllerSpec {
   "Complete phase 2 tests" should {
     "throw an exception if no active test is found for the given order id" in new TestFixture {
       val orderId = UniqueIdentifier(UUID.randomUUID().toString)
-      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now(), activeTests = Nil)
+      val p2TestGroup = Phase2TestGroupWithActiveTest(applicationId = "appId", expirationDate = OffsetDateTime.now(), activeTests = Nil)
       when(mockApplicationClient.getPhase2TestProfileByOrderId(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(p2TestGroup))
 
@@ -58,7 +58,9 @@ class PsiTestControllerSpec extends BaseControllerSpec {
         invitationDate = OffsetDateTime.now(), startedDateTime = None,
         completedDateTime = None)
 
-      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now(), activeTests = Seq(test1, test2))
+      val p2TestGroup = Phase2TestGroupWithActiveTest(
+        applicationId = "appId", expirationDate = OffsetDateTime.now(), activeTests = Seq(test1, test2)
+      )
 
       when(mockApplicationClient.getPhase2TestProfileByOrderId(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(p2TestGroup))
@@ -83,7 +85,9 @@ class PsiTestControllerSpec extends BaseControllerSpec {
         invitationDate = OffsetDateTime.now(), startedDateTime = Some(OffsetDateTime.now()),
         completedDateTime = Some(OffsetDateTime.now()))
 
-      val p2TestGroup = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now(), activeTests = Seq(test1, test2))
+      val p2TestGroup = Phase2TestGroupWithActiveTest(
+        applicationId = "appId", expirationDate = OffsetDateTime.now(), activeTests = Seq(test1, test2)
+      )
 
       when(mockApplicationClient.getPhase2TestProfileByOrderId(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(p2TestGroup))

@@ -20,13 +20,13 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.OffsetDateTime
 
-case class Phase1TestGroupWithNames(expirationDate: OffsetDateTime, activeTests: Seq[PsiTest])
+case class Phase1TestGroupWithNames(applicationId: String, expirationDate: OffsetDateTime, activeTests: Seq[PsiTest])
 
 object Phase1TestGroupWithNames {
   implicit val format: OFormat[Phase1TestGroupWithNames] = Json.format[Phase1TestGroupWithNames]
 }
 
-case class Phase2TestGroupWithActiveTest(expirationDate: OffsetDateTime, activeTests: Seq[PsiTest])
+case class Phase2TestGroupWithActiveTest(applicationId: String, expirationDate: OffsetDateTime, activeTests: Seq[PsiTest])
 
 object Phase2TestGroupWithActiveTest {
   implicit val phase2TestGroupWithNamesFormat = Json.format[Phase2TestGroupWithActiveTest]
