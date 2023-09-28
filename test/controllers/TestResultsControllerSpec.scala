@@ -127,9 +127,15 @@ class TestResultsControllerSpec extends BaseControllerSpec {
 
     def mockPhaseOneTwoThreeData(phase1Tests: List[PsiTest] = Nil, phase2Tests: List[PsiTest] = Nil) = {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase1TestGroupWithNames(expirationDate = OffsetDateTime.now, activeTests = phase1Tests)))
+        .thenReturn(
+          Future.successful(Phase1TestGroupWithNames(applicationId = "appId", expirationDate = OffsetDateTime.now, activeTests = phase1Tests))
+        )
       when(mockApplicationClient.getPhase2TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTests = phase2Tests)))
+        .thenReturn(
+          Future.successful(
+            Phase2TestGroupWithActiveTest(applicationId = "appId", expirationDate = OffsetDateTime.now, activeTests = phase2Tests)
+          )
+        )
       when(mockApplicationClient.getPhase3TestGroup(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.successful(Phase3TestGroup(expirationDate = OffsetDateTime.now, tests = Nil)))
     }

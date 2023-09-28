@@ -15,7 +15,9 @@
  *@
 
 @import config.TrackingConsentConfig
-@()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(applicationId: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@surveyUrl = @{ s"http://PLACEHOLDER.COM?applicationId=$applicationId" }
 
 @main_template(title = "Work based scenarios complete | Apply for the Civil Service Fast Stream") {
     <div class="success-banner">
@@ -37,7 +39,8 @@
                 }
 
                 <p>
-                    <a href="@feedbackUrl" target="_blank" rel="external">Give feedback?</a> (30 second survey)
+                    <a href=@surveyUrl target="_blank" rel="external">Give feedback? <b>(PLACEHOLDER TEXT)</b>
+                        <span class="visuallyhidden">link opens new window</span></a>
                 </p>
             </div>
         </div>

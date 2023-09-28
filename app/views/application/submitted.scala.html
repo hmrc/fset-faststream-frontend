@@ -27,15 +27,17 @@
         <h1 class="heading-large no-btm-margin"><i class="fa fa-check" aria-hidden="true"></i>Application submitted</h1>
     </div>
     <div class="panel-indent">
-        <p><i class="fa fa-envelope-o" aria-hidden="true"></i>We've sent you an email confirming your
-            application</p>
+        <p><i class="fa fa-envelope-o" aria-hidden="true"></i>We've sent you an email confirming your application</p>
     </div>
     <section>
         <div class="text">
             <h2 class="heading-large">What happens next?</h2>
             <p>The next step is to complete the online exercises.</p>
             <a href="@routes.HomeController.present()" class="button">See the next steps</a>
-            <p><a href="@feedbackUrl" target="_blank" rel="external">Give feedback?</a> (30 second survey)</p>
+            <p>
+                <a href="@feedbackUrl" target="_blank" rel="external">Give feedback?
+                    <span class="visuallyhidden">link opens new window</span></a> (30 second survey)
+            </p>
         </div>
     </section>
 }

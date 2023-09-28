@@ -689,7 +689,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         orderId = UniqueIdentifier(UUID.randomUUID()),
         invitationDate = OffsetDateTime.now
       ))
-      val response = Phase1TestGroupWithNames(expirationDate = OffsetDateTime.now, activeTests)
+      val response = Phase1TestGroupWithNames(applicationId = "appId", expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -721,7 +721,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         orderId = UniqueIdentifier(UUID.randomUUID()),
         invitationDate = OffsetDateTime.now
       ))
-      val response = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTests)
+      val response = Phase2TestGroupWithActiveTest(applicationId = "appId", expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -753,7 +753,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         orderId = UniqueIdentifier(UUID.randomUUID()),
         invitationDate = OffsetDateTime.now
       ))
-      val response = Phase1TestGroupWithNames(expirationDate = OffsetDateTime.now, activeTests)
+      val response = Phase1TestGroupWithNames(applicationId = "appId", expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)
@@ -785,7 +785,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
         orderId = UniqueIdentifier(UUID.randomUUID()),
         invitationDate = OffsetDateTime.now
       ))
-      val response = Phase2TestGroupWithActiveTest(expirationDate = OffsetDateTime.now, activeTests)
+      val response = Phase2TestGroupWithActiveTest(applicationId = "appId", expirationDate = OffsetDateTime.now, activeTests)
 
       stubFor(get(urlPathEqualTo(endpoint)).willReturn(
         aResponse().withStatus(OK).withBody(Json.toJson(response).toString)

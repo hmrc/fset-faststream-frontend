@@ -26,12 +26,18 @@ class Phase2TestsPageSpec extends UnitSpec {
 
   "Phase2TestsPage isInvigilatedETrayApproved" should {
     "return true when invigilated eTray has been approved" in {
-      val page = Phase2TestsPage(Phase2TestGroupWithActiveTest(OffsetDateTime.now(), Nil), Some(InvigilatedETrayAdjustment))
+      val page = Phase2TestsPage(
+        Phase2TestGroupWithActiveTest(applicationId = "appId", expirationDate = OffsetDateTime.now(), activeTests = Nil),
+        Some(InvigilatedETrayAdjustment)
+      )
       page.isInvigilatedETrayApproved mustBe true
     }
 
     "return false when invigilated eTray has not been approved" in {
-      val page = Phase2TestsPage(Phase2TestGroupWithActiveTest(OffsetDateTime.now(), Nil), Some(NoAdjustments))
+      val page = Phase2TestsPage(
+        Phase2TestGroupWithActiveTest(applicationId = "appId", expirationDate = OffsetDateTime.now(), activeTests = Nil),
+        Some(NoAdjustments)
+      )
       page.isInvigilatedETrayApproved mustBe false
     }
   }
