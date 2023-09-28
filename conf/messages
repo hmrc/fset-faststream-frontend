@@ -201,8 +201,8 @@ qualification.Degree_Numerate.description=2:1 degree in a numerate subject
 qualification.Degree_GORS.description=2:1 degree in a numerate subject, or a 2:2 with a relevant postgraduate degree
 qualification.Degree_SocialScience.description=2:1 degree in a relevant social science subject, or a 2:2 with a relevant postgraduate degree
 qualification.Degree_CharteredEngineer.description=2:1 degree and at least a postgraduate degree in a relevant subject, or you must be a registered chartered engineer
-qualification.Degree_OPD_STEM.description=Requires at least a 2:2 degree in a STEM subject; Economics, Accountancy / numerical based, BSc, MSc.
-qualification.Degree_GP_STEM.description=Requires at least a 2:2 degree in a STEM subject; Economics, Accountancy / numerical based, BSc, MSc.
+qualification.Degree_OPD_STEM.description=2:2 degree in a STEM subject; Economics, Accountancy / numerical based, BSc, MSc.
+qualification.Degree_GP_STEM.description=2:2 degree in a STEM subject; Economics, Accountancy / numerical based, BSc, MSc.
 
 # Should rarely ever occur. Will either occur if we start calculating location availability dynamically, or if the
 # YAML file has changed between the user loading the page, and submitting their preference (unlikely, but possible).
