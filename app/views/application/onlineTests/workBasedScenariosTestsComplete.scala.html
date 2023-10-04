@@ -17,7 +17,7 @@
 @import config.TrackingConsentConfig
 @(applicationId: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@surveyUrl = @{ s"http://PLACEHOLDER.COM?applicationId=$applicationId" }
+@surveyUrl = @{ s"https://civilserviceinsight.qualtrics.com/jfe/form/SV_9ojmPyGjeN00scu?Ref=2&Code=$applicationId" }
 
 @main_template(title = "Work based scenarios complete | Apply for the Civil Service Fast Stream") {
     <div class="success-banner">
@@ -32,14 +32,13 @@
                     the outcome. Make sure you check your junk inbox.</p>
                 @if(user.isDefined) {
                     <a href="@routes.HomeController.present()" class="button">Continue</a>
-                    <p>Finished with the service? <a href="@routes.SignInController.signOut">Sign out</a></p>
                 } else {
                     <p>You've been signed out. <a href="@routes.SignInController.signIn">Sign in</a>
                         to return to your home page.</p>
                 }
 
                 <p>
-                    <a href=@surveyUrl target="_blank" rel="external">Give feedback? <b>(PLACEHOLDER TEXT)</b>
+                    <a href=@surveyUrl target="_blank" rel="external">Give feedback? (short survey)
                         <span class="visuallyhidden">link opens new window</span></a>
                 </p>
             </div>
