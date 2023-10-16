@@ -55,24 +55,39 @@ $(function () {
   }
 
   function addressSearchByPostcode(postcode) {
-    var url = addressLookupUrlBase + '?postcode=' + sanitisePostcode(postcode);
-    $.getJSON(url, function (result) {
-      _this.$addressSelect.append(
-          '<option value=\'void\'>' + result.length + ' results found</option>'
-      );
+    var csrfToken = document.querySelector('input[name="csrfToken"]').value;
+    var data = {
+      postcode : sanitisePostcode(postcode),
+      csrfToken : csrfToken
+    };
 
-      $.map(result, function (lookupReply) {
-        var address = lookupReply.address.lines[0] + ' ' + lookupReply.address.town;
+    $.ajax({
+      url:         addressLookupUrlBase,
+      type:        "POST",
+      data:        JSON.stringify(data),
+      contentType: "application/json; charset=UTF-8",
+      dataType:    "json",
+      headers: {
+         'Csrf-Token': csrfToken
+      },
+      success:     function (result){
         _this.$addressSelect.append(
-            '<option value=\'' + lookupReply.uprn + '\'>' + address + '</option>'
+            '<option value=\'void\'>' + result.length + ' results found</option>'
         );
-      });
-      var addressSelector = _this.$addressesSelectorContainer;
-      addressSelector.removeClass('toggle-content');
-      addressSelector.slideDown('slow');
 
-      _this.$addressesSelectorContainer.attr('aria-hidden', 'false');
-      _this.$addressSelect.focus();
+        $.map(result, function (lookupReply) {
+          var address = lookupReply.address.lines[0] + ' ' + lookupReply.address.town;
+          _this.$addressSelect.append(
+              '<option value=\'' + lookupReply.uprn + '\'>' + address + '</option>'
+          );
+        });
+        var addressSelector = _this.$addressesSelectorContainer;
+        addressSelector.removeClass('toggle-content');
+        addressSelector.slideDown('slow');
+
+        _this.$addressesSelectorContainer.attr('aria-hidden', 'false');
+        _this.$addressSelect.focus();
+      }
     }).fail(postCodeSearchFailHandler);
   }
 
@@ -111,9 +126,17 @@ $(function () {
       hideAddressSelectorContainer();
     }
   }
+  function uprnSearchFailHandler(xhr) {
+    _this.$addressesSelectorContainer.attr('aria-hidden', 'true');
+    hideResultsLink();
+    if (xhr.status === BAD_REQUEST) {
+      showPostCodeError('Address is not valid');
+      hideAddressSelectorContainer();
+    }
+  }
 
   function getAddressById(id, successFunction) {
-    $.getJSON(addressLookupUrlBase + id,  successFunction).fail(postCodeSearchFailHandler);
+    $.getJSON(addressLookupUrlBase + id,  successFunction).fail(uprnSearchFailHandler);
   }
 
   function showPostCodeError(text) {

@@ -16,16 +16,17 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.addresslookup.AddressLookupClient
-import javax.inject.{ Inject, Singleton }
-import play.api.libs.json.Json
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+
+import javax.inject.{Inject, Singleton}
+import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.Roles.EditPersonalDetailsAndContinueRole
 import security.SilhouetteComponent
 import uk.gov.hmrc.http.BadRequestException
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import helpers.NotificationTypeHelper
 
 @Singleton
@@ -36,21 +37,44 @@ class AddressLookupController @Inject() (
   val silhouetteComponent: SilhouetteComponent,
   val notificationTypeHelper: NotificationTypeHelper,
   addressLookupClient: AddressLookupClient)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
-  def addressLookupByPostcode(postcode: String): Action[AnyContent] = CSRSecureAction(EditPersonalDetailsAndContinueRole) {
-    implicit request => implicit cachedData =>
-      val decoded = java.net.URLDecoder.decode(postcode, "UTF8")
-      addressLookupClient.findByPostcode(decoded, filter = None).map {
-        case head :: tail => Ok(Json.toJson(head :: tail))
-        case Nil => NotFound
-      }.recover {
-        case e: BadRequestException =>
-          logger.debug(s"Postcode lookup service returned ${e.getMessage} for postcode $postcode")
-          BadRequest
+
+  case class Data(postcode: String)
+  object Data {
+    implicit val format: OFormat[Data] = Json.format[Data]
+  }
+
+  private def isValidPostcode(postcode: String) = {
+    // 1 or more alphanumeric characters
+    // followed by 0 or 1 spaces
+    // followed by 1 or more alphanumeric characters
+    postcode.matches("^[a-zA-Z0-9]+[ ]?[a-zA-Z0-9]+$")
+  }
+
+  def addressLookupByPostcode: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    withJsonBody[Data] { data =>
+      val postcode = data.postcode
+      if (isValidPostcode(postcode)) {
+        val decoded = java.net.URLDecoder.decode(postcode, "UTF8")
+        addressLookupClient.findByPostcode(decoded, filter = None).map {
+          case head :: tail => Ok(Json.toJson(head :: tail))
+          case Nil => NotFound
+        }.recover {
+          case e: BadRequestException =>
+            logger.error(s"Postcode lookup service returned ${e.getMessage} for postcode $postcode")
+            BadRequest
+        }
+      } else {
+        Future.successful(BadRequest(s"Invalid postcode:$postcode"))
       }
+    }
   }
 
   def addressLookupByUprn(uprn: String): Action[AnyContent] = CSRSecureAction(EditPersonalDetailsAndContinueRole) {
-    implicit request => implicit cachedData =>
-    addressLookupClient.findByUprn(uprn).map(address => Ok(Json.toJson(address)) )
+    implicit request => implicit _cachedData =>
+    addressLookupClient.findByUprn(uprn).map(address => Ok(Json.toJson(address)) ).recover {
+      case e: BadRequestException =>
+        logger.error(s"Postcode lookup service returned ${e.getMessage} for uprn:$uprn")
+        BadRequest
+    }
   }
 }

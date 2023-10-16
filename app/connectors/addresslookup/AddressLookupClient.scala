@@ -59,7 +59,11 @@ class AddressLookupClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(i
     http.POST[LookupAddressByUprnRequest, List[AddressRecord]](
       s"$addressLookupEndpoint/lookup/by-uprn",
       LookupAddressByUprnRequest(uprn)
-    ).map( _.head )
+    ).map( _.head ). recover {
+      case e: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(e).contains(BAD_REQUEST) =>
+        logger.debug(s"AddressLookupClient received BAD_REQUEST for uprn: $uprn. Error message: ${e.getMessage()}")
+        throw new BadRequestException(e.getMessage())
+    }
   }
 
   private def enc(s: String) = URLEncoder.encode(s, "UTF-8")
