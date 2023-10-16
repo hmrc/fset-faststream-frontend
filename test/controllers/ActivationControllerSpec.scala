@@ -104,8 +104,7 @@ class ActivationControllerSpec extends BaseControllerSpec {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.ActivationController.present.url)
-      flash(result).data mustBe Map("success" -> ("activation.code-resent")
-      )
+      flash(result).data mustBe Map("success" -> "activation.code-resent")
     }
   }
 

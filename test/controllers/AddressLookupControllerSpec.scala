@@ -18,9 +18,10 @@ package controllers
 
 import connectors.addresslookup.{Address, AddressLookupClient, AddressRecord, Country}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
+import play.api.test.{FakeHeaders, FakeRequest, Helpers}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import testkit.MockitoImplicits._
 import testkit.TestableSecureActions
@@ -45,16 +46,16 @@ class AddressLookupControllerSpec extends BaseControllerSpec {
 
       when(mockAddressLookupClient.findByPostcode(any[String], any[Option[String]])(any[HeaderCarrier])).thenReturnAsync(addresses)
 
-      val response = controller.addressLookupByPostcode(postcode)(fakeRequest)
+      val response = controller.addressLookupByPostcode(createRequest("{\"postcode\":\"AB99 9AA\"}"))
       status(response) mustBe OK
       val data = Json.fromJson[List[AddressRecord]](Json.parse(contentAsString(response))).get
       data mustBe addresses
     }
 
-    "return NOT_FOUND if no addresses are found" in new TestFixture {
+    "return NOT_FOUND if no addresses are found POST" in new TestFixture {
       when(mockAddressLookupClient.findByPostcode(any[String], any[Option[String]])(any[HeaderCarrier])).thenReturnAsync(Nil)
 
-      val response = controller.addressLookupByPostcode("AB99 9AA")(fakeRequest)
+      val response = controller.addressLookupByPostcode(createRequest("{\"postcode\":\"AB99 9AA\"}"))
       status(response) mustBe NOT_FOUND
     }
 
@@ -62,8 +63,25 @@ class AddressLookupControllerSpec extends BaseControllerSpec {
       when(mockAddressLookupClient.findByPostcode(any[String], any[Option[String]])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new BadRequestException("Invalid postcode")))
 
-      val response = controller.addressLookupByPostcode("SW1")(fakeRequest)
+      val response = controller.addressLookupByPostcode(createRequest("{\"postcode\":\"SW1\"}"))
       status(response) mustBe BAD_REQUEST
+    }
+
+    "return BAD_REQUEST if the postcode is invalid" in new TestFixture {
+      val inValidPostcodes = Seq("SW1%3PB", "SW1!3PB", "SW1@3PB")
+      inValidPostcodes.foreach { postcode =>
+        val jsonString =
+          s"""
+             |{
+             |  "postcode":"$postcode"
+             |}
+          """.stripMargin
+
+        val response = controller.addressLookupByPostcode(createRequest(jsonString))
+        status(response) mustBe BAD_REQUEST
+        // If the postcode is invalid we do not call the AddressLookupClient
+        verify(mockAddressLookupClient, never()).findByPostcode(any[String], any[Option[String]])(any[HeaderCarrier])
+      }
     }
   }
 
@@ -73,5 +91,11 @@ class AddressLookupControllerSpec extends BaseControllerSpec {
     val controller = new AddressLookupController(
       mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper, mockAddressLookupClient
     ) with TestableSecureActions
+
+    def createRequest(jsonString: String): FakeRequest[JsValue] = {
+      val json = Json.parse(jsonString)
+      FakeRequest(Helpers.POST, controllers.routes.AddressLookupController.addressLookupByPostcode.url, FakeHeaders(), json)
+        .withHeaders("Content-Type" -> "application/json")
+    }
   }
 }
