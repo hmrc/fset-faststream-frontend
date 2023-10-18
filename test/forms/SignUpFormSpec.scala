@@ -79,6 +79,25 @@ class SignUpFormSpec extends BaseFormSpec {
       signUpForm.errors("faststreamEligible").head.messages mustBe Seq(Messages("agree.faststreamEligible"))
 //      signUpForm.errors("sdipFastStreamConsider").head.messages mustBe Seq(Messages("sdipFastStream.consider"))
     }
+
+    "throw an error if the applicationRoute is an invalid value" in {
+      val formData = Map(
+        "firstName" -> "name",
+        "lastName" -> "last name",
+        "email" -> "test@email.com",
+        "email_confirm" -> "test@email.com",
+        "password" -> "aA1234567",
+        "confirmpwd" -> "aA1234567",
+        "applicationRoute" -> "BOOM",
+        "agree" -> "true"
+      )
+
+      val signUpForm = Form(new SignUpForm().form.mapping).bind(formData)
+      signUpForm.hasErrors mustBe true
+      signUpForm.errors.length mustBe 1
+      signUpForm.errors("applicationRoute").head.messages mustBe Seq("Unrecognised application route: BOOM")
+    }
+
 /*
     "throw an error if I have clicked on the I am eligible for Fast Stream but not confirmed if I want to be considered for SDIP" in {
       val (_, signupForm) = SignupFormGenerator(faststreamEligible = true, sdipFastStreamConsider = None).get
@@ -254,12 +273,13 @@ class SignUpFormSpec extends BaseFormSpec {
       signUpForm.errors("edipEligible").head.messages mustBe Seq(Messages("agree.edipEligible"))
     }
 
+    // EDIP is not a valid applicationRoute for the 2023/24 campaign
     "throw an error if I try to submit a form with the EDIP applicationRoute" in {
       val (_, signUpForm) = SignupFormGenerator(applicationRoute = Some(ApplicationRoute.Edip),
         faststreamEligible = false, edipEligible = true).get
       signUpForm.hasErrors mustBe true
       signUpForm.errors.length mustBe 1
-      signUpForm.errors("eligible").head.messages mustBe Seq("Unrecognised application route Edip")
+      signUpForm.errors("applicationRoute").head.messages mustBe Seq("Unrecognised application route: Edip")
     }
 
     "throw an error if I haven't clicked on the I am eligible for SDIP" in {

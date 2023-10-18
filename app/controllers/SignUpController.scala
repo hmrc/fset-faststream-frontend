@@ -109,9 +109,7 @@ class SignUpController @Inject() (
 
       formWrapper.form.bindFromRequest().fold(
         invalidForm => {
-          checkAppWindowBeforeProceeding(invalidForm.data, Future.successful(
-            Ok(views.html.registration.signup(formWrapper.form.bind(invalidForm.data.sanitize), appRouteConfigMap)))
-          )
+          Future.successful(Ok(views.html.registration.signup(formWrapper.form.bind(invalidForm.data.sanitize), appRouteConfigMap)))
         },
         data => {
           val selectedAppRoute = ApplicationRoute.withName(data.applicationRoute)
