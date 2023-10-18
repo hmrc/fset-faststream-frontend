@@ -23,8 +23,10 @@ import models.view.CampaignReferrers
 import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.validation.Constraints
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
+
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class SignUpForm {
@@ -74,17 +76,22 @@ class SignUpForm {
 
   def applicationRouteFormatter(implicit messages: Messages) = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+      val key = "applicationRoute"
       data.get(key) match {
         case Some(appRoute) if appRoute.nonEmpty =>
-          ApplicationRoute.withName(appRoute) match {
-            case ApplicationRoute.Faststream => fastStreamCheck(appRoute, data)
-// Edip is disabled for 2023/24 campaign
-//            case ApplicationRoute.Edip => edipEligibilityCheck(data)
-            case ApplicationRoute.Sdip => sdipCheck(data)
-            case unknown => Left(List(FormError("eligible", s"Unrecognised application route $unknown")))
+          Try(ApplicationRoute.withName(appRoute)) match {
+            case Success(appRoute) => appRoute match {
+              case ApplicationRoute.Faststream => fastStreamCheck(appRoute, data)
+              // Edip is disabled for 2023/24 campaign
+//              case ApplicationRoute.Edip => edipEligibilityCheck(data)
+              case ApplicationRoute.Sdip => sdipCheck(data)
+              // The value submitted is an ApplicationRoute but not one we support in the current campaign
+              case unknown => Left(List(FormError(key, s"Unrecognised application route: $unknown")))
+            }
+            // The value submitted is not a valid ApplicationRoute
+            case Failure(_) => Left(List(FormError(key, s"Unrecognised application route: $appRoute")))
           }
-
-        case _ => Left(List(FormError("applicationRoute", Messages("error.appRoute"))))
+        case _ => Left(List(FormError(key, Messages("error.appRoute"))))
       }
     }
 
