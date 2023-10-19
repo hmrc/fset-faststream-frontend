@@ -2,6 +2,7 @@ error.invalidRole = You don''t have access to this application.
 error.required.signIn = Enter your email
 error.required.password = Enter your password
 error.required.campaignOther = Tell us how you heard about us
+error.boolean = You must specify a true/false value
 session.expired = You''ve been signed out due to inactivity. Sign in again if you want to continue
 
 application.cannotbe.withdrawn = You can''nt withdraw an application before you submit it
