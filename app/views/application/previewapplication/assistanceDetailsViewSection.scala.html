@@ -17,6 +17,7 @@
 @(assistanceDetails: connectors.exchange.AssistanceDetails)(edit: Html)(implicit user: Option[CachedData])
 
 @import security.RoleUtils._
+@import models.FieldNameHelpers._
 
 @displaySupportForOnlineTestsLabel = @{
     if(isEdip(user)) {
@@ -29,7 +30,7 @@
 @displayDisabilityCategories = @{
     assistanceDetails.disabilityCategories.map { disabilityCategoryList =>
         disabilityCategoryList.map { dc =>
-            <p id="disabilityCategory">{dc}</p>
+            <p id={createId("disabilityCategories", dc)}>{dc}</p>
         }
     }
 }
