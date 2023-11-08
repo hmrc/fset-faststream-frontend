@@ -42,7 +42,7 @@
 
             <section>
                 <fieldset class="form-group">
-                    <legend><h2 class="form-label" id="degreeType">@Messages("postgradDegree.degreeType.question")</h2></legend>
+                    <legend><h2 class="form-label" id="postGraduateDegreeType">@Messages("postgradDegree.degreeType.question")</h2></legend>
                     @radioBoxVertical(form("postgradUniversity.degreeType"), options = DegreeTypes.list, optionTrigger = "postgrad-degree-describe")
                     <div class="toggle-content form-group form-group-compound @if(form("postgradUniversity.otherDegreeType").hasErrors) {has-an-error input-validation-error}" id="postgrad-degree-describe">
                         <span class="has-error">@maybeDisplayError(form("postgradUniversity.otherDegreeType"))</span>
