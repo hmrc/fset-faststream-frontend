@@ -96,7 +96,7 @@
 
 @onlineExercisesForUnconfirmedAdjustments() = {
     <p class="med-btm-margin" id="etrayHeading"><i class="fa fa-minus the-icon" aria-hidden="true"></i>Work based scenarios</p>
-    <p>Before you take the work based scenarios we need to contact you to confirm your requested extra support.</p>
+    <p>You will be invited to take the tests shortly.</p>
 }
 
 @generatePsiTestId(psiTestPage: PsiTestPage) = {@Messages(psiTestPage.testNameKey).replace(" ", "").concat("LinkResultsReport")}
@@ -305,6 +305,7 @@
                     }
                     case (_, false, _, None, Some(phase1TestsPage)) => {
                         <li id="phase2TestsSection">
+                            @*
                             @if(dashboardPage.isPhase1TestsPassed && hasUnconfirmedAdjustments) {
                                 @onlineExercisesForUnconfirmedAdjustments()
                             } else { @if(dashboardPage.isPhase1TestsPassed && requiresInvigilatedETray) {
@@ -313,6 +314,8 @@
                             } else {
                                 @phase2SectionBeforeOnlineExercisesFinishes()
                             }}
+                                *@
+                            @phase2SectionBeforeOnlineExercisesFinishes()
                         </li>
                     }
                     case (false, false, false, Some(phase2TestsPage), _) => {
