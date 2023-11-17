@@ -65,6 +65,10 @@ lazy val microservice = Project(appName, file("."))
   // when we compile. It is version log4j-1.2.17.jar, which contains the security vulnerabilities so as a workaround
   // we exclude any log4j library here
   .settings(excludeDependencies += "log4j" % "log4j")
+  // play-silhouette 6.1.1 pulls in transitive dependencies which have vulnerabilities
+  // (bcpkix-jdk15on:1.60 and bcprov-jdk15on:1.60) so replace them here with newer versions
+  .settings(dependencyOverrides += "org.bouncycastle" % "bcpkix-jdk15on" % "1.70")
+  .settings(dependencyOverrides += "org.bouncycastle" % "bcprov-jdk15on" % "1.70")
   .settings(Compile / doc / sources := Seq.empty)
   .configs(IntegrationTest)
   .settings(pipelineStages := Seq(digest, gzip))
