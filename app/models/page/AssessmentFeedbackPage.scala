@@ -16,7 +16,7 @@
 
 package models.page
 
-import connectors.exchange.candidatescores.{ AssessmentScoresAllExercises, CompetencyAverageResult }
+import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, CompetencyAverageResult, ExerciseAverageResult}
 
 case class ExerciseFeedback(exerciseName: String, competencyFeedback: Seq[CompetencyFeedback])
 case class CompetencyFeedback(competencyName: String, feedback: String)
@@ -25,9 +25,17 @@ case class AssessmentFeedbackPage(
   exerciseFeedbackData: Seq[ExerciseFeedback],
   finalFeedback: String,
   evaluatedAverageResults: CompetencyAverageResult,
+  exerciseAverageResults: ExerciseAverageResult,
   candidateName: String
 ) {
   def formatScore(score: Double): String = "%.2f".format(score)
+
+  override def toString: String =
+    s"exerciseFeedbackData=$exerciseFeedbackData," +
+      s"finalFeedback=$finalFeedback," +
+      s"evaluatedAverageResults=$evaluatedAverageResults," +
+      s"exerciseAverageResults=$exerciseAverageResults," +
+      s"candidateName=$candidateName"
 }
 
 case object AssessmentFeedbackPage {
@@ -37,7 +45,7 @@ case object AssessmentFeedbackPage {
   val workingTogetherDevelopingSelfAndOthersCompetency = "Working Together/Developing Self and Others"
 
   def apply(assessmentScores: AssessmentScoresAllExercises, evaluatedAverageResults: CompetencyAverageResult,
-    candidateName: String): AssessmentFeedbackPage = {
+            exerciseAverageResults: ExerciseAverageResult, candidateName: String): AssessmentFeedbackPage = {
     val analysisExercise = ExerciseFeedback("Written scenario",
       Seq(
         CompetencyFeedback(seeingTheBigPictureCompetency,
@@ -69,6 +77,8 @@ case object AssessmentFeedbackPage {
       )
     )
     val finalFeedback = assessmentScores.finalFeedback.map { s => s.feedback }.getOrElse("")
-    AssessmentFeedbackPage(Seq(analysisExercise, groupExercise, leadershipExercise), finalFeedback, evaluatedAverageResults, candidateName)
+    AssessmentFeedbackPage(Seq(analysisExercise, groupExercise, leadershipExercise),
+      finalFeedback, evaluatedAverageResults, exerciseAverageResults, candidateName
+    )
   }
 }

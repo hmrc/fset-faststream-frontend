@@ -37,7 +37,6 @@ class AssessmentFeedbackController @Inject() (
   val notificationTypeHelper: NotificationTypeHelper,
   assessmentScoresClient: AssessmentScoresClient,
   applicationClient: ApplicationClient)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
-  import notificationTypeHelper._
 
   def present(applicationId: UniqueIdentifier): Action[AnyContent] = CSRSecureAction(ActiveUserRole) {
     implicit request =>
@@ -46,10 +45,11 @@ class AssessmentFeedbackController @Inject() (
           reviewerScoresAndFeedback <- assessmentScoresClient
             .findReviewerAcceptedAssessmentScores(applicationId)
           evaluatedAverageResults <- applicationClient.findFsacEvaluationAverages(applicationId)
+          evaluatedExerciseResults <- applicationClient.findFsacExerciseAverages(applicationId)
           personalDetails <- applicationClient.getPersonalDetails(cachedData.user.userID, applicationId)
         } yield {
           val name = s"${personalDetails.firstName} ${personalDetails.lastName}"
-          val page = AssessmentFeedbackPage(reviewerScoresAndFeedback, evaluatedAverageResults, name)
+          val page = AssessmentFeedbackPage(reviewerScoresAndFeedback, evaluatedAverageResults, evaluatedExerciseResults, name)
           Ok(views.html.home.assessmentFeedback(page))
         }
   }
