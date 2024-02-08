@@ -23,7 +23,7 @@ import connectors.exchange.Questionnaire._
 import connectors.exchange._
 import connectors.exchange.campaignmanagement.AfterDeadlineSignupCodeUnused
 import connectors.exchange.candidateevents.{CandidateAllocationWithEvent, CandidateAllocations}
-import connectors.exchange.candidatescores.CompetencyAverageResult
+import connectors.exchange.candidatescores.{CompetencyAverageResult, ExerciseAverageResult}
 import connectors.exchange.sift.SiftState
 import models.{Adjustments, ApplicationRoute, UniqueIdentifier}
 import play.api.http.Status._
@@ -127,6 +127,14 @@ class ApplicationClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(imp
       case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND =>
         val msg = s"Found no fsac evaluation averages for application id: $applicationId"
         throw new FsacEvaluatedAverageScoresNotFound(msg)
+    }
+  }
+
+  def findFsacExerciseAverages(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[ExerciseAverageResult] = {
+    http.GET[ExerciseAverageResult](s"$apiBaseUrl/application/$applicationId/fsacExerciseAverages").recover {
+      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND =>
+        val msg = s"Found no fsac exercise averages for application id: $applicationId"
+        throw new FsacExerciseAveragesNotFound(msg)
     }
   }
 
@@ -342,4 +350,5 @@ object ApplicationClient {
   sealed class CandidateAlreadyHasAnAnalysisExerciseException extends Exception
   sealed class OptimisticLockException(m: String) extends Exception(m)
   sealed class FsacEvaluatedAverageScoresNotFound(m: String) extends Exception(m)
+  sealed class FsacExerciseAveragesNotFound(m: String) extends Exception(m)
 }

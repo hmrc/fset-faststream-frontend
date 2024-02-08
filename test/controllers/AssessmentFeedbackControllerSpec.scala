@@ -17,11 +17,11 @@
 package controllers
 
 import java.util.UUID
-
 import connectors.exchange.GeneralDetails
-import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, CompetencyAverageResult}
+import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, CompetencyAverageResult, ExerciseAverageResult}
 import mappings.Address
 import models.UniqueIdentifier
+
 import java.time.LocalDate
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
@@ -48,6 +48,7 @@ class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
       mockAssessmentScoresClient, mockApplicationClient)
       with TestableSecureActions
 
+    //scalastyle:off method.length
     def controller = new TestableHomeController {
 
       val assessmentScores = AssessmentScoresAllExercises(
@@ -64,6 +65,12 @@ class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
         communicatingAndInfluencingAverage = 1.0,
         seeingTheBigPictureAverage = 1.0,
         overallScore = 4.0)
+
+      val exerciseAverageResult = ExerciseAverageResult(
+        writtenExerciseAverage = 1.0,
+        teamExerciseAverage = 1.0,
+        leadershipExerciseAverage = 1.0,
+        overallScore = 3.0)
 
       val generalDetails = GeneralDetails(
         firstName = "Joe",
@@ -90,8 +97,10 @@ class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(assessmentScores))
       when(mockApplicationClient.findFsacEvaluationAverages(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(competencyAverageResult))
+      when(mockApplicationClient.findFsacExerciseAverages(any[UniqueIdentifier])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(exerciseAverageResult))
       when(mockApplicationClient.getPersonalDetails(any[UniqueIdentifier], any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(generalDetails))
-    }
+    } //scalastyle:on
   }
 }

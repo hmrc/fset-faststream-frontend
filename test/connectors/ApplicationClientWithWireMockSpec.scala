@@ -25,12 +25,13 @@ import connectors.events.{Event, Location, Session, Venue}
 import connectors.exchange._
 import connectors.exchange.campaignmanagement.AfterDeadlineSignupCodeUnused
 import connectors.exchange.candidateevents.{CandidateAllocation, CandidateAllocationWithEvent, CandidateAllocations}
-import connectors.exchange.candidatescores.CompetencyAverageResult
+import connectors.exchange.candidatescores.{CompetencyAverageResult, ExerciseAverageResult}
 import connectors.exchange.referencedata.SchemeId
 import connectors.exchange.sift.SiftState
 import mappings.Address
 import models.events.{AllocationStatuses, EventType}
 import models.{Adjustments, ApplicationRoute, ProgressResponseExamples, UniqueIdentifier}
+
 import java.time.LocalDate
 import java.time.LocalTime
 import play.api.http.Status._
@@ -349,31 +350,56 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
 
   "findFsacEvaluationAverages" should {
     val applicationId = UniqueIdentifier(UUID.randomUUID())
-    val endpoint = s"/$base/application/$applicationId/fsacEvaluationAverages"
-    val response = CompetencyAverageResult(
+    val competenceAveragesEndpoint = s"/$base/application/$applicationId/fsacEvaluationAverages"
+    val exerciseAveragesEndpoint = s"/$base/application/$applicationId/fsacExerciseAverages"
+    val competencyResponse = CompetencyAverageResult(
       makingEffectiveDecisionsAverage = 4.0,
       workingTogetherDevelopingSelfAndOthersAverage = 4.0,
       communicatingAndInfluencingAverage = 4.0,
       seeingTheBigPictureAverage = 4.0,
       overallScore = 16.0
     )
+    val exerciseResponse = ExerciseAverageResult(
+      writtenExerciseAverage = 4.0,
+      teamExerciseAverage = 4.0,
+      leadershipExerciseAverage = 4.0,
+      overallScore = 12.0
+    )
 
     "return CompetencyAverageResult when OK is received" in new TestFixture {
-      stubFor(get(urlPathEqualTo(endpoint))
-        .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(response).toString()))
+      stubFor(get(urlPathEqualTo(competenceAveragesEndpoint))
+        .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(competencyResponse).toString()))
       )
 
       val result = client.findFsacEvaluationAverages(applicationId).futureValue
-      result mustBe response
+      result mustBe competencyResponse
     }
 
     "throw FsacEvaluatedAverageScoresNotFound exception when NOT_FOUND is received" in new TestFixture {
-      stubFor(get(urlPathEqualTo(endpoint))
+      stubFor(get(urlPathEqualTo(competenceAveragesEndpoint))
         .willReturn(aResponse().withStatus(NOT_FOUND)
         ))
 
       val result = client.findFsacEvaluationAverages(applicationId).failed.futureValue
       result mustBe a[FsacEvaluatedAverageScoresNotFound]
+    }
+
+    "return ExerciseAverageResult when OK is received" in new TestFixture {
+      stubFor(get(urlPathEqualTo(exerciseAveragesEndpoint))
+        .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(exerciseResponse).toString()))
+      )
+
+      val result = client.findFsacExerciseAverages(applicationId).futureValue
+      result mustBe exerciseResponse
+    }
+
+    "throw FsacExerciseAveragesNotFound exception when NOT_FOUND is received" in new TestFixture {
+      stubFor(get(urlPathEqualTo(exerciseAveragesEndpoint))
+        .willReturn(aResponse().withStatus(NOT_FOUND)
+        ))
+
+      val result = client.findFsacExerciseAverages(applicationId).failed.futureValue
+      result mustBe a[FsacExerciseAveragesNotFound]
     }
   }
 

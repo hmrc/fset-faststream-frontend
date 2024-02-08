@@ -76,10 +76,10 @@
 
     <h2 class="heading-large">Scores</h2>
     <div class="panel-indent text">
-        <p>Your performance is measured against several competencies. Each competency
-            is tested at least twice during the centre. We'll calculate an average
-            score to measure your overall performance in each competency, ranging
-            from 1.00 to 4.00.</p>
+        <p>
+            Your performance is measured against the three assessment centre scenarios, reflecting a number of behaviours.
+            We'll calculate an average score to measure your performance for each scenario, ranging from 1.00 to 4.00.
+        </p>
     </div>
     <div class="grid-wrapper">
         <div class="grid grid-1-2">
@@ -87,24 +87,20 @@
                 <h2 class="heading-small">How you scored</h2>
                 <table>
                     <tr>
-                        <td>Seeing the Big Picture/Changing and Improving</td>
-                        <td class="ta-right">@page.formatScore(page.evaluatedAverageResults.seeingTheBigPictureAverage)</td>
+                        <td>Written scenario</td>
+                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.writtenExerciseAverage)</td>
                     </tr>
                     <tr>
-                        <td>Making Effective Decisions</td>
-                        <td class="ta-right">@page.formatScore(page.evaluatedAverageResults.makingEffectiveDecisionsAverage)</td>
+                        <td>Team scenario</td>
+                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.teamExerciseAverage)</td>
                     </tr>
                     <tr>
-                        <td>Communicating and Influencing</td>
-                        <td class="ta-right">@page.formatScore(page.evaluatedAverageResults.communicatingAndInfluencingAverage)</td>
-                    </tr>
-                    <tr>
-                        <td>Working Together/Developing Self and Others</td>
-                        <td class="ta-right">@page.formatScore(page.evaluatedAverageResults.workingTogetherDevelopingSelfAndOthersAverage)</td>
+                        <td>Leadership scenario</td>
+                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.leadershipExerciseAverage)</td>
                     </tr>
                     <tr>
                         <td>Overall score</td>
-                        <td class="ta-right">@page.formatScore(page.evaluatedAverageResults.overallScore)</td>
+                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.overallScore)</td>
                     </tr>
                 </table>
             </div>
