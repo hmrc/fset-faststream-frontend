@@ -17,10 +17,10 @@
 package connectors.exchange
 
 import models.UniqueIdentifier
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class PersonalDetailsAdded(applicationId: UniqueIdentifier, userId: String)
 
 object PersonalDetailsAdded {
-  implicit val format = Json.format[PersonalDetailsAdded]
+  implicit val format: OFormat[PersonalDetailsAdded] = Json.format[PersonalDetailsAdded]
 }

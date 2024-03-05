@@ -16,7 +16,7 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class PassmarkEvaluation(passmarkVersion: String,
                               previousPhasePassMarkVersion: Option[String],
@@ -25,5 +25,5 @@ case class PassmarkEvaluation(passmarkVersion: String,
                               previousPhaseResultVersion: Option[String])
 
 object PassmarkEvaluation {
-  implicit val passmarkEvaluationFormat = Json.format[PassmarkEvaluation]
+  implicit val passmarkEvaluationFormat: OFormat[PassmarkEvaluation] = Json.format[PassmarkEvaluation]
 }

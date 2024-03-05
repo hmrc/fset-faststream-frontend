@@ -26,7 +26,7 @@ import helpers.NotificationTypeHelper
 import javax.inject.{Inject, Singleton}
 import models.ApplicationRoute
 import models.page.SelectedSchemesPage
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.Roles.SchemesRole
 import security.SilhouetteComponent
 
@@ -43,7 +43,7 @@ class SchemePreferencesController @Inject() (
   referenceDataClient: ReferenceDataClient
 )(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
-  def present = CSRSecureAppAction(SchemesRole) { implicit request =>
+  def present: Action[AnyContent] = CSRSecureAppAction(SchemesRole) { implicit request =>
     implicit cachedData =>
       referenceDataClient.allSchemes.flatMap { schemes =>
         val page = SelectedSchemesPage(sortSchemes(schemes))
@@ -67,7 +67,7 @@ class SchemePreferencesController @Inject() (
     withoutHop ++ hop
   }
 
-  def submit = CSRSecureAppAction(SchemesRole) { implicit request =>
+  def submit: Action[AnyContent] = CSRSecureAppAction(SchemesRole) { implicit request =>
     implicit cachedData =>
       referenceDataClient.allSchemes.flatMap { schemes =>
         val isCivilServant = cachedData.application.civilServiceExperienceDetails.exists(_.isCivilServant)

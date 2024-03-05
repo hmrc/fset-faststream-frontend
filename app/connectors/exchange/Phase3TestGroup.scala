@@ -16,9 +16,7 @@
 
 package connectors.exchange
 
-import org.joda.time.DateTime
-import play.api.libs.json.Json
-import models.FaststreamImplicits._
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.OffsetDateTime
 
@@ -29,14 +27,14 @@ import java.time.OffsetDateTime
 case class ReviewSectionCriteriaRequest(`type`: String, score: Option[Double])
 
 object ReviewSectionCriteriaRequest {
-  implicit val reviewCriteriaFormat = Json.format[ReviewSectionCriteriaRequest]
+  implicit val reviewCriteriaFormat: OFormat[ReviewSectionCriteriaRequest] = Json.format[ReviewSectionCriteriaRequest]
 }
 
 case class ReviewSectionQuestionRequest(id: Int, reviewCriteria1: ReviewSectionCriteriaRequest,
                                         reviewCriteria2: ReviewSectionCriteriaRequest)
 
 object ReviewSectionQuestionRequest {
-  implicit val reviewSectionReviewerQuestion = Json.format[ReviewSectionQuestionRequest]
+  implicit val reviewSectionReviewerQuestion: OFormat[ReviewSectionQuestionRequest] = Json.format[ReviewSectionQuestionRequest]
 }
 
 case class ReviewSectionReviewerRequest(name: String, email: String, comment: Option[String],
@@ -50,7 +48,7 @@ case class ReviewSectionReviewerRequest(name: String, email: String, comment: Op
   question8: ReviewSectionQuestionRequest)
 
 object ReviewSectionReviewerRequest {
-  implicit val reviewSectionReviewerFormat = Json.format[ReviewSectionReviewerRequest]
+  implicit val reviewSectionReviewerFormat: OFormat[ReviewSectionReviewerRequest] = Json.format[ReviewSectionReviewerRequest]
 }
 
 case class ReviewSectionTotalAverageRequest(`type`: String, scoreText: String, scoreValue: Double)
@@ -62,11 +60,11 @@ case class ReviewSectionReviewersRequest(
 )
 
 object ReviewSectionReviewersRequest {
-  implicit val reviewSectionReviewersFormat = Json.format[ReviewSectionReviewersRequest]
+  implicit val reviewSectionReviewersFormat: OFormat[ReviewSectionReviewersRequest] = Json.format[ReviewSectionReviewersRequest]
 }
 
 object ReviewSectionTotalAverageRequest {
-  implicit val reviewSectionTotalAverageFormat = Json.format[ReviewSectionTotalAverageRequest]
+  implicit val reviewSectionTotalAverageFormat: OFormat[ReviewSectionTotalAverageRequest] = Json.format[ReviewSectionTotalAverageRequest]
 }
 
 case class ReviewSectionRequest(
@@ -75,11 +73,11 @@ case class ReviewSectionRequest(
 )
 
 object ReviewSectionRequest {
-  implicit val reviewSectionFormat = Json.format[ReviewSectionRequest]
+  implicit val reviewSectionFormat: OFormat[ReviewSectionRequest] = Json.format[ReviewSectionRequest]
 }
 
 case class ReviewedCallbackRequest(
-  received: DateTime,
+  received: OffsetDateTime,
   reviews: ReviewSectionRequest) {
 
   val reviewers = reviews.reviewers
@@ -118,7 +116,7 @@ case class ReviewedCallbackRequest(
 }
 
 object ReviewedCallbackRequest {
-  implicit val reviewedCallbackFormat = Json.format[ReviewedCallbackRequest]
+  implicit val reviewedCallbackFormat: OFormat[ReviewedCallbackRequest] = Json.format[ReviewedCallbackRequest]
 }
 
 case class LaunchpadTestCallbacks(
@@ -128,7 +126,7 @@ case class LaunchpadTestCallbacks(
 }
 
 object LaunchpadTestCallbacks {
-  implicit val launchpadTestCallbacksFormat = Json.format[LaunchpadTestCallbacks]
+  implicit val launchpadTestCallbacksFormat: OFormat[LaunchpadTestCallbacks] = Json.format[LaunchpadTestCallbacks]
 }
 
 case class Phase3Test(usedForResults: Boolean,
@@ -138,19 +136,19 @@ case class Phase3Test(usedForResults: Boolean,
                       startedDateTime: Option[OffsetDateTime] = None,
                       completedDateTime: Option[OffsetDateTime] = None,
   callbacks: LaunchpadTestCallbacks) {
-  def started = startedDateTime.isDefined
-  def completed = completedDateTime.isDefined
+  def started: Boolean = startedDateTime.isDefined
+  def completed: Boolean = completedDateTime.isDefined
 }
 
 object Phase3Test {
-  implicit def phase3TestFormat = Json.format[Phase3Test]
+  implicit def phase3TestFormat: OFormat[Phase3Test] = Json.format[Phase3Test]
 }
 
 case class Phase3TestGroup(expirationDate: OffsetDateTime, tests: List[Phase3Test],
                            evaluation: Option[PassmarkEvaluation] = None) {
-  def activeTests = tests.filter(_.usedForResults)
+  def activeTests: Seq[Phase3Test] = tests.filter(_.usedForResults)
 }
 
 object Phase3TestGroup {
-  implicit val phase3TestGroupFormat = Json.format[Phase3TestGroup]
+  implicit val phase3TestGroupFormat: OFormat[Phase3TestGroup] = Json.format[Phase3TestGroup]
 }

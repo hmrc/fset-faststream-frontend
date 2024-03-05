@@ -18,7 +18,6 @@ package security
 
 import models.ApplicationData.ApplicationStatus._
 import models.CachedData
-import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import security.ProgressStatusRoleUtils._
 
@@ -28,49 +27,49 @@ object QuestionnaireRoles {
   import RoleUtils._
 
   object StartOrContinueQuestionnaireRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS)
   }
 
   object QuestionnaireNotStartedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) &&
         !hasDiversity(user) && !hasEducation(user) && !hasOccupation(user)
   }
 
   object QuestionnaireInProgressRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasAssistanceDetails(user) &&
         (!hasDiversity(user) || !hasEducation(user) || !hasOccupation(user))
   }
 
   object DiversityQuestionnaireRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasStartedQuest(user)
   }
 
   object EducationQuestionnaireRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasDiversity(user)
   }
 
   object ParentalOccupationQuestionnaireRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasEducation(user)
   }
 
   object DiversityQuestionnaireCompletedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasDiversity(user)
   }
 
   object EducationQuestionnaireCompletedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasEducation(user)
   }
 
   object ParentalOccupationQuestionnaireCompletedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasOccupation(user)
   }
 }

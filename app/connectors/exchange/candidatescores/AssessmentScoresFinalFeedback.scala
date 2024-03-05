@@ -17,7 +17,7 @@
 package connectors.exchange.candidatescores
 
 import models.UniqueIdentifier
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.OffsetDateTime
 
@@ -29,5 +29,5 @@ case class AssessmentScoresFinalFeedback(
 }
 
 object AssessmentScoresFinalFeedback {
-  implicit val jsonFormat = Json.format[AssessmentScoresFinalFeedback]
+  implicit val jsonFormat: OFormat[AssessmentScoresFinalFeedback] = Json.format[AssessmentScoresFinalFeedback]
 }

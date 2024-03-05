@@ -17,7 +17,7 @@
 package connectors.exchange.candidatescores
 
 import models.UniqueIdentifier
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.OffsetDateTime
 
@@ -47,5 +47,5 @@ case class AssessmentScoresExercise(
 )
 
 object AssessmentScoresExercise {
-  implicit val scoresAndFeedbackFormat = Json.format[AssessmentScoresExercise]
+  implicit val scoresAndFeedbackFormat: OFormat[AssessmentScoresExercise] = Json.format[AssessmentScoresExercise]
 }

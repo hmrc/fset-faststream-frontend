@@ -17,7 +17,7 @@
 package security
 
 import com.google.inject.Inject
-import com.mohiva.play.silhouette.api.LoginInfo
+import play.silhouette.api.LoginInfo
 import connectors.ApplicationClient.ApplicationNotFound
 import connectors.exchange._
 import connectors.{ ApplicationClient, UserManagementClient }
@@ -42,7 +42,7 @@ class UserCacheService @Inject() (
       applicationClient.findApplication(userId, FrameworkId).map { appData =>
         CachedData(userData.toCached, Some(appData))
       }.recover {
-        case ex: ApplicationNotFound => CachedData(userData.toCached, None)
+        case _: ApplicationNotFound => CachedData(userData.toCached, None)
       }
     }
   }

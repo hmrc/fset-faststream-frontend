@@ -16,8 +16,8 @@
 
 package security
 
-import com.mohiva.play.silhouette.api.Provider
-import com.mohiva.play.silhouette.api.util.Credentials
+import play.silhouette.api.Provider
+import play.silhouette.api.util.Credentials
 import config.{ CSRHttp, FrontendAppConfig }
 import connectors.UserManagementClient
 import connectors.UserManagementClient.{ AccountLockedOutException, InvalidCredentialsException, InvalidRoleException }

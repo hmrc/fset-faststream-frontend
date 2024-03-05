@@ -16,7 +16,7 @@
 
 package controllers
 
-import com.mohiva.play.silhouette.api.actions.SecuredRequest
+import play.silhouette.api.actions.SecuredRequest
 import config.{ FrontendAppConfig, SecurityEnvironment }
 import connectors.ApplicationClient.{ SiftAnswersIncomplete, SiftAnswersNotFound, SiftExpired }
 import connectors.exchange.referencedata.{ Scheme, SchemeId, SiftRequirement }
@@ -196,7 +196,7 @@ class SiftQuestionsController @Inject() (
 
   private def candidateCurrentSiftableSchemes(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier) = {
     applicationClient.getCurrentSchemeStatus(applicationId).flatMap { schemes =>
-      val resultIsGreen: (String => Boolean) = (schemeRes: String) => schemeRes == SchemeStatus.Green.toString
+      val resultIsGreen: String => Boolean = (schemeRes: String) => schemeRes == SchemeStatus.Green.toString
       Future.traverse(schemes.collect {
         case scheme if resultIsGreen(scheme.result) => scheme.schemeId
       }) { schemeId =>

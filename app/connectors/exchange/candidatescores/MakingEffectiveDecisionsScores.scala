@@ -16,7 +16,7 @@
 
 package connectors.exchange.candidatescores
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class MakingEffectiveDecisionsScores(
                                            decisiveAndMakesClearRecommendation: Option[Double] = None,
@@ -27,5 +27,5 @@ case class MakingEffectiveDecisionsScores(
 )
 
 object MakingEffectiveDecisionsScores {
-  implicit val makingEffectiveDecisionsScoresFormat = Json.format[MakingEffectiveDecisionsScores]
+  implicit val makingEffectiveDecisionsScoresFormat: OFormat[MakingEffectiveDecisionsScores] = Json.format[MakingEffectiveDecisionsScores]
 }

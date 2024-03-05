@@ -17,7 +17,6 @@
 package security
 
 import java.util.UUID
-
 import connectors.ApplicationClient.ApplicationNotFound
 import connectors.UserManagementClient.InvalidCredentialsException
 import connectors.exchange.{ApplicationResponse, ProgressResponse, UserResponse}
@@ -26,6 +25,7 @@ import models.ApplicationData.ApplicationStatus
 import models._
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testkit.BaseSpec
@@ -106,9 +106,9 @@ class UserCacheServiceSpec extends BaseSpec {
       None
     )
 
-    implicit val request = FakeRequest(GET, "")
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, "")
 
-    implicit val hc = new HeaderCarrier()
+    implicit val hc: HeaderCarrier = new HeaderCarrier()
 
     val mockApplicationClient = mock[ApplicationClient]
     val mockUserManagementClient = mock[UserManagementClient]

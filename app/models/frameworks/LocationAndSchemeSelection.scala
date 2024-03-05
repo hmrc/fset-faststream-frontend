@@ -16,7 +16,7 @@
 
 package models.frameworks
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class Preference(
   region: String,
@@ -39,15 +39,15 @@ case class LocationAndSchemeSelection(
 )
 
 object Preference {
-  implicit val jsonFormatPref = Json.format[Preference]
+  implicit val jsonFormatPref: OFormat[Preference] = Json.format[Preference]
 }
 
 object Alternatives {
-  implicit val jsonFormatAlt = Json.format[Alternatives]
+  implicit val jsonFormatAlt: OFormat[Alternatives] = Json.format[Alternatives]
 }
 
 object LocationAndSchemeSelection {
-  implicit val jsonFormat = Json.format[LocationAndSchemeSelection]
+  implicit val jsonFormat: OFormat[LocationAndSchemeSelection] = Json.format[LocationAndSchemeSelection]
 
-  val empty = LocationAndSchemeSelection(firstLocation = Preference("", "", "", None), None, None, None)
+  val empty: LocationAndSchemeSelection = LocationAndSchemeSelection(firstLocation = Preference("", "", "", None), None, None, None)
 }

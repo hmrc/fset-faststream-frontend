@@ -16,20 +16,20 @@
 
 package controllers
 
-import _root_.forms.{ RequestResetPasswordForm, ResetPasswordForm, SignInForm }
-import com.mohiva.play.silhouette.api.actions.UserAwareRequest
-import com.mohiva.play.silhouette.api.util.Credentials
-import config.{ FrontendAppConfig, SecurityEnvironment }
-import connectors.UserManagementClient.{ InvalidEmailException, TokenEmailPairInvalidException, TokenExpiredException }
-import connectors.{ ApplicationClient, UserManagementClient }
-import helpers.NotificationType._
+import _root_.forms.{RequestResetPasswordForm, ResetPasswordForm, SignInForm}
+import play.silhouette.api.actions.UserAwareRequest
+import play.silhouette.api.util.Credentials
+import config.{FrontendAppConfig, SecurityEnvironment}
+import connectors.UserManagementClient.{InvalidEmailException, TokenEmailPairInvalidException, TokenExpiredException}
+import connectors.{ApplicationClient, UserManagementClient}
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import models.CachedData
-import play.api.mvc.MessagesControllerComponents
-import security.{ InvalidRole, SignInService, SilhouetteComponent }
 
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import models.CachedData
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import security.{InvalidRole, SignInService, SilhouetteComponent}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PasswordResetController @Inject() (
@@ -45,7 +45,7 @@ class PasswordResetController @Inject() (
   extends BaseController(config, mcc) {
   import notificationTypeHelper._
 
-  def presentCode = CSRUserAwareAction { implicit request =>
+  def presentCode: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       val email = request.session.get("email")
       email.filter(e => formWrapper.validateEmail(e)).map(e => sendCode(e, isResend = true)).getOrElse {
@@ -55,7 +55,7 @@ class PasswordResetController @Inject() (
       }
   }
 
-  def submitCode = CSRUserAwareAction { implicit request =>
+  def submitCode: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       RequestResetPasswordForm.form.bindFromRequest().fold(
         invalidForm => Future.successful(Ok(views.html.registration.request_reset(invalidForm))),
@@ -63,7 +63,7 @@ class PasswordResetController @Inject() (
       )
   }
 
-  def presentReset = CSRUserAwareAction { implicit request =>
+  def presentReset: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       val email = request.session.get("email")
       email.filter(e => formWrapper.validateEmail(e)).map { e =>
@@ -80,7 +80,7 @@ class PasswordResetController @Inject() (
       }
   }
 
-  def submitReset = CSRUserAwareAction { implicit request =>
+  def submitReset: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
         invalidForm => Future.successful(Ok(views.html.registration.reset_password(invalidForm))),

@@ -16,8 +16,8 @@
 
 package controllers
 
-import com.mohiva.play.silhouette.api.services.AuthenticatorResult
-import com.mohiva.play.silhouette.impl.authenticators.SessionAuthenticator
+import play.silhouette.api.services.AuthenticatorResult
+import play.silhouette.impl.authenticators.SessionAuthenticator
 import forms.SignInForm
 import models.CachedDataExample
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
@@ -29,7 +29,6 @@ import testkit.{NoIdentityTestableCSRUserAwareAction, TestableCSRUserAwareAction
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
-import scala.util.Right
 
 class SignInControllerSpec extends BaseControllerSpec {
 

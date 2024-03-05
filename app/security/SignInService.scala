@@ -16,9 +16,9 @@
 
 package security
 
-import com.mohiva.play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
-import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, LogoutEvent}
-import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
+import play.silhouette.api.{LoginEvent, LoginInfo, LogoutEvent}
+import play.silhouette.impl.providers.CredentialsProvider
 import config.FrontendAppConfig
 import connectors.ApplicationClient
 import connectors.ApplicationClient.ApplicationNotFound

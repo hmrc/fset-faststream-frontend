@@ -16,7 +16,7 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class Answer(answer: Option[String], otherDetails: Option[String], unknown: Option[Boolean]) {
   override def toString = s"answer=$answer,otherDetails=$otherDetails,unknown=$unknown"
@@ -27,13 +27,13 @@ case class Question(question: String, answer: Answer)
 case class Questionnaire(questions: List[Question])
 
 object Answer {
-  implicit val answerFormats = Json.format[Answer]
+  implicit val answerFormats: OFormat[Answer] = Json.format[Answer]
 }
 
 object Question {
-  implicit val questionFormats = Json.format[Question]
+  implicit val questionFormats: OFormat[Question] = Json.format[Question]
 }
 
 object Questionnaire {
-  implicit val questionnaireFormats = Json.format[Questionnaire]
+  implicit val questionnaireFormats: OFormat[Questionnaire] = Json.format[Questionnaire]
 }

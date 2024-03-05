@@ -17,8 +17,6 @@
 package forms
 
 import forms.ParentalOccupationQuestionnaireForm.Data
-import play.api.data.FormError
-import play.api.i18n.Messages
 
 class ParentalOccupationQuestionnaireFormSpec extends BaseFormSpec {
 

@@ -18,7 +18,7 @@ package connectors.exchange
 
 import forms.FastPassForm
 import forms.FastPassForm.Data
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import language.implicitConversions
 
@@ -31,7 +31,7 @@ case class CivilServiceExperienceDetails(applicable: Boolean,
                                         fastPassReceived: Option[Boolean] = None,
                                         fastPassAccepted: Option[Boolean] = None,
                                         certificateNumber: Option[String] = None) {
-  override def toString = {
+  override def toString: String = {
     s"applicable=$applicable," +
       s"civilServantAndInternshipTypes=$civilServantAndInternshipTypes," +
       s"edipYear=$edipYear," +
@@ -49,7 +49,7 @@ case class CivilServiceExperienceDetails(applicable: Boolean,
 
 object CivilServiceExperienceDetails {
 
-  implicit val civilServiceExperienceDetailsFormat = Json.format[CivilServiceExperienceDetails]
+  implicit val civilServiceExperienceDetailsFormat: OFormat[CivilServiceExperienceDetails] = Json.format[CivilServiceExperienceDetails]
 
   implicit def toData(optExchange: Option[CivilServiceExperienceDetails]): Option[Data] = optExchange.map(exchange => Data(
     applicable = exchange.applicable.toString,

@@ -16,10 +16,10 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class EmailWrapper(email: String, service: String)
 
 object EmailWrapper {
-  implicit val format = Json.format[EmailWrapper]
+  implicit val format: OFormat[EmailWrapper] = Json.format[EmailWrapper]
 }

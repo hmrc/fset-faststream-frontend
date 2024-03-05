@@ -17,17 +17,17 @@
 package controllers
 
 import _root_.forms.ActivateAccountForm
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.UserManagementClient
-import connectors.UserManagementClient.{ TokenEmailPairInvalidException, TokenExpiredException }
+import connectors.UserManagementClient.{TokenEmailPairInvalidException, TokenExpiredException}
 import helpers.NotificationType._
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.Roles._
-import security.{ SignInService, SilhouetteComponent }
+import security.{SignInService, SilhouetteComponent}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ActivationController @Inject() (
@@ -42,9 +42,9 @@ class ActivationController @Inject() (
    {
      import notificationTypeHelper._
 
-  implicit val marketingTrackingEnabled = config.marketingTrackingEnabled
+  implicit val marketingTrackingEnabled: Boolean = config.marketingTrackingEnabled
 
-  def present = CSRSecureAction(NoRole) { implicit request =>
+  def present: Action[AnyContent] = CSRSecureAction(NoRole) { implicit request =>
     implicit user => if (user.user.isActive) {
       Future.successful(Redirect(routes.HomeController.present()).flashing(warning("activation.already")))
     } else {
@@ -53,7 +53,7 @@ class ActivationController @Inject() (
     }
   }
 
-  def submit = CSRSecureAction(ActivationRole) { implicit request =>
+  def submit: Action[AnyContent] = CSRSecureAction(ActivationRole) { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
         invalidForm =>
@@ -62,13 +62,13 @@ class ActivationController @Inject() (
           userManagementClient.activate(user.user.email, data.activationCode).flatMap { _ =>
             signInService.signInUser(user.user.copy(isActive = true))
           }.recover {
-            case e: TokenExpiredException =>
+            case _: TokenExpiredException =>
               Ok(views.html.registration.activation(
                 user.user.email,
                 formWrapper.form,
                 notification = Some(danger("expired.activation-code"))
               ))
-            case e: TokenEmailPairInvalidException =>
+            case _: TokenEmailPairInvalidException =>
               Ok(views.html.registration.activation(
                 user.user.email,
                 formWrapper.form,
@@ -79,7 +79,7 @@ class ActivationController @Inject() (
       )
   }
 
-  def resendCode = CSRSecureAction(ActivationRole) { implicit request =>
+  def resendCode: Action[AnyContent] = CSRSecureAction(ActivationRole) { implicit request =>
     implicit user =>
       userManagementClient.resendActivationCode(user.user.email).map { _ =>
         Redirect(routes.ActivationController.present).flashing(success("activation.code-resent"))

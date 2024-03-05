@@ -19,13 +19,13 @@ package connectors.exchange
 import models.UniqueIdentifier
 
 import java.time.OffsetDateTime
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 // More data is sent by the backend but we only care about the report url
 case class PsiTestResult(testReportUrl: Option[String])
 
 object PsiTestResult {
-  implicit def testResultFormat = Json.format[PsiTestResult]
+  implicit def testResultFormat: OFormat[PsiTestResult] = Json.format[PsiTestResult]
 }
 
 case class PsiTest(inventoryId: String,
@@ -38,10 +38,10 @@ case class PsiTest(inventoryId: String,
                    resultsReadyToDownload: Boolean = false,
                    testResult: Option[PsiTestResult] = None
 ) {
-  def started = startedDateTime.isDefined
-  def completed = completedDateTime.isDefined
+  def started: Boolean = startedDateTime.isDefined
+  def completed: Boolean = completedDateTime.isDefined
 }
 
 object PsiTest {
-  implicit def phase1TestFormat = Json.format[PsiTest]
+  implicit def phase1TestFormat: OFormat[PsiTest] = Json.format[PsiTest]
 }

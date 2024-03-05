@@ -16,7 +16,6 @@
 
 package controllers
 
-import com.kenshoo.play.metrics.PlayModule
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -28,7 +27,7 @@ class ApplicationSpec extends BaseSpec with GuiceOneAppPerSuite {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(new SilhouetteFakeModule())
-    .disable[PlayModule]
+//    .disable[PlayModule]
     .build()
 
   "Application" should {

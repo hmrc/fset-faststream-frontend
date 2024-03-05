@@ -16,10 +16,10 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 final case class FSACIndicator(area: String, assessmentCentre: String)
 
 object FSACIndicator {
-  implicit val fsacIndicatorFormat = Json.format[FSACIndicator]
+  implicit val fsacIndicatorFormat: OFormat[FSACIndicator] = Json.format[FSACIndicator]
 }

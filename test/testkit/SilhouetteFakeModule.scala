@@ -17,7 +17,7 @@
 package testkit
 
 import com.google.inject.AbstractModule
-import com.mohiva.play.silhouette.api.Environment
+import play.silhouette.api.Environment
 import net.codingwell.scalaguice.ScalaModule
 import security.SecurityEnvironment
 

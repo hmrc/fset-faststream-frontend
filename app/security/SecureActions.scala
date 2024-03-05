@@ -17,22 +17,21 @@
 package security
 
 import java.util.UUID
-import com.mohiva.play.silhouette.api.actions.{ SecuredRequest, UserAwareRequest }
-import com.mohiva.play.silhouette.api.{ Authorization, LogoutEvent, Silhouette }
-import com.mohiva.play.silhouette.impl.authenticators.SessionAuthenticator
+import play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
+import play.silhouette.api.{Authorization, LogoutEvent, Silhouette}
+import play.silhouette.impl.authenticators.SessionAuthenticator
 import connectors.UserManagementClient.InvalidCredentialsException
 import controllers.routes
-import helpers.NotificationType._
 import helpers.NotificationTypeHelper
-import models.{ CachedData, CachedDataWithApp, SecurityUser, UniqueIdentifier }
+import models.{CachedData, CachedDataWithApp, SecurityUser, UniqueIdentifier}
 import play.api.Logging
-import play.api.i18n.{ I18nSupport, Messages }
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import security.Roles.CsrAuthorization
-import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 /**
@@ -65,16 +64,15 @@ trait SecureActions extends I18nSupport with Logging {
    * If the user is inactive then the onNotAuthorized method on global will be called.
    */
   def CSRSecureAction(role: CsrAuthorization)(block: SecuredRequest[_, _] => CachedData => Future[Result]): Action[AnyContent] = {
-    silhouette.SecuredAction.async { secondRequest =>
-      implicit val carrier = hc(secondRequest.request)
+    silhouette.SecuredAction.async { implicit securedRequest =>
+      implicit val carrier: HeaderCarrier = hc(securedRequest)
 
-      secEnv.userService.refreshCachedUser(UniqueIdentifier(secondRequest.identity.userID))(carrier, secondRequest).flatMap { data =>
-        SecuredActionWithCSRAuthorisation(secondRequest, block, role, data, data)
+      secEnv.userService.refreshCachedUser(UniqueIdentifier(securedRequest.identity.userID))(carrier, securedRequest).flatMap { data =>
+        SecuredActionWithCSRAuthorisation(securedRequest, block, role, data, data)
       } recoverWith {
-        case ice: InvalidCredentialsException => {
-          logger.warn(s"Retrieved user cache data failed for userID '${secondRequest.identity.userID}. Could not recover!")
-          gotoAuthentication(secondRequest)
-        }
+        case _: InvalidCredentialsException =>
+          logger.warn(s"Retrieved user cache data failed for userID '${securedRequest.identity.userID}. Could not recover!")
+          gotoAuthentication(securedRequest)
       }
     }
   }
@@ -84,17 +82,15 @@ trait SecureActions extends I18nSupport with Logging {
    **/
   def CSRSecureAppAction(role: CsrAuthorization)
                         (block: SecuredRequest[_, _] => CachedDataWithApp => Future[Result]): Action[AnyContent] = {
-    silhouette.SecuredAction.async { secondRequest =>
-      implicit val carrier = hc(secondRequest.request)
-      implicit val request = secondRequest.request
+    silhouette.SecuredAction.async { implicit securedRequest =>
+      implicit val carrier: HeaderCarrier = hc(securedRequest)
 
-      secEnv.userService.refreshCachedUser(UniqueIdentifier(secondRequest.identity.userID))(carrier, secondRequest).flatMap {
+      secEnv.userService.refreshCachedUser(UniqueIdentifier(securedRequest.identity.userID))(carrier, securedRequest).flatMap {
         case CachedData(_, None) => gotoUnauthorised
-        case data @ CachedData(u, Some(app)) => SecuredActionWithCSRAuthorisation(
-          secondRequest,
-          block, role, data, CachedDataWithApp(u, app))
+        case data @ CachedData(u, Some(app)) =>
+          SecuredActionWithCSRAuthorisation(securedRequest, block, role, data, CachedDataWithApp(u, app))
       } recoverWith {
-        case ice: InvalidCredentialsException => gotoAuthentication(secondRequest)
+        case _: InvalidCredentialsException => gotoAuthentication(securedRequest)
       }
     }
   }
@@ -103,10 +99,9 @@ trait SecureActions extends I18nSupport with Logging {
     withSession {
       silhouette.UserAwareAction.async { request =>
         request.identity match {
-          case Some(securityUser: SecurityUser) => {
-            secEnv.userService.refreshCachedUser(UniqueIdentifier(securityUser.userID))(hc(request.request), request)
+          case Some(securityUser: SecurityUser) =>
+            secEnv.userService.refreshCachedUser(UniqueIdentifier(securityUser.userID))(hc(request), request)
               .flatMap(r => block(request)(Some(r)))
-          }
           case None => block(request)(None)
         }
       }
@@ -114,7 +109,7 @@ trait SecureActions extends I18nSupport with Logging {
 
   private def SecuredActionWithCSRAuthorisation[T](
                                                     originalRequest: SecuredRequest[SecurityEnvironment, AnyContent],
-                                                    block: SecuredRequest[_,_] => T => Future[Result],
+                                                    block: SecuredRequest[_, _] => T => Future[Result],
                                                     role: CsrAuthorization,
                                                     cachedData: CachedData,
                                                     valueForActionBlock: => T
@@ -124,7 +119,7 @@ trait SecureActions extends I18nSupport with Logging {
     val authorizer = new Authorization[SecurityUser, SessionAuthenticator] {
       override def isAuthorized[B](identity: SecurityUser,
                                    authenticator: SessionAuthenticator)(implicit request: Request[B]): Future[Boolean] =
-        Future.successful(role.isAuthorized(cachedData)(originalRequest.request))
+        Future.successful(role.isAuthorized(cachedData)(originalRequest))
     }
 
     silhouette.SecuredAction(authorizer).async { securedRequest =>
@@ -141,7 +136,7 @@ trait SecureActions extends I18nSupport with Logging {
     secEnv.eventBus.publish(LogoutEvent(request.identity, request))
     secEnv.authenticatorService.retrieve.flatMap {
       case Some(authenticator) =>
-        logger.info(s"No keystore record found for user with valid cookie (User Id = ${request.identity.userID}). " +
+        logger.info(s"No keystore record found for user with valid cookie (userID = ${request.identity.userID}). " +
           s"Removing cookie and redirecting to sign in.")
         secEnv.authenticatorService.discard(authenticator, Redirect(routes.SignInController.present))
       case None => Future.successful(Redirect(routes.SignInController.present))
@@ -154,7 +149,7 @@ trait SecureActions extends I18nSupport with Logging {
   /* method to wrap the functionality to generate a session is if not exists. */
   private def withSession(block: Action[AnyContent]) = Action.async { implicit request =>
     request.session.get(SessionKeys.sessionId) match {
-      case Some(v) => block(request)
+      case Some(_) => block(request)
       case None =>
         val session = request.session + (SessionKeys.sessionId -> s"session-${UUID.randomUUID}")
         block(request).map(_.withSession(session))

@@ -17,13 +17,14 @@
 package controllers
 
 import _root_.forms.LockAccountForm
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.MessagesControllerComponents
+
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LockAccountController @Inject() (config: FrontendAppConfig,
@@ -34,7 +35,7 @@ class LockAccountController @Inject() (config: FrontendAppConfig,
 )(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
 
-  def present = CSRUserAwareAction { implicit request =>
+  def present: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       val email = request.session.get("email")
       Future.successful(Ok(views.html.index.locked(
@@ -42,10 +43,10 @@ class LockAccountController @Inject() (config: FrontendAppConfig,
       )))
   }
 
-  def submit = CSRUserAwareAction { implicit request =>
+  def submit: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       LockAccountForm.form.bindFromRequest().fold(
-        invalidForm => Future.successful(Redirect(routes.LockAccountController.present)),
+        _ => Future.successful(Redirect(routes.LockAccountController.present)),
         data => Future.successful(Redirect(routes.PasswordResetController.presentReset)
           addingToSession("email" -> data.email))
       )

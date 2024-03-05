@@ -16,19 +16,20 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.SchoolsClient
 import connectors.SchoolsClient.SchoolsNotFound
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
+
+import javax.inject.{Inject, Singleton}
 import models.view.SchoolView
-import models.view.SchoolView.{ SchoolImplicits, _ }
+import models.view.SchoolView.{SchoolImplicits, _}
 import play.api.libs.json.Json
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.QuestionnaireRoles.EducationQuestionnaireRole
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.reflectiveCalls
 
 @Singleton
@@ -39,7 +40,7 @@ class SchoolsController @Inject() (config: FrontendAppConfig,
   val notificationTypeHelper: NotificationTypeHelper,
   schoolsClient: SchoolsClient)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
-  def getSchools(term: String) = CSRSecureAppAction(EducationQuestionnaireRole) { implicit request =>
+  def getSchools(term: String): Action[AnyContent] = CSRSecureAppAction(EducationQuestionnaireRole) { implicit request =>
     implicit user =>
       if (term.trim.nonEmpty) {
         schoolsClient.getSchools(term).map { schools =>

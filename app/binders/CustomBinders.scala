@@ -23,7 +23,7 @@ import scala.util.{ Failure, Success, Try }
 
 object CustomBinders {
 
-  implicit def pathBindableIdentifier = new PathBindable[UniqueIdentifier] {
+  implicit def pathBindableIdentifier: PathBindable[UniqueIdentifier] = new PathBindable[UniqueIdentifier] {
     def bind(key: String, value: String) =
       Try { UniqueIdentifier(value) } match {
         case Success(v) => Right(v)
@@ -33,7 +33,8 @@ object CustomBinders {
     def unbind(key: String, value: UniqueIdentifier) = value.toString
   }
 
-  implicit def queryBindableIdentifier(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[UniqueIdentifier] {
+  implicit def queryBindableIdentifier(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[UniqueIdentifier] =
+    new QueryStringBindable[UniqueIdentifier] {
     def bind(key: String, params: Map[String, Seq[String]]) =
       for {
         uuid <- stringBinder.bind(key, params)
@@ -50,5 +51,4 @@ object CustomBinders {
 
     def unbind(key: String, value: UniqueIdentifier) = stringBinder.unbind(key, value.toString())
   }
-
 }

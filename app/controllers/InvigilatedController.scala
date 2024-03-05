@@ -16,18 +16,19 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient
 import connectors.ApplicationClient.TestForTokenExpiredException
 import connectors.UserManagementClient.TokenEmailPairInvalidException
 import forms.VerifyCodeForm
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
+
+import javax.inject.{Inject, Singleton}
 import models.CachedData
-import play.api.mvc.{ MessagesControllerComponents, Request, Result }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class InvigilatedController @Inject() (
@@ -40,12 +41,12 @@ class InvigilatedController @Inject() (
   formWrapper: VerifyCodeForm)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
   import notificationTypeHelper._
 
-  def present = CSRUserAwareAction { implicit request =>
+  def present: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       Future.successful(Ok(views.html.index.invigilatedEtraySignin(formWrapper.form)))
   }
 
-  def verifyToken = CSRUserAwareAction { implicit request =>
+  def verifyToken: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
         invalidForm =>

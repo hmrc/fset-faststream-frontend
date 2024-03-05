@@ -16,10 +16,10 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class UpdateDetails(firstName: String, lastName: String, preferredName: Option[String], service: String)
 
 object UpdateDetails {
-  implicit val format = Json.format[UpdateDetails]
+  implicit val format: OFormat[UpdateDetails] = Json.format[UpdateDetails]
 }

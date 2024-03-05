@@ -16,17 +16,17 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class Adjustments(adjustments: Option[List[String]],
                         adjustmentsConfirmed: Option[Boolean]) {
   private val approved = adjustmentsConfirmed.contains(true)
 
-  def isInvigilatedETrayApproved = adjustments.exists(_.contains("etrayInvigilated")) && approved
+  def isInvigilatedETrayApproved: Boolean = adjustments.exists(_.contains("etrayInvigilated")) && approved
 
-  def isInvigilatedVideoApproved = adjustments.exists(_.contains("videoInvigilated")) && approved
+  def isInvigilatedVideoApproved: Boolean = adjustments.exists(_.contains("videoInvigilated")) && approved
 }
 
 object Adjustments {
-  implicit val adjustmentsFormat = Json.format[Adjustments]
+  implicit val adjustmentsFormat: OFormat[Adjustments] = Json.format[Adjustments]
 }

@@ -16,9 +16,9 @@
 
 package security
 
-import com.mohiva.play.silhouette.api.services.AuthenticatorService
-import com.mohiva.play.silhouette.api.{ Env, EventBus }
-import com.mohiva.play.silhouette.impl.authenticators.SessionAuthenticator
+import play.silhouette.api.services.AuthenticatorService
+import play.silhouette.api.{ Env, EventBus }
+import play.silhouette.impl.authenticators.SessionAuthenticator
 import connectors.UserManagementClient
 import models.SecurityUser
 

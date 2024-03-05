@@ -16,8 +16,8 @@
 
 package models
 
-import connectors.exchange.{ AssessmentCentre, Fsb, ProgressResponse }
-import play.api.libs.json.{ Format, Json }
+import connectors.exchange.{AssessmentCentre, Fsb, ProgressResponse}
+import play.api.libs.json.{Format, Json, OFormat}
 
 import scala.language.implicitConversions
 
@@ -107,7 +107,7 @@ case class Progress(
     assessmentCentre: AssessmentCentre = AssessmentCentre(),
     fsb: Fsb = Fsb()
 ) {
-  override def toString =
+  override def toString: String =
     s"personalDetails=$personalDetails," +
       s"schemePreferences=$schemePreferences," +
       s"assistanceDetails=$assistanceDetails," +
@@ -130,13 +130,13 @@ case class Progress(
 }
 
 object Progress {
-  implicit val assessmentCentreFormat = Json.format[AssessmentCentre]
-  implicit val fsbFormat = Json.format[Fsb]
-  implicit val eligibleForJobOfferProgressFormat = Json.format[JobOfferProgress]
-  implicit val phase1TestProgressFormat = Json.format[Phase1TestProgress]
-  implicit val phase2TestProgressFormat = Json.format[Phase2TestProgress]
-  implicit val phase3TestProgressFormat = Json.format[Phase3TestProgress]
-  implicit val siftProgressFormat = Json.format[SiftProgress]
+  implicit val assessmentCentreFormat: OFormat[AssessmentCentre] = Json.format[AssessmentCentre]
+  implicit val fsbFormat: OFormat[Fsb] = Json.format[Fsb]
+  implicit val eligibleForJobOfferProgressFormat: OFormat[JobOfferProgress] = Json.format[JobOfferProgress]
+  implicit val phase1TestProgressFormat: OFormat[Phase1TestProgress] = Json.format[Phase1TestProgress]
+  implicit val phase2TestProgressFormat: OFormat[Phase2TestProgress] = Json.format[Phase2TestProgress]
+  implicit val phase3TestProgressFormat: OFormat[Phase3TestProgress] = Json.format[Phase3TestProgress]
+  implicit val siftProgressFormat: OFormat[SiftProgress] = Json.format[SiftProgress]
   implicit val progressFormat: Format[Progress] = Json.format[Progress]
 
   // scalastyle:off method.length

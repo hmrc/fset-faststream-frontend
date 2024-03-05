@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, TrackingConsentConfig}
 import play.api.Logging
 import play.api.mvc.MessagesControllerComponents
 import security.SecureActions
@@ -30,6 +30,6 @@ abstract class BaseController(
   mcc: MessagesControllerComponents)
   extends FrontendController(mcc) with SecureActions with Logging {
 
-  implicit val feedbackUrl = config.feedbackUrl
-  implicit val trackingConsentConfig = config.trackingConsentConfig
+  implicit val feedbackUrl: String = config.feedbackUrl
+  implicit val trackingConsentConfig: TrackingConsentConfig = config.trackingConsentConfig
 }

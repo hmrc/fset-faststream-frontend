@@ -17,9 +17,7 @@
 package connectors.exchange
 
 import java.util.UUID
-import org.joda.time.{DateTime, LocalDate}
-
-import java.time.OffsetDateTime
+import java.time.{LocalDate, OffsetDateTime}
 
 object Phase3TestGroupExamples {
 
@@ -43,7 +41,7 @@ object Phase3TestGroupExamples {
   )
 
   val sampleReviewedCallback = (capabilityScore: Option[Double], engagementScore: Option[Double]) => ReviewedCallbackRequest(
-    DateTime.now(),
+    OffsetDateTime.now(),
     ReviewSectionRequest(
       ReviewSectionTotalAverageRequest(
         "video_interview",
@@ -68,7 +66,7 @@ object Phase3TestGroupExamples {
     )
   )
 
-  def buildReviewedCallBackRequest(criteriaScore: Double, dateTime: DateTime = DateTime.now()) = ReviewedCallbackRequest(
+  def buildReviewedCallBackRequest(criteriaScore: Double, dateTime: OffsetDateTime = OffsetDateTime.now()) = ReviewedCallbackRequest(
     dateTime,
     ReviewSectionRequest(
       ReviewSectionTotalAverageRequest(
@@ -103,8 +101,8 @@ object Phase3TestGroupExamples {
   def phase3TestWithResults(capabilityScore: Option[Double], engagementScore: Option[Double], hrsBeforeLastReviewed: Int = 0) = {
     val launchPadTestWithResult = launchPadTest.copy(callbacks =
       LaunchpadTestCallbacks(reviewed = List(
-        sampleReviewedCallback(capabilityScore, engagementScore).copy(received = DateTime.now().minusHours(hrsBeforeLastReviewed)),
-        sampleReviewedCallback(capabilityScore, engagementScore).copy(received = DateTime.now()))))
+        sampleReviewedCallback(capabilityScore, engagementScore).copy(received = OffsetDateTime.now().minusHours(hrsBeforeLastReviewed)),
+        sampleReviewedCallback(capabilityScore, engagementScore).copy(received = OffsetDateTime.now()))))
     Phase3TestGroup(expirationDate = DatePlus7Days, tests = List(launchPadTestWithResult))
   }
 

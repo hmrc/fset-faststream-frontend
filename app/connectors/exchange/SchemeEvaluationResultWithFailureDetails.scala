@@ -17,10 +17,11 @@
 package connectors.exchange
 
 import connectors.exchange.referencedata.SchemeId
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SchemeEvaluationResultWithFailureDetails(schemeId: SchemeId, result: String, failedAt: Option[String] = None)
 
 object SchemeEvaluationResultWithFailureDetails {
-  implicit val schemeEvaluationResultWithFailureDetailsFormat = Json.format[SchemeEvaluationResultWithFailureDetails]
+  implicit val schemeEvaluationResultWithFailureDetailsFormat: OFormat[SchemeEvaluationResultWithFailureDetails] =
+    Json.format[SchemeEvaluationResultWithFailureDetails]
 }

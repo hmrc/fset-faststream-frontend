@@ -16,7 +16,7 @@
 
 package connectors.exchange.candidatescores
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class CompetencyAverageResult(
                                     makingEffectiveDecisionsAverage: Double,
@@ -32,5 +32,5 @@ case class CompetencyAverageResult(
 }
 
 object CompetencyAverageResult {
-  implicit val competencyAverageResultFormat = Json.format[CompetencyAverageResult]
+  implicit val competencyAverageResultFormat: OFormat[CompetencyAverageResult] = Json.format[CompetencyAverageResult]
 }

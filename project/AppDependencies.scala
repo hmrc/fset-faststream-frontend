@@ -20,40 +20,31 @@ import play.sbt.PlayImport.ws
 object AppDependencies {
 
   object Versions {
-    val bootstrapVersion  = "7.23.0"
-    val silhouetteVersion = "6.1.1"
+    val bootstrapVersion  = "8.5.0"
+    val silhouetteVersion = "10.0.0"
   }
 
   import Versions._
 
   val compile = Seq(
-    "com.iheart"                %% "ficus"                                    % "1.5.0",
-    "uk.gov.hmrc"               %% "http-caching-client"                      % "10.0.0-play-28",
-    "uk.gov.hmrc"               %% "bootstrap-frontend-play-28"               % bootstrapVersion,
-    // We still need play-json-joda for Phase3TestGroup, check that file for more information
-    "com.typesafe.play"         %% "play-json-joda"                           % "2.9.2",
-    "org.apache.httpcomponents" %  "httpclient"                               % "4.5.3",
-    "org.apache.httpcomponents" %  "httpcore"                                 % "4.4.5",
-    "com.mohiva"                %% "play-silhouette"                          % silhouetteVersion,
-    "com.mohiva"                %% "play-silhouette-password-bcrypt"          % silhouetteVersion,
-    "com.mohiva"                %% "play-silhouette-crypto-jca"               % silhouetteVersion,
-    "com.mohiva"                %% "play-silhouette-persistence"              % silhouetteVersion,
-    "net.codingwell"            %% "scala-guice"                              % "5.1.0",
-    "com.github.nscala-time"    %% "nscala-time"                              % "2.24.0",
+    "uk.gov.hmrc"                   %% "bootstrap-frontend-play-30"               % bootstrapVersion,
+    "uk.gov.hmrc"                   %% "http-caching-client-play-30"              % "11.2.0",
+    "com.iheart"                    %% "ficus"                                    % "1.5.0",
+    "org.apache.httpcomponents"     %  "httpclient"                               % "4.5.3",
+    "org.apache.httpcomponents"     %  "httpcore"                                 % "4.4.5",
+    "org.playframework.silhouette"  %% "play-silhouette"                          % silhouetteVersion,
+    "org.playframework.silhouette"  %% "play-silhouette-password-bcrypt"          % silhouetteVersion,
+    "org.playframework.silhouette"  %% "play-silhouette-crypto-jca"               % silhouetteVersion,
+    "org.playframework.silhouette"  %% "play-silhouette-persistence"              % silhouetteVersion,
+    "net.codingwell"                %% "scala-guice"                              % "5.1.1",
     // Works with MireMock up to version 2.31.0
-    "com.fasterxml.jackson.module"  %% "jackson-module-scala"                 % "2.12.2",
+    "com.fasterxml.jackson.module"  %% "jackson-module-scala"                     % "2.12.2",
     ws
   )
 
   val test = Seq(
-    "org.scalatestplus.play"    %% "scalatestplus-play"           % "5.1.0"           % Test,
-    // Gives you access to MockitoSugar as it is no longer available in scalatestplus-play
-    "org.scalatestplus"         %% "mockito-3-4"                  % "3.2.8.0"         % Test,
-    "com.vladsch.flexmark"      %  "flexmark-all"                 % "0.36.8"          % Test,
-    "org.mockito"               %  "mockito-core"                 % "3.9.0"           % Test,
-    "com.github.tomakehurst"    % "wiremock-jre8"                 % "2.31.0"          % Test,
-    "com.mohiva"                %% "play-silhouette-testkit"      % silhouetteVersion % Test,
-    "uk.gov.hmrc"               %% "bootstrap-test-play-28"       % bootstrapVersion  % Test
+    "uk.gov.hmrc"                   %% "bootstrap-test-play-30"   % bootstrapVersion  % Test,
+    "org.playframework.silhouette"  %% "play-silhouette-testkit"  % silhouetteVersion % Test
   )
 
   def apply() = compile ++ test

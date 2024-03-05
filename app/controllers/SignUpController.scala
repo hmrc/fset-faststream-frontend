@@ -18,7 +18,7 @@ package controllers
 
 import _root_.forms.SignUpForm
 import _root_.forms.SignUpForm._
-import com.mohiva.play.silhouette.api.SignUpEvent
+import play.silhouette.api.SignUpEvent
 import config.{ FrontendAppConfig, SecurityEnvironment }
 import connectors.UserManagementClient.EmailTakenException
 import connectors.exchange._

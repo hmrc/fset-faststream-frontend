@@ -24,9 +24,9 @@ object SiftAnswersStatus extends Enumeration {
 
   val DRAFT, SUBMITTED = Value
 
-  implicit val siftAnswersStatusFormat = new Format[SiftAnswersStatus] {
-    def reads(json: JsValue) = JsSuccess(SiftAnswersStatus.withName(json.as[String]))
-    def writes(myEnum: SiftAnswersStatus) = JsString(myEnum.toString)
+  implicit val siftAnswersStatusFormat: Format[SiftAnswersStatus] = new Format[SiftAnswersStatus] {
+    def reads(json: JsValue): JsSuccess[Value] = JsSuccess(SiftAnswersStatus.withName(json.as[String]))
+    def writes(myEnum: SiftAnswersStatus): JsString = JsString(myEnum.toString)
   }
 }
 
@@ -36,5 +36,5 @@ case class SiftAnswers(applicationId: String,
   schemeAnswers: Map[String, SchemeSpecificAnswer])
 
 object SiftAnswers {
-  implicit val siftAnswersFormat = Json.format[SiftAnswers]
+  implicit val siftAnswersFormat: OFormat[SiftAnswers] = Json.format[SiftAnswers]
 }

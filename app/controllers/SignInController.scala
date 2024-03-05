@@ -17,7 +17,7 @@
 package controllers
 
 import _root_.forms.SignInForm
-import com.mohiva.play.silhouette.api.util.Credentials
+import play.silhouette.api.util.Credentials
 import config.{ FrontendAppConfig, SecurityEnvironment }
 import helpers.NotificationTypeHelper
 import javax.inject.{ Inject, Singleton }

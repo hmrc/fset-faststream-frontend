@@ -18,7 +18,7 @@ package security
 
 import java.util.UUID
 
-import com.mohiva.play.silhouette.api.util.Credentials
+import play.silhouette.api.util.Credentials
 import config.{CSRHttp, FrontendAppConfig, UserManagementConfig, UserManagementUrl}
 import connectors.UserManagementClient.{InvalidRoleException, _}
 import connectors.exchange.UserResponse
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class CsrCredentialsProviderSpec extends BaseSpec {
 
-  implicit override val patienceConfig =
+  implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = Span(2, Seconds), interval = Span(1, Seconds))
 
   "authenticate" should {

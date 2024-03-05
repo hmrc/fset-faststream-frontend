@@ -29,11 +29,11 @@ object Phase1TestGroupWithNames {
 case class Phase2TestGroupWithActiveTest(applicationId: String, expirationDate: OffsetDateTime, activeTests: Seq[PsiTest])
 
 object Phase2TestGroupWithActiveTest {
-  implicit val phase2TestGroupWithNamesFormat = Json.format[Phase2TestGroupWithActiveTest]
+  implicit val phase2TestGroupWithNamesFormat: OFormat[Phase2TestGroupWithActiveTest] = Json.format[Phase2TestGroupWithActiveTest]
 }
 
 case class SiftTestGroupWithActiveTest(expirationDate: OffsetDateTime, activeTest: PsiTest)
 
 object SiftTestGroupWithActiveTest {
-  implicit val siftTestGroupFormat = Json.format[SiftTestGroupWithActiveTest]
+  implicit val siftTestGroupFormat: OFormat[SiftTestGroupWithActiveTest] = Json.format[SiftTestGroupWithActiveTest]
 }

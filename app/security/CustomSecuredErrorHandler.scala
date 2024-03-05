@@ -16,7 +16,7 @@
 
 package security
 
-import com.mohiva.play.silhouette.api.actions.{ SecuredErrorHandler, SecuredRequest }
+import play.silhouette.api.actions.{ SecuredErrorHandler, SecuredRequest }
 import controllers.routes
 import javax.inject.Inject
 import play.api.i18n.{ I18nSupport, MessagesApi }

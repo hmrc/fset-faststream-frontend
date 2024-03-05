@@ -17,10 +17,10 @@
 package connectors.exchange
 
 import connectors.exchange.referencedata.SchemeId
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SchemeEvaluationResult(schemeId: SchemeId, result: String)
 
 object SchemeEvaluationResult {
-  implicit val schemeEvaluationResultFormat = Json.format[SchemeEvaluationResult]
+  implicit val schemeEvaluationResultFormat: OFormat[SchemeEvaluationResult] = Json.format[SchemeEvaluationResult]
 }

@@ -20,7 +20,7 @@ import forms.PersonalDetailsFormExamples._
 import java.time.LocalDate
 
 class PersonalDetailsFormSpec extends BaseFormSpec {
-  implicit val now = LocalDate.now
+  implicit val now: LocalDate = LocalDate.now
 
   def personalDetailsForm = new PersonalDetailsForm().form
 

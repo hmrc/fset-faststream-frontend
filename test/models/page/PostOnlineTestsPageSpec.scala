@@ -22,14 +22,12 @@ import connectors.ReferenceDataExamples._
 import connectors.exchange.candidateevents.CandidateAllocationWithEvent
 import connectors.exchange.referencedata.SchemeId
 import connectors.exchange.{EventsExamples, SchemeEvaluationResultWithFailureDetails, SelectedSchemes}
-import connectors.exchange.{ EventsExamples, SchemeEvaluationResultWithFailureDetails, SelectedSchemes }
 import testkit.UnitSpec
 import helpers.{CachedUserWithSchemeData, CurrentSchemeStatus}
 import models.ApplicationData.ApplicationStatus
 import models._
 import models.events.AllocationStatuses
 import models.page.DashboardPage.Flags.{ProgressActive, ProgressInactiveDisabled}
-import models.page.DashboardPage.Flags.{ ProgressActive, ProgressInactiveDisabled }
 
 class PostOnlineTestsPageSpec extends UnitSpec {
   val FsacGuideUrl = "localhost/fsac"

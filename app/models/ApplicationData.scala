@@ -38,21 +38,21 @@ case class ApplicationData(
 
   import ApplicationData.ApplicationStatus._
 
-  def isPhase1 =
+  def isPhase1: Boolean =
     applicationStatus == PHASE1_TESTS || applicationStatus == PHASE1_TESTS_PASSED || applicationStatus == PHASE1_TESTS_FAILED
-  def isPhase2 =
+  def isPhase2: Boolean =
     (applicationStatus == PHASE2_TESTS || applicationStatus == PHASE2_TESTS_PASSED || applicationStatus == PHASE2_TESTS_FAILED
       || progress.phase2TestProgress.phase2TestsInvited)
-  def isPhase3 =
+  def isPhase3: Boolean =
     (applicationStatus == PHASE3_TESTS || applicationStatus == PHASE3_TESTS_PASSED
       || applicationStatus == PHASE3_TESTS_FAILED || applicationStatus == PHASE3_TESTS_PASSED_WITH_AMBER
       || progress.phase3TestProgress.phase3TestsInvited)
 
-  def isSift = applicationStatus == SIFT
-  def isSiftExpired =
+  private def isSift = applicationStatus == SIFT
+  def isSiftExpired: Boolean =
     isSift && progress.siftProgress.siftExpired
-  def isSdipFaststream = applicationRoute == ApplicationRoute.SdipFaststream
-  def isFaststream = applicationRoute == ApplicationRoute.Faststream
+  def isSdipFaststream: Boolean = applicationRoute == ApplicationRoute.SdipFaststream
+  def isFaststream: Boolean = applicationRoute == ApplicationRoute.Faststream
 }
 
 object ApplicationData {
@@ -79,14 +79,14 @@ object ApplicationData {
     val WITHDRAWN = Value
     // format: ON
 
-    implicit val applicationStatusFormat = new Format[ApplicationStatus] {
-      def reads(json: JsValue) =
+    implicit val applicationStatusFormat: Format[ApplicationStatus] = new Format[ApplicationStatus] {
+      def reads(json: JsValue): JsSuccess[Value] =
         JsSuccess(ApplicationStatus.withName(json.as[String]))
-      def writes(myEnum: ApplicationStatus) = JsString(myEnum.toString)
+      def writes(myEnum: ApplicationStatus): JsString = JsString(myEnum.toString)
     }
   }
 
-  def isReadOnly(applicationStatus: ApplicationStatus) =
+  def isReadOnly(applicationStatus: ApplicationStatus): Boolean =
     applicationStatus match {
       case ApplicationStatus.REGISTERED  => false
       case ApplicationStatus.CREATED     => false
@@ -103,11 +103,10 @@ object ApplicationData {
       resp.applicationRoute,
       resp.progressResponse,
       resp.civilServiceExperienceDetails,
-      None,
+      edipCompleted = None,
       resp.overriddenSubmissionDeadline
     )
-  import models.FaststreamImplicits._
-  implicit val applicationDataFormat = Json.format[ApplicationData]
+  implicit val applicationDataFormat: OFormat[ApplicationData] = Json.format[ApplicationData]
 }
 
 // scalastyle:off number.of.types
@@ -119,10 +118,10 @@ object ProgressStatuses {
   }
 
   object ProgressStatus {
-    implicit val progressStatusFormat = new Format[ProgressStatus] {
-      def reads(json: JsValue) =
+    implicit val progressStatusFormat: Format[ProgressStatus] = new Format[ProgressStatus] {
+      def reads(json: JsValue): JsSuccess[ProgressStatus] =
         JsSuccess(nameToProgressStatus(json.as[String]))
-      def writes(progressStatus: ProgressStatus) = JsString(progressStatus.key)
+      def writes(progressStatus: ProgressStatus): JsString = JsString(progressStatus.key)
     }
 
     implicit def progressStatusToString(
@@ -302,7 +301,7 @@ object ProgressStatuses {
     PHASE1_TESTS_SDIP_FS_PASSED_NOTIFIED
   }
 
-  def nameToProgressStatus(name: String) =
+  private def nameToProgressStatus(name: String) =
     nameToProgressStatusMap(name.toLowerCase)
 
   // Reflection is generally 'A bad thing' but in this case it ensures that all progress statues are taken into account
@@ -334,7 +333,7 @@ object ProgressStatuses {
     if (matching.size == 1) matching.headOption else None
   }
 
-  def progressesByApplicationStatus(applicationStatuses: ApplicationStatus*) = {
+  def progressesByApplicationStatus(applicationStatuses: ApplicationStatus*): Seq[ProgressStatus] = {
     allStatuses.filter(st => applicationStatuses.contains(st.applicationStatus))
   }
 }
