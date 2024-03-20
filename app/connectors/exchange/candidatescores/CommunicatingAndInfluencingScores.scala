@@ -16,7 +16,7 @@
 
 package connectors.exchange.candidatescores
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class CommunicatingAndInfluencingScores(
                                               isAnInfluencer: Option[Double] = None,
@@ -28,5 +28,6 @@ case class CommunicatingAndInfluencingScores(
 )
 
 object CommunicatingAndInfluencingScores {
-  implicit val communicatingAndInfluencingScoresFormat = Json.format[CommunicatingAndInfluencingScores]
+  implicit val communicatingAndInfluencingScoresFormat: OFormat[CommunicatingAndInfluencingScores] =
+    Json.format[CommunicatingAndInfluencingScores]
 }

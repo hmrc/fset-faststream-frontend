@@ -16,15 +16,16 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.MessagesControllerComponents
+
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.Roles.Phase3TestInvitedRole
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LaunchpadTestController @Inject() (
@@ -35,7 +36,7 @@ class LaunchpadTestController @Inject() (
   val notificationTypeHelper: NotificationTypeHelper,
   applicationClient: ApplicationClient)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
-  def startPhase3Tests = CSRSecureAppAction(Phase3TestInvitedRole) { implicit request =>
+  def startPhase3Tests: Action[AnyContent] = CSRSecureAppAction(Phase3TestInvitedRole) { implicit request =>
     implicit cachedUserData =>
       applicationClient.getPhase3TestGroup(cachedUserData.application.applicationId).flatMap { testProfile =>
         testProfile.activeTests.find(!_.completed).map { testToStart =>
@@ -51,7 +52,7 @@ class LaunchpadTestController @Inject() (
       }
   }
 
-  def completePhase3TestsByToken(token: String) = CSRUserAwareAction { implicit request =>
+  def completePhase3TestsByToken(token: String): Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       applicationClient.completePhase3TestByToken(token).map { _ =>
         Ok(views.html.application.onlineTests.phase3TestsComplete())

@@ -16,13 +16,14 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.MessagesControllerComponents
+
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Provide all the peripheral links from this controller, like T&C link
@@ -36,39 +37,39 @@ class ApplicationController @Inject() (
   val notificationTypeHelper: NotificationTypeHelper)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
 
-  def index = Action {
+  def index: Action[AnyContent] = Action {
     Redirect(routes.SignInController.signIn)
   }
 
-  def terms = CSRUserAwareAction { implicit request =>
+  def terms: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       Future.successful(Ok(views.html.index.terms()))
   }
 
-  def cookies = CSRUserAwareAction { implicit request =>
+  def cookies: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       Future.successful(Ok(views.html.index.cookies()))
   }
 
   // For this to work on a dev machine you need to run the following service manager command:
   // sm --start TRACKING_CONSENT_FRONTEND
-  def trackingConsentCookies = CSRUserAwareAction { implicit request =>
+  def trackingConsentCookies: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       require(config.trackingConsentConfig.trackingConsentHost.isDefined, "Tracking consent host must be defined")
       Future.successful(Redirect(s"${config.trackingConsentConfig.trackingConsentHost.get}/tracking-consent/cookie-settings"))
   }
 
-  def privacy = CSRUserAwareAction { implicit request =>
+  def privacy: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       Future.successful(Ok(views.html.index.privacy()))
   }
 
-  def helpdesk = CSRUserAwareAction { implicit request =>
+  def helpdesk: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       Future.successful(Ok(views.html.index.helpdesk()))
   }
 
-  def accessibility = CSRUserAwareAction { implicit request =>
+  def accessibility: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       Future.successful(Ok(views.html.index.accessibility()))
   }

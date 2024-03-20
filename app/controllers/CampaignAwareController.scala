@@ -41,18 +41,18 @@ case class ApplicationRouteStateImpl(config: ApplicationRouteFrontendConfig) ext
   def applicationsSubmitEnabled: Boolean = isAfterNow(config.blockApplicationsDate)
   def applicationsStartDate: Option[LocalDateTime] = config.startNewAccountsDate
 
-  val zoneId = config.timeZone.map(ZoneId.of).getOrElse(ZoneId.systemDefault())
+  private val zoneId = config.timeZone.map(ZoneId.of).getOrElse(ZoneId.systemDefault())
 
-  def now = LocalDateTime.now(zoneId)
+  def now: LocalDateTime = LocalDateTime.now(zoneId)
 
-  def isAfterNow(date: Option[LocalDateTime]) = {
+  private def isAfterNow(date: Option[LocalDateTime]) = {
     val result = date forall (_.isAfter(now))
     logger.warn(s"isAfterNow check: checking if given closing date($date) in timezone($zoneId) is after now($now) - " +
       s"result=$result (false indicates we are closed)")
     result
   }
 
-  def isBeforeNow(date: Option[LocalDateTime]) = date forall (_.isBefore(now))
+  private def isBeforeNow(date: Option[LocalDateTime]) = date forall (_.isBefore(now))
 }
 
 trait CampaignAwareController {

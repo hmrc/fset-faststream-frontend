@@ -16,10 +16,10 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SelectedSchemes(schemes: List[String], orderAgreed: Boolean, eligible: Boolean)
 
 object SelectedSchemes {
-  implicit val selectedSchemesFormat = Json.format[SelectedSchemes]
+  implicit val selectedSchemesFormat: OFormat[SelectedSchemes] = Json.format[SelectedSchemes]
 }

@@ -16,8 +16,8 @@
 
 package connectors.exchange.sift
 
-import forms.sift.{ GeneralQuestionsForm, PostGradDegreeInfoForm, UndergradDegreeInfoForm }
-import play.api.libs.json.Json
+import forms.sift.{GeneralQuestionsForm, PostGradDegreeInfoForm, UndergradDegreeInfoForm}
+import play.api.libs.json.{Json, OFormat}
 
 case class UndergradDegreeInfoAnswers(
   name: String,
@@ -27,7 +27,7 @@ case class UndergradDegreeInfoAnswers(
 )
 
 object UndergradDegreeInfoAnswers {
-  implicit val degreeInfoFormat = Json.format[UndergradDegreeInfoAnswers]
+  implicit val degreeInfoFormat: OFormat[UndergradDegreeInfoAnswers] = Json.format[UndergradDegreeInfoAnswers]
 
   def apply(a: UndergradDegreeInfoForm.Data): UndergradDegreeInfoAnswers = {
     UndergradDegreeInfoAnswers(
@@ -46,7 +46,7 @@ case class PostGradDegreeInfoAnswers(
 )
 
 object PostGradDegreeInfoAnswers {
-  implicit val postGradDegreeInfoAnswersFormat = Json.format[PostGradDegreeInfoAnswers]
+  implicit val postGradDegreeInfoAnswersFormat: OFormat[PostGradDegreeInfoAnswers] = Json.format[PostGradDegreeInfoAnswers]
 
   def apply(a: PostGradDegreeInfoForm.Data): PostGradDegreeInfoAnswers = {
     PostGradDegreeInfoAnswers(
@@ -67,7 +67,7 @@ case class GeneralQuestionsAnswers(
 )
 
 object GeneralQuestionsAnswers {
-  implicit val generalQuestionsAnswersFormat = Json.format[GeneralQuestionsAnswers]
+  implicit val generalQuestionsAnswersFormat: OFormat[GeneralQuestionsAnswers] = Json.format[GeneralQuestionsAnswers]
 
   def apply(a: GeneralQuestionsForm.Data): GeneralQuestionsAnswers = {
     GeneralQuestionsAnswers(

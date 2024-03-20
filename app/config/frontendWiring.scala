@@ -16,11 +16,11 @@
 
 package config
 
-import akka.actor.ActorSystem
-import com.mohiva.play.silhouette.api.crypto.{ Base64AuthenticatorEncoder, Hash }
-import com.mohiva.play.silhouette.api.util.{ Clock, FingerprintGenerator }
-import com.mohiva.play.silhouette.api.{ Environment, EventBus }
-import com.mohiva.play.silhouette.impl.authenticators.{ SessionAuthenticatorService, SessionAuthenticatorSettings }
+import org.apache.pekko.actor.ActorSystem
+import play.silhouette.api.crypto.{ Base64AuthenticatorEncoder, Hash }
+import play.silhouette.api.util.{ Clock, FingerprintGenerator }
+import play.silhouette.api.{ Environment, EventBus }
+import play.silhouette.impl.authenticators.{ SessionAuthenticatorService, SessionAuthenticatorSettings }
 import com.typesafe.config.Config
 import helpers.WSBinaryPost
 import javax.inject.{ Inject, Singleton }

@@ -25,7 +25,7 @@ object SchemeId {
   val schemeIdWritesFormat: Writes[SchemeId] = Writes[SchemeId](scheme => JsString(scheme.value))
   val schemeIdReadsFormat: Reads[SchemeId] = Reads[SchemeId](scheme => JsSuccess(SchemeId(scheme.as[String])))
 
-  implicit val schemeIdFormat = Format(schemeIdReadsFormat, schemeIdWritesFormat)
+  implicit val schemeIdFormat: Format[SchemeId] = Format(schemeIdReadsFormat, schemeIdWritesFormat)
 }
 
 case class Degree(
@@ -34,15 +34,15 @@ case class Degree(
 )
 
 object Degree {
-  implicit val degreeFormat = Json.format[Degree]
+  implicit val degreeFormat: OFormat[Degree] = Json.format[Degree]
 }
 
 object SiftRequirement extends Enumeration {
   val FORM, NUMERIC_TEST = Value
 
-  implicit val applicationStatusFormat = new Format[SiftRequirement.Value] {
-    def reads(json: JsValue) = JsSuccess(SiftRequirement.withName(json.as[String]))
-    def writes(myEnum: SiftRequirement.Value) = JsString(myEnum.toString)
+  implicit val applicationStatusFormat: Format[SiftRequirement.Value] = new Format[SiftRequirement.Value] {
+    def reads(json: JsValue): JsSuccess[Value] = JsSuccess(SiftRequirement.withName(json.as[String]))
+    def writes(myEnum: SiftRequirement.Value): JsString = JsString(myEnum.toString)
   }
 }
 
@@ -66,7 +66,7 @@ case class Scheme(
 )
 
 object Scheme {
-  implicit val schemeFormat = Json.format[Scheme]
+  implicit val schemeFormat: OFormat[Scheme] = Json.format[Scheme]
 
   // scalastyle:off parameter.number
   def apply(id: String, code: String, name: String, civilServantEligible: Boolean,

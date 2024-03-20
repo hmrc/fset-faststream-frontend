@@ -16,26 +16,29 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient.PersonalDetailsNotFound
 import connectors.exchange.CivilServiceExperienceDetails._
 import connectors.exchange.SelectedSchemes
-import connectors.{ ApplicationClient, ReferenceDataClient, SchemeClient, UserManagementClient }
+import connectors.{ApplicationClient, ReferenceDataClient, SchemeClient, UserManagementClient}
 import forms.FastPassForm._
 import forms.PersonalDetailsForm
 import helpers.NotificationType._
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import mappings.{ Address, DayMonthYear }
-import models.{ ApplicationRoute, CachedDataWithApp }
+
+import javax.inject.{Inject, Singleton}
+import mappings.{Address, DayMonthYear}
+import models.{ApplicationRoute, CachedDataWithApp}
+
 import java.time.LocalDate
 import play.api.data.Form
-import play.api.mvc.{ MessagesControllerComponents, Request, Result }
-import security.Roles.{ EditPersonalDetailsAndContinueRole, EditPersonalDetailsRole }
+import play.api.i18n.Messages
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import security.Roles.{EditPersonalDetailsAndContinueRole, EditPersonalDetailsRole}
 import security.SilhouetteComponent
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PersonalDetailsController @Inject() (
@@ -56,12 +59,12 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
   private case object ContinueToNextStepInJourney extends OnSuccess
   private case object RedirectToTheDashboard extends OnSuccess
 
-  def presentAndContinue = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
+  def presentAndContinue: Action[AnyContent] = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
     implicit user =>
       personalDetails(afterSubmission = ContinueToNextStepInJourney)
   }
 
-  def present = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
+  def present: Action[AnyContent] = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
     implicit user =>
       personalDetails(afterSubmission = RedirectToTheDashboard)
   }
@@ -126,20 +129,20 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
     }.flatMap(identity)
   }
 
-  def submitPersonalDetailsAndContinue =
+  def submitPersonalDetailsAndContinue: Action[AnyContent] =
     CSRSecureAppAction(EditPersonalDetailsAndContinueRole) { implicit request =>
     implicit user =>
-      implicit val messages = request.messages
+      implicit val messages: Messages = request.messages
       val redirect = if (user.application.applicationRoute == ApplicationRoute.Faststream ||
         user.application.applicationRoute == ApplicationRoute.SdipFaststream) {
         Redirect(routes.SchemePreferencesController.present)
       } else {
         Redirect(routes.AssistanceDetailsController.present)
       }
-      submit(formWrapper.form(LocalDate.now, false, messages), ContinueToNextStepInJourney, redirect)
+      submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = false, messages), ContinueToNextStepInJourney, redirect)
     }
 
-  def submitPersonalDetails = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
+  def submitPersonalDetails: Action[AnyContent] = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
     implicit user =>
       submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = true, request.messages), RedirectToTheDashboard,
         Redirect(routes.HomeController.present()).flashing(success("personalDetails.updated")))

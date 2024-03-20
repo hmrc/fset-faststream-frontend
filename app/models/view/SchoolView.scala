@@ -17,15 +17,16 @@
 package models.view
 
 import connectors.exchange.School
+
 import scala.language.implicitConversions
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SchoolView(id: String, name: String, label: String)
 
 object SchoolView {
   val limitResults = 15
-  val narrowYourSearchHint = SchoolView("", "", "More than 15 results found, enter more text")
-  implicit val schoolFormat = Json.format[SchoolView]
+  val narrowYourSearchHint: SchoolView = SchoolView("", "", "More than 15 results found, enter more text")
+  implicit val schoolFormat: OFormat[SchoolView] = Json.format[SchoolView]
 
   implicit class SchoolImplicits(school: School) {
     def toSchoolView: SchoolView = {

@@ -16,7 +16,7 @@
 
 package connectors.exchange.sift
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import services.TimeFormattingService
 
 import java.time.OffsetDateTime
@@ -26,5 +26,5 @@ case class SiftState(siftEnteredDate: OffsetDateTime, expirationDate: OffsetDate
 }
 
 object SiftState {
-  implicit val siftStateFormat = Json.format[SiftState]
+  implicit val siftStateFormat: OFormat[SiftState] = Json.format[SiftState]
 }

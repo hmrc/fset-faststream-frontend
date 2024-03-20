@@ -17,7 +17,7 @@
 package connectors.exchange.candidateevents
 
 import models.events.AllocationStatuses
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class CandidateAllocations(
   version: Option[String] = None,
@@ -25,7 +25,7 @@ case class CandidateAllocations(
 )
 
 object CandidateAllocations {
-  implicit val candidateAllocationsFormat = Json.format[CandidateAllocations]
+  implicit val candidateAllocationsFormat: OFormat[CandidateAllocations] = Json.format[CandidateAllocations]
 
   def createConfirmed(version: Option[String], applicationId: String): CandidateAllocations = {
     new CandidateAllocations(version, List(CandidateAllocation(applicationId, AllocationStatuses.CONFIRMED, None)))

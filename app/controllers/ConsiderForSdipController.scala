@@ -17,21 +17,21 @@
 package controllers
 
 import java.util.UUID
-
-import config.{ FrontendAppConfig, SecurityEnvironment }
-import connectors.{ ApplicationClient, UserManagementClient }
+import config.{FrontendAppConfig, SecurityEnvironment}
+import connectors.{ApplicationClient, UserManagementClient}
 import forms.ConsiderForSdipForm
 import helpers.NotificationType._
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
+
+import javax.inject.{Inject, Singleton}
 import models.ApplicationRoute._
 import models.ConsiderMeForSdipHelper._
 import security.RoleUtils._
-import security.Roles.{ ActiveUserRole, ContinueAsSdipRole }
+import security.Roles.{ActiveUserRole, ContinueAsSdipRole}
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
-import play.api.mvc.MessagesControllerComponents
+import scala.concurrent.{ExecutionContext, Future}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 @Singleton
 class ConsiderForSdipController @Inject() (
@@ -47,7 +47,7 @@ class ConsiderForSdipController @Inject() (
 
   val appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState] = config.applicationRoutesFrontend
 
-  def present = CSRSecureAction(ActiveUserRole) { implicit request => implicit cachedData =>
+  def present: Action[AnyContent] = CSRSecureAction(ActiveUserRole) { implicit request => implicit cachedData =>
     Future.successful {
       cachedData.application match {
         case Some(app) if !isFaststreamOnly(cachedData) =>
@@ -61,7 +61,7 @@ class ConsiderForSdipController @Inject() (
     }
   }
 
-  def submit = CSRSecureAppAction(ActiveUserRole) { implicit request => implicit cachedData =>
+  def submit: Action[AnyContent] = CSRSecureAppAction(ActiveUserRole) { implicit request => implicit cachedData =>
     ConsiderForSdipForm.form.bindFromRequest().fold(
       invalidForm =>
         Future.successful(Ok(views.html.application.sdip.considerMeForSdip(invalidForm))),
@@ -75,7 +75,7 @@ class ConsiderForSdipController @Inject() (
     )
   }
 
-  def continueAsSdip = CSRSecureAction(ContinueAsSdipRole) { implicit request => implicit cachedData =>
+  def continueAsSdip: Action[AnyContent] = CSRSecureAction(ContinueAsSdipRole) { implicit request => implicit cachedData =>
     val archivedEmail = convertToArchiveEmail(cachedData.user.email)
     for {
       userToArchiveWith <- userManagementClient.register(archivedEmail, UUID.randomUUID().toString,

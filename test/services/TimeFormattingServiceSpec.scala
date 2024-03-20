@@ -21,7 +21,7 @@ import helpers.Timezones
 import org.mockito.Mockito._
 import testkit.UnitSpec
 
-import java.time.{LocalDateTime, OffsetDateTime, ZoneId}
+import java.time.{LocalDateTime, OffsetDateTime}
 
 class TimeFormattingServiceSpec extends UnitSpec {
 

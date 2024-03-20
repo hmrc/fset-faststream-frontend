@@ -16,7 +16,7 @@
 
 package filters
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import forms.{SignInForm, SignUpForm}
 import play.api.Configuration
 

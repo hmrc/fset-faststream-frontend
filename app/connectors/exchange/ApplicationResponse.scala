@@ -17,7 +17,7 @@
 package connectors.exchange
 
 import models.{ApplicationRoute, UniqueIdentifier}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.OffsetDateTime
 
@@ -32,5 +32,5 @@ case class ApplicationResponse(
 )
 
 object ApplicationResponse {
-  implicit val applicationAddedFormat = Json.format[ApplicationResponse]
+  implicit val applicationAddedFormat: OFormat[ApplicationResponse] = Json.format[ApplicationResponse]
 }

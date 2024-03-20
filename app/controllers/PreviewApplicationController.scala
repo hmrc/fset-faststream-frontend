@@ -16,15 +16,16 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
-import connectors.ApplicationClient.{ AssistanceDetailsNotFound, PersonalDetailsNotFound }
+import config.{FrontendAppConfig, SecurityEnvironment}
+import connectors.ApplicationClient.{AssistanceDetailsNotFound, PersonalDetailsNotFound}
 import connectors.SchemeClient.SchemePreferencesNotFound
-import connectors.{ ApplicationClient, SchemeClient }
+import connectors.{ApplicationClient, SchemeClient}
 import helpers.NotificationType._
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
+
+import javax.inject.{Inject, Singleton}
 import models.CachedDataWithApp
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.RoleUtils._
 import security.Roles.PreviewApplicationRole
 import security.SilhouetteComponent
@@ -43,7 +44,7 @@ class PreviewApplicationController @Inject() (
   extends BaseController(config, mcc) {
   import notificationTypeHelper._
 
-  def present = CSRSecureAppAction(PreviewApplicationRole) { implicit request =>
+  def present: Action[AnyContent] = CSRSecureAppAction(PreviewApplicationRole) { implicit request =>
     implicit user =>
       val personalDetailsFut = applicationClient.getPersonalDetails(user.user.userID, user.application.applicationId)
       val schemePreferencesFut = schemeClient.getSchemePreferences(user.application.applicationId)
@@ -61,13 +62,13 @@ class PreviewApplicationController @Inject() (
       }
   }
 
-  def submit = CSRSecureAppAction(PreviewApplicationRole) { implicit request =>
+  def submit: Action[AnyContent] = CSRSecureAppAction(PreviewApplicationRole) { implicit request =>
     implicit user =>
       applicationClient.updatePreview(user.application.applicationId).map { _ =>
           Redirect(routes.SubmitApplicationController.presentSubmit)
       }
   }
 
-  def isFastStreamAndNotCivilServant(implicit user: CachedDataWithApp) =
+  def isFastStreamAndNotCivilServant(implicit user: CachedDataWithApp): Boolean =
     isFaststream(user) && !user.application.civilServiceExperienceDetails.exists(_.isCivilServant)
 }

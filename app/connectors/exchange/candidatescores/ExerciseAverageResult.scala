@@ -16,7 +16,7 @@
 
 package connectors.exchange.candidatescores
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class ExerciseAverageResult(
                                   writtenExerciseAverage: Double,
@@ -25,5 +25,5 @@ case class ExerciseAverageResult(
                                   overallScore: Double)
 
 object ExerciseAverageResult {
-  implicit val exerciseScoresFormat = Json.format[ExerciseAverageResult]
+  implicit val exerciseScoresFormat: OFormat[ExerciseAverageResult] = Json.format[ExerciseAverageResult]
 }

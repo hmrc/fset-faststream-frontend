@@ -16,7 +16,7 @@
 
 package models
 
-import com.mohiva.play.silhouette.api.Identity
+import play.silhouette.api.Identity
 import play.api.libs.json._
 
 /**
@@ -36,7 +36,7 @@ case class CachedUser(
 )
 
 object CachedUser {
-  implicit val userJsonFormats = Json.format[CachedUser]
+  implicit val userJsonFormats: OFormat[CachedUser] = Json.format[CachedUser]
 }
 
 case class CachedData(
@@ -50,8 +50,5 @@ case class CachedDataWithApp(
 )
 
 object CachedData {
-  implicit val dataJsonFormats = Json.format[CachedData]
-}
-
-object SecurityUser {
+  implicit val dataJsonFormats: OFormat[CachedData] = Json.format[CachedData]
 }

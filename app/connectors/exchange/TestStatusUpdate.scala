@@ -16,13 +16,12 @@
 
 package connectors.exchange
 
-import models.{ ProgressStatuses, UniqueIdentifier }
-import play.api.libs.json.Json
+import models.{ProgressStatuses, UniqueIdentifier}
+import play.api.libs.json.{Json, OFormat}
 
 case class TestStatusUpdate(status: ProgressStatuses.ProgressStatus,
   testToken: UniqueIdentifier
 )
 object TestStatusUpdate {
-  import ProgressStatuses.ProgressStatus.progressStatusFormat
-  implicit def progressStatusFormat = Json.format[TestStatusUpdate]
+  implicit def progressStatusFormat: OFormat[TestStatusUpdate] = Json.format[TestStatusUpdate]
 }

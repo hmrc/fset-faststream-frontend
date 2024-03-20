@@ -18,66 +18,66 @@ package connectors.exchange
 
 import models.ApplicationRoute.ApplicationRoute
 import models.UniqueIdentifier
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class FindByUserIdRequest(userId: UniqueIdentifier)
 object FindByUserIdRequest {
-  implicit val format = Json.format[FindByUserIdRequest]
+  implicit val format: OFormat[FindByUserIdRequest] = Json.format[FindByUserIdRequest]
 }
 
 case class CreateApplicationRequest(userId: UniqueIdentifier, frameworkId: String,
                                     applicationRoute: ApplicationRoute, sdipDiversity: Option[Boolean])
 object CreateApplicationRequest {
-  implicit val format = Json.format[CreateApplicationRequest]
+  implicit val format: OFormat[CreateApplicationRequest] = Json.format[CreateApplicationRequest]
 }
 
 case class AddUserRequest(email: String, password: String, firstName: String, lastName: String, roles: List[String], service: String)
 object AddUserRequest {
-  implicit val format = Json.format[AddUserRequest]
+  implicit val format: OFormat[AddUserRequest] = Json.format[AddUserRequest]
 }
 
 case class UpdateUserRequest(email: String, password: String, firstName: String, lastName: String,
                              userId: UniqueIdentifier, isActive: Boolean, service: String)
 object UpdateUserRequest {
-  implicit val format = Json.format[UpdateUserRequest]
+  implicit val format: OFormat[UpdateUserRequest] = Json.format[UpdateUserRequest]
 }
 
 case class SignInRequest(email: String, password: String, service: String)
 object SignInRequest {
-  implicit val format = Json.format[SignInRequest]
+  implicit val format: OFormat[SignInRequest] = Json.format[SignInRequest]
 }
 
 case class FindUserRequest(email: String)
 object FindUserRequest {
-  implicit val format = Json.format[FindUserRequest]
+  implicit val format: OFormat[FindUserRequest] = Json.format[FindUserRequest]
 }
 
 case class ActivateEmailRequest(email: String, token: String, service: String)
 object ActivateEmailRequest {
-  implicit val format = Json.format[ActivateEmailRequest]
+  implicit val format: OFormat[ActivateEmailRequest] = Json.format[ActivateEmailRequest]
 }
 
 case class ResendActivationTokenRequest(email: String, service: String)
 object ResendActivationTokenRequest {
-  implicit val format = Json.format[ResendActivationTokenRequest]
+  implicit val format: OFormat[ResendActivationTokenRequest] = Json.format[ResendActivationTokenRequest]
 }
 
 case class SendPasswordCodeRequest(email: String, service: String)
 object SendPasswordCodeRequest {
-  implicit val format = Json.format[SendPasswordCodeRequest]
+  implicit val format: OFormat[SendPasswordCodeRequest] = Json.format[SendPasswordCodeRequest]
 }
 
 case class ResetPasswordRequest(email: String, token: String, newPassword: String, service: String)
 object ResetPasswordRequest {
-  implicit val format = Json.format[ResetPasswordRequest]
+  implicit val format: OFormat[ResetPasswordRequest] = Json.format[ResetPasswordRequest]
 }
 
 case class PreviewRequest(flag: Boolean)
 object PreviewRequest {
-  implicit val format = Json.format[PreviewRequest]
+  implicit val format: OFormat[PreviewRequest] = Json.format[PreviewRequest]
 }
 
 final case class VerifyInvigilatedTokenUrlRequest(email: String, accessCode: String)
 object VerifyInvigilatedTokenUrlRequest {
-  implicit val format = Json.format[VerifyInvigilatedTokenUrlRequest]
+  implicit val format: OFormat[VerifyInvigilatedTokenUrlRequest] = Json.format[VerifyInvigilatedTokenUrlRequest]
 }

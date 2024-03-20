@@ -16,11 +16,11 @@
 
 package models
 
-import org.joda.time.{DateTime, LocalDate, LocalTime}
-import play.api.libs.json._
-
+//import org.joda.time.{DateTime, LocalDate, LocalTime}
+//import play.api.libs.json._
 
 object FaststreamImplicits {
+/*
   implicit val dateTimeFormatDefault = new Format[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] =
       JodaReads.DefaultJodaDateTimeReads.reads(json)
@@ -41,4 +41,5 @@ object FaststreamImplicits {
     override def writes(o: LocalTime): JsValue =
       JodaWrites.DefaultJodaLocalTimeWrites.writes(o)
   }
+ */
 }

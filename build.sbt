@@ -28,7 +28,6 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 import uk.gov.hmrc._
 import DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings, targetJvm}
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
 val appName = "fset-faststream-frontend"
 val appDependencies : Seq[ModuleID] = AppDependencies()
@@ -44,12 +43,11 @@ lazy val microservice = Project(appName, file("."))
   .settings(majorVersion := 0)
   .settings(playSettings : _*)
   .settings(scalaSettings: _*)
-  .settings(publishingSettings ++ ((Compile / packageDoc / publishArtifact) := false))
   .settings(defaultSettings(): _*)
   .settings(playDefaultPort := 9284)
   .settings(
     targetJvm := "jvm-1.8",
-    scalaVersion := "2.13.8",
+    scalaVersion := "2.13.12",
     routesImport += "controllers.Binders._",
     libraryDependencies ++= appDependencies,
     Test / parallelExecution := false,

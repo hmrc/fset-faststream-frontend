@@ -16,12 +16,12 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class School(typeId: String, id: String, name: String, addressLine1: Option[String] = None, addressLine2: Option[String] = None,
                   addressLine3: Option[String] = None, addressLine4: Option[String] = None, postCode: Option[String] = None,
                   phaseOfEducation: Option[String] = None, typeOfEstablishment: Option[String] = None)
 
 object School {
-  implicit val schoolFormat = Json.format[School]
+  implicit val schoolFormat: OFormat[School] = Json.format[School]
 }

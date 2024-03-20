@@ -16,18 +16,19 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import forms.AssistanceDetailsForm
 import connectors.ApplicationClient
 import connectors.ApplicationClient.AssistanceDetailsNotFound
-import javax.inject.{ Inject, Singleton }
+
+import javax.inject.{Inject, Singleton}
 import models.CachedData
 import security.SilhouetteComponent
 import security.ProgressStatusRoleUtils._
 import security.Roles.AssistanceDetailsRole
 
-import scala.concurrent.{ ExecutionContext, Future }
-import play.api.mvc.MessagesControllerComponents
+import scala.concurrent.{ExecutionContext, Future}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import helpers.NotificationTypeHelper
 
 @Singleton
@@ -40,9 +41,8 @@ class AssistanceDetailsController @Inject() (
   applicationClient: ApplicationClient,
   formWrapper: AssistanceDetailsForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
-  import notificationTypeHelper._
 
-  def present = CSRSecureAppAction(AssistanceDetailsRole) { implicit request =>
+  def present: Action[AnyContent] = CSRSecureAppAction(AssistanceDetailsRole) { implicit request =>
     implicit user =>
       applicationClient.getAssistanceDetails(user.user.userID, user.application.applicationId).map { ad =>
         val form = formWrapper.form.fill(AssistanceDetailsForm.Data(ad))
@@ -53,7 +53,7 @@ class AssistanceDetailsController @Inject() (
       }
   }
 
-  def submit = CSRSecureAppAction(AssistanceDetailsRole) { implicit request =>
+  def submit: Action[AnyContent] = CSRSecureAppAction(AssistanceDetailsRole) { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
         invalidForm =>

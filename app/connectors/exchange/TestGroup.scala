@@ -21,7 +21,7 @@ import models.UniqueIdentifier
 // TODO: This is currently not used, possible we will resurrect this in the future?
 trait TestGroup[T <: Test] {
   def tests: List[T]
-  def activeTests = tests filter (_.usedForResults)
+  def activeTests: Seq[T] = tests filter (_.usedForResults)
 }
 
 trait Test {

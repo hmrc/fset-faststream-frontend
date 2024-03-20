@@ -16,7 +16,7 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 final case class AssistanceDetails(
                                     hasDisability: String,
@@ -55,5 +55,5 @@ final case class AssistanceDetails(
 }
 
 object AssistanceDetails {
-  implicit val assistanceDetailsFormat = Json.format[AssistanceDetails]
+  implicit val assistanceDetailsFormat: OFormat[AssistanceDetails] = Json.format[AssistanceDetails]
 }

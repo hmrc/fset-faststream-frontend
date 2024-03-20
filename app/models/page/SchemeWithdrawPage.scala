@@ -16,7 +16,6 @@
 
 package models.page
 
-import connectors.exchange.referencedata.Scheme
 import forms.SchemeWithdrawForm
 import play.api.data.Form
 

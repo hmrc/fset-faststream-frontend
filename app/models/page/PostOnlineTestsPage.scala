@@ -16,8 +16,6 @@
 
 package models.page
 
-import com.github.nscala_time.time.OrderingImplicits._
-import config.FrontendAppConfig
 import connectors.exchange.SchemeEvaluationResultWithFailureDetails
 import connectors.exchange.candidateevents.CandidateAllocationWithEvent
 import connectors.exchange.referencedata.Scheme
@@ -28,11 +26,10 @@ import models.events.EventType
 import models.page.DashboardPage.Flags
 import models.page.DashboardPage.Flags.{ProgressActive, ProgressInactiveDisabled}
 import models.{ApplicationRoute, SchemeStatus}
-import java.time.LocalTime
 import security.{ProgressStatusRoleUtils, RoleUtils}
 
+import java.time.{LocalTime, ZonedDateTime}
 import java.time.format.DateTimeFormatter
-import java.time.ZonedDateTime
 import scala.util.Try
 
 object PostOnlineTestsStage extends Enumeration {

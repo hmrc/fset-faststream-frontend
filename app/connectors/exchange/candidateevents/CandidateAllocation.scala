@@ -17,7 +17,7 @@
 package connectors.exchange.candidateevents
 
 import models.events.AllocationStatuses
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class CandidateAllocation(
   id: String,
@@ -26,5 +26,5 @@ case class CandidateAllocation(
 )
 
 object CandidateAllocation {
-  implicit val candidateAllocationFormat = Json.format[CandidateAllocation]
+  implicit val candidateAllocationFormat: OFormat[CandidateAllocation] = Json.format[CandidateAllocation]
 }

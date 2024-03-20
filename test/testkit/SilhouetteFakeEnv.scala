@@ -16,8 +16,8 @@
 
 package testkit
 
-import com.mohiva.play.silhouette.api.{Environment, LoginInfo}
-import com.mohiva.play.silhouette.test.FakeEnvironment
+import play.silhouette.api.{Environment, LoginInfo}
+import play.silhouette.test.FakeEnvironment
 import models.SecurityUser
 import security.SecurityEnvironment
 

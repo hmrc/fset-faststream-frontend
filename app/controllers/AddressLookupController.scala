@@ -70,7 +70,7 @@ class AddressLookupController @Inject() (
   }
 
   def addressLookupByUprn(uprn: String): Action[AnyContent] = CSRSecureAction(EditPersonalDetailsAndContinueRole) {
-    implicit request => implicit _cachedData =>
+    implicit request => implicit cachedData =>
     addressLookupClient.findByUprn(uprn).map(address => Ok(Json.toJson(address)) ).recover {
       case e: BadRequestException =>
         logger.error(s"Postcode lookup service returned ${e.getMessage} for uprn:$uprn")

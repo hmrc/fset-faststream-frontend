@@ -17,10 +17,10 @@
 package connectors.exchange
 
 import models.UniqueIdentifier
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class AddReferral(userId: UniqueIdentifier, media: String)
 
 object AddReferral {
-  implicit val format = Json.format[AddReferral]
+  implicit val format: OFormat[AddReferral] = Json.format[AddReferral]
 }

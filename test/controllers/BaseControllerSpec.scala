@@ -18,9 +18,8 @@ package controllers
 
 import java.util.UUID
 import _root_.helpers.{NotificationType, NotificationTypeHelper}
-import com.github.nscala_time.time.Imports.DateTime
-import com.mohiva.play.silhouette.api.{EventBus, LoginInfo}
-import com.mohiva.play.silhouette.impl.authenticators.{SessionAuthenticator, SessionAuthenticatorService}
+import play.silhouette.api.{EventBus, LoginInfo}
+import play.silhouette.impl.authenticators.{SessionAuthenticator, SessionAuthenticatorService}
 import config.{CSRHttp, FrontendAppConfig, TrackingConsentConfig}
 import connectors._
 import models.ApplicationRoute.{ApplicationRoute => _}
@@ -41,6 +40,7 @@ import testkit.BaseSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import java.time.ZonedDateTime
 import scala.concurrent.Future
 
 abstract class BaseControllerSpec extends BaseSpec {
@@ -95,7 +95,7 @@ abstract class BaseControllerSpec extends BaseSpec {
 
   trait BaseControllerTestFixture {
     // Basic Wiring
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val mockMessagesApi = mock[MessagesApi]
     val stubMcc = stubMessagesControllerComponents(messagesApi = mockMessagesApi)
     val mockConfig = mock[FrontendAppConfig]
@@ -113,8 +113,8 @@ abstract class BaseControllerSpec extends BaseSpec {
     when(mockAuthenticatorService.embed(any[Session], any[RequestHeader])).thenReturn(FakeRequest())
     val sessionAuthenticator = SessionAuthenticator(
       LoginInfo("fakeProvider", "fakeKey"),
-      DateTime.now(),
-      DateTime.now().plusDays(1),
+      ZonedDateTime.now(),
+      ZonedDateTime.now().plusDays(1),
       idleTimeout = None, fingerprint = None
     )
 

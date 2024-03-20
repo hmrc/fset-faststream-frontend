@@ -17,7 +17,7 @@
 package connectors.exchange.candidatescores
 
 import models.UniqueIdentifier
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class AssessmentScoresAllExercises(
                                          applicationId: UniqueIdentifier,
@@ -28,5 +28,5 @@ case class AssessmentScoresAllExercises(
 )
 
 object AssessmentScoresAllExercises {
-  implicit val candidateScoresAndFeedbackFormat = Json.format[AssessmentScoresAllExercises]
+  implicit val candidateScoresAndFeedbackFormat: OFormat[AssessmentScoresAllExercises] = Json.format[AssessmentScoresAllExercises]
 }

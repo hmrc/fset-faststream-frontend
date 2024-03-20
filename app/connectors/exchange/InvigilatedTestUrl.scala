@@ -16,10 +16,10 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 final case class InvigilatedTestUrl(url: String)
 
 object InvigilatedTestUrl {
-  implicit val format = Json.format[InvigilatedTestUrl]
+  implicit val format: OFormat[InvigilatedTestUrl] = Json.format[InvigilatedTestUrl]
 }

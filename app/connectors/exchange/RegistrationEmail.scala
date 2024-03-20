@@ -16,10 +16,10 @@
 
 package connectors.exchange
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class RegistrationEmail(to: List[String], templateId: String, parameters: Map[String, String])
 
 object RegistrationEmail {
-  implicit val format = Json.format[RegistrationEmail]
+  implicit val format: OFormat[RegistrationEmail] = Json.format[RegistrationEmail]
 }

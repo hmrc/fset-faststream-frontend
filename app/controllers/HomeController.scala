@@ -68,9 +68,8 @@ class HomeController @Inject() (
         for {
         page <- cachedData.application.map { implicit application =>
           cachedData match {
-            case _ if !isSiftEntered && !isSiftReady && !isPhase3TestsPassed && !isAllocatedToAssessmentCentre => {
+            case _ if !isSiftEntered && !isSiftReady && !isPhase3TestsPassed && !isAllocatedToAssessmentCentre =>
               dashboardWithOnlineTests.recoverWith(dashboardWithoutOnlineTests)
-            }
             case _ => displayPostOnlineTestsDashboard
           }
         }.getOrElse {
@@ -174,7 +173,7 @@ class HomeController @Inject() (
               case Some(contentType) if validMSWordContentTypes.contains(contentType) =>
                 logger.warn(s"File upload accepted for applicationId $applicationId (Size: ${document.ref.path.toFile.length()})")
                 applicationClient.uploadAnalysisExercise(applicationId, contentType,
-                  getAllBytesInFile(document.ref.path)).map { result =>
+                  getAllBytesInFile(document.ref.path)).map { _ =>
                   Redirect(routes.HomeController.present()).flashing(
                     success("assessmentCentre.analysisExercise.upload.success"))
                 }.recover {
@@ -184,7 +183,7 @@ class HomeController @Inject() (
                     Redirect(routes.HomeController.present()).flashing(
                       danger("assessmentCentre.analysisExercise.upload.error"))
                 }
-              case Some(contentType) =>
+              case Some(_) =>
                 logger.warn(s"File upload rejected as wrong content type for applicationId $applicationId" +
                   s" (Size: ${document.ref.path.toFile.length()})")
                 Future.successful(
@@ -236,7 +235,7 @@ class HomeController @Inject() (
       }
       val isDashboardEnabled = canApplicationBeSubmitted(application.overriddenSubmissionDeadline)(application.applicationRoute) ||
         applicationSubmitted
-      val dashboardPage = DashboardPage(cachedData, None, None, None, config.fsacGuideUrl)
+      val dashboardPage = DashboardPage(cachedData, phase1TestGroup = None, phase2TestGroup = None, phase3TestGroup = None, config.fsacGuideUrl)
       Future.successful(Ok(views.html.home.dashboard(cachedData, dashboardPage,
         submitApplicationsEnabled = isDashboardEnabled,
         displaySdipEligibilityInfo = displaySdipEligibilityInfo)))
@@ -245,7 +244,7 @@ class HomeController @Inject() (
   private def dashboardWithoutApplication(implicit cachedData: CachedData,
     displaySdipEligibilityInfo: Boolean,
     request: Request[_]) = {
-    val dashboardPage = DashboardPage(cachedData, None, None, None, config.fsacGuideUrl)
+    val dashboardPage = DashboardPage(cachedData, phase1TestGroup = None, phase2TestGroup = None, phase3TestGroup = None, config.fsacGuideUrl)
     Future.successful(
       Ok(views.html.home.dashboard(cachedData, dashboardPage,
         submitApplicationsEnabled = canApplicationBeSubmitted(None),

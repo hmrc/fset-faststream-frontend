@@ -17,19 +17,18 @@
 package testkit
 
 import java.util.UUID
-
-import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
-import com.mohiva.play.silhouette.impl.authenticators.SessionAuthenticator
+import play.silhouette.api.LoginInfo
+import play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
+import play.silhouette.impl.authenticators.SessionAuthenticator
 import models.SecurityUserExamples.{ActiveCandidate, CreatedApplication}
 import models._
-import org.joda.time.DateTime
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import security.Roles.CsrAuthorization
 import security.{SecureActions, SecurityEnvironment}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.time.ZonedDateTime
 import scala.concurrent.Future
 
 // This class supports unit testing and creates a testable version of Secure Actions.
@@ -77,7 +76,7 @@ trait TestableSecureActions extends SecureActions {
     )
 
   private def now[T] = {
-    DateTime.now()
+    ZonedDateTime.now()
   }
 }
 
@@ -107,7 +106,7 @@ trait TestableCSRSecureAction extends SecureActions {
   }
 
   private def now[T] = {
-    DateTime.now()
+    ZonedDateTime.now()
   }
 }
 
@@ -120,8 +119,8 @@ trait TestableCSRUserAwareAction extends SecureActions {
         Some(SecurityUser("userId")),
         Some(SessionAuthenticator(
           LoginInfo("fakeProvider", "fakeKey"),
-          DateTime.now(),
-          DateTime.now().plusDays(1),
+          ZonedDateTime.now(),
+          ZonedDateTime.now().plusDays(1),
           idleTimeout = None, fingerprint = None
         )), request)
 

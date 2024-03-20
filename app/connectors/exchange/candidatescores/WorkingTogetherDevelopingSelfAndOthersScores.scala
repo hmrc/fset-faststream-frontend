@@ -16,7 +16,7 @@
 
 package connectors.exchange.candidatescores
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class WorkingTogetherDevelopingSelfAndOthersScores(
                                                          formsEffectiveWorkingRelationships: Option[Double] = None,
@@ -29,6 +29,6 @@ case class WorkingTogetherDevelopingSelfAndOthersScores(
 )
 
 object WorkingTogetherDevelopingSelfAndOthersScores {
-  implicit val workingTogetherDevelopingSelfAndOthersScoresFormat =
+  implicit val workingTogetherDevelopingSelfAndOthersScoresFormat: OFormat[WorkingTogetherDevelopingSelfAndOthersScores] =
     Json.format[WorkingTogetherDevelopingSelfAndOthersScores]
 }

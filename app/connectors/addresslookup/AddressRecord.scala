@@ -16,7 +16,7 @@
 
 package connectors.addresslookup
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat, OWrites, Reads}
 
 /**
   * The following DTOs are taken from https://github.com/hmrc/address-reputation-store. The project has
@@ -30,8 +30,8 @@ import play.api.libs.json.Json
 case class LocalCustodian(code: Int, name: String)
 
 object LocalCustodian {
-  implicit val localCustodianReads = Json.reads[LocalCustodian]
-  implicit val localCustodianWrites = Json.writes[LocalCustodian]
+  implicit val localCustodianReads: Reads[LocalCustodian] = Json.reads[LocalCustodian]
+  implicit val localCustodianWrites: OWrites[LocalCustodian] = Json.writes[LocalCustodian]
 }
 
 /** Represents a country as per ISO3166. */
@@ -45,8 +45,8 @@ case class Country(
                     name: String)
 
 object Country {
-  implicit val countryReads = Json.reads[Country]
-  implicit val countryWrites = Json.writes[Country]
+  implicit val countryReads: Reads[Country] = Json.reads[Country]
+  implicit val countryWrites: OWrites[Country] = Json.writes[Country]
 }
 
 case class Outcode(area: String, district: String) {
@@ -54,7 +54,7 @@ case class Outcode(area: String, district: String) {
 }
 
 object Outcode {
-  implicit val outcodeReads = Json.reads[Outcode]
+  implicit val outcodeReads: Reads[Outcode] = Json.reads[Outcode]
 }
 
 object Countries {
@@ -110,8 +110,8 @@ case class Address(lines: List[String],
 }
 
 object Address {
-  implicit val addressReadFormat = Json.reads[Address]
-  implicit val addressWriteFormat = Json.writes[Address]
+  implicit val addressReadFormat: Reads[Address] = Json.reads[Address]
+  implicit val addressWriteFormat: OWrites[Address] = Json.writes[Address]
 }
 
 case class Location(latitude: BigDecimal, longitude: BigDecimal) {
@@ -119,7 +119,7 @@ case class Location(latitude: BigDecimal, longitude: BigDecimal) {
 }
 
 object Location {
-  implicit val locationFormat = Json.format[Location]
+  implicit val locationFormat: OFormat[Location] = Json.format[Location]
 }
 
 case class AddressRecord(
@@ -138,6 +138,6 @@ case class AddressRecord(
 }
 
 object AddressRecord {
-  implicit val addressRecordReadFormat = Json.reads[AddressRecord]
-  implicit val addressRecordWriteFormat = Json.writes[AddressRecord]
+  implicit val addressRecordReadFormat: Reads[AddressRecord] = Json.reads[AddressRecord]
+  implicit val addressRecordWriteFormat: OWrites[AddressRecord] = Json.writes[AddressRecord]
 }

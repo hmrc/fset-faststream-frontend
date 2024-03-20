@@ -16,7 +16,7 @@
 
 package config
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import filters.{FaststreamAllowlistFilter, FaststreamAuditFilter}
 import play.api.Logging
 import play.api.http.{DefaultHttpFilters, EnabledFilters}
