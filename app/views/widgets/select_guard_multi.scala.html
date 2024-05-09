@@ -17,14 +17,15 @@
 @(field : play.api.data.Field,
         options: Map[String, List[(String, Boolean)]],
         optionTrigger: String,
-        defaultChoice: String = "-- Choose One --")(implicit messages: Messages)
+        defaultChoice: String = "-- Choose One --",
+        ariaLabelledById: String)(implicit messages: Messages)
 
 @import helpers.CSRNoErrorFieldConstructor._
 @import helpers.TemplateHelper._
 
 @helper.input(field) { (id, name, value, args) =>
     <span class="has-error">@maybeDisplayError(field)</span>
-    <select name="@name" id="@id" class="selectWithOptionTrigger form-control-select">
+    <select name="@name" id="@id" class="selectWithOptionTrigger form-control-select" aria-labelledBy="@ariaLabelledById">
         <option value="">@defaultChoice</option>
         @for( key <- options) {
             <optgroup label="@key._1">
