@@ -71,7 +71,7 @@
         <section>
             <fieldset class="form-group">
                 <legend><h2 class="form-label" id="ethnicity-ques">@Messages("ethnicity.question")</h2></legend>
-                @select_guard_multi(form("ethnicity"), Ethnicities.map, "ethnicity-describe", "Select one")
+                @select_guard_multi(form("ethnicity"), Ethnicities.map, "ethnicity-describe", "Select one", "ethnicity-ques")
 
                 <div class="toggle-content form-group form-group-compound" id="ethnicity-describe">
                     @helper.inputText(form("other_ethnicity"),
