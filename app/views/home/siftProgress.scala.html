@@ -197,7 +197,7 @@
                 @page.fsacAllocation.map { alloc =>
                     @alloc.event.sessions.headOption.map { session =>
                     @helper.form(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id),
-                    'novalidate -> "novalidate") {
+                    Symbol("novalidate") -> "novalidate") {
                         @helper.CSRF.formField
                         <button type="submit" class="button" id="assCanAttendBtn">I can attend</button>
                     }
@@ -303,7 +303,7 @@
                         @page.fsbAllocation.map { alloc =>
                             @alloc.event.sessions.headOption.map { session =>
                             @helper.form(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id),
-                            'novalidate -> "novalidate") {
+                            Symbol("novalidate") -> "novalidate") {
                             @helper.CSRF.formField
                             <button type="submit" class="button" id="fsbCanAttendBtn">I can attend</button>
                             }
