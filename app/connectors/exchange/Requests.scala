@@ -25,8 +25,7 @@ object FindByUserIdRequest {
   implicit val format: OFormat[FindByUserIdRequest] = Json.format[FindByUserIdRequest]
 }
 
-case class CreateApplicationRequest(userId: UniqueIdentifier, frameworkId: String,
-                                    applicationRoute: ApplicationRoute, sdipDiversity: Option[Boolean])
+case class CreateApplicationRequest(userId: UniqueIdentifier, frameworkId: String, applicationRoute: ApplicationRoute)
 object CreateApplicationRequest {
   implicit val format: OFormat[CreateApplicationRequest] = Json.format[CreateApplicationRequest]
 }

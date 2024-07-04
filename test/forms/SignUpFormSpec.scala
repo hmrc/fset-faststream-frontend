@@ -164,7 +164,7 @@ class SignUpFormSpec extends BaseFormSpec {
     }
  */
 
-    "generate 2 errors if I am an SDIP candidate but I haven't clicked on diversity strand of SDIP or whether I am eligible for SDIP" in {
+    "generate an error if I am an SDIP candidate but I haven't clicked on whether I am eligible for SDIP" in {
       val formData = Map(
         "firstName" -> "name",
         "lastName" -> "last name",
@@ -179,8 +179,7 @@ class SignUpFormSpec extends BaseFormSpec {
 
       val form = Form(new SignUpForm().form.mapping).bind(formData)
       form.hasErrors mustBe true
-      form.errors.length mustBe 2
-      form.errors("sdipDiversity").head.messages mustBe Seq(Messages("agree.sdipDiversity"))
+      form.errors.length mustBe 1
       form.errors("sdipEligible").head.messages mustBe Seq(Messages("agree.sdipEligible"))
     }
 
@@ -357,8 +356,7 @@ case class SignupFormGenerator(
     sdipFastStreamEligible,
     sdipFastStreamDiversity,
     edipEligible,
-    sdipEligible,
-    sdipDiversity
+    sdipEligible
   )
 
   private val validFormData = Map(
@@ -374,8 +372,7 @@ case class SignupFormGenerator(
     "agree" -> data.agree.toString,
     "faststreamEligible" -> data.faststreamEligible.toString,
     "edipEligible" -> data.edipEligible.toString,
-    "sdipEligible" -> data.sdipEligible.toString,
-    "sdipDiversity" -> data.sdipDiversity.toString
+    "sdipEligible" -> data.sdipEligible.toString
   ) ++ data.sdipFastStreamConsider.map(x => "sdipFastStreamConsider" -> x.toString) ++
     data.sdipFastStreamEligible.map(x => "sdipFastStreamEligible" -> x.toString) ++
     data.sdipFastStreamDiversity.map(x => "sdipFastStreamDiversity" -> x.toString)
