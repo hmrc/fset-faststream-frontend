@@ -49,11 +49,11 @@ class ApplicationClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(imp
       Seq("code" -> afterDeadlineSignupCode))
   }
 
-  def createApplication(userId: UniqueIdentifier, frameworkId: String, sdipDiversity: Option[Boolean],
+  def createApplication(userId: UniqueIdentifier, frameworkId: String,
     applicationRoute: ApplicationRoute.ApplicationRoute = ApplicationRoute.Faststream)
     (implicit hc: HeaderCarrier): Future[ApplicationResponse] = {
     http.PUT[CreateApplicationRequest, ApplicationResponse](s"$apiBaseUrl/application/create",
-      CreateApplicationRequest(userId, frameworkId, applicationRoute, sdipDiversity)
+      CreateApplicationRequest(userId, frameworkId, applicationRoute)
     )
   }
 

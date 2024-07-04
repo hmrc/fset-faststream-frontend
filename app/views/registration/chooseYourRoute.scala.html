@@ -177,8 +177,10 @@
             </ul>
             @yesNoQuestion(form("sdipEligible"), question = "Are you eligible to apply for the Summer Internship Programme (SIP)?",
                 noMessage = Some("You must be eligible to apply for the Summer Internship Programme."))
+            @* We removed this question for the 2024/25 campaign
             @yesNoQuestion(form("sdipDiversity"), question = "Do you want to be considered for the Diversity strand of SIP?",
                 noMessage = Some("If you select no you will follow the non Diversity SIP route."), description = sdipDiversityHintText)
+            *@
         } else {
             <div class="panel-info standard-panel">
                 <p class="text">Unfortunately, applications for the Summer Internship Programme are now closed.</p>
