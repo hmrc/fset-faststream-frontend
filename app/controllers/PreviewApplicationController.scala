@@ -19,8 +19,8 @@ package controllers
 import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient.{AssistanceDetailsNotFound, PersonalDetailsNotFound}
 import connectors.SchemeClient.SchemePreferencesNotFound
-import connectors.{ApplicationClient, SchemeClient}
-import helpers.NotificationType._
+import connectors.SdipLocationsClient.LocationPreferencesNotFound
+import connectors.{ApplicationClient, SchemeClient, SdipLocationsClient}
 import helpers.NotificationTypeHelper
 
 import javax.inject.{Inject, Singleton}
@@ -29,20 +29,31 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.RoleUtils._
 import security.Roles.PreviewApplicationRole
 import security.SilhouetteComponent
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PreviewApplicationController @Inject() (
+class PreviewApplicationController @Inject()(
   config: FrontendAppConfig,
   mcc: MessagesControllerComponents,
   val secEnv: SecurityEnvironment,
   val silhouetteComponent: SilhouetteComponent,
   val notificationTypeHelper: NotificationTypeHelper,
   applicationClient: ApplicationClient,
-  schemeClient: SchemeClient)(implicit val ec: ExecutionContext)
+  schemeClient: SchemeClient, sdipLocationsClient: SdipLocationsClient)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
-  import notificationTypeHelper._
+
+  private def fetchLocationPreferences(implicit user: CachedDataWithApp, hc: HeaderCarrier) = {
+    // We only attempt to fetch Location preferences for sdip candidates
+    if (isSdip(user)) {
+      for {
+        lp <- sdipLocationsClient.getLocationPreferences(user.application.applicationId)
+      } yield Some(lp)
+    } else {
+      Future.successful(None)
+    }
+  }
 
   def present: Action[AnyContent] = CSRSecureAppAction(PreviewApplicationRole) { implicit request =>
     implicit user =>
@@ -54,10 +65,12 @@ class PreviewApplicationController @Inject() (
         gd <- personalDetailsFut
         sp <- schemePreferencesFut
         ad <- assistanceDetailsFut
+        lp <- fetchLocationPreferences
       } yield {
-        Ok(views.html.application.preview(gd, sp, ad, user.application))
+        Ok(views.html.application.preview(gd, sp, lp, ad, user.application))
       }).recover {
-        case _: PersonalDetailsNotFound | _: SchemePreferencesNotFound | _: AssistanceDetailsNotFound =>
+        case _: PersonalDetailsNotFound | _: SchemePreferencesNotFound | _: LocationPreferencesNotFound | _: AssistanceDetailsNotFound =>
+          import notificationTypeHelper._
           Redirect(routes.HomeController.present()).flashing(warning("info.cannot.preview.yet"))
       }
   }

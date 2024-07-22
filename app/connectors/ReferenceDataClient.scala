@@ -17,7 +17,7 @@
 package connectors
 
 import config.{CSRHttp, FrontendAppConfig}
-import connectors.exchange.referencedata.{ReferenceData, Scheme, SchemeId}
+import connectors.exchange.referencedata.{ReferenceData, Scheme, SchemeId, SdipLocation}
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logging
@@ -42,6 +42,10 @@ class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(i
     val data = getReferenceDataAsList[Scheme]("schemes", "/reference/schemes")
     // Filter out GCFS (GovernmentCommunicationService) for 2021 campaign
     data.map { allSchemes => allSchemes.filterNot(s => s.id == SchemeId("GovernmentCommunicationService")) }
+  }
+
+  def sdipLocations(implicit hc: HeaderCarrier): Future[List[SdipLocation]] = {
+    getReferenceDataAsList[SdipLocation]("sdipLocations", "/reference/sdip/locations")
   }
 
   private def getReferenceDataAsList[T](

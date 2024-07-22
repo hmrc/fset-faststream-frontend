@@ -1,0 +1,56 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(selectedLocations: connectors.exchange.SelectedLocations)(edit: Html)(implicit messages: Messages)
+
+@getOrder(pos: Int) = @{
+    pos match {
+        case 1 => "1st"
+        case 2 => "2nd"
+        case 3 => "3rd"
+        case _ => s"${pos}th"
+    }
+}
+
+<section class="section-border">
+    <h2 class="heading-large">
+        <span class="sectionTitle">Choose your locations</span>
+        @edit
+    </h2>
+    <section>
+        <ul id="locationPreferenceList" class="list-text">
+            @for(position <- 0 to selectedLocations.locations.size - 1) {
+                <li>
+                    <h3 class="bold-small">@getOrder(position + 1) preference</h3>
+                    <p id="locationPreferenceChoice@{position+1}"> @Html(Messages("location."+selectedLocations.locations(position)+".description"))</p>
+                </li>
+            }
+        </ul>
+    </section>
+    <h2 class="heading-large">
+        <span class="sectionTitle">Your interests</span>
+    </h2>
+    <section>
+        <ul id="interestsList" class="list-text">
+        @for(position <- 0 to selectedLocations.interests.size - 1) {
+            <li>
+                <h3 class="bold-small">@getOrder(position + 1) interest</h3>
+                <p id="interestChoice@{position+1}"> @selectedLocations.interests(position)</p>
+            </li>
+        }
+        </ul>
+    </section>
+</section>

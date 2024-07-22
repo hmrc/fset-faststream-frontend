@@ -15,9 +15,11 @@
  *@
 
 @import config.TrackingConsentConfig
+@import views.html.application.previewapplication.locationPreferencesViewSection
 @(
         generalDetails: connectors.exchange.GeneralDetails,
         schemePreferences: connectors.exchange.SelectedSchemes,
+        locationPreferences: Option[connectors.exchange.SelectedLocations],
         assistanceDetails: connectors.exchange.AssistanceDetails,
         applicationData: models.ApplicationData)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
@@ -70,6 +72,12 @@
         @schemePreferencesViewSection(schemePreferences)(edit_link("editSchemePreferences", "Scheme Preferences", routes.SchemePreferencesController.present))
     }
 
+    @if(isSdip(user)) {
+        @locationPreferences.map { lp =>
+            @locationPreferencesViewSection(lp)(edit_link("editLocationPreferences", "Location Preferences", routes.LocationPreferencesController.present))
+        }
+    }
+
     @assistanceDetailsViewSection(assistanceDetails)(edit_link("editAssistanceDetails", "Disability and health conditions", routes.AssistanceDetailsController.present))
 
     @diversityQuestionnaireViewSection()
@@ -101,7 +109,6 @@
             <div>
                 <button id="submit" type="submit" value="submit" class="button">Save and continue</button>
             </div>
-
         }
     }
 }

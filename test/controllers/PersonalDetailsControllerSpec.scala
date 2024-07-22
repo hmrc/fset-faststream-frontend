@@ -208,11 +208,11 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
       val Request = fakeRequest.withMethod("POST").withFormUrlEncodedBody(ValidFormUrlEncodedBody: _*)
       val result = controller(currentCandidateWithEdipApp).submitPersonalDetailsAndContinue()(Request)
 
-      status(result) mustBe  SEE_OTHER
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.AssistanceDetailsController.present.url)
     }
 
-    "update sdip candidate's details and return to assistance details" in new TestFixture {
+    "update sdip candidate's details and return to location preferences" in new TestFixture {
       configureCommonSubmitPersonalDetailsMocks()
       when(mockApplicationClient.getApplicationProgress(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.successful(ProgressResponseExamples.InProgress))
@@ -220,7 +220,7 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
         .copy(progress = ProgressResponseExamples.InProgress, applicationStatus = ApplicationStatus.IN_PROGRESS,
           civilServiceExperienceDetails = None)
       val UpdatedCandidate = currentCandidate.copy(application = Some(Application))
-      when(mockSchemeClient.updateSchemePreferences(eqTo(SelectedSchemes(List(Edip), orderAgreed = true, eligible = true))
+      when(mockSchemeClient.updateSchemePreferences(eqTo(SelectedSchemes(List(Sdip), orderAgreed = true, eligible = true))
       )(eqTo(Application.applicationId))(any[HeaderCarrier])).thenReturn(Future.successful(()))
       when(mockUserService.refreshCachedUser(any[UniqueIdentifier])(any[HeaderCarrier],
         any[Request[_]])).thenReturn(Future.successful(UpdatedCandidate))
@@ -228,10 +228,10 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
         eqTo(ValidUKAddressForm.toExchange(currentEmail, Some(true))))(any[HeaderCarrier])).thenReturn(Future.successful(()))
 
       val Request = fakeRequest.withMethod("POST").withFormUrlEncodedBody(ValidFormUrlEncodedBody: _*)
-      val result = controller(currentCandidateWithEdipApp).submitPersonalDetailsAndContinue()(Request)
+      val result = controller(currentCandidateWithSdipApp).submitPersonalDetailsAndContinue()(Request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.AssistanceDetailsController.present.url)
+      redirectLocation(result) mustBe Some(routes.LocationPreferencesController.present.url)
     }
 
     "update candidate's details and return to dashboard page" in new TestFixture {
