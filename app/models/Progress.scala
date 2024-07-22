@@ -89,6 +89,7 @@ case class JobOfferProgress(
 case class Progress(
     personalDetails: Boolean = false,
     schemePreferences: Boolean = false,
+    locationPreferences: Boolean = false,
     assistanceDetails: Boolean = false,
     preview: Boolean = false,
     startedQuestionnaire: Boolean = false,
@@ -110,6 +111,7 @@ case class Progress(
   override def toString: String =
     s"personalDetails=$personalDetails," +
       s"schemePreferences=$schemePreferences," +
+      s"locationPreferences=$locationPreferences," +
       s"assistanceDetails=$assistanceDetails," +
       s"preview=$preview," +
       s"startedQuestionnaire=$startedQuestionnaire," +
@@ -145,6 +147,7 @@ object Progress {
     Progress(
       personalDetails = progressResponse.personalDetails,
       schemePreferences = progressResponse.schemePreferences,
+      locationPreferences = progressResponse.locationPreferences,
       assistanceDetails = progressResponse.assistanceDetails,
       preview = progressResponse.preview,
       startedQuestionnaire =

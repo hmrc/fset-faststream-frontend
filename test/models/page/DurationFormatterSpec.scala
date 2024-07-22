@@ -24,9 +24,9 @@ class DurationFormatterSpec extends PlaySpec {
 
   "Duration formatter" should {
     "return years, months, days and hours" in new TestFixture {
-      val futureDate = now.plusYears(50).plusMonths(7).plusDays(12).plusHours(1).plusMinutes(34).plusSeconds(10)
+      val futureDate = now.plusYears(10).plusMonths(1).plusDays(12).plusHours(1).plusMinutes(34).plusSeconds(10)
       val result = durationFormatter.durationFromNowWithMoreZeros(futureDate)
-      result mustBe "50 years, 7 months, 12 days, 1 hour and 34 minutes"
+      result mustBe "10 years, 1 month, 12 days, 1 hour and 34 minutes"
     }
 
     "return months, days and hours" in new TestFixture {
@@ -108,5 +108,4 @@ class DurationFormatterSpec extends PlaySpec {
       override def expirationDate: OffsetDateTime = self.now
     }
   }
-
 }

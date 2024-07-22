@@ -16,7 +16,7 @@
 
 package connectors
 
-import connectors.exchange.referencedata.{ Degree, Scheme, SchemeId, SiftRequirement }
+import connectors.exchange.referencedata.{Degree, LocationId, Scheme, SchemeId, SdipLocation, SiftRequirement}
 
 object ReferenceDataExamples {
 
@@ -71,5 +71,15 @@ object ReferenceDataExamples {
     val SomeSchemes = Commercial :: DDTaC :: Dip :: Nil
 
     def schemesWithNoDegree = AllSchemes.filter( _.degree.isEmpty )
+  }
+
+  object Locations {
+    val Location1 = SdipLocation(LocationId("location1"), "Location 1")
+    val Location2 = SdipLocation(LocationId("location2"), "Location 2")
+    val Location3 = SdipLocation(LocationId("location3"), "Location 3")
+    val Location4 = SdipLocation(LocationId("location4"), "Location 4")
+    val Location5 = SdipLocation(LocationId("location5"), "Location 5")
+
+    val AllLocations = (Location1 :: Location2 :: Location3 :: Location4 :: Location5 :: Nil)
   }
 }

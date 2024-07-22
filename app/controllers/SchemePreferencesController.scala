@@ -53,7 +53,7 @@ class SchemePreferencesController @Inject() (
         schemeClient.getSchemePreferences(cachedData.application.applicationId).map { selectedSchemes =>
           Ok(views.html.application.schemePreferences.schemeSelection(page, civilServant, formObj.form.fill(selectedSchemes)))
         }.recover {
-          case e: SchemePreferencesNotFound =>
+          case _: SchemePreferencesNotFound =>
             Ok(views.html.application.schemePreferences.schemeSelection(page, civilServant, formObj.form))
         }
       }

@@ -129,7 +129,7 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
     }.flatMap(identity)
   }
 
-  def submitPersonalDetailsAndContinue: Action[AnyContent] =
+  def submitPersonalDetailsAndContinue2: Action[AnyContent] =
     CSRSecureAppAction(EditPersonalDetailsAndContinueRole) { implicit request =>
     implicit user =>
       implicit val messages: Messages = request.messages
@@ -138,6 +138,21 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
         Redirect(routes.SchemePreferencesController.present)
       } else {
         Redirect(routes.AssistanceDetailsController.present)
+      }
+      submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = false, messages), ContinueToNextStepInJourney, redirect)
+    }
+
+  def submitPersonalDetailsAndContinue: Action[AnyContent] =
+    CSRSecureAppAction(EditPersonalDetailsAndContinueRole) { implicit request =>
+    implicit user =>
+      implicit val messages: Messages = request.messages
+      val redirect = if (user.application.applicationRoute == ApplicationRoute.Faststream ||
+        user.application.applicationRoute == ApplicationRoute.SdipFaststream) {
+        Redirect(routes.SchemePreferencesController.present)
+      } else if (user.application.applicationRoute == ApplicationRoute.Edip) {
+        Redirect(routes.AssistanceDetailsController.present)
+      } else {
+        Redirect(routes.LocationPreferencesController.present)
       }
       submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = false, messages), ContinueToNextStepInJourney, redirect)
     }

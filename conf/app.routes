@@ -51,8 +51,13 @@ POST        /application/details                                    @controllers
 GET         /application/details/continue                           @controllers.PersonalDetailsController.presentAndContinue
 POST        /application/details/continue                           @controllers.PersonalDetailsController.submitPersonalDetailsAndContinue
 
+# Only applicable for FastStream candidates
 GET         /application/schemes                                    @controllers.SchemePreferencesController.present
 POST        /application/schemes                                    @controllers.SchemePreferencesController.submit
+
+# Only applicable for Sdip candidates
+GET         /application/locations                                  @controllers.LocationPreferencesController.present
+POST        /application/locations                                  @controllers.LocationPreferencesController.submit
 
 GET         /application/assistance-details                         @controllers.AssistanceDetailsController.present
 POST        /application/assistance-details                         @controllers.AssistanceDetailsController.submit

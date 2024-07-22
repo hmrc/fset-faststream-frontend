@@ -19,7 +19,7 @@ package controllers
 import com.github.tomakehurst.wiremock.client.WireMock.{any => _}
 import connectors.ApplicationClient.{AssistanceDetailsNotFound, PersonalDetailsNotFound}
 import connectors.SchemeClient.SchemePreferencesNotFound
-import connectors.exchange.{AssistanceDetailsExamples, GeneralDetailsExamples, SchemePreferencesExamples}
+import connectors.exchange.{AssistanceDetailsExamples, GeneralDetailsExamples, SchemePreferencesExamples, SelectedLocations}
 import forms.AssistanceDetailsFormExamples
 import models.SecurityUserExamples._
 import models._
@@ -68,6 +68,8 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(AssistanceDetailsExamples.SdipAdjustments))
       when(mockApplicationClient.getPersonalDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.successful(GeneralDetailsExamples.SdipFullDetailsWithEdipCompleted))
+      when(mockSdipLocationsClient.getLocationPreferences(eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(SelectedLocations(List("location1"), List("Interest 1"))))
 
       val result = controller(currentCandidateWithSdipApp).present()(fakeRequest)
 
@@ -76,6 +78,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
       content must include("<title>Check your application")
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
       content mustNot include("""<ul id="schemePreferenceList" class="list-text">""")
+      content must include("""<ul id="locationPreferenceList" class="list-text">""")
       content must include(phoneText)
       content must include("<p id=\"edipCompleted\">Yes</p>")
       content must include("Have you completed the Early Diversity Internship Programme (EDIP)?")
@@ -141,7 +144,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
 
     def controller(implicit candWithApp: CachedDataWithApp = currentCandidateWithApp) = {
       new PreviewApplicationController(mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent,
-      mockNotificationTypeHelper, mockApplicationClient, mockSchemeClient) with TestableSecureActions {
+      mockNotificationTypeHelper, mockApplicationClient, mockSchemeClient, mockSdipLocationsClient) with TestableSecureActions {
         override val candidateWithApp: CachedDataWithApp = candWithApp
       }
     }

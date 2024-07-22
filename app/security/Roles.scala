@@ -85,6 +85,11 @@ object Roles {
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasPersonalDetails(user)
   }
 
+  object LocationsRole extends CsrAuthorization {
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+      isSdip(user) && statusIn(user)(IN_PROGRESS) && hasPersonalDetails(user)
+  }
+
   object ContinueAsSdipRole extends CsrAuthorization {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
       isFaststreamOnly(user) && (user.application.isEmpty || statusIn(user)(WITHDRAWN) || !isSubmitted(user) || isPhase1TestsExpired(user))
@@ -94,8 +99,8 @@ object Roles {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) &&
         (
-          hasSchemes(user) ||
-          (hasPersonalDetails(user) && (isEdip(user) || isSdip(user)))
+          (hasSchemes(user) && (isFaststream(user) || isEdip(user))) ||
+          (hasLocations(user) && isSdip(user))
         )
   }
 
@@ -334,6 +339,8 @@ object ProgressStatusRoleUtils {
   def hasPersonalDetails(implicit user: CachedData) = user.application.exists(_.progress.personalDetails)
 
   def hasSchemes(implicit user: CachedData) = user.application.isDefined && user.application.exists(_.progress.schemePreferences)
+
+  def hasLocations(implicit user: CachedData) = user.application.isDefined && user.application.exists(_.progress.locationPreferences)
 
   def hasAssistanceDetails(implicit user: CachedData) = user.application.isDefined && user.application.exists(_.progress.assistanceDetails)
 
