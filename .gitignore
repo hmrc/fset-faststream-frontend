@@ -22,3 +22,4 @@ dist
 /bin/
 .ensime*
 /.bsp
+**/.DS_Store
