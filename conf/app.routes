@@ -1,5 +1,9 @@
 # microservice specific routes
 
+# Serve public media assets from the public/media folder using a url in the following format:
+# http://localhost:9284/fset-fast-stream/media/1248/scheme-questions-ges.odt
+GET         /media/*file                                            controllers.Assets.at(path="/public/media", file)
+
 # Generic links
 GET         /                                                       @controllers.ApplicationController.index
 GET         /terms                                                  @controllers.ApplicationController.terms
