@@ -104,7 +104,7 @@
 @displayTestPageLink(psiTestPage: PsiTestPage, testName: String) = {
     @psiTestPage.testReportUrl.map { reportUrl =>
         <a href="@reportUrl" target="_blank" id="@generatePsiTestId(psiTestPage)">Feedback report <span class="visuallyhidden">for @testName (opens pdf document in a new window)</span></a>
-    }
+    }.getOrElse("No feedback report found")
 }
 
 @displayPhase1TestResultsLinks(testsPage: Phase1TestsPage2) = {
@@ -141,6 +141,7 @@
                         .</p>
                     <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil Service jobs</a>
                         site for more opportunities with us.</p>
+                    <h3 class="bold-small">Phase 1 results</h3>
                     @displayPhase1TestResultsLinks(testsPage)
                 </div>
             </li>
@@ -155,6 +156,7 @@
                     <p>Unfortunately we've assessed your results and you've been unsuccessful this time.</p>
                     <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil Service jobs</a>
                         site for more opportunities with us.</p>
+                    <h3 class="bold-small">Phase 1 results</h3>
                     @displayPhase1TestResultsLinks(testsPage)
                 </div>
             </li>

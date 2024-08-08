@@ -58,7 +58,7 @@ class WithdrawController @Inject() (
     implicit user =>
       getWithdrawableSchemes(user.application.applicationId).map {
         case Nil => Redirect(routes.HomeController.present()).flashing(danger("access.denied"))
-        case lastScheme :: Nil => Redirect(routes.WithdrawController.presentWithdrawApplication).flashing(
+        case _ :: Nil => Redirect(routes.WithdrawController.presentWithdrawApplication).flashing(
           warning("withdraw.scheme.last"))
         case schemes =>
           val page = SchemeWithdrawPage(schemes.map(s => (s.name, s.id.value)),
