@@ -14,20 +14,16 @@
  * limitations under the License.
  *@
 
-@import models.ApplicationData.ApplicationStatus._
-@import models.ProgressStatuses._
-@import models.ProgressStatuses.ProgressStatus._
-@import models.page.DashboardPage.activateByStep
-@import models.page.DashboardPage.Flags._
-@import models.page._
-@import security.QuestionnaireRoles._
-@import security.Roles._
-@import security.RoleUtils._
-@import security.ProgressStatusRoleUtils._
-@import views.html.widgets.{ onlineTestProgress, sdipFaststreamBanner }
-@import models.ConsiderMeForSdipHelper._
-
 @import config.TrackingConsentConfig
+@import models.ConsiderMeForSdipHelper._
+@import models.page.DashboardPage.Flags._
+@import models.page.DashboardPage.activateByStep
+@import models.page._
+@import security.ProgressStatusRoleUtils._
+@import security.QuestionnaireRoles._
+@import security.RoleUtils._
+@import security.Roles._
+@import views.html.widgets.{onlineTestProgress, sdipFaststreamBanner}
 @(usr: CachedData, dashboardPage: DashboardPage,
         assistanceDetails: Option[connectors.exchange.AssistanceDetails] = None,
         adjustments: Option[Adjustments] = None,
@@ -104,6 +100,10 @@
                 @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn) {
                     <p><a class="" id="view-application" href="@routes.PreviewApplicationController.present">View your submitted application</a></p>
                     <p><a class="" id="edit-personal-details" href="@routes.PersonalDetailsController.present">Edit your personal details</a></p>
+                    @if(!dashboardPage.isTestGroupExpired) {
+                        <p><a class="" id="withdraw-schemes" a href="@routes.WithdrawController.presentWithdrawScheme">
+                            Withdraw from individual schemes</a></p>
+                    }
                 }
 
                 @if(dashboardPage.isApplicationWithdrawn) {
@@ -127,7 +127,6 @@
                         Start your application</a>
                     <p>(Should take 5 to 10 minutes to fill in)</p>
                 }
-
             </li>
             <li class="step text second-step @activateByStep(dashboardPage.secondStepVisibility)">
                 <h2 class="heading-medium">2. Take the online tests</h2>

@@ -137,7 +137,20 @@ object Roles {
 
   object SchemeWithdrawRole extends CsrAuthorization {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean = {
+      user.application.isDefined && user.application.get.progress.submitted && !user.application.get.progress.jobOffer.eligible
+    }
+  }
+
+  object SchemeWithdrawSiftOrFsacAwaitingAllocationRole extends CsrAuthorization {
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean = {
       statusIn(user)(SIFT) || (statusIn(user)(ASSESSMENT_CENTRE) && isAwaitingAllocation(user))
+    }
+  }
+
+  object SchemeWithdrawOutsideSiftOrFsacAwaitingAllocationRole extends CsrAuthorization {
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean = {
+      user.application.isDefined && user.application.get.progress.submitted && !user.application.get.progress.jobOffer.eligible &&
+        !statusIn(user)(SIFT) && !(statusIn(user)(ASSESSMENT_CENTRE) && isAwaitingAllocation(user))
     }
   }
 
@@ -419,7 +432,5 @@ object ProgressStatusRoleUtils {
   def isFailedAtSift(implicit user: CachedData): Boolean = user.application.exists(_.progress.siftProgress.failedAtSift)
 
   def isFastStreamFailedGreenSdip(implicit user: CachedData): Boolean = user.application.exists(_.progress.assessmentCentre.failedSdipGreen)
-
 }
-
 // scalastyle:on

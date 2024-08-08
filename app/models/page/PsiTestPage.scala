@@ -23,6 +23,13 @@ case class PsiTestPage(orderId: String,
                        testReportUrl: Option[String],
                        started: Boolean = false,
                        completed: Boolean = false) {
+  override def toString: String =
+    s"orderId=$orderId," +
+      s"inventoryId=$inventoryId," +
+      s"testReportUrl=$testReportUrl," +
+      s"started=$started," +
+      s"completed=$completed"
+
   def testNameKey = s"tests.inventoryid.name.$inventoryId"
   def testDescriptionKey = s"tests.inventoryid.description.$inventoryId"
 }
