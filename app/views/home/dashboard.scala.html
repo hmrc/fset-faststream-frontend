@@ -100,7 +100,7 @@
                 @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn) {
                     <p><a class="" id="view-application" href="@routes.PreviewApplicationController.present">View your submitted application</a></p>
                     <p><a class="" id="edit-personal-details" href="@routes.PersonalDetailsController.present">Edit your personal details</a></p>
-                    @if(!dashboardPage.isTestGroupExpired) {
+                    @if(!dashboardPage.isTestGroupExpired && !dashboardPage.isPhase1TestFailed) {
                         <p><a class="" id="withdraw-schemes" a href="@routes.WithdrawController.presentWithdrawScheme">
                             Withdraw from individual schemes</a></p>
                     }
