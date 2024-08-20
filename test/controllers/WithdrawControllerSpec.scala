@@ -57,6 +57,66 @@ class WithdrawControllerSpec extends BaseControllerSpec {
     }
   }
 
+  "presentWithdrawScheme" should {
+    "redirect to withdraw application if the candidate only has 1 Green scheme remaining" in new TestFixture {
+      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturnAsync(
+          List(SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Green))
+        )
+
+      val result = controller.presentWithdrawScheme()(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      flash(result).get("warning") mustBe Some("withdraw.scheme.last")
+      // This varies when you run this test in isolation vs all tests together
+      redirectLocation(result).getOrElse("").endsWith("/application/withdraw") mustBe true
+    }
+
+    "redirect to withdraw application if the candidate only has 1 Amber scheme remaining" in new TestFixture {
+      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturnAsync(
+          List(SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Amber))
+        )
+
+      val result = controller.presentWithdrawScheme()(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      flash(result).get("warning") mustBe Some("withdraw.scheme.last")
+      // This varies when you run this test in isolation vs all tests together
+      redirectLocation(result).getOrElse("").endsWith("/application/withdraw") mustBe true
+    }
+
+    "prevent the candidate from withdrawing if they only have Red or Withdrawn schemes" in new TestFixture {
+      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturnAsync(
+          List(
+            SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Red),
+            SchemeEvaluationResultWithFailureDetails(SchemeId("Finance"), SchemeStatus.Withdrawn)
+          )
+        )
+
+      val result = controller.presentWithdrawScheme()(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      flash(result).get("danger") mustBe Some("access.denied")
+      // This varies when you run this test in isolation vs all tests together
+      redirectLocation(result).getOrElse("").endsWith("/dashboard") mustBe true
+    }
+
+    "display withdraw scheme page when candidate has at least 2 schemes that are Green or Amber" in new TestFixture {
+      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(currentApplicationId))(any[HeaderCarrier]))
+        .thenReturnAsync(
+          List(
+            SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Green),
+            SchemeEvaluationResultWithFailureDetails(SchemeId("Finance"), SchemeStatus.Amber),
+            SchemeEvaluationResultWithFailureDetails(SchemeId("Commercial"), SchemeStatus.Withdrawn)
+          )
+        )
+
+      val result = controller.presentWithdrawScheme()(fakeRequest)
+      status(result) mustBe OK
+      val content = contentAsString(result)
+      content must include("Withdraw from a scheme")
+    }
+  }
+
   "withdrawApplication" should {
     "display withdraw form when the form was submitted invalid" in new TestFixture {
       val Request = fakeRequest.withMethod("POST")
@@ -108,8 +168,6 @@ class WithdrawControllerSpec extends BaseControllerSpec {
       val schemeWithdrawFormWrapper = new SchemeWithdrawForm
 
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
-      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturnAsync(List(SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Green)))
       when(mockUserService.refreshCachedUser(any[UniqueIdentifier])(any[HeaderCarrier], any[Request[_]]))
         .thenReturn(Future.successful(CachedData(ActiveCandidate.user, Some(CreatedApplication.copy(userId = ActiveCandidate.user.userID)))))
 
