@@ -69,7 +69,7 @@ class WithdrawController @Inject() (
 
   private def getWithdrawableSchemes(appId: UniqueIdentifier)(implicit hc: HeaderCarrier) =
     applicationClient.getCurrentSchemeStatus(appId).flatMap { schemesStatus =>
-      schemesStatus.filter(_.result == "Green").map(_.schemeId) match {
+      schemesStatus.filter(ss => List(SchemeStatus.Green.toString, SchemeStatus.Amber.toString).contains(ss.result)).map(_.schemeId) match {
         case Nil => Future(Nil)
         case schemes => refDataClient.allSchemes.map { refDataSchemes =>
           refDataSchemes.filter(s => schemes.contains(s.id))
