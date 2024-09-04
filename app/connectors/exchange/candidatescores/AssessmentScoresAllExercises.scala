@@ -21,9 +21,9 @@ import play.api.libs.json.{Json, OFormat}
 
 case class AssessmentScoresAllExercises(
                                          applicationId: UniqueIdentifier,
-                                         writtenExercise: Option[AssessmentScoresExercise] = None,
-                                         teamExercise: Option[AssessmentScoresExercise] = None,
-                                         leadershipExercise: Option[AssessmentScoresExercise] = None,
+                                         exercise1: Option[AssessmentScoresExercise] = None,
+                                         exercise2: Option[AssessmentScoresExercise] = None,
+                                         exercise3: Option[AssessmentScoresExercise] = None,
                                          finalFeedback: Option[AssessmentScoresFinalFeedback] = None
 )
 

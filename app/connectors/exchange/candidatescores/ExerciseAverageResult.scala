@@ -19,9 +19,9 @@ package connectors.exchange.candidatescores
 import play.api.libs.json.{Json, OFormat}
 
 case class ExerciseAverageResult(
-                                  writtenExerciseAverage: Double,
-                                  teamExerciseAverage: Double,
-                                  leadershipExerciseAverage: Double,
+                                  exercise1Average: Double,
+                                  exercise2Average: Double,
+                                  exercise3Average: Double,
                                   overallScore: Double)
 
 object ExerciseAverageResult {

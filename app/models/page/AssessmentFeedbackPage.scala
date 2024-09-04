@@ -16,7 +16,7 @@
 
 package models.page
 
-import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, CompetencyAverageResult, ExerciseAverageResult}
+import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, ExerciseAverageResult}
 
 case class ExerciseFeedback(exerciseName: String, competencyFeedback: Seq[CompetencyFeedback])
 case class CompetencyFeedback(competencyName: String, feedback: String)
@@ -24,7 +24,6 @@ case class CompetencyFeedback(competencyName: String, feedback: String)
 case class AssessmentFeedbackPage(
   exerciseFeedbackData: Seq[ExerciseFeedback],
   finalFeedback: String,
-  evaluatedAverageResults: CompetencyAverageResult,
   exerciseAverageResults: ExerciseAverageResult,
   candidateName: String
 ) {
@@ -33,52 +32,53 @@ case class AssessmentFeedbackPage(
   override def toString: String =
     s"exerciseFeedbackData=$exerciseFeedbackData," +
       s"finalFeedback=$finalFeedback," +
-      s"evaluatedAverageResults=$evaluatedAverageResults," +
       s"exerciseAverageResults=$exerciseAverageResults," +
       s"candidateName=$candidateName"
 }
 
 case object AssessmentFeedbackPage {
-  val seeingTheBigPictureCompetency = "Seeing the Big Picture/Changing and Improving"
-  val makingEffectiveDecisionsCompetency = "Making Effective Decisions"
-  val communicatingAndInfluencingCompetency = "Communicating and Influencing"
-  val workingTogetherDevelopingSelfAndOthersCompetency = "Working Together/Developing Self and Others"
+  val relatesCompetency = "Relates"
+  val thinksCompetency = "Thinks"
+  val strivesCompetency = "Strives"
+  val adaptsCompetency = "Adapts"
 
-  def apply(assessmentScores: AssessmentScoresAllExercises, evaluatedAverageResults: CompetencyAverageResult,
+  def apply(assessmentScores: AssessmentScoresAllExercises,
             exerciseAverageResults: ExerciseAverageResult, candidateName: String): AssessmentFeedbackPage = {
-    val analysisExercise = ExerciseFeedback("Written scenario",
+    val exercise1 = ExerciseFeedback("Written exercise",
       Seq(
-        CompetencyFeedback(seeingTheBigPictureCompetency,
-          assessmentScores.writtenExercise.flatMap{ s => s.seeingTheBigPictureFeedback}.getOrElse("")),
-        CompetencyFeedback(makingEffectiveDecisionsCompetency,
-          assessmentScores.writtenExercise.flatMap{ s => s.makingEffectiveDecisionsFeedback}.getOrElse("")),
-        CompetencyFeedback(communicatingAndInfluencingCompetency,
-          assessmentScores.writtenExercise.flatMap{ s => s.communicatingAndInfluencingFeedback}.getOrElse(""))
+        CompetencyFeedback(thinksCompetency,
+          assessmentScores.exercise1.flatMap { s => s.thinksFeedback }.getOrElse("")),
+        CompetencyFeedback(relatesCompetency,
+          assessmentScores.exercise1.flatMap{ s => s.relatesFeedback}.getOrElse("")),
+        CompetencyFeedback(strivesCompetency,
+          assessmentScores.exercise1.flatMap{ s => s.strivesFeedback}.getOrElse(""))
       )
     )
-    val groupExercise = ExerciseFeedback("Team scenario",
+    val exercise2 = ExerciseFeedback("Stakeholder communication exercise",
       Seq(
-        CompetencyFeedback(makingEffectiveDecisionsCompetency,
-          assessmentScores.teamExercise.flatMap{ s => s.makingEffectiveDecisionsFeedback}.getOrElse("")),
-        CompetencyFeedback(workingTogetherDevelopingSelfAndOthersCompetency,
-          assessmentScores.teamExercise.flatMap{ s => s.workingTogetherDevelopingSelfAndOthersFeedback}.getOrElse("")),
-        CompetencyFeedback(communicatingAndInfluencingCompetency,
-          assessmentScores.teamExercise.flatMap{ s => s.communicatingAndInfluencingFeedback}.getOrElse(""))
+        CompetencyFeedback(thinksCompetency,
+          assessmentScores.exercise2.flatMap{ s => s.thinksFeedback}.getOrElse("")),
+        CompetencyFeedback(relatesCompetency,
+          assessmentScores.exercise2.flatMap{ s => s.relatesFeedback}.getOrElse("")),
+        CompetencyFeedback(adaptsCompetency,
+          assessmentScores.exercise2.flatMap{ s => s.adaptsFeedback}.getOrElse("")),
+        CompetencyFeedback(strivesCompetency,
+          assessmentScores.exercise2.flatMap{ s => s.strivesFeedback}.getOrElse(""))
       )
     )
-    val leadershipExercise = ExerciseFeedback("Leadership scenario",
+    val exercise3 = ExerciseFeedback("Personal development conversation",
       Seq(
-        CompetencyFeedback(workingTogetherDevelopingSelfAndOthersCompetency,
-          assessmentScores.leadershipExercise.flatMap{ s => s.workingTogetherDevelopingSelfAndOthersFeedback}.getOrElse("")),
-        CompetencyFeedback(communicatingAndInfluencingCompetency,
-          assessmentScores.leadershipExercise.flatMap{ s => s.communicatingAndInfluencingFeedback}.getOrElse("")),
-        CompetencyFeedback(seeingTheBigPictureCompetency,
-          assessmentScores.leadershipExercise.flatMap{ s => s.seeingTheBigPictureFeedback}.getOrElse(""))
+        CompetencyFeedback(relatesCompetency,
+          assessmentScores.exercise3.flatMap { s => s.relatesFeedback }.getOrElse("")),
+        CompetencyFeedback(adaptsCompetency,
+          assessmentScores.exercise3.flatMap{ s => s.adaptsFeedback}.getOrElse("")),
+        CompetencyFeedback(strivesCompetency,
+          assessmentScores.exercise3.flatMap{ s => s.strivesFeedback}.getOrElse(""))
       )
     )
     val finalFeedback = assessmentScores.finalFeedback.map { s => s.feedback }.getOrElse("")
-    AssessmentFeedbackPage(Seq(analysisExercise, groupExercise, leadershipExercise),
-      finalFeedback, evaluatedAverageResults, exerciseAverageResults, candidateName
+    AssessmentFeedbackPage(Seq(exercise1, exercise2, exercise3),
+      finalFeedback, exerciseAverageResults, candidateName
     )
   }
 }

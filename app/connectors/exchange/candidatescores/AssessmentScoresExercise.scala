@@ -24,25 +24,15 @@ import java.time.OffsetDateTime
 case class AssessmentScoresExercise(
                                      attended: Boolean,
 
-                                     seeingTheBigPictureScores: Option[SeeingTheBigPictureScores] = None,
-                                     seeingTheBigPictureAverage: Option[Double] = None,
-                                     seeingTheBigPictureFeedback: Option[String] = None,
-
-                                     makingEffectiveDecisionsScores: Option[MakingEffectiveDecisionsScores] = None,
-                                     makingEffectiveDecisionsAverage: Option[Double] = None,
-                                     makingEffectiveDecisionsFeedback: Option[String] = None,
-
-                                     communicatingAndInfluencingScores: Option[CommunicatingAndInfluencingScores] = None,
-                                     communicatingAndInfluencingAverage: Option[Double] = None,
-                                     communicatingAndInfluencingFeedback: Option[String] = None,
-
-                                     workingTogetherDevelopingSelfAndOthersScores: Option[WorkingTogetherDevelopingSelfAndOthersScores] = None,
-                                     workingTogetherDevelopingSelfAndOthersAverage: Option[Double] = None,
-                                     workingTogetherDevelopingSelfAndOthersFeedback: Option[String] = None,
+                                     relatesFeedback: Option[String] = None,
+                                     thinksFeedback: Option[String] = None,
+                                     strivesFeedback: Option[String] = None,
+                                     adaptsFeedback: Option[String] = None,
 
                                      updatedBy: UniqueIdentifier,
                                      savedDate: Option[OffsetDateTime] = None,
                                      submittedDate: Option[OffsetDateTime] = None,
+                                     overallAverage: Option[Double] = None,
                                      version: Option[String] = None
 )
 
