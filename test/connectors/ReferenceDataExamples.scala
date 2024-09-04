@@ -74,11 +74,11 @@ object ReferenceDataExamples {
   }
 
   object Locations {
-    val Location1 = SdipLocation(LocationId("location1"), "Location 1")
-    val Location2 = SdipLocation(LocationId("location2"), "Location 2")
-    val Location3 = SdipLocation(LocationId("location3"), "Location 3")
-    val Location4 = SdipLocation(LocationId("location4"), "Location 4")
-    val Location5 = SdipLocation(LocationId("location5"), "Location 5")
+    val Location1 = SdipLocation(LocationId("London"), "London")
+    val Location2 = SdipLocation(LocationId("Manchester"), "Manchester")
+    val Location3 = SdipLocation(LocationId("Newcastle"), "Newcastle")
+    val Location4 = SdipLocation(LocationId("Reading"), "Reading")
+    val Location5 = SdipLocation(LocationId("York"), "York")
 
     val AllLocations = (Location1 :: Location2 :: Location3 :: Location4 :: Location5 :: Nil)
   }

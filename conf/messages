@@ -209,17 +209,31 @@ qualification.Degree_GP_STEM.description=2:2 degree in a STEM subject; Economics
 # YAML file has changed between the user loading the page, and submitting their preference (unlikely, but possible).
 location.unavailable=This location isn''t available
 
-location.location1.description=Location 1
-location.location2.description=Location 2
-location.location3.description=Location 3
-location.location4.description=Location 4
-location.location5.description=Location 5
-location.location6.description=Location 6
-location.location7.description=Location 7
-location.location8.description=Location 8
+location.Belfast.description = Belfast
+location.Birmingham.description = Birmingham
+location.Blackpool.description = Blackpool
+location.Bristol.description = Bristol
+location.Cardiff.description = Cardiff
+location.Coventry.description = Coventry
+location.Darlington.description = Darlington
+location.Edinburgh.description = Edinburgh
+location.Exeter.description = Exeter
+location.Glasgow.description = Glasgow
+location.Leeds.description = Leeds
+location.Liverpool.description = Liverpool
+location.London.description = London
+location.Manchester.description = Manchester
+location.Newcastle.description = Newcastle
+location.Newport.description = Newport
+location.Nottingham.description = Nottingham
+location.Reading.description = Reading
+location.Sheffield.description = Sheffield
+location.Titchfield.description = Titchfield
+location.Wolverhampton.description = Wolverhampton
+location.York.description = York
 
-locations.required=You must choose a location
-locationss.tooMany=You can only select a maximum of 4 locations
+locations.required = You must choose a location
+locationss.tooMany = You can only select a maximum of 4 locations
 
 # Preview
 info.cannot.preview.yet = You can''t preview your application before you finish all the sections

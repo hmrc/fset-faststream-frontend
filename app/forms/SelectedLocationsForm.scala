@@ -92,12 +92,19 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
 object SelectedLocationsForm {
 
   val interestsList = List(
-    "Interest 1",
-    "Interest 2",
-    "Interest 3",
-    "Interest 4",
-    "Interest 5",
-    "Interest 6"
+    "Commercial",
+    "Cyber",
+    "Digital and Data",
+    "Diplomacy and International Relations",
+    "Economics",
+    "Finance",
+    "Governance",
+    "Operational Delivery",
+    "People",
+    "Policy Development",
+    "Project Management",
+    "Science and Engineering",
+    "Statistics and Research"
   )
 
   case class LocationPreferences(locations: List[String], interests: List[String])

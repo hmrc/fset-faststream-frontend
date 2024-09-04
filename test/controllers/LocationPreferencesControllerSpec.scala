@@ -50,20 +50,20 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
 
     "populate selected locations and interests for the candidate" in new TestFixture {
       when(mockSdipLocationsClient.getLocationPreferences(eqTo(currentApplicationId))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(SelectedLocations(List("location3", "location4"), List("Interest 1"))))
+        .thenReturn(Future.successful(SelectedLocations(List("London", "Manchester"), List("Cyber"))))
 
       val result = controller.present(fakeRequest)
 
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include ("Choose your preferred locations")
-      content must include (s"""name="location_0" value='location3'""")
-      content must include (s"""name="location_1" value='location4'""")
+      content must include (s"""name="location_0" value='London'""")
+      content must include (s"""name="location_1" value='Manchester'""")
       content must include (s"""name="location_2" value=''""")
       content must include (s"""name="location_3" value=''""")
       content must include (s"""name="location_4" value=''""")
       //scalastyle:off line.size.limit
-      content must include ("""value="Interest 1"  checked="checked"""")
+      content must include ("""value="Cyber"  checked="checked"""")
       //scalastyle:on
     }
   }
@@ -71,8 +71,8 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
   "submit location preferences" should {
     "update location preference details" in new TestFixture {
       val request = fakeRequest.withMethod("POST")
-        .withFormUrlEncodedBody("location_0" -> "location3", "location_1" -> "location4", "interests[0]" -> "Interest 1")
-      val selectedLocations = SelectedLocations(List("location3", "location4"), List("Interest 1"))
+        .withFormUrlEncodedBody("location_0" -> "London", "location_1" -> "Manchester", "interests[0]" -> "Cyber")
+      val selectedLocations = SelectedLocations(List("London", "Manchester"), List("Cyber"))
       when(mockSdipLocationsClient.updateLocationPreferences(eqTo(selectedLocations))(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturnAsync()
 
