@@ -16,19 +16,18 @@
 
 package controllers
 
-import java.util.UUID
 import connectors.exchange.GeneralDetails
-import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, CompetencyAverageResult, ExerciseAverageResult}
+import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, ExerciseAverageResult}
 import mappings.Address
 import models.UniqueIdentifier
-
-import java.time.LocalDate
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import play.api.test.Helpers._
 import testkit.TestableSecureActions
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
+import java.util.UUID
 import scala.concurrent.Future
 
 class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
@@ -53,23 +52,16 @@ class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
 
       val assessmentScores = AssessmentScoresAllExercises(
         applicationId,
-        writtenExercise = None,
-        teamExercise = None,
-        leadershipExercise = None,
+        exercise1 = None,
+        exercise2 = None,
+        exercise3 = None,
         finalFeedback = None
       )
 
-      val competencyAverageResult = CompetencyAverageResult(
-        makingEffectiveDecisionsAverage = 1.0,
-        workingTogetherDevelopingSelfAndOthersAverage = 1.0,
-        communicatingAndInfluencingAverage = 1.0,
-        seeingTheBigPictureAverage = 1.0,
-        overallScore = 4.0)
-
       val exerciseAverageResult = ExerciseAverageResult(
-        writtenExerciseAverage = 1.0,
-        teamExerciseAverage = 1.0,
-        leadershipExerciseAverage = 1.0,
+        exercise1Average = 1.0,
+        exercise2Average = 1.0,
+        exercise3Average = 1.0,
         overallScore = 3.0)
 
       val generalDetails = GeneralDetails(
@@ -95,8 +87,6 @@ class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
 
       when(mockAssessmentScoresClient.findReviewerAcceptedAssessmentScores(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(assessmentScores))
-      when(mockApplicationClient.findFsacEvaluationAverages(any[UniqueIdentifier])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(competencyAverageResult))
       when(mockApplicationClient.findFsacExerciseAverages(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(exerciseAverageResult))
       when(mockApplicationClient.getPersonalDetails(any[UniqueIdentifier], any[UniqueIdentifier])(any[HeaderCarrier]))

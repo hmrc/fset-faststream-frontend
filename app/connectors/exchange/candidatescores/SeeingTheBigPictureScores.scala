@@ -18,6 +18,7 @@ package connectors.exchange.candidatescores
 
 import play.api.libs.json.{Json, OFormat}
 
+// TODO: this class can be deleted
 case class SeeingTheBigPictureScores(
                                       strategicOutlook: Option[Double] = None,
                                       understandsHowOptionsMeetDiverseNeedsOfStakeholders: Option[Double] = None,

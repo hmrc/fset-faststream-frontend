@@ -18,6 +18,7 @@ package connectors.exchange.candidatescores
 
 import play.api.libs.json.{Json, OFormat}
 
+// TODO: this class can be deleted
 case class WorkingTogetherDevelopingSelfAndOthersScores(
                                                          formsEffectiveWorkingRelationships: Option[Double] = None,
                                                          inclusiveApproach: Option[Double] = None,
