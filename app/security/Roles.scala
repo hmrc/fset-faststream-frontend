@@ -143,14 +143,14 @@ object Roles {
 
   object SchemeWithdrawSiftOrFsacAwaitingAllocationRole extends CsrAuthorization {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean = {
-      statusIn(user)(SIFT) || (statusIn(user)(ASSESSMENT_CENTRE) && isAwaitingAllocation(user))
+      statusIn(user)(SIFT) || (statusIn(user)(ASSESSMENT_CENTRE) && isAwaitingFsacAllocation(user))
     }
   }
 
   object SchemeWithdrawOutsideSiftOrFsacAwaitingAllocationRole extends CsrAuthorization {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean = {
       user.application.isDefined && user.application.get.progress.submitted && !user.application.get.progress.jobOffer.eligible &&
-        !statusIn(user)(SIFT) && !(statusIn(user)(ASSESSMENT_CENTRE) && isAwaitingAllocation(user))
+        (statusIn(user)(ASSESSMENT_CENTRE) && !isAwaitingFsacAllocation(user)) || statusIn(user)(FSB)
     }
   }
 
@@ -417,7 +417,7 @@ object ProgressStatusRoleUtils {
 
   def isSiftComplete(implicit user: CachedData) = user.application.exists(_.progress.siftProgress.siftCompleted)
 
-  def isAwaitingAllocation(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.awaitingAllocation)
+  def isAwaitingFsacAllocation(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.awaitingAllocation)
 
   def isAllocatedToAssessmentCentre(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.allocationConfirmed) || user.application.exists(_.progress.assessmentCentre.allocationUnconfirmed)
 
