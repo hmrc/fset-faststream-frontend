@@ -16,12 +16,20 @@
 
 @(selectedLocations: connectors.exchange.SelectedLocations)(edit: Html)(implicit messages: Messages)
 
+@import models.FieldNameHelpers._
+
 @getOrder(pos: Int) = @{
     pos match {
         case 1 => "1st"
         case 2 => "2nd"
         case 3 => "3rd"
         case _ => s"${pos}th"
+    }
+}
+
+@displayInterests = @{
+    selectedLocations.interests.sorted.map { interest =>
+        <li><p id={createId("interests", interest)}>{interest}</p></li>
     }
 }
 
@@ -45,12 +53,7 @@
     </h2>
     <section>
         <ul id="interestsList" class="list-text">
-        @for(position <- 0 to selectedLocations.interests.size - 1) {
-            <li>
-                <h3 class="bold-small">@getOrder(position + 1) interest</h3>
-                <p id="interestChoice@{position+1}"> @selectedLocations.interests(position)</p>
-            </li>
-        }
+            @displayInterests
         </ul>
     </section>
 </section>
