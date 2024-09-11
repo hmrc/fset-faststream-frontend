@@ -77,10 +77,12 @@
 
         <section class="grid-wrapper">
             <div class="scheme-input-container">
-                @interestsCheckboxGroup(form("interests"), interests,
-                    Symbol("_label") -> "Please select which interests you have. (Select all that apply)",
-                    Symbol("_class") -> ""
-                )
+                <h2 class="heading-large">Please select which interests you have. (Select all that apply)</h2>
+                <section class="text panel-indent">
+                    <p>We request your areas of interest to help us match candidates to internships.</p>
+                    <p>The preferences you choose will play no part in your likelihood of being offered an internship and we cannot guarantee we are able to offer every preference in every location.</p>
+                </section>
+                @interestsCheckboxGroup(form("interests"), interests)
             </div>
         </section>
 
