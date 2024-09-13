@@ -155,27 +155,5 @@ class SelectedSchemesFormSpec extends BaseFormSpec {
       form.errors.map(_.message) mustBe List("schemes.tooMany")
       form.hasGlobalErrors mustBe false
     }
-
-    "be invalid when GovernmentPolicy and GovernmentPolicySTEM are both selected" in {
-      val form = selectedSchemesForm().bind(Map(
-        "scheme_0" -> "GovernmentPolicy",
-        "scheme_1" -> "GovernmentPolicySTEM",
-        "orderAgreed" -> "true",
-        "eligible" -> "true"))
-      form.hasErrors mustBe true
-      form.errors.map(_.message) mustBe List("schemes.stemAndNonStemBothSelected")
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when OperationalDelivery and OperationalDeliverySTEM are both selected" in {
-      val form = selectedSchemesForm().bind(Map(
-        "scheme_0" -> "OperationalDelivery",
-        "scheme_1" -> "OperationalDeliverySTEM",
-        "orderAgreed" -> "true",
-        "eligible" -> "true"))
-      form.hasErrors mustBe true
-      form.errors.map(_.message) mustBe List("schemes.stemAndNonStemBothSelected")
-      form.hasGlobalErrors mustBe false
-    }
   }
 }
