@@ -163,7 +163,7 @@ alternatives.required=Select whether or not you would consider other schemes
 
 scheme.Commercial.description=Commercial
 scheme.CyberSecurity.description=Cyber Security
-scheme.DigitalDataTechnologyAndCyber.description=Digital, Data, Technology & Cyber
+scheme.Digital.description=Digital
 scheme.DiplomaticAndDevelopment.description=Diplomatic and Development
 scheme.DiplomaticAndDevelopmentEconomics.description=Diplomatic and Development Economics
 scheme.Finance.description=Finance
