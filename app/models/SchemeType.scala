@@ -22,7 +22,7 @@ object SchemeType extends Enumeration {
 /*
   type SchemeType = Value
 
-  val Commercial, DigitalDataTechnologyAndCyber, DiplomaticAndDevelopment, DiplomaticAndDevelopmentEconomics,
+  val Commercial, Digital, DiplomaticAndDevelopment, DiplomaticAndDevelopmentEconomics,
   Finance, Generalist, GovernmentCommunicationService, GovernmentEconomicsService,
   GovernmentOperationalResearchService, GovernmentSocialResearchService,
   GovernmentStatisticalService, HousesOfParliament, HumanResources,
