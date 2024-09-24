@@ -41,6 +41,11 @@
             @if(isFaststream(user)) {
                 @needsSupportOnlineAssessmentsFaststream(form)
                 @needsSupportAtVenue(form)
+                <legend><h2 class="form-label">Final Selection Board</h2></legend>
+                <p class="form-hint text">
+                    The assessments conducted during the Final Selection Board stage vary depending on the scheme.
+                    Candidates who require a Reasonable Adjustment at Final Selection Board should <a href="@routes.ApplicationController.helpdesk" class="">contact us</a> once their application reaches this stage.
+                </p>
             }
             @if(isEdip(user) || isSdip(user)) {
                 @needsSupportOnlineAssessmentsSdip()
