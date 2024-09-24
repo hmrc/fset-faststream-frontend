@@ -23,8 +23,9 @@
     <fieldset>
         <legend><h2 class="form-label">Will you need any support at the virtual assessment centre?</h2></legend>
         <p class="form-hint text">
-            For example, a request for reasonable adjustments such as a qualified signer for those with hearing difficulties.
-            Find out more about the virtual assessment centre <a href="https://www.faststream.gov.uk/faqs/index.html" target="_blank" rel="external">here
+            The virtual assessment centre has been built with inclusivity and accessibility in mind.
+            Further information on the assessments and reasonable adjustments can be found
+            <a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-reasonable-adjustments/" target="_blank" rel="external">here
                 <span class="visuallyhidden">link opens new window</span></a>.
         </p>
         @radioBoxHorizontal(form("needsSupportAtVenue"), options = List(("yes", "Yes", true), ("no", "No", false)),
@@ -33,6 +34,7 @@
             <div class="form-group">
                 <label for="needsSupportAtVenueDescription" class="form-label">What adjustments will you need <span
                 class='visuallyhidden'>at the assessment centre</span>?</label>
+                <span class="form-hint text">Please give us as much detail as possible about what you need</span>
                 @helper.textarea(form("needsSupportAtVenueDescription"),
                     Symbol("_label") -> "",
                     Symbol("class") -> "form-control",
@@ -42,8 +44,8 @@
                 <span class="visuallyhidden aria-limit" aria-live="polite"></span>
             </div>
             <div class="panel-indent text">
-                <p>If you want to talk about your adjustment needs in more detail,
-                    <a id="contactUsForVenueAssessment" href="@routes.ApplicationController.helpdesk" class="">please contact us</a>.</p>
+                <p>If you want to talk about your adjustment needs in more detail, please
+                    <a id="contactUsForVenueAssessment" href="@routes.ApplicationController.helpdesk" class="">contact us</a>.</p>
                 <p>It's important you let us know this information now, as there won't
                     be another opportunity to do this unless your situation changes.</p>
             </div>
