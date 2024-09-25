@@ -32,7 +32,6 @@
         <div id="needsSupportForOnlineAssessment-describe" class="toggle-content" aria-hidden="true">
             <div class="form-group">
                 <label for="needsSupportForPhoneInterviewDescription" class="form-label">What adjustments will you need <span class='visuallyhidden'>for your phone interview?</span></label>
-                <span class="form-hint text">Please give us as much detail as possible about what you need</span>
                 @helper.textarea(form("needsSupportForPhoneInterviewDescription"),
                     Symbol("_label") -> "",
                     Symbol("class") -> "form-control",
@@ -42,8 +41,8 @@
                 <span class="visuallyhidden aria-limit" aria-live="polite"></span>
             </div>
             <div class="panel-indent text">
-                <p>If you want to talk about your adjustment needs in more detail,
-                    <a id="contactUsForPhoneInterview" href="@routes.ApplicationController.helpdesk" class="">please contact us</a>.</p>
+                <p>If you want to talk about your adjustment needs in more detail, please
+                    <a id="contactUsForPhoneInterview" href="@routes.ApplicationController.helpdesk" class="">contact us</a>.</p>
                 <p>It's important you let us know this information now, as there won't
                     be another opportunity to do this unless your situation changes.</p>
             </div>
