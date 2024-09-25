@@ -44,7 +44,7 @@ case object AssessmentFeedbackPage {
 
   def apply(assessmentScores: AssessmentScoresAllExercises,
             exerciseAverageResults: ExerciseAverageResult, candidateName: String): AssessmentFeedbackPage = {
-    val exercise1 = ExerciseFeedback("Written exercise",
+    val exercise1 = ExerciseFeedback("Written advice exercise",
       Seq(
         CompetencyFeedback(thinksCompetency,
           assessmentScores.exercise1.flatMap { s => s.thinksFeedback }.getOrElse("")),

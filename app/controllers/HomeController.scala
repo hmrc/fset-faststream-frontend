@@ -178,7 +178,7 @@ class HomeController @Inject() (
                     success("assessmentCentre.analysisExercise.upload.success"))
                 }.recover {
                   case _: CandidateAlreadyHasAnAnalysisExerciseException =>
-                    logger.warn(s"A duplicate written exercise submission was attempted " +
+                    logger.warn(s"A duplicate written advice exercise submission was attempted " +
                       s"(applicationId = $applicationId)")
                     Redirect(routes.HomeController.present()).flashing(
                       danger("assessmentCentre.analysisExercise.upload.error"))
@@ -192,7 +192,7 @@ class HomeController @Inject() (
             }
         }
       }.getOrElse {
-        logger.info(s"A malformed file request was submitted as a written exercise " +
+        logger.info(s"A malformed file request was submitted as a written advice exercise " +
           s"(applicationId = $applicationId)")
         Future.successful(Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.analysisExercise.upload.error")))
       }
