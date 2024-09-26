@@ -185,13 +185,13 @@ scheme.Sdip.description=Summer Internship Programme
 
 # These should be checked before each campaign
 # Hyerlinks to the scheme and eligibility criteria on the scheme selection page
-scheme.DiplomaticAndDevelopment.link = diplomatic-service/index.html
-scheme.DiplomaticAndDevelopmentEconomics.link = diplomatic-service-economics/index.html
-scheme.GovernmentEconomicsService.link = government-economic-service/index.html
-scheme.GovernmentOperationalResearchService.link = government-operational-research-service/index.html
-scheme.GovernmentSocialResearchService.link = government-social-research-service/index.html
-scheme.GovernmentStatisticalService.link = government-statistical-service/index.html
-scheme.ScienceAndEngineering.link = science-engineering/index.html
+scheme.DiplomaticAndDevelopment.link             = fs-diplomatic-development/
+scheme.DiplomaticAndDevelopmentEconomics.link    = fs-diplomatic-development-economics-scheme/
+scheme.GovernmentEconomicsService.link           = fs-government-economics-service-scheme/
+scheme.GovernmentOperationalResearchService.link = fs-government-operational-research-service-scheme/
+scheme.GovernmentSocialResearchService.link      = fs-government-social-research/
+scheme.GovernmentStatisticalService.link         = fs-government-statistical-service-scheme/
+scheme.ScienceAndEngineering.link                = fs-science-engineering-scheme/
 
 qualification.Degree_21.description=2:1 degree in any subject
 qualification.Degree_22.description=2:2 degree in any subject
