@@ -374,8 +374,8 @@ error.year.required=You must specify a year
 error.year.format=You must specify a valid 4 digit year
 
 # Phase1 tests
-tests.inventoryid.name.9c03bd37-c222-4b79-9fa0-c1c79e23a5ac=Using Data
-tests.inventoryid.description.9c03bd37-c222-4b79-9fa0-c1c79e23a5ac=This test is untimed, but usually takes between 15 and 45 minutes to complete.
+tests.inventoryid.name.394c88c5-70e6-406c-a794-97b816be8041=Using Data
+tests.inventoryid.description.394c88c5-70e6-406c-a794-97b816be8041=This test is untimed, but usually takes between 15 and 45 minutes to complete.
 tests.inventoryid.name.940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7=Work Based Scenarios
 tests.inventoryid.description.940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7=This test is untimed, but usually takes around 20 minutes to complete.
 tests.inventoryid.name.60b423e5-75d6-4d31-b02c-97b8686e22e6=Case Study Assessment
