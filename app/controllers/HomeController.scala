@@ -66,16 +66,20 @@ class HomeController @Inject() (
     implicit request =>
       implicit cachedData =>
         for {
-        page <- cachedData.application.map { implicit application =>
-          cachedData match {
-            case _ if !isSiftEntered && !isSiftReady && !isPhase3TestsPassed && !isAllocatedToAssessmentCentre =>
-              dashboardWithOnlineTests.recoverWith(dashboardWithoutOnlineTests)
-            case _ => displayPostOnlineTestsDashboard
+          page <- cachedData.application.map { implicit application =>
+            cachedData match {
+              case _ if !isPhase1TestsPassedNotified && !isSiftEntered && !isSiftReady &&
+                !isPhase3TestsPassed && !isAllocatedToAssessmentCentre =>
+                // We display this dashboard while the sdip candidate has not yet passed their P1 tests and the fs candidate
+                // has not been invited to sift and has not been invited to a fsac event (in case they skip sift)
+                dashboardWithOnlineTests.recoverWith(dashboardWithoutOnlineTests)
+              case _ =>
+                displayPostOnlineTestsDashboard
+            }
+          }.getOrElse {
+            dashboardWithoutApplication
           }
-        }.getOrElse {
-          dashboardWithoutApplication
-        }
-      } yield page
+        } yield page
   }
 
   def resume: Action[AnyContent] = CSRSecureAppAction(ActiveUserRole) { implicit request =>
@@ -229,7 +233,7 @@ class HomeController @Inject() (
     displaySdipEligibilityInfo: Boolean,
     cachedData: CachedData,
     request: Request[_]): PartialFunction[Throwable, Future[Result]] = {
-    case e: OnlineTestNotFound =>
+    case _: OnlineTestNotFound =>
       val applicationSubmitted = !cachedData.application.forall { app =>
         app.applicationStatus == ApplicationStatus.CREATED || app.applicationStatus == ApplicationStatus.IN_PROGRESS
       }

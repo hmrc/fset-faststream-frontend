@@ -54,6 +54,8 @@ case class PostOnlineTestsPage(
 
   //lazy val fsacGuideUrl: String = config.fsacGuideUrl
 
+  val isSdip: Boolean = userDataWithSchemes.application.isSdip
+
   val isOnlySdipGreen: Boolean = userDataWithSchemes.application.applicationRoute == ApplicationRoute.SdipFaststream &&
     userDataWithSchemes.currentSchemesStatus.forall(schemeStatus =>
       (schemeStatus.scheme.id != Scheme.SdipId && schemeStatus.status == SchemeStatus.Red) ||

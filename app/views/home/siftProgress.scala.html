@@ -253,26 +253,28 @@
 
  <section class="text">
     <ol class="step-by-step-coloured" id="nextStepsList">
-        <li class="first-step">
-            @if(isInPhase3PassedOrPassedNotified(page.userDataWithSchemes.toCachedData)) {
-                <p>Depending on your chosen schemes, you may need to answer some additional questions.</p>
-            } else {
-                @if(page.userDataWithSchemes.application.isSiftExpired) {
-                    <section class="inner-block-padr" id="schemeForms">
-                        <h2 class='heading-medium'>Extra information</h2>
-
-                        <p>At least one of your scheme preferences required you to answer some additional questions or take a numerical test.</p>
-                        <p>Unfortunately, the time you had to provide this information has expired.</p>
-
-                        <p>If you believe there's been a mistake, please <a href="@routes.ApplicationController.helpdesk">contact us</a>.</p>
-                    </section>
+        @if(!page.isSdip) {
+            <li class="first-step">
+                @if(isInPhase3PassedOrPassedNotified(page.userDataWithSchemes.toCachedData)) {
+                    <p>Depending on your chosen schemes, you may need to answer some additional questions.</p>
                 } else {
-                    @if(page.userDataWithSchemes.hasFormRequirement || page.userDataWithSchemes.hasNumericRequirement) {
-                        @renderExtraInfo
+                    @if(page.userDataWithSchemes.application.isSiftExpired) {
+                        <section class="inner-block-padr" id="schemeForms">
+                            <h2 class='heading-medium'>Extra information</h2>
+
+                            <p>At least one of your scheme preferences required you to answer some additional questions or take a numerical test.</p>
+                            <p>Unfortunately, the time you had to provide this information has expired.</p>
+
+                            <p>If you believe there's been a mistake, please <a href="@routes.ApplicationController.helpdesk">contact us</a>.</p>
+                        </section>
+                    } else {
+                        @if(page.userDataWithSchemes.hasFormRequirement || page.userDataWithSchemes.hasNumericRequirement) {
+                            @renderExtraInfo
+                        }
                     }
                 }
-            }
-        </li>
+            </li>
+        }
 
         @if(page.userDataWithSchemes.requiresAssessmentCentre && !page.isOnlySdipGreen) {
             <li class="second-step @activateByStep(page.secondStepVisibility)">
@@ -314,9 +316,15 @@
                     }
 
                     case _ => {
-                        <p>If you've successfully passed the previous stage, you'll need to
-                            attend a final event for your chosen scheme. We'll contact you
-                            to arrange this.</p>
+                        @if(page.isSdip) {
+                            <p>You've successfully passed the previous stage. You'll need to
+                                attend a final event for your chosen scheme. We'll contact you
+                                to arrange this.</p>
+                        } else {
+                            <p>If you've successfully passed the previous stage, you'll need to
+                                attend a final event for your chosen scheme. We'll contact you
+                                to arrange this.</p>
+                        }
                         <p>We aim to make your results available as soon as possible.</p>
                     }
                 }

@@ -31,6 +31,7 @@ case class Phase1TestProgress(
     phase1TestsResultsReady: Boolean = false,
     phase1TestsResultsReceived: Boolean = false,
     phase1TestsPassed: Boolean = false,
+    phase1TestsPassedNotified: Boolean = false, // Only applicable for Sdip candidates
     phase1TestsFailed: Boolean = false,
     sdipFSFailed: Boolean = false,
     sdipFSFailedNotified: Boolean = false,
@@ -183,6 +184,8 @@ object Progress {
           progressResponse.phase1ProgressResponse.phase1TestsResultsReceived,
         phase1TestsPassed =
           progressResponse.phase1ProgressResponse.phase1TestsPassed,
+        phase1TestsPassedNotified =
+          progressResponse.phase1ProgressResponse.phase1TestsSuccessNotified,
         phase1TestsFailed =
           progressResponse.phase1ProgressResponse.phase1TestsFailed,
         sdipFSFailed = progressResponse.phase1ProgressResponse.sdipFSFailed,
