@@ -53,6 +53,8 @@ case class ApplicationData(
     isSift && progress.siftProgress.siftExpired
   def isSdipFaststream: Boolean = applicationRoute == ApplicationRoute.SdipFaststream
   def isFaststream: Boolean = applicationRoute == ApplicationRoute.Faststream
+  def isSdip: Boolean = applicationRoute == ApplicationRoute.Sdip
+
 }
 
 object ApplicationData {

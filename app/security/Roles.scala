@@ -375,6 +375,8 @@ object ProgressStatusRoleUtils {
 
   def isPhase1TestsPassed(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsPassed)
 
+  def isPhase1TestsPassedNotified(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsPassedNotified)
+
   def isPhase1TestsFailed(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsFailed)
 
   def isPhase1TestsExpired(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsExpired)
