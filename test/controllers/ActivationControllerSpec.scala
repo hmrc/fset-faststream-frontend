@@ -36,7 +36,7 @@ class ActivationControllerSpec extends BaseControllerSpec {
       val result = controller(ActiveCandidate).present()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) must be(Some(routes.HomeController.present().url))
+      redirectLocation(result) mustBe Some(routes.HomeController.present().url)
       flash(result).data mustBe Map("warning" -> "activation.already")
     }
 

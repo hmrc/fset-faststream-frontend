@@ -57,7 +57,7 @@ class LocationPreferencesController @Inject()(
       }
   }
 
-  def submit: Action[AnyContent] = CSRSecureAppAction(SchemesRole) { implicit request =>
+  def submit: Action[AnyContent] = CSRSecureAppAction(LocationsRole) { implicit request =>
     implicit cachedData =>
       referenceDataClient.sdipLocations.flatMap { locations =>
         new SelectedLocationsForm(locations).form.bindFromRequest().fold(

@@ -16,26 +16,25 @@
 
 package testkit
 
-import java.util.UUID
+import models.SecurityUserExamples.{ActiveCandidate, CreatedApplication}
+import models._
+import play.api.Logging
+import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.silhouette.api.LoginInfo
 import play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
 import play.silhouette.impl.authenticators.SessionAuthenticator
-import models.SecurityUserExamples.{ActiveCandidate, CreatedApplication}
-import models._
-import play.api.mvc.{Action, AnyContent, Request, Result}
 import security.Roles.CsrAuthorization
 import security.{SecureActions, SecurityEnvironment}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import java.time.ZonedDateTime
+import java.util.UUID
 import scala.concurrent.Future
 
-// This class supports unit testing and creates a testable version of Secure Actions.
-// It needs to create some Silhoutte objects that still use the old Joda Date Time.
-// As migration from Silhoutte will take some time, we will leave this code as it is for the
-// time being.
-trait TestableSecureActions extends SecureActions {
+// This class supports unit testing and creates a testable version of Secure Actions
+// using a Faststream candidate as the logged in user
+trait TestableSecureActions extends SecureActions with Logging {
   self: FrontendController =>
 
   def candidate: CachedData = ActiveCandidate
@@ -44,26 +43,26 @@ trait TestableSecureActions extends SecureActions {
 
   // scalastyle:off method.name
   override def CSRSecureAction(role: CsrAuthorization)(block: SecuredRequest[_,_] => CachedData => Future[Result]): Action[AnyContent] =
-    execute(candidate)(block)
+    execute(candidate)(role)(block)
 
-  override def CSRSecureAppAction(role: CsrAuthorization)(block: SecuredRequest[_,_] => CachedDataWithApp =>
-    Future[Result]): Action[AnyContent] = execute(candidateWithApp)(block)
+  override def CSRSecureAppAction(role: CsrAuthorization)(
+    block: SecuredRequest[_,_] => CachedDataWithApp => Future[Result]): Action[AnyContent] =
+    execute(candidateWithApp)(role)(block)
 
   override def CSRUserAwareAction(block: UserAwareRequest[_,_] => Option[CachedData] => Future[Result]): Action[AnyContent] =
     Action.async { request =>
-      val secReq = UserAwareRequest(identity = None, authenticator = None, request)
-      block(secReq)(None)
+      val userAwareRequest = UserAwareRequest(identity = None, authenticator = None, request)
+      block(userAwareRequest)(None)
     }
-  // scalastyle:on
+    // scalastyle:on
 
-  private def execute[T](result: T)(block: SecuredRequest[_,_] => T => Future[Result]): Action[AnyContent] = {
+  private def execute[T](result: T)(role: CsrAuthorization)(block: SecuredRequest[_,_] => T => Future[Result]): Action[AnyContent] =
     Action.async { request =>
-      val secReq = defaultAction(request)
-      block(secReq)(result)
+      val securedRequest = buildSecuredRequest(request)
+      block(securedRequest)(result)
     }
-  }
 
-  private def defaultAction[T](request: Request[AnyContent]) =
+  private def buildSecuredRequest(request: Request[AnyContent]) =
     SecuredRequest[SecurityEnvironment, AnyContent](
       SecurityUser(UUID.randomUUID.toString),
       SessionAuthenticator(
@@ -75,9 +74,7 @@ trait TestableSecureActions extends SecureActions {
       request
     )
 
-  private def now[T] = {
-    ZonedDateTime.now()
-  }
+  private def now = ZonedDateTime.now()
 }
 
 // scalastyle:off method.name
@@ -100,14 +97,11 @@ trait TestableCSRSecureAction extends SecureActions {
           idleTimeout = None, fingerprint = None
         ), request
       )
-//      implicit val carrier = PersonalDetailsController.hc(request)
       block(secReq)(CachedDataExample.ActiveCandidate)
     }
   }
 
-  private def now[T] = {
-    ZonedDateTime.now()
-  }
+  private def now = ZonedDateTime.now()
 }
 
 trait TestableCSRUserAwareAction extends SecureActions {
@@ -126,8 +120,8 @@ trait TestableCSRUserAwareAction extends SecureActions {
 
       val session = SessionKeys.sessionId -> s"session-${UUID.randomUUID}"
 
-      block(userAwareReq)(Some(CachedDataExample.ActiveCandidate)).
-        map(_.addingToSession(session)(request))
+      block(userAwareReq)(Some(CachedDataExample.ActiveCandidate))
+        .map(_.addingToSession(session)(request))
     }
 }
 

@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import play.api.test.Helpers._
 import testkit.MockitoImplicits._
-import testkit.TestableSecureActions
+import testkit.{TestableSecureActionsWithAuthorizationForFsCandidate, TestableSecureActionsWithAuthorizationForSdipCandidate}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -32,11 +32,11 @@ import scala.concurrent.Future
 class LocationPreferencesControllerSpec extends BaseControllerSpec {
 
   "present" should {
-    "handle not fetching candidate's location selections from the db" in new TestFixture {
-      when(mockSdipLocationsClient.getLocationPreferences(eqTo(currentApplicationId))(any[HeaderCarrier]))
+    "allow a Sdip candidate access to the location selection page" in new TestFixture {
+      when(mockSdipLocationsClient.getLocationPreferences(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new LocationPreferencesNotFound))
 
-      val result = controller.present(fakeRequest)
+      val result = sdipController.present(fakeRequest)
 
       status(result) mustBe OK
       val content = contentAsString(result)
@@ -48,11 +48,20 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
       content must include(s"""name="location_4" value=''""")
     }
 
+    "not allow a Faststream candidate access to the Sdip location selection page" in new TestFixture {
+      val result = fsController.present(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result) mustBe Some(routes.HomeController.present().url)
+      flash(result).data mustBe Map("danger" -> "access.denied")
+    }
+
     "populate selected locations and interests for the candidate" in new TestFixture {
-      when(mockSdipLocationsClient.getLocationPreferences(eqTo(currentApplicationId))(any[HeaderCarrier]))
+      when(mockSdipLocationsClient.getLocationPreferences(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(SelectedLocations(List("London", "Manchester"), List("Cyber"))))
 
-      val result = controller.present(fakeRequest)
+      val result = sdipController.present(fakeRequest)
 
       status(result) mustBe OK
       val content = contentAsString(result)
@@ -73,10 +82,10 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
       val request = fakeRequest.withMethod("POST")
         .withFormUrlEncodedBody("location_0" -> "London", "location_1" -> "Manchester", "interests[0]" -> "Cyber")
       val selectedLocations = SelectedLocations(List("London", "Manchester"), List("Cyber"))
-      when(mockSdipLocationsClient.updateLocationPreferences(eqTo(selectedLocations))(eqTo(currentApplicationId))(any[HeaderCarrier]))
+      when(mockSdipLocationsClient.updateLocationPreferences(eqTo(selectedLocations))(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturnAsync()
 
-      val result = controller.submit(request)
+      val result = sdipController.submit(request)
 
       print(contentAsString(result))
       status(result) mustBe SEE_OTHER
@@ -91,8 +100,12 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
     )))
     when(mockReferenceDataClient.sdipLocations(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Locations.AllLocations)
 
-    def controller = new LocationPreferencesController(mockConfig,
+    def sdipController = new LocationPreferencesController(mockConfig,
       stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
-      mockSdipLocationsClient, mockReferenceDataClient) with TestableSecureActions
+      mockSdipLocationsClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForSdipCandidate
+
+    def fsController = new LocationPreferencesController(mockConfig,
+      stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      mockSdipLocationsClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForFsCandidate
   }
 }

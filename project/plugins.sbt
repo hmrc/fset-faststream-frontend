@@ -5,8 +5,8 @@ resolvers += Resolver.typesafeRepo("releases")
 addSbtPlugin("org.playframework"  %  "sbt-plugin"             % "3.0.2")
 addSbtPlugin("uk.gov.hmrc"        %  "sbt-auto-build"         % "3.24.0")
 addSbtPlugin("uk.gov.hmrc"        %  "sbt-distributables"     % "2.5.0")
-addSbtPlugin("com.typesafe.sbt"   %  "sbt-digest"             % "1.1.4")
-addSbtPlugin("com.typesafe.sbt"   %  "sbt-gzip"               % "1.0.2")
+addSbtPlugin("com.github.sbt"     %  "sbt-digest"             % "2.0.0")
+addSbtPlugin("com.github.sbt"     %  "sbt-gzip"               % "2.0.0")
 
 // Use the Scalariform plugin to reformat the code
 // Note that it currently does not handle implicit parameters well so we need to comment out adding the plugin
