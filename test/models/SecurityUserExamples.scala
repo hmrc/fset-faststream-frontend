@@ -19,12 +19,14 @@ package models
 object SecurityUserExamples {
   val ValidToken = "ABCDEFG"
   val CreatedApplication = CachedDataExample.CreatedApplication
+  val CreatedApplicationPersonalDetailsEntered = CachedDataExample.ApplicationPersonalDetailsEntered
+  val SdipApplicationPersonalDetailsEntered = CachedDataExample.SdipApplicationPersonalDetailsEntered
   val ActiveCandidateUser = CachedUser(CreatedApplication.userId, "firstName", "lastName", Some("preferredName"),
     "email@test.com", isActive = true, "lockStatus")
   val ActiveCandidate = CachedData(ActiveCandidateUser, application = None)
 
-  val InactiveCandidateUser = ActiveCandidateUser.copy(isActive = false)
+  private val InactiveCandidateUser = ActiveCandidateUser.copy(isActive = false)
   val InactiveCandidate = CachedData(InactiveCandidateUser, application = None)
 
-  val CandidateWithApp = CachedDataWithApp(ActiveCandidateUser, CreatedApplication)
+//  val CandidateWithApp = CachedDataWithApp(ActiveCandidateUser, CreatedApplication)
 }

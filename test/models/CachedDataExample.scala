@@ -40,6 +40,28 @@ object CachedDataExample {
     overriddenSubmissionDeadline = None
   )
 
+  val ApplicationPersonalDetailsEntered = ApplicationData(
+    UniqueIdentifier(UUID.randomUUID.toString),
+    UniqueIdentifier(UUID.randomUUID.toString),
+    ApplicationStatus.IN_PROGRESS,
+    ApplicationRoute.Faststream,
+    ProgressExamples.PersonalDetailsProgress,
+    Some(CivilServiceExperienceDetails(applicable = false)),
+    edipCompleted = None,
+    overriddenSubmissionDeadline = None
+  )
+
+  val SdipApplicationPersonalDetailsEntered = ApplicationData(
+    UniqueIdentifier(UUID.randomUUID.toString),
+    UniqueIdentifier(UUID.randomUUID.toString),
+    ApplicationStatus.IN_PROGRESS,
+    ApplicationRoute.Sdip,
+    ProgressExamples.PersonalDetailsProgress,
+    Some(CivilServiceExperienceDetails(applicable = false)),
+    edipCompleted = None,
+    overriddenSubmissionDeadline = None
+  )
+
   val fastPassRejectedInvitedToPhase1Application = ApplicationData(
     UniqueIdentifier(UUID.randomUUID.toString),
     UniqueIdentifier(UUID.randomUUID.toString),

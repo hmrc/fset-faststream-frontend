@@ -25,7 +25,7 @@ import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import play.api.test.Helpers._
 import testkit.MockitoImplicits._
-import testkit.TestableSecureActions
+import testkit.{TestableSecureActionsWithAuthorizationForFsCandidate, TestableSecureActionsWithAuthorizationForSdipCandidate}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -33,11 +33,11 @@ import scala.concurrent.Future
 class SchemePreferencesControllerSpec extends BaseControllerSpec {
 
   "present" should {
-    "load scheme selections page for the new candidate" in new TestFixture {
-      when(mockSchemeClient.getSchemePreferences(eqTo(currentApplicationId))(any[HeaderCarrier]))
+    "allow a Faststream candidate access to the scheme selection page" in new TestFixture {
+      when(mockSchemeClient.getSchemePreferences(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new SchemePreferencesNotFound))
 
-      val result = controller.present(fakeRequest)
+      val result = fsController.present(fakeRequest)
 
       status(result) mustBe OK
       val content = contentAsString(result)
@@ -49,11 +49,20 @@ class SchemePreferencesControllerSpec extends BaseControllerSpec {
       content must include (s"""name="scheme_4" value=''""")
     }
 
+    "not allow a Sdip candidate access to the Faststream scheme selection page" in new TestFixture {
+      val result = sdipController.present(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result) mustBe Some(routes.HomeController.present().url)
+      flash(result).data mustBe Map("danger" -> "access.denied")
+    }
+
     "populate selected schemes for the candidate" in new TestFixture {
-      when(mockSchemeClient.getSchemePreferences(eqTo(currentApplicationId))(any[HeaderCarrier]))
+      when(mockSchemeClient.getSchemePreferences(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturn(Future.successful(SchemePreferencesExamples.DefaultSelectedSchemes))
 
-      val result = controller.present(fakeRequest)
+      val result = fsController.present(fakeRequest)
 
       status(result) mustBe OK
       val content = contentAsString(result)
@@ -71,13 +80,13 @@ class SchemePreferencesControllerSpec extends BaseControllerSpec {
       val request = fakeRequest.withMethod("POST")
         .withFormUrlEncodedBody("scheme_0" -> "Finance", "scheme_1" -> "Commercial", "orderAgreed" -> "true", "eligible" -> "true")
       val schemePreferences = SchemePreferences(List("Finance", "Commercial"), orderAgreed = true, eligible = true)
-      when(mockSchemeClient.updateSchemePreferences(eqTo(schemePreferences))(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync()
+      when(mockSchemeClient.updateSchemePreferences(eqTo(schemePreferences))(any[UniqueIdentifier])(any[HeaderCarrier])).thenReturnAsync()
 
-      val result = controller.submit(request)
+      val result = fsController.submit(request)
 
       print(contentAsString(result))
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) must be(Some(routes.AssistanceDetailsController.present.url))
+      redirectLocation(result) mustBe Some(routes.AssistanceDetailsController.present.url)
     }
   }
 
@@ -88,8 +97,12 @@ class SchemePreferencesControllerSpec extends BaseControllerSpec {
     )))
     when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
 
-    def controller = new SchemePreferencesController(mockConfig,
+    def fsController = new SchemePreferencesController(mockConfig,
       stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
-      mockSchemeClient, mockReferenceDataClient) with TestableSecureActions
+      mockSchemeClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForFsCandidate
+
+    def sdipController = new SchemePreferencesController(mockConfig,
+      stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      mockSchemeClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForSdipCandidate
   }
 }

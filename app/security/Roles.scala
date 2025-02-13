@@ -82,7 +82,7 @@ object Roles {
 
   object SchemesRole extends CsrAuthorization {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
-      activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasPersonalDetails(user)
+      isFaststreamOnly(user) && activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasPersonalDetails(user)
   }
 
   object LocationsRole extends CsrAuthorization {
