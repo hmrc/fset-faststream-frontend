@@ -71,11 +71,11 @@ class UserCacheServiceSpec extends BaseSpec {
       isActive = true,
       testUserId,
       "barry@smith.com",
-      false,
+      disabled = false,
       "UNLOCKED",
       List("candidate"),
       "faststream",
-      None
+      phoneNumber = None
     )
     val testApplicationResponse = ApplicationResponse(
       testApplicationId,

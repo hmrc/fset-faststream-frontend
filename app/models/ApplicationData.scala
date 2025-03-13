@@ -113,9 +113,8 @@ object ApplicationData {
 // scalastyle:off number.of.types
 // scalastyle:off number.of.methods
 object ProgressStatuses {
-  sealed abstract class ProgressStatus(
-      val applicationStatus: ApplicationStatus) {
-    def key = toString
+  sealed abstract class ProgressStatus(val applicationStatus: ApplicationStatus) {
+    def key: String = toString
   }
 
   object ProgressStatus {
@@ -142,6 +141,11 @@ object ProgressStatuses {
   case object SCHEME_PREFERENCES
     extends ProgressStatus(ApplicationStatus.IN_PROGRESS) {
     override def key = "scheme-preferences"
+  }
+
+  case object LOCATION_PREFERENCES
+    extends ProgressStatus(ApplicationStatus.IN_PROGRESS) {
+    override def key = "location-preferences"
   }
 
   case object ASSISTANCE_DETAILS
@@ -307,18 +311,31 @@ object ProgressStatuses {
 
   // Reflection is generally 'A bad thing' but in this case it ensures that all progress statues are taken into account
   // Had considered an implementation with a macro, but that would need defining in another compilation unit
-  // As it is a val in a object, it is only run once upon startup
+  // As it is a val in an object, it is only run once upon startup
   private[models] val allStatuses: Seq[ProgressStatus] = {
     import scala.reflect.runtime.universe._
+
+    // Creates a runtime reflection mirror from the JVM classloader for this instance
     val mirror = runtimeMirror(this.getClass.getClassLoader)
-    val insMirror = mirror reflect this
-    val originType = insMirror.symbol.typeSignature
-    val members = originType.members
+
+    // Get the reflective mirror for the given instance (this)
+    // Such a mirror can be used to further reflect against the members of the object
+    val instanceMirror: InstanceMirror = mirror.reflect(this)
+
+    // The symbol of the InstanceMirror corresponds to the runtime class of the reflected instance
+    // Then we fetch the type signature of the symbol
+    val scalaType: Type = instanceMirror.symbol.typeSignature
+    val members = scalaType.members
+
     members.collect { member =>
       member.typeSignature match {
-        case tpe if tpe <:< typeOf[ProgressStatus] && member.isModule =>
+        // <:< is a method that checks if the type conforms to the given type argument
+        // e.g. typeOf[ProgressStatus] && member.isModule
+        case theType if theType <:< typeOf[ProgressStatus] && member.isModule =>
           val module = member.asModule
-          (mirror reflectModule module).instance.asInstanceOf[ProgressStatus]
+          // Reflects against a static module symbol and returns a mirror that can be used to get
+          // the instance of the object or inspect its companion class.
+          mirror.reflectModule(module).instance.asInstanceOf[ProgressStatus]
       }
     }.toSeq
   }
