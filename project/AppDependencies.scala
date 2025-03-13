@@ -20,7 +20,7 @@ import play.sbt.PlayImport.ws
 object AppDependencies {
 
   object Versions {
-    val bootstrapVersion  = "8.5.0"
+    val bootstrapVersion  = "8.6.0"
     val silhouetteVersion = "10.0.0"
   }
 
