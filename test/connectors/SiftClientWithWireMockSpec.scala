@@ -17,14 +17,15 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import config.{CSRHttp, FaststreamBackendConfig, FaststreamBackendUrl, FrontendAppConfig}
-import connectors.ApplicationClient.{CannotUpdateRecord, SiftAnswersIncomplete, SiftAnswersNotFound, SiftAnswersSubmitted, SiftExpired}
+import config.{FaststreamBackendConfig, FaststreamBackendUrl, FrontendAppConfig}
+import connectors.ApplicationClient._
 import connectors.exchange.referencedata.SchemeId
-import connectors.exchange.sift.{GeneralQuestionsAnswers, SchemeSpecificAnswer}
+import connectors.exchange.sift.{GeneralQuestionsAnswers, SchemeSpecificAnswer, SiftAnswers, SiftAnswersStatus}
 import models.UniqueIdentifier
-import play.api.http.Status.{BAD_REQUEST, CONFLICT, FORBIDDEN, INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY}
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 class SiftClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
 
@@ -138,6 +139,91 @@ class SiftClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
     }
   }
 
+  "getGeneralQuestionsAnswers" should {
+    val endpoint = s"/$base/sift-answers/$applicationId/general"
+
+    "handle a response that contains data" in new TestFixture {
+      val answers = GeneralQuestionsAnswers(
+        multipleNationalities = false,
+        secondNationality = None,
+        nationality = "British",
+        undergradDegree = None,
+        postgradDegree = None
+      )
+
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(OK)
+          .withBody(Json.toJson(answers).toString())
+      ))
+
+      val response = client.getGeneralQuestionsAnswers(applicationId).futureValue
+      response mustBe Some(answers)
+    }
+
+    "handle a response that contains no data" in new TestFixture {
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(NOT_FOUND)
+      ))
+
+      val response = client.getGeneralQuestionsAnswers(applicationId).futureValue
+      response mustBe None
+    }
+  }
+
+
+  "getSchemeSpecificAnswer" should {
+    val schemeId = SchemeId("Commercial")
+    val endpoint = s"/$base/sift-answers/$applicationId/${schemeId.value}"
+
+    "handle a response that contains data" in new TestFixture {
+      val schemeSpecificAnswer = SchemeSpecificAnswer("test text")
+
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(OK)
+          .withBody(Json.toJson(schemeSpecificAnswer).toString())
+      ))
+
+      val response = client.getSchemeSpecificAnswer(applicationId, schemeId).futureValue
+      response mustBe Some(schemeSpecificAnswer)
+    }
+
+    "handle a response that contains no data" in new TestFixture {
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(NOT_FOUND)
+      ))
+
+      val response = client.getSchemeSpecificAnswer(applicationId, schemeId).futureValue
+      response mustBe None
+    }
+  }
+
+  "getSiftAnswers" should {
+    val endpoint = s"/$base/sift-answers/$applicationId"
+
+    "handle a response indicating success" in new TestFixture {
+      val answers = SiftAnswers(
+        applicationId.toString, SiftAnswersStatus.SUBMITTED, generalAnswers = None, schemeAnswers = Map.empty[String, SchemeSpecificAnswer]
+      )
+
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(OK)
+          .withBody(Json.toJson(answers).toString())
+      ))
+
+      val response = client.getSiftAnswers(applicationId).futureValue
+      response mustBe answers
+    }
+
+    "handle a response indicating answers not found" in new TestFixture {
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(NOT_FOUND)
+      ))
+
+      val response = client.getSiftAnswers(applicationId).failed.futureValue
+      response mustBe a[SiftAnswersNotFound]
+    }
+  }
+
   "submitSiftAnswers" should {
     val endpoint = s"/$base/sift-answers/$applicationId/submit"
 
@@ -210,13 +296,36 @@ class SiftClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
     }
   }
 
+  "getSiftAnswersStatus" should {
+    val endpoint = s"/$base/sift-answers/$applicationId/status"
+
+    "handle a response that contains data" in new TestFixture {
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(OK)
+        .withBody(Json.toJson(SiftAnswersStatus.SUBMITTED).toString())
+      ))
+
+      val response = client.getSiftAnswersStatus(applicationId).futureValue
+      response mustBe Some(SiftAnswersStatus.SUBMITTED)
+    }
+
+    "handle a response that contains no data" in new TestFixture {
+      stubFor(get(urlPathEqualTo(endpoint)).willReturn(
+        aResponse().withStatus(NOT_FOUND)
+      ))
+
+      val response = client.getSiftAnswersStatus(applicationId).futureValue
+      response mustBe None
+    }
+  }
+
   trait TestFixture extends BaseConnectorTestFixture {
     val mockConfig = new FrontendAppConfig(mockConfiguration, mockEnvironment) {
       val faststreamUrl = FaststreamBackendUrl(s"http://localhost:$wireMockPort", s"/$base")
       override lazy val faststreamBackendConfig = FaststreamBackendConfig(faststreamUrl)
     }
     val ws = app.injector.instanceOf(classOf[WSClient])
-    val http = new CSRHttp(ws, app)
+    val http = app.injector.instanceOf(classOf[HttpClientV2])
     val client = new SiftClient(mockConfig, http)
   }
 }

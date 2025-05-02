@@ -16,22 +16,13 @@
 
 package security
 
-import play.silhouette.api.services.AuthenticatorService
-import play.silhouette.api.{ Env, EventBus }
-import play.silhouette.impl.authenticators.SessionAuthenticator
-import connectors.UserManagementClient
 import models.SecurityUser
+import play.silhouette.api.Env
+import play.silhouette.impl.authenticators.SessionAuthenticator
 
-trait SecurityEnvironment extends UserManagementClient with Env {
+// Scala 3 - this used to extend UserManagementClient but changed due to circular dependency issue
+trait SecurityEnvironment extends Env {
 
   type I = SecurityUser
   type A = SessionAuthenticator
-
-  def userService: UserService
-
-  def credentialsProvider: CsrCredentialsProvider
-
-  val eventBus: EventBus
-
-  val authenticatorService: AuthenticatorService[SessionAuthenticator]
 }

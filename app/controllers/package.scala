@@ -21,7 +21,7 @@ package object controllers {
 
   object Binders {
 
-    implicit val schemeIdPathBinder = new PathBindable.Parsing[SchemeId](
+    implicit val schemeIdPathBinder: PathBindable.Parsing[SchemeId] = new PathBindable.Parsing[SchemeId](
       parse = (value: String) => SchemeId(value),
       serialize = _.value,
       error = (m: String, e: Exception) => s"Can't parse $m as SchemeId: ${e.getMessage}"

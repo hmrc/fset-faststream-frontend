@@ -16,12 +16,12 @@
 
 package connectors
 
-import config.CSRHttp
 import org.mockito.Mockito.when
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.ws.WSClient
 import play.api.{ConfigLoader, Configuration, Environment}
 import testkit.BaseSpec
+import uk.gov.hmrc.http.client.HttpClientV2
 
 trait BaseConnectorSpec extends BaseSpec {
   trait BaseConnectorTestFixture {
@@ -29,7 +29,7 @@ trait BaseConnectorSpec extends BaseSpec {
     when(mockConfiguration.getOptional(any[String])(any[ConfigLoader[String]])).thenReturn(None)
 
     val mockEnvironment = mock[Environment]
-    val mockHttp = mock[CSRHttp]
+    val mockHttp = mock[HttpClientV2]
     val mockApplicationClient = mock[ApplicationClient]
     val mockWs = mock[WSClient]
   }

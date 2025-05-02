@@ -16,22 +16,22 @@
 
 package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock.{any => _}
-import connectors.ApplicationClient.{CannotWithdraw, OnlineTestNotFound}
+import com.github.tomakehurst.wiremock.client.WireMock.any as _
+import connectors.ApplicationClient.CannotWithdraw
 import connectors.ReferenceDataExamples
-import connectors.exchange._
+import connectors.exchange.*
 import connectors.exchange.candidateevents.CandidateAllocationWithEvent
 import connectors.exchange.referencedata.SchemeId
 import forms.{SchemeWithdrawForm, WithdrawApplicationForm, WithdrawApplicationFormExamples}
-import models.ApplicationRoute._
-import models.SecurityUserExamples._
-import models._
+import models.*
+import models.ApplicationRoute.*
+import models.SecurityUserExamples.*
 import models.events.AllocationStatuses
-import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq as eqTo, *}
+import org.mockito.Mockito.*
 import play.api.mvc.Request
-import play.api.test.Helpers._
-import testkit.MockitoImplicits._
+import play.api.test.Helpers.*
+import testkit.MockitoImplicits.*
 import testkit.TestableSecureActions
 import uk.gov.hmrc.http.HeaderCarrier
 

@@ -63,8 +63,8 @@ class EducationQuestionnaireForm {
         "degreeType" -> of(degreeTypeFormatter("hasPostgradDegree", "postgradUniversity.degreeType")),
         "otherDegreeType" -> of(otherDegreeTypeFormatter(
           "hasPostgradDegree", "postgradUniversity.degreeType", "postgradUniversity.otherDegreeType", TextMaxSize))
-      )(PostgradUniversity.apply)(PostgradUniversity.unapply)
-    )(EducationQuestionnaireForm.Data.apply)(EducationQuestionnaireForm.Data.unapply)
+      )(PostgradUniversity.apply)(f => Some(Tuple.fromProductTyped(f)))
+    )(EducationQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   def schoolIdFormatter(schoolNameKey: String) = new Formatter[Option[String]] {

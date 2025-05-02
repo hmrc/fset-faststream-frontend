@@ -39,7 +39,7 @@ class FaststreamAllowlistFilter @Inject()(
 
   private def allowlistConfig(key: String): Seq[String] =
     Some(new String(Base64.getDecoder.decode(configuration.getOptional[String](key).getOrElse("")), "UTF-8"))
-      .map(_.split(",")).getOrElse(Array.empty).toSeq
+      .map(_.split(",")).getOrElse(Array.empty[String]).toSeq
 
   // List of IP addresses
   override def allowlist: Seq[String] = allowlistConfig("whitelist") //TODO: change the key

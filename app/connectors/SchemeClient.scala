@@ -16,37 +16,40 @@
 
 package connectors
 
-import config.{CSRHttp, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.SchemeClient.{CannotUpdateSchemePreferences, SchemePreferencesNotFound}
 import connectors.exchange.SelectedSchemes
 import models.UniqueIdentifier
 import play.api.http.Status._
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SchemeClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit ec: ExecutionContext) {
-  val url = config.faststreamBackendConfig.url
+class SchemeClient @Inject()(config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) {
+  val apiBaseUrl: String = config.faststreamBackendConfig.url.host + config.faststreamBackendConfig.url.base
 
   def getSchemePreferences(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier) = {
-    http.GET[SelectedSchemes](
-      s"${url.host}${url.base}/scheme-preferences/$applicationId"
-    ).recover {
-      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new SchemePreferencesNotFound
-    }
+    http.get(url"$apiBaseUrl/scheme-preferences/$applicationId")
+      .execute[SelectedSchemes]
+      .recover {
+        case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new SchemePreferencesNotFound
+      }
   }
 
   def updateSchemePreferences(data: SelectedSchemes)(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier) = {
-    http.PUT[SelectedSchemes, HttpResponse](
-      s"${url.host}${url.base}/scheme-preferences/$applicationId",
-      data
-    ).map {
-      case x: HttpResponse if x.status == OK => ()
-      case x: HttpResponse if x.status == BAD_REQUEST => throw new CannotUpdateSchemePreferences
-    }
+    import play.api.libs.ws.writeableOf_JsValue
+    http.put(url"$apiBaseUrl/scheme-preferences/$applicationId")
+      .withBody(Json.toJson(data))
+      .execute[HttpResponse]
+      .map {
+        case x: HttpResponse if x.status == OK => ()
+        case x: HttpResponse if x.status == BAD_REQUEST => throw new CannotUpdateSchemePreferences
+      }
   }
 }
 

@@ -19,7 +19,7 @@ package security
 import play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
 import play.silhouette.api.{LoginEvent, LoginInfo, LogoutEvent}
 import play.silhouette.impl.providers.CredentialsProvider
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, TrackingConsentConfig}
 import connectors.ApplicationClient
 import connectors.ApplicationClient.ApplicationNotFound
 import connectors.UserManagementClient.InvalidCredentialsException
@@ -28,15 +28,17 @@ import play.api.mvc.Results.Redirect
 import controllers.routes
 import forms.SignInForm
 import forms.SignInForm.Data
-import helpers.NotificationType._
+import helpers.NotificationType.*
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import models._
+
+import javax.inject.{Inject, Singleton}
+import models.*
 import play.api.i18n.Messages
-import play.api.mvc._
+import play.api.mvc.*
+import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignInService @Inject() (
@@ -72,9 +74,9 @@ class SignInService @Inject() (
 
   def showErrorLogin(data: Data, errorMsg: String = "signIn.invalid")(
     implicit user: Option[CachedData], request: Request[_], flash: Flash, messages: Messages): Result = {
-    implicit val feedBackUrl = config.feedbackUrl
-    implicit val trackingConsentConfig = config.trackingConsentConfig
-    play.api.mvc.Results.Ok(views.html.index.signin(
+    implicit val feedBackUrl: String = config.feedbackUrl
+    implicit val trackingConsentConfig: TrackingConsentConfig = config.trackingConsentConfig
+    Ok(views.html.index.signin(
       formWrapper.form.fill(SignInForm.Data(signIn = data.signIn, signInPassword = "", route = data.route)),
       Some(danger(errorMsg))
     ))
@@ -84,12 +86,12 @@ class SignInService @Inject() (
     secEnv.authenticatorService.retrieve.map {
       case Some(authenticator) =>
         request match {
-          case sr: SecuredRequest[_, _] => {
+          case sr: SecuredRequest[_, _] =>
             secEnv.eventBus.publish(LogoutEvent(sr.identity, request))
-          }
-          case uar: UserAwareRequest[_, _] => {
-            uar.identity.foreach(identity => secEnv.eventBus.publish(LogoutEvent(identity, request)))
-          }
+          case uar: UserAwareRequest[_, _] =>
+            uar.identity.foreach { identity =>
+              secEnv.eventBus.publish(LogoutEvent(identity, request))
+            }
           case _ => ()
         }
         secEnv.authenticatorService.discard(authenticator, successAction)
@@ -104,10 +106,9 @@ class SignInService @Inject() (
         danger("access.denied"))
       case _ => Redirect(routes.ActivationController.present).flashing(danger("access.denied"))
     } recoverWith {
-      case ice: InvalidCredentialsException => {
+      case ice: InvalidCredentialsException =>
         val signInAction = Redirect(routes.SignInController.present)
         logOutAndRedirectUserAware(signInAction, signInAction)(sec)
-      }
     }
   }
 }

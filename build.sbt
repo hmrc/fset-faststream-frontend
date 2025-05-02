@@ -34,7 +34,7 @@ lazy val playSettings : Seq[Setting[?]] = Seq(routesImport ++= Seq("binders.Cust
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "3.3.4"
 ThisBuild / majorVersion := 0
 
 lazy val microservice = Project(appName, file("."))
@@ -53,6 +53,10 @@ lazy val microservice = Project(appName, file("."))
     Test / javaOptions += "-Dmicroservice.services.user-management.url.host=http://localhost:11111",
     retrieveManaged := true,
     scalacOptions += "-feature",
+    // Use these to help troubleshoot Scala 3 cyclic dependency compile errors
+//    scalacOptions += "-Ydebug-cyclic",
+//    scalacOptions += "-explain-cyclic",
+//    scalacOptions += "-explain",
     // Currently don't enable warning in value discard in tests until ScalaTest 3
     Compile / compile / scalacOptions += "-Ywarn-value-discard"
   )

@@ -23,7 +23,7 @@ object RequestResetPasswordForm {
   val form = Form(
     mapping(
       "email" -> email
-    )(Data.apply)(Data.unapply)
+    )(Data.apply)(f => Some(f.email))
   )
 
   case class Data(email: String)

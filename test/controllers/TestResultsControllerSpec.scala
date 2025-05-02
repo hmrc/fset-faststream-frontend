@@ -187,8 +187,14 @@ class TestResultsControllerSpec extends BaseControllerSpec {
       checkPhase3ResultsLink(content)
     }
 
-    val phase3ResultsReportLink = "<a href=\"/online-tests/phase3/feedback-report\"" +
+    // After moving to Scala 3, the generated content varies depending on if you run all tests or this test on its own!!
+    // <a href="/fset-fast-stream/online-tests/phase3/feedback-report" ...
+    // or
+    // <a href="/online-tests/phase3/feedback-report" ...
+    // so omit the start of the hyperlink: <a href="/online-tests ...  to cover both scenarios
+    val phase3ResultsReportLink = "/online-tests/phase3/feedback-report\"" +
       " target=\"_blank\" id=\"phase3ResultsReportLink\" alt=\"Phase 3 feedback report\">"
+
     def checkPhase3ResultsLink(content: String) = {
       content must include(phase3ResultsReportLink)
     }

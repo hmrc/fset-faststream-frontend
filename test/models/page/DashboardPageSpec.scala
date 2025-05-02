@@ -43,7 +43,7 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
 
   val FsacGuideUrl = "fsacGuideurl"
 
-  implicit val mockMessages = mock[Messages]
+  implicit val mockMessages: Messages = mock[Messages]
   when(mockMessages.messages).thenReturn(mockMessages)
   when(mockMessages.apply(anyString(), any())).thenAnswer(new Answer[String]() {
     override def answer(invocationOnMock: InvocationOnMock): String = {

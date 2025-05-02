@@ -26,13 +26,12 @@ class SchemeWithdrawForm {
   val form = Form(mapping(
     "scheme" -> nonEmptyTrimmedText("withdraw.scheme.required"),
     "reason" -> text
-  )(SchemeWithdrawForm.Data.apply)(SchemeWithdrawForm.Data.unapply))
-
+  )(SchemeWithdrawForm.Data.apply)(f => Some(Tuple.fromProductTyped(f))))
 }
+
 object SchemeWithdrawForm {
   case class Data(
     scheme: String,
     reason: String
   )
-
 }

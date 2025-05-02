@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import play.silhouette.api.LoginInfo
 import connectors.ApplicationClient.ApplicationNotFound
 import connectors.exchange._
-import connectors.{ ApplicationClient, UserManagementClient }
+import connectors.{ ApplicationClient, UserManagementFindUserClient }
 import javax.inject.Singleton
 import models.{ CachedData, SecurityUser, UniqueIdentifier }
 import play.api.mvc.Request
@@ -29,9 +29,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class UserCacheService @Inject() (
+class UserCacheService @Inject()(
   applicationClient: ApplicationClient,
-  userManagementClient: UserManagementClient)(
+  userManagementClient: UserManagementFindUserClient)(
   implicit ec: ExecutionContext) extends UserService {
 
   override def retrieve(loginInfo: LoginInfo): Future[Option[SecurityUser]] =

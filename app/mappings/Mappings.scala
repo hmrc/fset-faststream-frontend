@@ -136,7 +136,7 @@ object Mappings {
 
   def fieldWithCheckBox(max: Int, conditionKey: Option[String] = None,
     skipValues: Seq[String] = Seq.empty[String], relationField: Option[String] = None)
-(implicit messages: Messages)= new Formatter[Option[String]] {
+  (implicit messages: Messages)= new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val conditionValue = conditionKey.flatMap(key => data.get(key).map(_.trim).filter(_.length < max).sanitize)
       val valueField = data.get(key).map(_.trim).filter(_.length < max).sanitize
@@ -186,7 +186,7 @@ object Mappings {
 
   def mayBeOptionalString(emptyErrorKey: String, maxLength: Int,
                           required: Map[String, String] => Boolean)
-(implicit messages: Messages)= new Formatter[Option[String]] {
+  (implicit messages: Messages)= new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       if (required(data)) {
         data.getOrElse(key, "").trim match {
@@ -204,7 +204,7 @@ object Mappings {
   def mayBeOptionalString(emptyErrorKey: String, additionalCheckEmptyErrorKey: String, maxLength: Int,
                            required: Map[String, String] => Boolean,
                            additionalCheck: Map[String, String] => Boolean)
-(implicit messages: Messages)= new Formatter[Option[String]] {
+  (implicit messages: Messages)= new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val additionalCheckResult = additionalCheck(data)
 

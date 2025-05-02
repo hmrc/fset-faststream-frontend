@@ -16,16 +16,18 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient
 import connectors.ApplicationClient.CannotSubmit
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
+import models.ApplicationRoute.ApplicationRoute
+
+import javax.inject.{Inject, Singleton}
 import play.api.mvc.MessagesControllerComponents
-import security.Roles.{ AbleToWithdrawApplicationRole, SubmitApplicationRole }
+import security.Roles.{AbleToWithdrawApplicationRole, SubmitApplicationRole}
 import security.SilhouetteComponent
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubmitApplicationController @Inject() (
@@ -35,12 +37,12 @@ class SubmitApplicationController @Inject() (
   val silhouetteComponent: SilhouetteComponent,
   val notificationTypeHelper: NotificationTypeHelper,
   applicationClient: ApplicationClient
-)(implicit val ec: ExecutionContext)
-  extends BaseController(config, mcc) with CampaignAwareController {
-  val appRouteConfigMap = config.applicationRoutesFrontend
+)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) with CampaignAwareController {
+
+  val appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState] = config.applicationRoutesFrontend
   import notificationTypeHelper._
 
-  implicit val marketingTrackingEnabled = config.marketingTrackingEnabled
+  implicit val marketingTrackingEnabled: Boolean = config.marketingTrackingEnabled
 
   def presentSubmit = CSRSecureAppAction(SubmitApplicationRole) { implicit request =>
     implicit user =>

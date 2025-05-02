@@ -22,17 +22,19 @@ import play.api.mvc.{Request, RequestHeader}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
 class FaststreamErrorHandler @Inject() (
   val messagesApi: MessagesApi,
-  val config: FrontendAppConfig) extends FrontendErrorHandler {
+  val config: FrontendAppConfig)(implicit val ec: ExecutionContext) extends FrontendErrorHandler {
 
   private implicit def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html = {
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: RequestHeader): Future[Html] = {
     val messages = implicitly[Messages]
-    views.html.error_template(pageTitle, heading, message)(
-      rh, config.feedbackUrl, config.trackingConsentConfig, messages)
+    Future.successful(
+      views.html.error_template(pageTitle, heading, message)(rh, config.feedbackUrl, config.trackingConsentConfig, messages)
+    )
   }
 }

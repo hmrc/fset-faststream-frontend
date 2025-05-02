@@ -18,12 +18,12 @@ package controllers
 
 import _root_.forms.ActivateAccountForm
 import config.{FrontendAppConfig, SecurityEnvironment}
-import connectors.UserManagementClient
-import connectors.UserManagementClient.{TokenEmailPairInvalidException, TokenExpiredException}
-import helpers.NotificationType._
+import connectors.{TokenEmailPairInvalidException, UserManagementClient}
+import connectors.UserManagementClient.TokenExpiredException
+import helpers.NotificationType.*
 import helpers.NotificationTypeHelper
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import security.Roles._
+import security.Roles.*
 import security.{SignInService, SilhouetteComponent}
 
 import javax.inject.{Inject, Singleton}
@@ -38,9 +38,9 @@ class ActivationController @Inject() (
   userManagementClient: UserManagementClient,
   val notificationTypeHelper: NotificationTypeHelper,
   signInService: SignInService,
-  formWrapper: ActivateAccountForm)(implicit val ec: ExecutionContext) extends BaseController(config, mcc)
-   {
-     import notificationTypeHelper._
+  formWrapper: ActivateAccountForm)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
+
+  import notificationTypeHelper.*
 
   implicit val marketingTrackingEnabled: Boolean = config.marketingTrackingEnabled
 

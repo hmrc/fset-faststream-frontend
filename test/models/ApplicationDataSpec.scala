@@ -34,7 +34,8 @@ class ApplicationDataSpec extends BaseSpec {
       val fromJson = Json.fromJson[MyTest](jsValue).get
       fromJson mustBe myTest
     }
-
+/*
+    // Previous implementation that used Scala 2 reflection
     "be able to deserialize all progress statuses from json (this uses reflection)" in {
       import scala.reflect.runtime.universe._
 
@@ -78,6 +79,30 @@ class ApplicationDataSpec extends BaseSpec {
       }
 
       statuses.foreach { ps =>
+        val jsValue: JsValue = Json.parse(s"{\"progressStatus\":\"${getProgressStatusKey(ps)}\"}")
+        val fromJson = Json.fromJson[MyTest](jsValue).get
+
+        val myTest = MyTest(ps)
+        fromJson mustBe myTest
+      }
+    }
+ */
+
+    "be able to deserialize all progress statuses from json " in {
+      def getProgressStatusKey(ps: ProgressStatus): String = {
+        // These progress statuses contains hyphenated keys instead of keys with underscores so we need to deal with them as special cases
+        val hyphenatedKeys = Seq(
+          ProgressStatuses.PERSONAL_DETAILS, ProgressStatuses.SCHEME_PREFERENCES,
+          ProgressStatuses.LOCATION_PREFERENCES, ProgressStatuses.ASSISTANCE_DETAILS
+        )
+        if (hyphenatedKeys.contains(ps)) {
+          ps.key
+        } else {
+          ps.toString
+        }
+      }
+
+      ProgressStatuses.allStatuses.foreach { ps =>
         val jsValue: JsValue = Json.parse(s"{\"progressStatus\":\"${getProgressStatusKey(ps)}\"}")
         val fromJson = Json.fromJson[MyTest](jsValue).get
 

@@ -30,7 +30,7 @@ class AlternateLocationsForm {
     mapping(
       "alternativeLocation" -> nonEmptyTrimmedText("error.alternativeLocation", 3),
       "alternativeScheme" -> nonEmptyTrimmedText("error.alternativeScheme", 3)
-    )(AlternateLocationsForm.Data.apply)(AlternateLocationsForm.Data.unapply)
+    )(AlternateLocationsForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   import forms.AlternateLocationsForm._

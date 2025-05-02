@@ -20,10 +20,10 @@
 @import forms.FastPassForm
 @import security.RoleUtils._
 
-@displayFastPassSection(id: String, display: Boolean, heading: String, text: => String) = @{
-    if(display){
-        <h3 class="heading-small">{heading}</h3>
-        <p id={id}>{text}</p>
+@displayFastPassSection(id: String, display: Boolean, heading: String, text: => String) = {
+    @if(display){
+        <h3 class="heading-small">@heading</h3>
+        <p id=@id>@text</p>
     }
 }
 

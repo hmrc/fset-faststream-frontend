@@ -57,7 +57,7 @@ class AssistanceDetailsForm {
       "needsSupportForPhoneInterview" -> of(mayBeOptionalString("error.needsSupportForPhoneInterview.required", 31, isEdipOrSdip)),
       "needsSupportForPhoneInterviewDescription" ->
         of(requiredFormatterWithMaxLengthCheck("needsSupportForPhoneInterview", "needsSupportForPhoneInterviewDescription", Some(2048)))
-    )(AssistanceDetailsForm.Data.apply)(AssistanceDetailsForm.Data.unapply)
+    )(AssistanceDetailsForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   val hasDisability = "hasDisability"

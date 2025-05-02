@@ -58,7 +58,7 @@ object DayMonthYear {
     "day" -> text,
     "month" -> text,
     "year" -> text
-  )(DayMonthYear.apply)(DayMonthYear.unapply)
+  )(DayMonthYear.apply)(f => Some(Tuple.fromProductTyped(f)))
 }
 
 object Year {

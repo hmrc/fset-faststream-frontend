@@ -16,42 +16,19 @@
 
 package config
 
-import org.apache.pekko.actor.ActorSystem
-import play.silhouette.api.crypto.{ Base64AuthenticatorEncoder, Hash }
-import play.silhouette.api.util.{ Clock, FingerprintGenerator }
-import play.silhouette.api.{ Environment, EventBus }
-import play.silhouette.impl.authenticators.{ SessionAuthenticatorService, SessionAuthenticatorSettings }
-import com.typesafe.config.Config
-import helpers.WSBinaryPost
-import javax.inject.{ Inject, Singleton }
 import play.api.Application
-import play.api.libs.ws.WSClient
-import play.api.mvc.{ LegacySessionCookieBaker, RequestHeader }
-import security.{ CsrCredentialsProvider, UserCacheService }
-import uk.gov.hmrc.http.hooks.HttpHooks
-import uk.gov.hmrc.http.{ HttpDelete, HttpGet, HttpPost, HttpPut }
-import uk.gov.hmrc.play.http.ws._
+import play.api.mvc.{LegacySessionCookieBaker, RequestHeader}
+import play.silhouette.api.crypto.{Base64AuthenticatorEncoder, Hash}
+import play.silhouette.api.util.{Clock, FingerprintGenerator}
+import play.silhouette.api.{Environment, EventBus}
+import play.silhouette.impl.authenticators.{SessionAuthenticatorService, SessionAuthenticatorSettings}
+import security.{CsrCredentialsProvider, UserCacheService}
+import uk.gov.hmrc.http.client.HttpClientV2
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.language.postfixOps
-
-trait WSHttp
-  extends HttpGet with WSGet
-  with HttpPut with WSPut
-  with HttpPost with WSPost
-  with HttpDelete with WSDelete
-  with HttpHooks
-
-@Singleton
-class CSRHttp @Inject() (
-  val wsClient: WSClient,
-  application: Application)
-  extends WSHttp with WSBinaryPost {
-  override val hooks = NoneRequired
-  override lazy val configuration: Config = application.configuration.underlying
-  override lazy val actorSystem: ActorSystem = application.actorSystem
-}
 
 object CaseInSensitiveFingerPrintGenerator extends FingerprintGenerator {
   import play.api.http.HeaderNames._
@@ -67,11 +44,12 @@ object CaseInSensitiveFingerPrintGenerator extends FingerprintGenerator {
 
 @Singleton
 class SecurityEnvironmentImpl @Inject() (
-  val application: Application,
-  val config: FrontendAppConfig,
-  val http: CSRHttp,
-  val userCacheService: UserCacheService,
-  val sessionCookieBaker: LegacySessionCookieBaker)(implicit val ec: ExecutionContext) extends SecurityEnvironment {
+                                          val application: Application,
+                                          val config: FrontendAppConfig,
+                                          val http: HttpClientV2,
+                                          val userCacheService: UserCacheService,
+                                          val sessionCookieBaker: LegacySessionCookieBaker)(
+  implicit val ec: ExecutionContext) extends SecurityEnvironment {
   lazy val eventBus: EventBus = EventBus()
 
   val userService = userCacheService
@@ -86,14 +64,14 @@ class SecurityEnvironmentImpl @Inject() (
       "silhouette.authenticator.authenticatorExpiry").get seconds
   )
 
-  lazy val authenticatorService = new SessionAuthenticatorService(
+  val authenticatorService = new SessionAuthenticatorService(
     sessionAuthenticationSettings,
     CaseInSensitiveFingerPrintGenerator,
     new Base64AuthenticatorEncoder,
     sessionCookieBaker,
     Clock())
 
-  lazy val credentialsProvider = new CsrCredentialsProvider(config, http)
+  val credentialsProvider = new CsrCredentialsProvider(config, http)
 
   def providers = Map(credentialsProvider.id -> credentialsProvider)
 
@@ -105,7 +83,7 @@ class SecurityEnvironmentImpl @Inject() (
 trait SecurityEnvironment extends Environment[security.SecurityEnvironment] {
   val application: Application
   val config: FrontendAppConfig
-  val http: CSRHttp
+  val http: HttpClientV2
   def userCacheService: UserCacheService
   val sessionCookieBaker: LegacySessionCookieBaker
   implicit val ec: ExecutionContext

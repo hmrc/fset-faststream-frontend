@@ -37,14 +37,14 @@ class ResetPasswordForm @Inject() (signUpForm: SignUpForm) {
         ("activation.wrong-format", value => value.matches("[\\w]{7}"))),
       "password" -> of(signUpForm.passwordFormatter),
       "confirmpwd" -> nonEmptyTrimmedText("error.confirmpwd", signUpForm.passwordMaxLength)
-    )(ResetPasswordForm.Data.apply)(ResetPasswordForm.Data.unapply)
+    )(ResetPasswordForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   val resendCodeForm = Form(
     mapping(
       "email" -> email,
       "resend" -> optionalTrimmedText(4) // Some("true") or None
-    )(ResetPasswordForm.ResendCodeData.apply)(ResetPasswordForm.ResendCodeData.unapply)
+    )(ResetPasswordForm.ResendCodeData.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 }
 

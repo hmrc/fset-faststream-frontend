@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.{CSRHttp, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.exchange.referencedata.{ReferenceData, Scheme, SchemeId, SdipLocation}
 
 import javax.inject.{Inject, Singleton}
@@ -29,10 +29,11 @@ import play.api.http.Status.OK
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 @Singleton
-class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit ec: ExecutionContext) extends Logging {
+class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
   val url = config.faststreamBackendConfig.url
   val apiBaseUrl = s"${url.host}${url.base}"
 
@@ -55,7 +56,8 @@ class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(i
 
     logger.info(s"Values successfully fetched from reference data cache for key: $key = $values")
     if (values.isEmpty) {
-      http.GET[HttpResponse](s"$apiBaseUrl$endpointPath").map { response =>
+      val urlString = s"$apiBaseUrl$endpointPath"
+      http.get(url"$urlString").execute[HttpResponse].map { response =>
         if (response.status == OK) {
           val dataResponse = response.json.as[List[T]]
           referenceDataCache.update(key, dataResponse)
@@ -77,7 +79,8 @@ class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(i
   )(implicit hc: HeaderCarrier, jsonFormat: OFormat[T]): Future[ReferenceData[T]] = {
     referenceDataCache.get(key).map(_.asInstanceOf[ReferenceData[T]]) match {
       case None =>
-        http.GET[HttpResponse](s"$apiBaseUrl$endpointPath").map { response =>
+        val urlString = s"$apiBaseUrl$endpointPath"
+        http.get(url"$urlString").execute[HttpResponse].map { response =>
           if (response.status == OK) {
             val dataResponse = response.json.as[ReferenceData[T]]
             referenceDataCache.update(key, dataResponse)

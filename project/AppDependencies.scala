@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 
-import sbt._
 import play.sbt.PlayImport.ws
+import sbt.*
 
 object AppDependencies {
 
   object Versions {
-    val bootstrapVersion  = "8.6.0"
-    val silhouetteVersion = "10.0.0"
+    val bootstrapVersion  = "9.11.0"
+    val silhouetteVersion = "10.0.1"
   }
 
-  import Versions._
+  import Versions.*
 
   val compile = Seq(
     "uk.gov.hmrc"                   %% "bootstrap-frontend-play-30"               % bootstrapVersion,
-    "uk.gov.hmrc"                   %% "http-caching-client-play-30"              % "11.2.0",
-    "com.iheart"                    %% "ficus"                                    % "1.5.0",
-    "org.apache.httpcomponents"     %  "httpclient"                               % "4.5.3",
-    "org.apache.httpcomponents"     %  "httpcore"                                 % "4.4.5",
+    "uk.gov.hmrc"                   %% "http-caching-client-play-30"              % "12.1.0",
     "org.playframework.silhouette"  %% "play-silhouette"                          % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-password-bcrypt"          % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-crypto-jca"               % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-persistence"              % silhouetteVersion,
-    "net.codingwell"                %% "scala-guice"                              % "5.1.1",
-    // Works with MireMock up to version 2.31.0
-    "com.fasterxml.jackson.module"  %% "jackson-module-scala"                     % "2.12.2",
+    "net.codingwell"                %% "scala-guice"                              % "6.0.0",
     ws
   )
 

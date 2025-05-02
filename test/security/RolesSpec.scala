@@ -17,44 +17,43 @@
 package security
 
 import java.util.UUID
-
-import connectors.exchange.CivilServiceExperienceDetailsExamples._
+import connectors.exchange.CivilServiceExperienceDetailsExamples.*
 import connectors.exchange.ProgressExamples
 import models.ApplicationData.ApplicationStatus
-import models.ApplicationData.ApplicationStatus.{CREATED, _}
-import models.CachedDataExample._
-import models._
-import play.api.mvc.RequestHeader
+import models.ApplicationData.ApplicationStatus.{CREATED, *}
+import models.CachedDataExample.*
+import models.*
+import play.api.mvc.{AnyContentAsEmpty, RequestHeader}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import security.Roles.{CsrAuthorization, WithdrawComponent}
 import testkit.UnitSpec
 
 class RolesSpec extends UnitSpec {
   import RolesSpec._
 
-  val request = FakeRequest(GET, "")
+  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, "")
 
   "hasFastPassBeenApproved" must {
     val user = activeUser(ApplicationStatus.SUBMITTED)
     "return true if the candidate fastPass has been accepted" in {
       val appData = CreatedApplication.copy(civilServiceExperienceDetails = Some(CivilServantExperienceFastPassApproved))
-      implicit val rh = mock[RequestHeader]
+      implicit val rh: RequestHeader = mock[RequestHeader]
       RoleUtils.hasFastPassBeenApproved(user.copy(application = Some(appData)))(rh) mustBe true
     }
     "return false if the candidate fastPass has not been accepted" in {
       val appData = CreatedApplication.copy(civilServiceExperienceDetails = Some(CivilServantExperienceFastPassRejected))
-      implicit val rh = mock[RequestHeader]
+      implicit val rh: RequestHeader = mock[RequestHeader]
       RoleUtils.hasFastPassBeenApproved(user.copy(application = Some(appData)))(rh) mustBe false
     }
     "return false if the acceptance flag is not present" in {
       val appData = CreatedApplication.copy(civilServiceExperienceDetails = Some(CivilServantExperience))
-      implicit val rh = mock[RequestHeader]
+      implicit val rh: RequestHeader = mock[RequestHeader]
       RoleUtils.hasFastPassBeenApproved(user.copy(application = Some(appData)))(rh) mustBe false
     }
     "return false if there are no civil servant details" in {
       val appData = CreatedApplication.copy(civilServiceExperienceDetails = None)
-      implicit val rh = mock[RequestHeader]
+      implicit val rh: RequestHeader = mock[RequestHeader]
       RoleUtils.hasFastPassBeenApproved(user.copy(application = Some(appData)))(rh) mustBe false
     }
   }
@@ -74,27 +73,27 @@ class RolesSpec extends UnitSpec {
   ) = {
     valid.foreach { validStatus =>
       withClue(s"$validStatus is not accepted by $role") {
-        role.isAuthorized(activeUser(validStatus))(request) mustBe(true)
+        role.isAuthorized(activeUser(validStatus))(request) mustBe true
       }
     }
 
     invalid.foreach { invalidStatus =>
       withClue(s"$invalidStatus is accepted by $role") {
-        role.isAuthorized(activeUser(invalidStatus))(request) mustBe(false)
+        role.isAuthorized(activeUser(invalidStatus))(request) mustBe false
       }
     }
   }
 }
 
 object RolesSpec {
-  val id = UniqueIdentifier(UUID.randomUUID().toString)
+  val id: UniqueIdentifier = UniqueIdentifier(UUID.randomUUID().toString)
 
-  def activeUser(applicationStatus: ApplicationStatus, progress: Progress = ProgressExamples.FullProgress) = CachedData(CachedUser(
+  def activeUser(applicationStatus: ApplicationStatus, progress: Progress = ProgressExamples.FullProgress): CachedData = CachedData(CachedUser(
     id,
     "John", "Biggs", None, "aaa@bbb.com", isActive = true, "locked"
   ), Some(ApplicationData(id, id, applicationStatus, ApplicationRoute.Faststream, progress, None, None, None)))
 
-  def registeredUser(applicationStatus: ApplicationStatus) = CachedData(CachedUser(
+  def registeredUser(applicationStatus: ApplicationStatus): CachedData = CachedData(CachedUser(
     id,
     "John", "Biggs", None, "aaa@bbb.com", isActive = true, "locked"
   ), None)

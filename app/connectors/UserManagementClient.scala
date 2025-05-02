@@ -16,35 +16,46 @@
 
 package connectors
 
-import config.{CSRHttp, FrontendAppConfig}
-import connectors.UserManagementClient._
-import connectors.exchange._
+import config.{FrontendAppConfig, UserManagementUrl}
+import connectors.UserManagementClient.*
+import connectors.exchange.*
 import models.UniqueIdentifier
-import play.api.http.Status._
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http._
+import play.api.http.Status.*
+import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserManagementClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit val ec: ExecutionContext) {
+class UserManagementClient @Inject()(config: FrontendAppConfig, http: HttpClientV2)(implicit val ec: ExecutionContext) {
 
   private val role = "candidate" // We have only one role for this application
   private lazy val ServiceName = config.authConfig.serviceName
   private val urlPrefix = "faststream"
 
-  val url = config.userManagementConfig.url
+  val url: UserManagementUrl = config.userManagementConfig.url
 
   def register(email: String, password: String, firstName: String, lastName: String)(implicit hc: HeaderCarrier): Future[UserResponse] = {
-    http.POST[AddUserRequest, UserResponse](s"${url.host}/$urlPrefix/add",
-      AddUserRequest(email.toLowerCase, password, firstName, lastName, List(role), ServiceName)).recover {
+    http.post(url"${url.host}/$urlPrefix/add")
+      .withBody(Json.toJson(AddUserRequest(email.toLowerCase, password, firstName, lastName, List(role), ServiceName)))
+      .execute[HttpResponse]
+      .map {
+        case resp if resp.status == OK => resp.json.as[UserResponse]
+        case resp if resp.status == CONFLICT => throw new EmailTakenException
+      }
+      .recover {
         case e: UpstreamErrorResponse if e.statusCode == CONFLICT => throw new EmailTakenException
       }
   }
 
   def signIn(email: String, password: String)(implicit hc: HeaderCarrier): Future[UserResponse] = {
-    http.POST[SignInRequest, HttpResponse](s"${url.host}/$urlPrefix/authenticate", SignInRequest(email.toLowerCase, password, ServiceName))
+    http.post(url"${url.host}/$urlPrefix/authenticate")
+      .withBody(Json.toJson(SignInRequest(email.toLowerCase, password, ServiceName)))
+      .execute[HttpResponse]
       .map {
         case resp if resp.status == OK =>
           val response = resp.json.as[UserResponse]
@@ -54,7 +65,9 @@ class UserManagementClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(
   }
 
   def activate(email: String, token: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[ActivateEmailRequest, HttpResponse](s"${url.host}/activate", ActivateEmailRequest(email.toLowerCase, token, ServiceName))
+    http.post(url"${url.host}/activate")
+      .withBody(Json.toJson(ActivateEmailRequest(email.toLowerCase, token, ServiceName)))
+      .execute[HttpResponse]
       .map {
         case resp if resp.status == OK => (): Unit
         case resp if resp.status == GONE => throw new TokenExpiredException
@@ -63,62 +76,62 @@ class UserManagementClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(
   }
 
   def resendActivationCode(email: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[ResendActivationTokenRequest, HttpResponse](
-      s"${url.host}/resend-activation-code", ResendActivationTokenRequest(email.toLowerCase, ServiceName)
-    ).map {
-      case resp if resp.status == OK => (): Unit
-      case resp if resp.status == NOT_FOUND => throw new InvalidEmailException
-    }
+    http.post(url"${url.host}/resend-activation-code")
+      .withBody(Json.toJson(ResendActivationTokenRequest(email.toLowerCase, ServiceName)))
+      .execute[HttpResponse]
+      .map {
+        case resp if resp.status == OK => (): Unit
+        case resp if resp.status == NOT_FOUND => throw new InvalidEmailException
+      }
   }
 
   def sendResetPwdCode(email: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[SendPasswordCodeRequest, HttpResponse](
-      s"${url.host}/$urlPrefix/send-reset-password-code", SendPasswordCodeRequest(email.toLowerCase, ServiceName)
-    ).map {
-      case resp if resp.status == OK => (): Unit
-      case resp if resp.status == NOT_FOUND => throw new InvalidEmailException
-    }
+    http.post(url"${url.host}/$urlPrefix/send-reset-password-code")
+      .withBody(Json.toJson(SendPasswordCodeRequest(email.toLowerCase, ServiceName)))
+      .execute[HttpResponse]
+      .map {
+        case resp if resp.status == OK => (): Unit
+        case resp if resp.status == NOT_FOUND => throw new InvalidEmailException
+      }
   }
 
   def resetPasswd(email: String, token: String, newPassword: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POST[ResetPasswordRequest, HttpResponse](
-      s"${url.host}/$urlPrefix/reset-password",
-      ResetPasswordRequest(email.toLowerCase, token, newPassword, ServiceName)
-    ).map {
-      case resp if resp.status == OK => (): Unit
-      case resp if resp.status == GONE => throw new TokenExpiredException
-      case resp if resp.status == NOT_FOUND => throw new TokenEmailPairInvalidException
-    }
+    http.post(url"${url.host}/$urlPrefix/reset-password")
+      .withBody(Json.toJson(ResetPasswordRequest(email.toLowerCase, token, newPassword, ServiceName)))
+      .execute[HttpResponse]
+      .map {
+        case resp if resp.status == OK => (): Unit
+        case resp if resp.status == GONE => throw new TokenExpiredException
+        case resp if resp.status == NOT_FOUND => throw new TokenEmailPairInvalidException
+      }
   }
 
   def updateDetails(userId: UniqueIdentifier, firstName: String, lastName: String, preferredName: Option[String])(
     implicit hc: HeaderCarrier): Future[Unit] =
-    http.PUT[UpdateDetails, HttpResponse](
-      s"${url.host}/$urlPrefix/service/$ServiceName/details/$userId",
-      UpdateDetails(firstName, lastName, preferredName, ServiceName)
-    ).map(_ => ())
+    http.put(url"${url.host}/$urlPrefix/service/$ServiceName/details/$userId")
+      .withBody(Json.toJson(UpdateDetails(firstName, lastName, preferredName, ServiceName)))
+      .execute[HttpResponse]
+      .map(_ => ())
 
   def failedLogin(email: String)(implicit hc: HeaderCarrier): Future[UserResponse] = {
-    http.PUT[EmailWrapper, UserResponse](s"${url.host}/$urlPrefix/failedAttempt", EmailWrapper(email.toLowerCase, ServiceName)).recover {
-      case eNotFound: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(eNotFound).contains(NOT_FOUND) =>
-        throw new InvalidCredentialsException
-      case eLocked: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(eLocked).contains(LOCKED) =>
-        throw new AccountLockedOutException
+    http.put(url"${url.host}/$urlPrefix/failedAttempt")
+      .withBody(Json.toJson(EmailWrapper(email.toLowerCase, ServiceName)))
+      .execute[UserResponse]
+      .recover {
+        case eNotFound: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(eNotFound).contains(NOT_FOUND) =>
+          throw new InvalidCredentialsException
+        case eLocked: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(eLocked).contains(LOCKED) =>
+          throw new AccountLockedOutException
     }
   }
 
   def find(email: String)(implicit hc: HeaderCarrier): Future[UserResponse] = {
-    http.POST[EmailWrapper, UserResponse](s"${url.host}/$urlPrefix/find", EmailWrapper(email.toLowerCase, ServiceName)).recover {
-      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new InvalidCredentialsException
-    }
-  }
-
-  def findByUserId(userId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[UserResponse] = {
-    http.POST[FindByUserIdRequest, UserResponse](s"${url.host}/$urlPrefix/service/$ServiceName/findUserById", FindByUserIdRequest(userId))
+    http.post(url"${url.host}/$urlPrefix/find")
+      .withBody(Json.toJson(EmailWrapper(email.toLowerCase, ServiceName)))
+      .execute[UserResponse]
       .recover {
-        case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND =>
-          throw new InvalidCredentialsException(s"UserId = $userId")
-      }
+        case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new InvalidCredentialsException
+    }
   }
 }
 
@@ -128,6 +141,5 @@ object UserManagementClient {
   sealed class EmailTakenException extends Exception
   sealed class InvalidCredentialsException(message: String = "") extends Exception(message)
   sealed class AccountLockedOutException extends Exception
-  sealed class TokenEmailPairInvalidException extends Exception
   sealed class TokenExpiredException extends Exception
 }

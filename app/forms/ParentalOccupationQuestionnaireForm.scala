@@ -70,7 +70,7 @@ class ParentalOccupationQuestionnaireForm {
       "employee" -> of(employedDependentFormatter(Employees)),
       "organizationSize" -> of(employedDependentFormatter(OrganizationSizes)),
       "supervise" -> of(employedDependentFormatter(SimpleAnswerOptions))
-    )(ParentalOccupationQuestionnaireForm.Data.apply)(ParentalOccupationQuestionnaireForm.Data.unapply)
+    )(ParentalOccupationQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 }
 

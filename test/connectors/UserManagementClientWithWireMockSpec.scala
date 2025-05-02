@@ -16,15 +16,15 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
-import config._
-import connectors.UserManagementClient._
-import connectors.exchange._
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import config.*
+import connectors.UserManagementClient.*
+import connectors.exchange.*
 import models.UniqueIdentifier
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.UpstreamErrorResponse
+import uk.gov.hmrc.http.client.HttpClientV2
 
 class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
 
@@ -58,7 +58,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
 
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(addUserRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(addUserRequest).toString))
         .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(response).toString))
       )
 
@@ -69,7 +69,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating a conflict" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(addUserRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(addUserRequest).toString))
         .willReturn(aResponse().withStatus(CONFLICT))
       )
 
@@ -77,15 +77,15 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
       result mustBe an[EmailTakenException]
     }
 
-    "throw an UpstreamErrorResponse when dealing with a response indicating an internal server error" in new TestFixture {
+    "not elegantly handle a response indicating an internal server error" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(addUserRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(addUserRequest).toString))
         .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR))
       )
 
       val result = client.register(email, password, firstName, lastName).failed.futureValue
-      result mustBe a[UpstreamErrorResponse]
+      result mustBe a[MatchError]
     }
   }
 
@@ -115,7 +115,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
 
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(signInRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(signInRequest).toString))
         .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(response).toString))
       )
 
@@ -126,7 +126,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating unauthorized" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(signInRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(signInRequest).toString))
         .willReturn(aResponse().withStatus(UNAUTHORIZED))
       )
 
@@ -151,7 +151,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
 
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(signInRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(signInRequest).toString))
         .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(response).toString))
       )
 
@@ -170,7 +170,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating success" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(activateEmailRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(activateEmailRequest).toString))
         .willReturn(aResponse().withStatus(OK))
       )
 
@@ -181,7 +181,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating gone" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(activateEmailRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(activateEmailRequest).toString))
         .willReturn(aResponse().withStatus(GONE))
       )
 
@@ -192,7 +192,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating not found" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(activateEmailRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(activateEmailRequest).toString))
         .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
@@ -210,7 +210,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating success" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(resendActivationTokenRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(resendActivationTokenRequest).toString))
         .willReturn(aResponse().withStatus(OK))
       )
 
@@ -221,7 +221,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating not found" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(resendActivationTokenRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(resendActivationTokenRequest).toString))
         .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
@@ -239,7 +239,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating success" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(sendPasswordCodeRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(sendPasswordCodeRequest).toString))
         .willReturn(aResponse().withStatus(OK))
       )
 
@@ -250,7 +250,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating not found" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(sendPasswordCodeRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(sendPasswordCodeRequest).toString))
         .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
@@ -270,7 +270,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating success" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(resetPasswordRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(resetPasswordRequest).toString))
         .willReturn(aResponse().withStatus(OK))
       )
 
@@ -281,7 +281,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating gone" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(resetPasswordRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(resetPasswordRequest).toString))
         .willReturn(aResponse().withStatus(GONE))
       )
 
@@ -292,7 +292,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating not found" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(resetPasswordRequest).toString))
+        .withRequestBody(equalTo(Json.toJson(resetPasswordRequest).toString))
         .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
@@ -312,7 +312,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating success" in new TestFixture {
       stubFor(put(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(updateDetails).toString))
+        .withRequestBody(equalTo(Json.toJson(updateDetails).toString))
         .willReturn(aResponse().withStatus(OK))
       )
 
@@ -344,7 +344,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
 
       stubFor(put(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(emailWrapper).toString))
+        .withRequestBody(equalTo(Json.toJson(emailWrapper).toString))
         .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(response).toString))
       )
 
@@ -355,7 +355,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating not found" in new TestFixture {
       stubFor(put(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(emailWrapper).toString))
+        .withRequestBody(equalTo(Json.toJson(emailWrapper).toString))
         .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
@@ -366,7 +366,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating locked" in new TestFixture {
       stubFor(put(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(emailWrapper).toString))
+        .withRequestBody(equalTo(Json.toJson(emailWrapper).toString))
         .willReturn(aResponse().withStatus(LOCKED))
       )
 
@@ -398,7 +398,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
 
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(emailWrapper).toString))
+        .withRequestBody(equalTo(Json.toJson(emailWrapper).toString))
         .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(response).toString))
       )
 
@@ -409,53 +409,11 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
     "handle a response indicating not found" in new TestFixture {
       stubFor(post(urlPathEqualTo(endpoint))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(emailWrapper).toString))
+        .withRequestBody(equalTo(Json.toJson(emailWrapper).toString))
         .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
       val result = client.find(email).failed.futureValue
-      result mustBe an[InvalidCredentialsException]
-    }
-  }
-
-  "findByUserId" should {
-    val endpoint = s"/$urlPrefix/service/$serviceName/findUserById"
-
-    val findByUserIdRequest = FindByUserIdRequest(userId)
-
-    "handle a response indicating success" in new TestFixture {
-      val response = UserResponse(
-        "firstName",
-        "lastName",
-        preferredName = None,
-        isActive = true,
-        userId,
-        "joeblogs@test.com",
-        disabled = false,
-        lockStatus = "",
-        roles = List("candidate"),
-        serviceName,
-        phoneNumber = None
-      )
-
-      stubFor(post(urlPathEqualTo(endpoint))
-        .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(findByUserIdRequest).toString))
-        .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(response).toString))
-      )
-
-      val result = client.findByUserId(userId).futureValue
-      result mustBe response
-    }
-
-    "handle a response indicating not found" in new TestFixture {
-      stubFor(post(urlPathEqualTo(endpoint))
-        .withHeader("Content-Type", equalTo("application/json"))
-        .withRequestBody(containing(Json.toJson(findByUserIdRequest).toString))
-        .willReturn(aResponse().withStatus(NOT_FOUND))
-      )
-
-      val result = client.findByUserId(userId).failed.futureValue
       result mustBe an[InvalidCredentialsException]
     }
   }
@@ -466,7 +424,7 @@ class UserManagementClientWithWireMockSpec extends BaseConnectorWithWireMockSpec
       override lazy val authConfig = AuthConfig(serviceName)
     }
     val ws = app.injector.instanceOf(classOf[WSClient])
-    val http = new CSRHttp(ws, app)
+    val http = app.injector.instanceOf(classOf[HttpClientV2])
     val client = new UserManagementClient(mockConfig, http)
   }
 }

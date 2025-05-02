@@ -16,28 +16,28 @@
 
 package connectors
 
-import config.{CSRHttp, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.SchoolsClient.SchoolsNotFound
 import connectors.exchange.School
-import play.api.http.Status._
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import play.api.http.Status.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SchoolsClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit ec: ExecutionContext) {
+class SchoolsClient @Inject()(config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) {
 
-  val url = config.faststreamBackendConfig.url
+  val apiBaseUrl: String = config.faststreamBackendConfig.url.host + config.faststreamBackendConfig.url.base
 
-  def getSchools(term: String)(implicit hc: HeaderCarrier) = {
-    http.GET[List[School]](
-      s"${url.host}${url.base}/schools",
-      Seq("term" -> term)
-    ).recover {
-      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND  => throw new SchoolsNotFound
-    }
+  def getSchools(term: String)(implicit hc: HeaderCarrier): Future[List[School]] = {
+    http.get(url"$apiBaseUrl/schools?term=$term")
+      .execute[List[School]]
+      .recover {
+        case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new SchoolsNotFound
+      }
   }
 }
 

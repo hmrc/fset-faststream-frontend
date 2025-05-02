@@ -25,7 +25,7 @@ object ConsiderForSdipForm {
   def form(implicit messages: Messages) = Form(
     mapping(
       "acceptTerms" -> checked(Messages("sdipFaststream.acceptTerms.required"))
-    )(Data.apply)(Data.unapply))
+    )(Data.apply)(f => Some(f.acceptTerms)))
 
   case class Data(acceptTerms: Boolean)
 }

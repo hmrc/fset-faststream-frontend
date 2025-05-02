@@ -16,17 +16,17 @@
 
 package connectors
 
-import config.{CSRHttp, FrontendAppConfig}
+import config.FrontendAppConfig
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Singleton
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpReads.Implicits._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TestDataGeneratorClient(config: FrontendAppConfig, http: CSRHttp)(implicit val ec: ExecutionContext) {
+class TestDataGeneratorClient(config: FrontendAppConfig, http: HttpClientV2)(implicit val ec: ExecutionContext) {
 
   val url = config.faststreamBackendConfig.url
 
@@ -34,7 +34,9 @@ class TestDataGeneratorClient(config: FrontendAppConfig, http: CSRHttp)(implicit
   def getTestDataGenerator(path: String, queryParams: Map[String, String])(implicit hc: HeaderCarrier): Future[String] = {
     import TestDataGeneratorClient._
     val queryParamString = queryParams.toList.map { item => s"${item._1}=${item._2}" }.mkString("&")
-    http.GET[HttpResponse](s"${url.host}${url.base}/test-data-generator/$path?$queryParamString").map { response =>
+    http.get(url"${url.host}${url.base}/test-data-generator/$path?$queryParamString")
+      .execute[HttpResponse]
+      .map { response =>
       response.status match {
         case OK => response.body
         case NOT_FOUND => throw new TestDataGeneratorException(
@@ -46,7 +48,6 @@ class TestDataGeneratorClient(config: FrontendAppConfig, http: CSRHttp)(implicit
       }
     }
   }
-
 }
 
 object TestDataGeneratorClient {
