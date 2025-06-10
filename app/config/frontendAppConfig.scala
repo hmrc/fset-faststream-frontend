@@ -16,28 +16,61 @@
 
 package config
 
+import com.typesafe.config.Config
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Base64
-import controllers.{ ApplicationRouteState, ApplicationRouteStateImpl }
+import controllers.{ApplicationRouteState, ApplicationRouteStateImpl}
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import models.ApplicationRoute._
-import net.ceedubs.ficus.Ficus._
-import net.ceedubs.ficus.readers.ArbitraryTypeReader._
-import play.api.{ Configuration, Environment, Logging }
-
-case class EmailConfig(url: EmailUrl, templates: EmailTemplates)
-case class EmailUrl(host: String, sendEmail: String)
-case class EmailTemplates(registration: String)
+import play.api.{ConfigLoader, Configuration, Environment, Logging}
 
 case class AuthConfig(serviceName: String)
 
+object AuthConfig {
+  implicit val configLoader: ConfigLoader[AuthConfig] = (rootConfig: Config, path: String) => {
+    val config = Configuration(rootConfig).get[Configuration](path)
+    AuthConfig(config.get[String]("serviceName"))
+  }
+}
+
 case class UserManagementConfig(url: UserManagementUrl)
+
+object UserManagementConfig {
+  implicit val configLoader: ConfigLoader[UserManagementConfig] = (rootConfig: Config, path: String) => {
+    val config = Configuration(rootConfig).get[Configuration](path)
+    UserManagementConfig(config.get[UserManagementUrl]("url"))
+  }
+}
+
 case class UserManagementUrl(host: String)
 
+object UserManagementUrl {
+  implicit val configLoader: ConfigLoader[UserManagementUrl] = (rootConfig: Config, path: String) => {
+    val config = Configuration(rootConfig).get[Configuration](path)
+    UserManagementUrl(config.get[String]("host"))
+  }
+}
+
 case class FaststreamBackendConfig(url: FaststreamBackendUrl)
+
+object FaststreamBackendConfig {
+  implicit val configLoader: ConfigLoader[FaststreamBackendConfig] = (rootConfig: Config, path: String) => {
+    val config = Configuration(rootConfig).get[Configuration](path)
+    FaststreamBackendConfig(config.get[FaststreamBackendUrl]("url"))
+  }
+}
+
 case class FaststreamBackendUrl(host: String, base: String)
+
+object FaststreamBackendUrl {
+  implicit val configLoader: ConfigLoader[FaststreamBackendUrl] = (rootConfig: Config, path: String) => {
+    val config = Configuration(rootConfig).get[Configuration](path)
+    FaststreamBackendUrl(config.get[String]("host"), config.get[String]("base"))
+  }
+}
 
 case class ApplicationRouteFrontendConfig(timeZone: Option[String],
                                           startNewAccountsDate: Option[LocalDateTime],
@@ -45,6 +78,13 @@ case class ApplicationRouteFrontendConfig(timeZone: Option[String],
                                           blockApplicationsDate: Option[LocalDateTime])
 
 case class AddressLookupConfig(url: String)
+
+object AddressLookupConfig {
+  implicit val configLoader: ConfigLoader[AddressLookupConfig] = (rootConfig: Config, path: String) => {
+    val config = Configuration(rootConfig).get[Configuration](path)
+    AddressLookupConfig(config.get[String]("url"))
+  }
+}
 
 // Based on the following class:
 // https://github.com/hmrc/play-frontend-hmrc/src/main/scala/uk/gov/hmrc/hmrcfrontend/config/TrackingConsentConfig.scala
@@ -75,14 +115,13 @@ object ApplicationRouteFrontendConfig {
 
 @Singleton
 class FrontendAppConfig @Inject() (val config: Configuration, val environment: Environment) extends Logging {
-  lazy val emailConfig = config.underlying.as[EmailConfig]("microservice.services.email")
-  lazy val authConfig = config.underlying.as[AuthConfig](s"microservice.services.auth")
-  lazy val userManagementConfig = config.underlying.as[UserManagementConfig]("microservice.services.user-management")
-  lazy val faststreamBackendConfig = config.underlying.as[FaststreamBackendConfig]("microservice.services.faststream")
+  lazy val authConfig = config.get[AuthConfig](s"microservice.services.auth")
+  lazy val userManagementConfig = config.get[UserManagementConfig]("microservice.services.user-management")
+  lazy val faststreamBackendConfig = config.get[FaststreamBackendConfig]("microservice.services.faststream")
 
-  lazy val addressLookupConfig = config.underlying.as[AddressLookupConfig]("microservice.services.address-lookup")
+  lazy val addressLookupConfig = config.get[AddressLookupConfig]("microservice.services.address-lookup")
 
-  lazy val fsacGuideUrl = config.underlying.as[String]("microservice.fsacGuideUrl")
+  lazy val fsacGuideUrl = config.get[String]("microservice.fsacGuideUrl")
 
   lazy val feedbackUrl = config.getOptional[String]("feedback.url").getOrElse("")
 
@@ -133,7 +172,7 @@ class FrontendAppConfig @Inject() (val config: Configuration, val environment: E
   // Whitelist Configuration
   private def whitelistConfig(key: String): Seq[String] = Some(
     new String(Base64.getDecoder.decode(config.getOptional[String](key).getOrElse("")), "UTF-8")
-  ).map(_.split(",")).getOrElse(Array.empty).toSeq
+  ).map(_.split(",")).getOrElse(Array.empty[String]).toSeq
 
   lazy val whitelist = whitelistConfig("whitelist")
   lazy val whitelistFileUpload = whitelistConfig("whitelistFileUpload")

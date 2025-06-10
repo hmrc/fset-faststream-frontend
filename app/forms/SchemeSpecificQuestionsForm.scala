@@ -27,6 +27,6 @@ class SchemeSpecificQuestionsForm {
   val form = Form(
     mapping(
       "rawText" -> nonEmptyTrimmedText("additionalquestions.error.schemespecific")
-    )(SchemeSpecificAnswer.apply)(SchemeSpecificAnswer.unapply)
+    )(SchemeSpecificAnswer.apply)(f => Some(f.rawText))
   )
 }

@@ -16,20 +16,20 @@
 
 package connectors.addresslookup
 
-import java.net.URLEncoder
-import config.{CSRHttp, FrontendAppConfig}
+import config.FrontendAppConfig
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
+import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, UpstreamErrorResponse}
-import uk.gov.hmrc.http.HttpReads.Implicits._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * The following client has been take from taken from https://github.com/hmrc/address-reputation-store. The project has
+ * The following client has been taken from https://github.com/hmrc/address-reputation-store. The project has
  * not been added as a dependency, as it brings in many transitive dependencies that are not needed,
  * as well as data cleansing/ingestion and backward compatibility logic that is not needed for this project.
  * If the version 2 api gets deprecated, then these DTOs will have to change.
@@ -38,32 +38,40 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 
 @Singleton
-class AddressLookupClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit val ec: ExecutionContext) extends Logging {
+class AddressLookupClient @Inject()(config: FrontendAppConfig, http: HttpClientV2)(implicit val ec: ExecutionContext) extends Logging {
 
-  val addressLookupEndpoint = config.addressLookupConfig.url
+  private val addressLookupEndpoint = config.addressLookupConfig.url
 
   def findByPostcode(postcode: String, filter: Option[String])(implicit hc: HeaderCarrier): Future[List[AddressRecord]] = {
     val safePostcode = postcode.replaceAll("[^A-Za-z0-9]", "")
     val request = LookupAddressByPostcodeRequest(enc(safePostcode), filter.map( f => enc(f)) )
-    http.POST[LookupAddressByPostcodeRequest, List[AddressRecord]](s"$addressLookupEndpoint/lookup", request).recover {
-      case e: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(e).contains(NOT_FOUND) =>
-        logger.debug(s"AddressLookupClient received NOT_FOUND for postcode: $postcode. Error message: ${e.getMessage()}")
-        Nil
-      case e: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(e).contains(BAD_REQUEST) =>
-        logger.debug(s"AddressLookupClient received BAD_REQUEST for postcode: $postcode. Error message: ${e.getMessage()}")
-        throw new BadRequestException(e.getMessage())
-    }
+
+    import play.api.libs.ws.writeableOf_JsValue
+    http.post(url"$addressLookupEndpoint/lookup")
+      .withBody(Json.toJson(request))
+      .execute[Either[UpstreamErrorResponse, List[AddressRecord]]]
+      .map {
+        case Right(response) => response
+        case Left(ex) if ex.statusCode == NOT_FOUND =>
+          logger.debug(s"AddressLookupClient received NOT_FOUND for postcode: $postcode. Error message: ${ex.getMessage()}")
+          Nil
+        case Left(ex) if ex.statusCode == BAD_REQUEST =>
+          logger.debug(s"AddressLookupClient received BAD_REQUEST for postcode: $postcode. Error message: ${ex.getMessage()}")
+          throw new BadRequestException(ex.getMessage())
+      }
   }
 
   def findByUprn(uprn: String)(implicit hc: HeaderCarrier): Future[AddressRecord] = {
-    http.POST[LookupAddressByUprnRequest, List[AddressRecord]](
-      s"$addressLookupEndpoint/lookup/by-uprn",
-      LookupAddressByUprnRequest(uprn)
-    ).map( _.head ). recover {
-      case e: UpstreamErrorResponse if UpstreamErrorResponse.WithStatusCode.unapply(e).contains(BAD_REQUEST) =>
-        logger.debug(s"AddressLookupClient received BAD_REQUEST for uprn: $uprn. Error message: ${e.getMessage()}")
-        throw new BadRequestException(e.getMessage())
-    }
+    import play.api.libs.ws.writeableOf_JsValue
+    http.post(url"$addressLookupEndpoint/lookup/by-uprn")
+      .withBody(Json.toJson(LookupAddressByUprnRequest(uprn)))
+      .execute[Either[UpstreamErrorResponse, List[AddressRecord]]]
+      .map {
+        case Right(response) => response.head
+        case Left(ex) if ex.statusCode == BAD_REQUEST =>
+          logger.debug(s"AddressLookupClient received BAD_REQUEST for uprn: $uprn. Error message: ${ex.getMessage()}")
+          throw new BadRequestException(ex.getMessage())
+      }
   }
 
   private def enc(s: String) = URLEncoder.encode(s, "UTF-8")

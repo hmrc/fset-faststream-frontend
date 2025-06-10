@@ -16,37 +16,40 @@
 
 package connectors
 
-import config.{CSRHttp, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.SdipLocationsClient.{CannotUpdateLocationPreferences, LocationPreferencesNotFound}
 import connectors.exchange.SelectedLocations
 import models.UniqueIdentifier
 import play.api.http.Status._
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SdipLocationsClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit ec: ExecutionContext) {
-  val url = config.faststreamBackendConfig.url
+class SdipLocationsClient @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) {
+  val apiBaseUrl: String = config.faststreamBackendConfig.url.host + config.faststreamBackendConfig.url.base
 
   def getLocationPreferences(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier) = {
-    http.GET[SelectedLocations](
-      s"${url.host}${url.base}/location-preferences/$applicationId"
-    ).recover {
-      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new LocationPreferencesNotFound
-    }
+    http.get(url"$apiBaseUrl/location-preferences/$applicationId")
+      .execute[SelectedLocations]
+      .recover {
+        case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new LocationPreferencesNotFound
+      }
   }
 
   def updateLocationPreferences(data: SelectedLocations)(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier) = {
-    http.PUT[SelectedLocations, HttpResponse](
-      s"${url.host}${url.base}/location-preferences/$applicationId",
-      data
-    ).map {
-      case x: HttpResponse if x.status == OK => ()
-      case x: HttpResponse if x.status == BAD_REQUEST => throw new CannotUpdateLocationPreferences
-    }
+    import play.api.libs.ws.writeableOf_JsValue
+    http.put(url"$apiBaseUrl/location-preferences/$applicationId")
+      .withBody(Json.toJson(data))
+      .execute[HttpResponse]
+      .map {
+        case x: HttpResponse if x.status == OK => ()
+        case x: HttpResponse if x.status == BAD_REQUEST => throw new CannotUpdateLocationPreferences
+      }
   }
 }
 

@@ -19,7 +19,7 @@ package controllers
 import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient
 import connectors.ApplicationClient.TestForTokenExpiredException
-import connectors.UserManagementClient.TokenEmailPairInvalidException
+import connectors.TokenEmailPairInvalidException
 import forms.VerifyCodeForm
 import helpers.NotificationTypeHelper
 

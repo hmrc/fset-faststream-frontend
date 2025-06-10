@@ -40,13 +40,13 @@ class DiversityQuestionnaireForm {
       "preferNotSay_ethnicity" -> optional(checked(Messages("error.required.ethnicity"))),
 
       "isEnglishFirstLanguage" -> of(englishLanguageFormatter)
-    )(DiversityQuestionnaireForm.Data.apply)(DiversityQuestionnaireForm.Data.unapply)
+    )(DiversityQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   def acceptanceForm(implicit messages: Messages) = Form(
     mapping(
       "accept-terms" -> checked(Messages("error.required.acceptance"))
-    )(DiversityQuestionnaireForm.AcceptanceTerms.apply)(DiversityQuestionnaireForm.AcceptanceTerms.unapply)
+    )(DiversityQuestionnaireForm.AcceptanceTerms.apply)(f => Some(f.acceptTerms))
   )
 
   private def bindParam[T](validityCheck: Boolean, errMsg: String, key: String, value: => T): Either[Seq[FormError], T] =
@@ -107,7 +107,7 @@ class DiversityQuestionnaireForm {
     def ethnicityParam = param("ethnicity").getOrElse("")
 
     val validEthnicityOptions =
-      Ethnicities.map.values.flatMap { list: List[(String, Boolean)] =>
+      Ethnicities.map.values.flatMap { (list: List[(String, Boolean)]) =>
         list.map { case (ethnicity, _) => ethnicity }
       }.toList
 

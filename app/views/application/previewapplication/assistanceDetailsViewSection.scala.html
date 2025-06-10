@@ -35,10 +35,10 @@
     }
 }
 
-@maybeDisplayOtherDisabilityDescription = @{
-    if(assistanceDetails.hasSelectedOtherDisabilityCategory) {
+@maybeDisplayOtherDisabilityDescription = {
+    @if(assistanceDetails.hasSelectedOtherDisabilityCategory) {
         <h3 class="heading-small">Other Disability Description</h3>
-        <p id="otherDisabilityDescription">{assistanceDetails.otherDisabilityDescription.getOrElse("NOT SPECIFIED")}</p>
+        <p id="otherDisabilityDescription">@assistanceDetails.otherDisabilityDescription.getOrElse("NOT SPECIFIED")</p>
     }
 }
 

@@ -77,7 +77,7 @@ class PersonalDetailsForm {
         isEdipOrSdipOrSdipFsAndCreatedOrInProgress, isEdipCandidate)),
       otherInternshipName -> of(otherInternshipNameFormatter(otherInternshipNameMaxSize)),
       otherInternshipYear -> of(otherInternshipYearFormatter)
-    )(PersonalDetailsForm.Data.apply)(PersonalDetailsForm.Data.unapply)
+    )(PersonalDetailsForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   val isSdipOrSdipFsAndCreatedOrInProgress = (requestParams: Map[String, String]) =>

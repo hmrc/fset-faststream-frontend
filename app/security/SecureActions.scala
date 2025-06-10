@@ -132,7 +132,7 @@ trait SecureActions extends I18nSupport with Logging {
   implicit def userWithAppToOptionCachedUser(implicit u: CachedDataWithApp): Option[CachedData] = Some(CachedData(u.user, Some(u.application)))
 
   // TODO: Duplicates code from SigninService. Refactoring challenge.
-  private def gotoAuthentication[_](implicit request: SecuredRequest[SecurityEnvironment, _]) = {
+  private def gotoAuthentication(implicit request: SecuredRequest[SecurityEnvironment, _]) = {
     secEnv.eventBus.publish(LogoutEvent(request.identity, request))
     secEnv.authenticatorService.retrieve.flatMap {
       case Some(authenticator) =>

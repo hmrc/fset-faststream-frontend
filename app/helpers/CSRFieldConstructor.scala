@@ -31,7 +31,7 @@ package helpers
  */
 object CSRFieldConstructor {
   import views.html.helper.FieldConstructor
-  implicit val myFields = FieldConstructor(views.html.template.fieldTemplate.f)
+  implicit val myFields: FieldConstructor = FieldConstructor(views.html.template.fieldTemplate.f)
 }
 
 /**
@@ -49,7 +49,7 @@ object CSRFieldConstructor {
  */
 object CSRSkinnyFieldConstructor {
   import views.html.helper.FieldConstructor
-  implicit val myFields = FieldConstructor(views.html.template.skinnyTemplate.f)
+  implicit val myFields: FieldConstructor = FieldConstructor(views.html.template.skinnyTemplate.f)
 }
 
 /**
@@ -67,7 +67,7 @@ object CSRSkinnyFieldConstructor {
  */
 object CSRNoErrorFieldConstructor {
   import views.html.helper.FieldConstructor
-  implicit val myFields = FieldConstructor(views.html.template.noErrorTemplate.f)
+  implicit val myFields: FieldConstructor = FieldConstructor(views.html.template.noErrorTemplate.f)
 }
 
 /**
@@ -86,5 +86,5 @@ object CSRNoErrorFieldConstructor {
  */
 object CSREmptyFieldConstructor {
   import views.html.helper.FieldConstructor
-  implicit val myFields = FieldConstructor(views.html.template.emptyTemplate.f)
+  implicit val myFields: FieldConstructor = FieldConstructor(views.html.template.emptyTemplate.f)
 }

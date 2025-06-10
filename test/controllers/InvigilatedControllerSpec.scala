@@ -17,12 +17,12 @@
 package controllers
 
 import connectors.ApplicationClient.TestForTokenExpiredException
-import connectors.UserManagementClient.TokenEmailPairInvalidException
+import connectors.TokenEmailPairInvalidException
 import connectors.exchange.InvigilatedTestUrl
 import forms.VerifyCodeForm
-import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import play.api.test.Helpers._
+import org.mockito.ArgumentMatchers.{eq as eqTo, *}
+import org.mockito.Mockito.*
+import play.api.test.Helpers.*
 import testkit.TestableSecureActions
 
 import scala.concurrent.Future

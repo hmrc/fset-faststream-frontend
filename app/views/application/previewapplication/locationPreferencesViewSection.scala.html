@@ -27,9 +27,9 @@
     }
 }
 
-@displayInterests = @{
-    selectedLocations.interests.sorted.map { interest =>
-        <li><p id={createId("interests", interest)}>{interest}</p></li>
+@displayInterests = {
+    @selectedLocations.interests.sorted.map { interest =>
+        <li><p id=@createId("interests", interest)>@interest</p></li>
     }
 }
 

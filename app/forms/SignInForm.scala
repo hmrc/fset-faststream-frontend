@@ -30,7 +30,7 @@ class SignInForm {
       "signIn" -> nonEmptyTrimmedText("error.required.signIn", 128),
       passwordField -> nonEmptyTrimmedText("error.required.password", 128),
       "route" -> optional(text)
-    )(SignInForm.Data.apply)(SignInForm.Data.unapply)
+    )(SignInForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 }
 

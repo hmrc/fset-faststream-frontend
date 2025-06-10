@@ -36,5 +36,5 @@ object AddressMapping {
     "line2" -> optional(nonEmptyTrimmedText("error.address.required", Address.MaxLineLength)),
     "line3" -> optional(nonEmptyTrimmedText("error.address.required", Address.MaxLineLength)),
     "line4" -> optional(nonEmptyTrimmedText("error.address.required", Address.MaxLineLength))
-  )(Address.apply)(Address.unapply)
+  )(Address.apply)(f => Some(Tuple.fromProductTyped(f)))
 }

@@ -32,7 +32,7 @@ class SchemeLocationPreferenceForm {
         ("location.required", value => value.matches("[^;]+;[^;]+"))),
       "firstScheme" -> nonEmptyTrimmedText("firstScheme.required", 64),
       "secondScheme" -> optionalTrimmedText(64)
-    )(SchemeLocationPreferenceForm.Data.apply)(SchemeLocationPreferenceForm.Data.unapply)
+    )(SchemeLocationPreferenceForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   val locationErr = "location.unavailable"
@@ -41,9 +41,9 @@ class SchemeLocationPreferenceForm {
   val secondErr = "secondScheme.unavailable"
 
   def resetPreference(preference: Preference, errs: Seq[String]) = List(
-    errs.contains(locationErr) -> { pref: Preference => pref.copy(location = "") },
-    errs.contains(firstErr) -> { pref: Preference => pref.copy(firstFramework = "", secondFramework = None) },
-    errs.contains(secondErr) -> { pref: Preference => pref.copy(secondFramework = None) }
+    errs.contains(locationErr) -> { (pref: Preference) => pref.copy(location = "") },
+    errs.contains(firstErr) -> { (pref: Preference) => pref.copy(firstFramework = "", secondFramework = None) },
+    errs.contains(secondErr) -> { (pref: Preference) => pref.copy(secondFramework = None) }
   ).foldLeft(preference) {
       case (p, (true, f)) => f(p)
       case (p, _) => p

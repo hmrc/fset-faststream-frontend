@@ -25,6 +25,7 @@ import uk.gov.hmrc.play.http.ws.{WSHttpResponse, WSRequest}
 import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
+// TODO: the functionality this supports is no longer used so think about removing this file
 trait WSBinaryPost extends HttpBinaryPost with WSRequest {
 
   override protected def doBinaryPost(url: String, body: Array[Byte])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {

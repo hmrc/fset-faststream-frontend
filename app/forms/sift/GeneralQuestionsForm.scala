@@ -33,7 +33,7 @@ class UndergradDegreeInfoForm(classifications: Seq[String]) {
       "undergradDegree.classification" -> of(requiredSetFormatter(classifications)),
       "undergradDegree.graduationYear" -> of(Year.yearFormatter),
       "undergradDegree.moduleDetails" -> optional(text)
-    )(UndergradDegreeInfoForm.Data.apply)(UndergradDegreeInfoForm.Data.unapply))
+    )(UndergradDegreeInfoForm.Data.apply)(f => Some(Tuple.fromProductTyped(f))))
 }
 
 object UndergradDegreeInfoForm {
@@ -64,7 +64,7 @@ object PostGradDegreeInfoForm {
         "postgradDegree.graduationYear" -> of(Year.yearFormatter),
         "postgradDegree.otherDetails" -> optional(text),
         "postgradDegree.projectDetails" -> optional(text)
-      )(Data.apply)(Data.unapply))
+      )(Data.apply)(f => Some(Tuple.fromProductTyped(f))))
   }
 
   case class Data(
@@ -86,7 +86,7 @@ class GeneralQuestionsForm(validNationalities: Seq[String]) {
       "undergradDegree" -> of(undergradDegreeInfoFormFormatter("hasUndergradDegree")),
       "hasPostgradDegree" -> of(BooleanMapping.booleanFormatter("generalquestions.error.postgraduatedegree")),
       "postgradDegree" -> of(postGradDegreeInfoFormFormatter("hasPostgradDegree"))
-    )(GeneralQuestionsForm.Data.apply)(GeneralQuestionsForm.Data.unapply))
+    )(GeneralQuestionsForm.Data.apply)(f => Some(Tuple.fromProductTyped(f))))
 }
 
 object GeneralQuestionsForm {

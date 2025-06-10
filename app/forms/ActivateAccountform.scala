@@ -27,7 +27,7 @@ class ActivateAccountForm {
     mapping(
       "activation" -> (nonEmptyTrimmedText("activation.required", 7, "activation.wrong-format") verifying
         ("activation.wrong-format", value => value.matches("[\\w]{7}")))
-    )(ActivateAccountForm.Data.apply)(ActivateAccountForm.Data.unapply)
+    )(ActivateAccountForm.Data.apply)(f => Some(f.activationCode))
   )
 }
 

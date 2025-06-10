@@ -20,5 +20,5 @@ import scala.language.implicitConversions
  * Consider breaking this into multiple exchange objects (e.g. Email Exchange objects etc).
  */
 package object connectors {
-
+  sealed class TokenEmailPairInvalidException extends Exception
 }

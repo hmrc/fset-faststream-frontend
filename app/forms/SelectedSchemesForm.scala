@@ -41,7 +41,7 @@ class SelectedSchemesForm(allSchemes: Seq[Scheme], isSdipFaststream: Boolean) {
         "schemes" -> of(schemeFormatter("schemes")),
         "orderAgreed" -> checked(Messages("orderAgreed.required")),
         "eligible" -> checked(Messages("eligible.required"))
-      )(SchemePreferences.apply)(SchemePreferences.unapply))
+      )(SchemePreferences.apply)(f => Some(Tuple.fromProductTyped(f))))
   }
 
   //scalastyle:off cyclomatic.complexity

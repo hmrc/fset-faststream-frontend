@@ -16,30 +16,33 @@
 
 package connectors
 
-import config.{CSRHttp, FrontendAppConfig}
-import connectors.ApplicationClient._
+import config.{FaststreamBackendUrl, FrontendAppConfig}
+import connectors.ApplicationClient.*
 import connectors.exchange.referencedata.SchemeId
 import connectors.exchange.sift.SiftAnswersStatus.SiftAnswersStatus
 import connectors.exchange.sift.{GeneralQuestionsAnswers, SchemeSpecificAnswer, SiftAnswers}
 import models.UniqueIdentifier
-import play.api.http.Status._
-import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.http.Status.*
+import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SiftClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit ec: ExecutionContext) {
+class SiftClient @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) {
 
-  val url = config.faststreamBackendConfig.url
+  val url: FaststreamBackendUrl = config.faststreamBackendConfig.url
   val apiBase: String = s"${url.host}${url.base}"
 
   def updateGeneralAnswers(applicationId: UniqueIdentifier, answers: GeneralQuestionsAnswers)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.PUT[GeneralQuestionsAnswers, HttpResponse](
-      s"$apiBase/sift-answers/$applicationId/general",
-      answers
-    ).map {
+    http.put(url"$apiBase/sift-answers/$applicationId/general")
+      .withBody(Json.toJson(answers))
+      .execute[HttpResponse]
+      .map {
         case response if response.status == OK => ()
         case response if response.status == BAD_REQUEST => throw new CannotUpdateRecord
         case response if response.status == CONFLICT => throw new SiftAnswersSubmitted
@@ -48,47 +51,52 @@ class SiftClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit e
 
   def updateSchemeSpecificAnswer(applicationId: UniqueIdentifier, schemeId: SchemeId, answer: SchemeSpecificAnswer)
                                 (implicit hc: HeaderCarrier): Future[Unit] = {
-    http.PUT[SchemeSpecificAnswer, HttpResponse](
-      s"$apiBase/sift-answers/$applicationId/${schemeId.value}",
-      answer
-    ).map {
+    http.put(url"$apiBase/sift-answers/$applicationId/${schemeId.value}")
+      .withBody(Json.toJson(answer))
+      .execute[HttpResponse]
+      .map {
         case response if response.status == OK => ()
         case response if response.status == BAD_REQUEST => throw new CannotUpdateRecord
         case response if response.status == CONFLICT => throw new SiftAnswersSubmitted
-    }
+      }
   }
 
   def getGeneralQuestionsAnswers(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Option[GeneralQuestionsAnswers]] = {
-    http.GET[Option[GeneralQuestionsAnswers]](s"$apiBase/sift-answers/$applicationId/general")
+    http.get(url"$apiBase/sift-answers/$applicationId/general")
+      .execute[Option[GeneralQuestionsAnswers]]
   }
 
   def getSchemeSpecificAnswer(applicationId: UniqueIdentifier, schemeId: SchemeId)
     (implicit hc: HeaderCarrier): Future[Option[SchemeSpecificAnswer]] = {
-    http.GET[Option[SchemeSpecificAnswer]](s"$apiBase/sift-answers/$applicationId/${schemeId.value}")
+    http.get(url"$apiBase/sift-answers/$applicationId/${schemeId.value}")
+      .execute[Option[SchemeSpecificAnswer]]
   }
 
   def getSiftAnswers(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[SiftAnswers] = {
-    http.GET[SiftAnswers](s"$apiBase/sift-answers/$applicationId").recover {
-      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new SiftAnswersNotFound()
-    }
+    http.get(url"$apiBase/sift-answers/$applicationId")
+      .execute[SiftAnswers]
+      .recover {
+        case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND => throw new SiftAnswersNotFound()
+      }
   }
 
   // scalastyle:off cyclomatic.complexity
   def submitSiftAnswers(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.PUT[Array[Byte], HttpResponse](
-      s"$apiBase/sift-answers/$applicationId/submit",
-      Array.empty[Byte]
-    ).map {
-      case response if response.status == OK => ()
-      case response if response.status == UNPROCESSABLE_ENTITY => throw new SiftAnswersIncomplete
-      case response if response.status == CONFLICT => throw new SiftAnswersSubmitted
-      case response if response.status == BAD_REQUEST => throw new SiftAnswersNotFound
-      case response if response.status == FORBIDDEN => throw new SiftExpired
-    }
+    http.put(url"$apiBase/sift-answers/$applicationId/submit")
+      .withBody(Json.toJson(Array.empty[Byte]))
+      .execute[HttpResponse]
+      .map {
+        case response if response.status == OK => ()
+        case response if response.status == UNPROCESSABLE_ENTITY => throw new SiftAnswersIncomplete
+        case response if response.status == CONFLICT => throw new SiftAnswersSubmitted
+        case response if response.status == BAD_REQUEST => throw new SiftAnswersNotFound
+        case response if response.status == FORBIDDEN => throw new SiftExpired
+      }
   }
   // scalastyle:on
 
   def getSiftAnswersStatus(applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Option[SiftAnswersStatus]] = {
-    http.GET[Option[SiftAnswersStatus]](s"$apiBase/sift-answers/$applicationId/status")
+    http.get(url"$apiBase/sift-answers/$applicationId/status")
+      .execute[Option[SiftAnswersStatus]]
   }
 }

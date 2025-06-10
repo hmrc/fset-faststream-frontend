@@ -24,7 +24,7 @@ import play.api.i18n.Messages
 import testkit.BaseSpec
 
 abstract class BaseFormSpec extends BaseSpec {
-  implicit val mockMessages = mock[Messages]
+  implicit val mockMessages: Messages = mock[Messages]
   when(mockMessages.messages).thenReturn(mockMessages)
   when(mockMessages.apply(anyString(), any())).thenAnswer(new Answer[String]() {
     override def answer(invocationOnMock: InvocationOnMock): String = {

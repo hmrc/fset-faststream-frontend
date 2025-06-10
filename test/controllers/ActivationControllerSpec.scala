@@ -16,7 +16,8 @@
 
 package controllers
 
-import connectors.UserManagementClient.{TokenEmailPairInvalidException, TokenExpiredException}
+import connectors.TokenEmailPairInvalidException
+import connectors.UserManagementClient.TokenExpiredException
 import forms.ActivateAccountForm
 import models.CachedData
 import models.SecurityUserExamples._

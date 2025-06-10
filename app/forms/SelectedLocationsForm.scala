@@ -38,7 +38,8 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
       mapping(
         "locations" -> of(locationFormatter("locations")),
         "interests" -> of(interestsFormatter)
-      )(LocationPreferences.apply)(LocationPreferences.unapply))
+      )(LocationPreferences.apply)(f => Some(Tuple.fromProductTyped(f)))
+    )
   }
 
   //scalastyle:off cyclomatic.complexity

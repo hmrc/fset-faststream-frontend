@@ -18,9 +18,9 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
-import config.{CSRHttp, FaststreamBackendConfig, FaststreamBackendUrl, FrontendAppConfig}
+import config.{FaststreamBackendConfig, FaststreamBackendUrl, FrontendAppConfig}
 import connectors.ApplicationClient._
-import connectors.UserManagementClient.TokenEmailPairInvalidException
+import connectors.TokenEmailPairInvalidException
 import connectors.events.{Event, Location, Session, Venue}
 import connectors.exchange._
 import connectors.exchange.campaignmanagement.AfterDeadlineSignupCodeUnused
@@ -35,6 +35,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.UpstreamErrorResponse
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import java.time.{LocalDate, LocalTime, OffsetDateTime}
 import java.util.UUID
@@ -1206,7 +1207,7 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
       override lazy val faststreamBackendConfig = FaststreamBackendConfig(faststreamUrl)
     }
     val ws = app.injector.instanceOf(classOf[WSClient])
-    val http = new CSRHttp(ws, app)
+    val http = app.injector.instanceOf(classOf[HttpClientV2])
     val client = new ApplicationClient(mockConfig, http)
   }
 }

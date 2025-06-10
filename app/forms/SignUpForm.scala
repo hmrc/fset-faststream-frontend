@@ -174,7 +174,7 @@ class SignUpForm {
       "sdipFastStreamDiversity" -> optional(boolean),
       "edipEligible" -> boolean,
       "sdipEligible" -> boolean
-    )(SignUpForm.Data.apply)(SignUpForm.Data.unapply)
+    )(SignUpForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
   import SignUpForm.RequestValidation

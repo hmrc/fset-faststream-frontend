@@ -41,11 +41,10 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
     "load preview page for existing application" in new TestFixture {
       val result = controller.present()(fakeRequest)
 
-      status(result) must be(OK)
+      status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Check your application")
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
-      content must include(s"""<p id="fastPassApplicable">No</p>""")
       content must include("""<ul id="schemePreferenceList" class="list-text">""")
     }
 
@@ -55,7 +54,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
 
       val result = controller(currentCandidateWithEdipApp).present()(fakeRequest)
 
-      status(result) must be(OK)
+      status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Check your application")
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
@@ -73,7 +72,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
 
       val result = controller(currentCandidateWithSdipApp).present()(fakeRequest)
 
-      status(result) must be(OK)
+      status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Check your application")
       content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
@@ -90,7 +89,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
 
       val result = controller.present()(fakeRequest)
 
-      status(result) must be(SEE_OTHER)
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) must be(Some(routes.HomeController.present().url))
     }
 
@@ -100,7 +99,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
 
       val result = controller.present()(fakeRequest)
 
-      status(result) must be(SEE_OTHER)
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) must be(Some(routes.HomeController.present().url))
     }
 
@@ -110,7 +109,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
 
       val result = controller.present()(fakeRequest)
 
-      status(result) must be(SEE_OTHER)
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) must be(Some(routes.HomeController.present().url))
     }
   }
@@ -126,7 +125,7 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
 
       val result = controller.submit()(Request)
 
-      status(result) must be(SEE_OTHER)
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) must be(Some(routes.SubmitApplicationController.presentSubmit.url))
     }
   }

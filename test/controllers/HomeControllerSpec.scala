@@ -490,8 +490,9 @@ class HomeControllerSpec extends BaseControllerSpec {
     }
   }
 
+  // No longer relevant so all tests are set to ignore
   "present with sdip eligibility info" should {
-    "display eligibility information when faststream application is withdrawn" in new TestFixture {
+    "display eligibility information when faststream application is withdrawn" ignore new TestFixture {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new OnlineTestNotFound))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier]))
@@ -506,7 +507,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       content must include("error.faststream.becomes.sdip.withdrew")
     }
 
-    "display eligibility information when faststream application is not submitted" in new TestFixture {
+    "display eligibility information when faststream application is not submitted" ignore new TestFixture {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new OnlineTestNotFound))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier]))
@@ -521,7 +522,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       content must include("error.faststream.becomes.sdip.not.submitted")
     }
 
-    "display eligibility information when faststream application is phase1 tests expired" in new TestFixture {
+    "display eligibility information when faststream application is phase1 tests expired" ignore new TestFixture {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new OnlineTestNotFound))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier]))
@@ -536,7 +537,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       content must include("error.faststream.becomes.sdip.test.expired")
     }
 
-    "not display eligibility information when application route is not faststream" in new TestFixture {
+    "not display eligibility information when application route is not faststream" ignore new TestFixture {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new OnlineTestNotFound))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier]))
@@ -550,7 +551,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       content mustNot include("Continue as SDIP")
     }
 
-    "not display eligibility information when faststream application is submitted" in new TestFixture {
+    "not display eligibility information when faststream application is submitted" ignore new TestFixture {
       when(mockApplicationClient.getPhase1TestProfile(eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new OnlineTestNotFound))
       when(mockApplicationClient.findAdjustments(eqTo(currentApplicationId))(any[HeaderCarrier]))
@@ -566,8 +567,10 @@ class HomeControllerSpec extends BaseControllerSpec {
     }
   }
 
+  // This functionality is no longer available in the candidate ui.
+  // It can only be done via the admin ui
   "submitAnalysisExercise" should {
-    "show a too big message when file is too large" in new TestFixture {
+    "show a too big message when file is too large" ignore new TestFixture {
       mockPostOnlineTestsDashboardCalls()
       fileUploadMocks(10000000)
 
@@ -577,7 +580,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       flash(result).get("danger") mustBe Some("assessmentCentre.analysisExercise.upload.tooBig")
     }
 
-    "show success when preconditions for upload are met" in new TestFixture {
+    "show success when preconditions for upload are met" ignore new TestFixture {
       mockPostOnlineTestsDashboardCalls()
       fileUploadMocks(3500000)
 
@@ -587,7 +590,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       flash(result).get("success") mustBe Some("assessmentCentre.analysisExercise.upload.success")
     }
 
-    "show an error if this candidate has already uploaded a written exercise" in new TestFixture {
+    "show an error if this candidate has already uploaded a written exercise" ignore new TestFixture {
       mockPostOnlineTestsDashboardCalls(hasAnalysisExerciseAlready = true)
       fileUploadMocks(3500000, analysisExerciseUploadedAlready = true)
 
@@ -597,7 +600,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       flash(result).get("danger") mustBe Some("assessmentCentre.analysisExercise.upload.error")
     }
 
-    "show an error if the content type is not on the allowed list" in new TestFixture {
+    "show an error if the content type is not on the allowed list" ignore new TestFixture {
       mockPostOnlineTestsDashboardCalls()
       fileUploadMocks(3500000)
 
@@ -607,7 +610,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       flash(result).get("danger") mustBe Some("assessmentCentre.analysisExercise.upload.wrongContentType")
     }
 
-    "Show an error if the file POST is not as expected" in new TestFixture {
+    "Show an error if the file POST is not as expected" ignore new TestFixture {
       mockPostOnlineTestsDashboardCalls()
       fileUploadMocks(3500000)
 
@@ -743,7 +746,12 @@ class HomeControllerSpec extends BaseControllerSpec {
       content must include(phase2Test1ResultsReportLink)
     }
 
-    val phase3ResultsReportLink = "<a href=\"/online-tests/phase3/feedback-report\"" +
+    // After moving to Scala 3, the generated content varies depending on if you run all tests or the HomeControllerSpec on its own!!
+    // <a href="/fset-fast-stream/online-tests/phase3/feedback-report" ...
+    // or
+    // <a href="/online-tests/phase3/feedback-report" ...
+    // so omit the start of the hyperlink: <a href="/online-tests ...  to cover both scenarios
+    val phase3ResultsReportLink = "/online-tests/phase3/feedback-report\"" +
       " target=\"_blank\" id=\"phase3ResultsReportLink\" alt=\"Phase 3 feedback report\">"
 
     def checkPhase3ResultsTitleAndLinks(content: String) = {

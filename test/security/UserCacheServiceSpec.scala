@@ -20,7 +20,7 @@ import java.util.UUID
 import connectors.ApplicationClient.ApplicationNotFound
 import connectors.UserManagementClient.InvalidCredentialsException
 import connectors.exchange.{ApplicationResponse, ProgressResponse, UserResponse}
-import connectors.{ApplicationClient, UserManagementClient}
+import connectors.{ApplicationClient, UserManagementFindUserClient}
 import models.ApplicationData.ApplicationStatus
 import models._
 import org.mockito.ArgumentMatchers._
@@ -111,7 +111,7 @@ class UserCacheServiceSpec extends BaseSpec {
     implicit val hc: HeaderCarrier = new HeaderCarrier()
 
     val mockApplicationClient = mock[ApplicationClient]
-    val mockUserManagementClient = mock[UserManagementClient]
+    val mockUserManagementClient = mock[UserManagementFindUserClient]
 
     lazy val noUserCacheService = makeUserCacheService {
       when(mockUserManagementClient.findByUserId(any[UniqueIdentifier]())(any[HeaderCarrier]())).thenReturn(Future.failed(

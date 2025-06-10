@@ -20,20 +20,20 @@ import java.util.UUID
 import _root_.helpers.{NotificationType, NotificationTypeHelper}
 import play.silhouette.api.{EventBus, LoginInfo}
 import play.silhouette.impl.authenticators.{SessionAuthenticator, SessionAuthenticatorService}
-import config.{CSRHttp, FrontendAppConfig, TrackingConsentConfig}
-import connectors._
-import models.ApplicationRoute.{ApplicationRoute => _}
-import models.SecurityUserExamples._
-import models._
+import config.{FrontendAppConfig, SecurityEnvironment, TrackingConsentConfig}
+import connectors.*
+import models.ApplicationRoute.ApplicationRoute as _
+import models.SecurityUserExamples.*
+import models.*
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.{CSRFTokenHelper, FakeRequest}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import security.{CsrCredentialsProvider, SignInService, SilhouetteComponent, UserCacheService}
 import services.Phase3FeedbackService
 import testkit.BaseSpec
@@ -96,22 +96,21 @@ abstract class BaseControllerSpec extends BaseSpec {
   trait BaseControllerTestFixture {
     // Basic Wiring
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val mockMessagesApi = mock[MessagesApi]
-    val stubMcc = stubMessagesControllerComponents(messagesApi = mockMessagesApi)
-    val mockConfig = mock[FrontendAppConfig]
+    val mockMessagesApi: MessagesApi = mock[MessagesApi]
+    val stubMcc: MessagesControllerComponents = stubMessagesControllerComponents(messagesApi = mockMessagesApi)
+    val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
     when(mockConfig.trackingConsentConfig).thenReturn(TrackingConsentConfig(
       platformHost = None, trackingConsentHost = Some("http://localhost"), trackingConsentPath = Some("/testPath.js"), gtmContainer = None
     ))
-    val mockSilhouetteComponent = mock[SilhouetteComponent]
-    val mockApplication = mock[Application]
-    val mockHttp = mock[CSRHttp]
+    val mockSilhouetteComponent: SilhouetteComponent = mock[SilhouetteComponent]
+    val mockApplication: Application = mock[Application]
 
     // Security env
-    val mockEventBus = mock[EventBus]
-    val mockCredentialsProvider = mock[CsrCredentialsProvider]
-    val mockAuthenticatorService = mock[SessionAuthenticatorService]
+    val mockEventBus: EventBus = mock[EventBus]
+    val mockCredentialsProvider: CsrCredentialsProvider = mock[CsrCredentialsProvider]
+    val mockAuthenticatorService: SessionAuthenticatorService = mock[SessionAuthenticatorService]
     when(mockAuthenticatorService.embed(any[Session], any[RequestHeader])).thenReturn(FakeRequest())
-    val sessionAuthenticator = SessionAuthenticator(
+    val sessionAuthenticator: SessionAuthenticator = SessionAuthenticator(
       LoginInfo("fakeProvider", "fakeKey"),
       ZonedDateTime.now(),
       ZonedDateTime.now().plusDays(1),
@@ -120,10 +119,10 @@ abstract class BaseControllerSpec extends BaseSpec {
 
     when(mockAuthenticatorService.retrieve(any())).thenReturn(Future.successful(Some(sessionAuthenticator)))
 
-    val mockUserCacheService = mock[UserCacheService]
-    val mockUserService = mock[UserCacheService]
+    val mockUserCacheService: UserCacheService = mock[UserCacheService]
+    val mockUserService: UserCacheService = mock[UserCacheService]
 
-    val mockSecurityEnv = mock[config.SecurityEnvironment]
+    val mockSecurityEnv: SecurityEnvironment = mock[config.SecurityEnvironment]
     when(mockSecurityEnv.eventBus).thenReturn(mockEventBus)
     when(mockSecurityEnv.credentialsProvider).thenReturn(mockCredentialsProvider)
     when(mockSecurityEnv.authenticatorService).thenReturn(mockAuthenticatorService)
@@ -131,7 +130,7 @@ abstract class BaseControllerSpec extends BaseSpec {
     when(mockSecurityEnv.userService).thenReturn(mockUserService)
 
     // MessagesApi and Messages
-    implicit val mockMessages = mock[Messages]
+    implicit val mockMessages: Messages = mock[Messages]
     when(mockMessages.messages).thenReturn(mockMessages)
     when(mockMessages.apply(anyString(), any())).thenAnswer(new Answer[String]() {
       override def answer(invocationOnMock: InvocationOnMock): String = {

@@ -18,14 +18,16 @@ package security
 
 import play.silhouette.api.Provider
 import play.silhouette.api.util.Credentials
-import config.{ CSRHttp, FrontendAppConfig }
+import config.FrontendAppConfig
 import connectors.UserManagementClient
-import connectors.UserManagementClient.{ AccountLockedOutException, InvalidCredentialsException, InvalidRoleException }
-import javax.inject.{ Inject, Singleton }
+import connectors.UserManagementClient.{AccountLockedOutException, InvalidCredentialsException, InvalidRoleException}
+
+import javax.inject.{Inject, Singleton}
 import models.CachedUser
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait AccountError
 case object InvalidRole extends AccountError
@@ -34,17 +36,17 @@ case object AccountLocked extends AccountError
 case object InvalidCredentials extends AccountError
 
 @Singleton
-class CsrCredentialsProvider @Inject() (
+class CsrCredentialsProvider @Inject()(
   config: FrontendAppConfig,
-  http: CSRHttp)(override implicit val ec: ExecutionContext)
+  http: HttpClientV2)(override implicit val ec: ExecutionContext)
   extends UserManagementClient(config, http) with Provider {
 
   def authenticate(credentials: Credentials)(implicit hc: HeaderCarrier): Future[Either[AccountError, CachedUser]] = {
     signIn(credentials.identifier, credentials.password).map {
       user => Right(user.toCached)
     }.recoverWith {
-      case e: InvalidCredentialsException => recordFailedAttempt(credentials.identifier)
-      case e: InvalidRoleException => Future.successful(Left(InvalidRole))
+      case _: InvalidCredentialsException => recordFailedAttempt(credentials.identifier)
+      case _: InvalidRoleException => Future.successful(Left(InvalidRole))
     }
   }
 
@@ -58,8 +60,8 @@ class CsrCredentialsProvider @Inject() (
         case _ => Left(InvalidCredentials)
       }
     }.recover {
-      case e: InvalidCredentialsException => Left(InvalidCredentials)
-      case e: AccountLockedOutException => Left(AccountLocked)
+      case _: InvalidCredentialsException => Left(InvalidCredentials)
+      case _: AccountLockedOutException => Left(AccountLocked)
     }
   }
 }

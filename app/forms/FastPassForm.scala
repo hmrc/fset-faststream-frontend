@@ -92,7 +92,7 @@ object FastPassForm {
       s"$formQualifier.otherInternshipYear" -> of(otherInternshipYearFormatter),
       s"$formQualifier.fastPassReceived" -> of(fastPassReceivedFormatter),
       s"$formQualifier.certificateNumber" -> of(fastPassCertificateFormatter)
-    )(Data.apply)(Data.unapply))
+    )(Data.apply)(f => Some(Tuple.fromProductTyped(f))))
   }
 
   // Only applicable for fs candidates - all other application routes have validation on the PersonalDetailsForm

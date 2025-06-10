@@ -16,29 +16,32 @@
 
 package connectors
 
-import config.{ CSRHttp, FrontendAppConfig }
+import config.FrontendAppConfig
 import connectors.exchange.candidatescores.AssessmentScoresAllExercises
-import javax.inject.{ Inject, Singleton }
 import models.UniqueIdentifier
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{ HeaderCarrier, UpstreamErrorResponse }
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AssessmentScoresClient @Inject() (config: FrontendAppConfig, http: CSRHttp)(implicit ec: ExecutionContext) {
+class AssessmentScoresClient @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) {
 
   val url = config.faststreamBackendConfig.url
   val apiBase: String = s"${url.host}${url.base}"
 
   def findReviewerAcceptedAssessmentScores(applicationId: UniqueIdentifier)(
-    implicit
-    hc: HeaderCarrier): Future[AssessmentScoresAllExercises] = {
-    http.GET[AssessmentScoresAllExercises](s"$apiBase/assessment-scores/reviewer/accepted-scores/application/$applicationId").recover {
-      case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND =>
-        throw new Exception(s"Error no assessment scores found for application id $applicationId")
-      case _ => throw new Exception(s"Error retrieving assessment scores for application id $applicationId")
-    }
+    implicit hc: HeaderCarrier): Future[AssessmentScoresAllExercises] = {
+
+    http.get(url"$apiBase/assessment-scores/reviewer/accepted-scores/application/$applicationId")
+      .execute[AssessmentScoresAllExercises]
+      .recover {
+        case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND =>
+          throw new Exception(s"Error no assessment scores found for application id $applicationId")
+        case _ => throw new Exception(s"Error retrieving assessment scores for application id $applicationId")
+      }
   }
 }

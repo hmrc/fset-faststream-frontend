@@ -28,7 +28,7 @@ class VerifyCodeForm {
     mapping(
       "email" -> nonEmptyTrimmedText("error.token.required.email", 128),
       "token" -> nonEmptyTrimmedText("error.token.required.token", 128)
-    )(VerifyCodeForm.Data.apply)(VerifyCodeForm.Data.unapply)
+    )(VerifyCodeForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 }
 

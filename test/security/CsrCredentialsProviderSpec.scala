@@ -16,18 +16,18 @@
 
 package security
 
-import java.util.UUID
-
-import play.silhouette.api.util.Credentials
-import config.{CSRHttp, FrontendAppConfig, UserManagementConfig, UserManagementUrl}
-import connectors.UserManagementClient.{InvalidRoleException, _}
+import config.{FrontendAppConfig, UserManagementConfig, UserManagementUrl}
+import connectors.UserManagementClient._
 import connectors.exchange.UserResponse
 import models.{CachedUser, UniqueIdentifier}
 import org.mockito.Mockito.when
 import org.scalatest.time.{Seconds, Span}
+import play.silhouette.api.util.Credentials
 import testkit.BaseSpec
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class CsrCredentialsProviderSpec extends BaseSpec {
@@ -113,7 +113,7 @@ class CsrCredentialsProviderSpec extends BaseSpec {
       val mockConfig = mock[FrontendAppConfig]
       val userManagementConfig = UserManagementConfig(UserManagementUrl("localhost"))
       when(mockConfig.userManagementConfig).thenReturn(userManagementConfig)
-      val mockHttp = mock[CSRHttp]
+      val mockHttp = mock[HttpClientV2]
 
       new CsrCredentialsProvider(mockConfig, mockHttp) {
         override def signIn(email: String, password: String)(implicit hc: HeaderCarrier): Future[UserResponse] = {
@@ -125,7 +125,5 @@ class CsrCredentialsProviderSpec extends BaseSpec {
         }
       }
     }
-
-
   }
 }

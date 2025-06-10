@@ -48,7 +48,7 @@ class WithdrawApplicationForm {
       "wantToWithdraw" -> nonEmptyTrimmedText("error.wantToWithdraw.required", 5),
       "reason" -> of(requiredFormatterWithMaxLengthCheck("wantToWithdraw", "reason", Some(64))),
       "otherReason" -> of(otherReasonFormatter(Some(300)))
-    )(WithdrawApplicationForm.Data.apply)(WithdrawApplicationForm.Data.unapply)
+    )(WithdrawApplicationForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 }
 

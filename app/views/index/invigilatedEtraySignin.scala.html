@@ -27,7 +27,7 @@
         <p>You'll need the candidate's email address and 7-character access code to continue.</p>
     </section>
 
-    @helper.form(action = routes.InvigilatedController.verifyToken, 'novalidate -> "novalidate") {
+    @helper.form(action = routes.InvigilatedController.verifyToken, Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
         <div class="form-group form-group-compound">
             @helper.inputText(verifyTokenForm("email"),

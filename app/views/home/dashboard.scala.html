@@ -46,7 +46,7 @@
 }
 
 @disableDashboardMayBe = @{
-    if(!submitApplicationsEnabled || cannotBeConsideredForSdip) "disabled"
+    if(!submitApplicationsEnabled || cannotBeConsideredForSdip) "disabled" else ""
 }
 
 @displayLeadInformation = @{(cannotBeConsideredForSdip, submitApplicationsEnabled) match {

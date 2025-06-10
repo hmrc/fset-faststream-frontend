@@ -17,18 +17,17 @@
 package controllers
 
 import _root_.forms.{RequestResetPasswordForm, ResetPasswordForm, SignInForm}
-import play.silhouette.api.actions.UserAwareRequest
-import play.silhouette.api.util.Credentials
 import config.{FrontendAppConfig, SecurityEnvironment}
-import connectors.UserManagementClient.{InvalidEmailException, TokenEmailPairInvalidException, TokenExpiredException}
-import connectors.{ApplicationClient, UserManagementClient}
+import connectors.UserManagementClient.{InvalidEmailException, TokenExpiredException}
+import connectors.{ApplicationClient, TokenEmailPairInvalidException, UserManagementClient}
 import helpers.NotificationTypeHelper
-
-import javax.inject.{Inject, Singleton}
 import models.CachedData
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.silhouette.api.actions.UserAwareRequest
+import play.silhouette.api.util.Credentials
 import security.{InvalidRole, SignInService, SilhouetteComponent}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -43,7 +42,7 @@ class PasswordResetController @Inject() (
   signInService: SignInService,
   formWrapper: ResetPasswordForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
-  import notificationTypeHelper._
+  import notificationTypeHelper.*
 
   def presentCode: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
