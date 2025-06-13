@@ -20,7 +20,7 @@ import sbt.*
 object AppDependencies {
 
   object Versions {
-    val bootstrapVersion  = "9.11.0"
+    val bootstrapVersion  = "9.13.0"
     val silhouetteVersion = "10.0.1"
   }
 
@@ -28,7 +28,7 @@ object AppDependencies {
 
   val compile = Seq(
     "uk.gov.hmrc"                   %% "bootstrap-frontend-play-30"               % bootstrapVersion,
-    "uk.gov.hmrc"                   %% "http-caching-client-play-30"              % "12.1.0",
+    "uk.gov.hmrc"                   %% "http-caching-client-play-30"              % "12.2.0",
     "org.playframework.silhouette"  %% "play-silhouette"                          % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-password-bcrypt"          % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-crypto-jca"               % silhouetteVersion,
