@@ -34,7 +34,7 @@ lazy val playSettings : Seq[Setting[?]] = Seq(routesImport ++= Seq("binders.Cust
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 
-ThisBuild / scalaVersion := "3.3.4"
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
 
 lazy val microservice = Project(appName, file("."))
@@ -79,5 +79,4 @@ lazy val microservice = Project(appName, file("."))
   )
   // Silhouette transitive dependencies require that the Atlassian repository be first in the resolver list
   .settings(resolvers += ("Atlassian Releases" at "https://maven.atlassian.com/public/"))
-  .settings(resolvers ++= Seq(Resolver.jcenterRepo))
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
