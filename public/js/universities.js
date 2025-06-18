@@ -16,11 +16,11 @@
 
 
 $(function() {
-    var otherLabel = "Other";
-    var otherValue = "Others";
+    const otherLabel = "Other";
+    const otherValue = "Others";
 
     // If you need to make any changes to this list note the list is also defined in Scala and also needs to be changed there
-    var universities = [
+    const universities = [
         {"label":"Abingdon and Witney College", "hiddenValue":"A14-AWC"},
         {"label":"University of Aberdeen", "hiddenValue":"A20-ABRDN"},
         {"label":"University of Abertay Dundee", "hiddenValue":"A30-ABTAY"},
@@ -431,7 +431,6 @@ $(function() {
         },
         // Triggered after a search completes, before the menu is shown.
         response: function(event, ui) {
-            console.log("response");
             if (ui.content.length === 0) {
                 setUniversityData(otherLabel, otherValue);
                 console.log("response - data set to other");
@@ -439,7 +438,11 @@ $(function() {
         },
         // Triggered when the field is blurred, if the value has changed.
         change: function (event, ui) {
-            console.log("change - ui.item.label = " + ui.item.label);
+            if (ui.item != null) {
+                console.log("change - ui.item.label = " + ui.item.label);
+            } else {
+                console.log("change - ui.item = " + ui.item);
+            }
             if (ui.item == null) {
                 setUniversityData('', '');
                 console.log("change - data cleared");
@@ -463,7 +466,6 @@ $(function() {
         },
         // Triggered after a search completes, before the menu is shown.
         response: function(event, ui) {
-            console.log("response");
             if (ui.content.length === 0) {
                 setPostgradUniversityData(otherLabel, otherValue);
                 console.log("response - data set to other");
@@ -471,11 +473,20 @@ $(function() {
         },
         // Triggered when the field is blurred, if the value has changed.
         change: function (event, ui) {
-            console.log("change - ui.item.label = " + ui.item.label);
+            if (ui.item != null) {
+                console.log("change - ui.item.label = " + ui.item.label);
+            } else {
+                console.log("change - ui.item = " + ui.item);
+            }
             if (ui.item == null) {
                 setPostgradUniversityData('', '');
                 console.log("change - data cleared");
             }
         }
     });
+
+    // Hide the error message associated with the hidden fields so only the manually
+    // generated error messages are visible for the autocomplete fields
+    $("#university_field").css("visibility", "hidden");
+    $("#postgradUniversity_university_field").css("visibility", "hidden");
 });

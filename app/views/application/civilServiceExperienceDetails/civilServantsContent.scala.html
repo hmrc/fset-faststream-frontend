@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@(schemesRequiringQualifications: Seq[String])(implicit messages: Messages)
+@import helpers.TemplateHelper.maybeDisplayError
+
+@(form: Form[forms.PersonalDetailsForm.Data], schemesRequiringQualifications: Seq[String])(implicit messages: Messages)
 <div id="civilServiceExperienceDetails_civilServantAndInternshipTypes-CivilServant-panel" class="toggle-content" aria-hidden="true">
     <h3 class="heading-medium">Current civil servants</h3>
     <div class="text">
@@ -27,6 +29,32 @@
         </ul>
         <p>Check the <a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" rel="external" target="_blank">eligibility
             requirements<span class="visuallyhidden"> for Faststream</span> (link opens new window)</a>for more information.</p>
+    </div>
+
+    <div class="panel-indent">
+        <div class="form-group">
+            @helper.input(form("civilServiceExperienceDetails.civilServantDepartment"),
+                Symbol("_label") -> "",
+                Symbol("class") -> "form-control",
+                Symbol("_showConstraints") -> false
+            ) { (id, name, value, args) =>
+                <input id="@id" name="@name" type="hidden" class="form-control" value="@value">
+            }
+        </div>
+
+        @helper.input(form("civilServiceExperienceDetails_civilServantDepartmentSelected"),
+            Symbol("id") -> "civilServiceExperienceDetails_civilServantDepartmentSelected",
+            Symbol("_label") -> "",
+            Symbol("class") -> "form-control",
+            Symbol("_showConstraints") -> false
+        ) { (id, name, value, args) =>
+            <label for="@id" class="form-label">What Department do you currently work for?</label>
+            <div id="department_field_wrapper" class="form-group @if(form("civilServiceExperienceDetails.civilServantDepartment").hasErrors) {has-an-error input-validation-error}">
+                <span class="has-error">@maybeDisplayError(form("civilServiceExperienceDetails.civilServantDepartment"))</span>
+                <input id="@{id}" name="@{name}" type="text" class="form-control" value="@value">
+            </div>
+        }
+
     </div>
 @* Removed during content sweep 2022/23 campaign
     <div class="panel-indent text">

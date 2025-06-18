@@ -24,6 +24,7 @@ import language.implicitConversions
 
 case class CivilServiceExperienceDetails(applicable: Boolean,
                                         civilServantAndInternshipTypes: Option[Seq[String]] = None,
+                                        civilServantDepartment: Option[String] = None,
                                         edipYear: Option[String] = None,
                                         sdipYear: Option[String] = None,
                                         otherInternshipName: Option[String] = None,
@@ -34,6 +35,7 @@ case class CivilServiceExperienceDetails(applicable: Boolean,
   override def toString: String = {
     s"applicable=$applicable," +
       s"civilServantAndInternshipTypes=$civilServantAndInternshipTypes," +
+      s"civilServantDepartment=$civilServantDepartment," +
       s"edipYear=$edipYear," +
       s"sdipYear=$sdipYear," +
       s"otherInternshipName=$otherInternshipName," +
@@ -54,6 +56,7 @@ object CivilServiceExperienceDetails {
   implicit def toData(optExchange: Option[CivilServiceExperienceDetails]): Option[Data] = optExchange.map(exchange => Data(
     applicable = exchange.applicable.toString,
     civilServantAndInternshipTypes = exchange.civilServantAndInternshipTypes,
+    civilServantDepartment = exchange.civilServantDepartment,
     edipYear = exchange.edipYear,
     sdipYear = exchange.sdipYear,
     otherInternshipName = exchange.otherInternshipName,
@@ -67,6 +70,7 @@ object CivilServiceExperienceDetails {
       CivilServiceExperienceDetails(
         applicable = data.applicable.toBoolean,
         civilServantAndInternshipTypes = data.civilServantAndInternshipTypes,
+        civilServantDepartment = data.civilServantDepartment,
         edipYear = data.edipYear,
         sdipYear = data.sdipYear,
         otherInternshipName = data.otherInternshipName,
