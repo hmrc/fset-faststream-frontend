@@ -110,6 +110,8 @@ error.edipYear.required = You must provide the year of the EDIP internship
 error.applicable.required = Tell us if you''re currently a civil servant or been on an internship
 error.civilServantAndInternshipTypes.required = Tell us whether you''ve been part of the Civil Service or on an internship
 
+error.civilServantDepartment.required = Tell us what department you currently work for
+
 error.edipCompleted.required = Tell us if you have completed EDIP
 
 error.edipInternshipYear.required = You must provide the year of the EDIP internship

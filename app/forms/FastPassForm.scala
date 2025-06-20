@@ -48,6 +48,9 @@ object FastPassForm {
     OtherInternshipKey -> Messages("civilServantAndInternshipType.another")
   )
 
+  val civilServantDepartment = "civilServantDepartment"
+  def civilServantDepartmentMsg(implicit messages: Messages) = Messages("error.civilServantDepartment.required")
+
   val edipInternshipYear = "edipYear"
   def edipInternshipYearMsg(implicit messages: Messages) = Messages("error.edipInternshipYear.required")
 
@@ -75,6 +78,7 @@ object FastPassForm {
 
   case class Data(applicable: String,
                   civilServantAndInternshipTypes: Option[Seq[String]] = None,
+                  civilServantDepartment: Option[String] = None,
                   edipYear: Option[String] = None,
                   sdipYear: Option[String] = None,
                   otherInternshipName: Option[String] = None,
@@ -86,6 +90,7 @@ object FastPassForm {
     Form(mapping(
       s"$formQualifier.applicable" -> nonemptyBooleanText("error.applicable.required"),
       s"$formQualifier.civilServantAndInternshipTypes" -> of(civilServantAndInternshipTypesFormatter),
+      s"$formQualifier.civilServantDepartment" -> of(civilServantDepartmentFormatter),
       s"$formQualifier.edipYear" -> of(edipInternshipYearFormatter),
       s"$formQualifier.sdipYear" -> of(sdipInternshipYearFormatter),
       s"$formQualifier.otherInternshipName" -> of(otherInternshipNameFormatter(otherInternshipNameMaxSize)),
@@ -174,6 +179,15 @@ object FastPassForm {
     def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
+  def civilServantDepartmentFormatter(implicit messages: Messages) = new Formatter[Option[String]] {
+    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      bindOptionalParam(request.isCivilServantSelected, request.isCivilServantDepartmentValid,
+        civilServantDepartmentMsg)(key, request.civilServantDepartmentParam)
+    }
+
+    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
+  }
+
   private def bindOptionalParam[T](dependencyCheck: Boolean, validityCheck: Boolean, errMsg: String)
                                   (key: String, value: => T): Either[Seq[FormError], Option[T]] =
     (dependencyCheck, validityCheck) match {
@@ -208,6 +222,13 @@ object FastPassForm {
       val isValid = civilServantAndInternshipTypesParam.diff(civilServantAndInternshipTypes.toMap.keys.toSeq).isEmpty
       filled && isValid
     }
+
+    // Civil servant
+    def isCivilServantSelected(implicit messages: Messages) = civilServantAndInternshipTypesParam.contains(CivilServantKey)
+
+    def civilServantDepartmentParam = param(civilServantDepartment).getOrElse("")
+
+    def isCivilServantDepartmentValid = civilServantDepartmentParam != ""
 
     // Sdip
     def sdipInternshipYearParam = param(sdipInternshipYear).getOrElse("")

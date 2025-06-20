@@ -74,7 +74,8 @@ class PersonalDetailsForm {
       // Relevant for edip, sdip, sdip faststream
       otherInternshipCompleted -> of(mayBeOptionalString(
         "error.otherInternshipCompleted.required", "error.edipCandidate.otherInternshipCompleted.required", 31,
-        isEdipOrSdipOrSdipFsAndCreatedOrInProgress, isEdipCandidate)),
+        isEdipOrSdipOrSdipFsAndCreatedOrInProgress, isEdipCandidate)
+      ),
       otherInternshipName -> of(otherInternshipNameFormatter(otherInternshipNameMaxSize)),
       otherInternshipYear -> of(otherInternshipYearFormatter)
     )(PersonalDetailsForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))

@@ -15,6 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
+@import views.html.helper.CSPNonce
 @(form: Form[forms.PersonalDetailsForm.Data], updateStatus: Boolean, schemesRequiringQualifications: Seq[String])(implicit request: Request[_], flash: Flash, optCachedData: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @import views.html.application.personaldetails.{ contactDetails, nameAndDateOfBirth }
@@ -58,3 +59,6 @@
         @saveAndContinueButton()
     }
 }
+
+<script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-ui-1.13.2.custom.min.js")' type="text/javascript"></script>
+<script @CSPNonce.attr src='@routes.Assets.versioned("js/civilServantDepartments.js")' type="text/javascript"></script>
