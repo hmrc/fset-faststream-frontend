@@ -22,7 +22,7 @@
 @import views.html.widgets.sdipFaststreamBanner
 
 @import config.TrackingConsentConfig
-@(page: PostOnlineTestsPage)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(page: PostOnlineTestsPage, cssDescriptions: Seq[String])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @getOrder(pos: Int) = @{
   pos match {
@@ -177,7 +177,7 @@
     @for((schemeResult, index) <- page.userDataWithSchemes.greenAndAmberSchemesForDisplay.zipWithIndex) {
         <section>
             <h3 class="bold-small">@getOrder(index + 1) preference</h3>
-            <p>@Html(Messages("scheme." + schemeResult.scheme.id.value + ".description"))</p>
+            <p>@Html(Messages("scheme." + schemeResult.scheme.id.value + ".description")) - In Progress</p>
         </section>
     }
 }
@@ -296,7 +296,7 @@
                 }
             </div>
             <h2 class="heading-large">Next steps</h2>
-            @siftProgress(page)
+            @siftProgress(page, cssDescriptions)
         </section>
         @withdrawSection(page.userDataWithSchemes.toCachedData)
         }

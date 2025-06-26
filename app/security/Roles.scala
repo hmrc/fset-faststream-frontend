@@ -205,6 +205,11 @@ object Roles {
         isPhase3TestsFailedSdipGreen(user)
   }
 
+  object Phase3TestPassedNotifiedRole extends CsrAuthorization {
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+      isPhase3TestsPassedNotified(user)
+  }
+
   object DisplayOnlineTestSectionRole extends CsrAuthorization {
     // format: OFF
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =

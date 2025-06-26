@@ -117,7 +117,8 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
               isPhase1TestFailed,
               isPhase2TestFailed,
               isPhase3TestFailed,
-              false,
+              isPhase3TestPassedNotified = false,
+              shouldDisplayPhase3TestFeedbackReport = false,
               fullName,
               testProfile,
               phase2TestProfile,
@@ -127,7 +128,7 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
             )
 
           // this is rather unwieldy but makes it much easier to match up what field is wrong in the long list of booleans
-          val actual = DashboardPage(user(status), None, None, None, FsacGuideUrl)
+          val actual = DashboardPage(user(status), phase1TestGroup = None, phase2TestGroup = None, phase3TestGroup = None, FsacGuideUrl)
 
           actual.firstStepVisibility mustBe expected.firstStepVisibility
           actual.secondStepVisibility mustBe expected.secondStepVisibility
@@ -218,7 +219,8 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
               isPhase1TestFailed,
               isPhase2TestFailed,
               isPhase3TestFailed,
-              false,
+              isPhase3TestPassedNotified = false,
+              shouldDisplayPhase3TestFeedbackReport = false,
               fullName,
               testProfile,
               phase2TestProfile,

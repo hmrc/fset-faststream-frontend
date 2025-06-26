@@ -23,7 +23,7 @@
 @import connectors.exchange.candidateevents.CandidateAllocationWithEvent
 
 @import security.RoleUtils
-@(page: models.page.PostOnlineTestsPage)(implicit request: Request[_])
+@(page: models.page.PostOnlineTestsPage, cssDescriptions: Seq[String] = Nil)(implicit request: Request[_])
 @{implicit val cachedData = page.userDataWithSchemes.toCachedData}
 
 @generateId(siftableScheme: String) = {siftSchemeQuestions@siftableScheme}
@@ -128,6 +128,17 @@
     <p><a href="@page.fsacGuideUrl" rel="external" target="_blank">
         Find out more about the assessment centre</a>
     </p>
+}
+
+@renderSchemePreferences = {
+    <details>
+        <summary>View your scheme preferences</summary>
+        <ul class="schemes-list">
+        @cssDescriptions.map { description =>
+            <li>@description</li>
+        }
+        </ul>
+    </details>
 }
 
 @renderFindMoreAboutFsbDay(a: Option[CandidateAllocationWithEvent]) = {
@@ -296,6 +307,7 @@
                         @renderEventDetails(page.fsbAllocation)
                         @renderCannotAttend
                         @renderFindMoreAboutFsbDay(page.fsbAllocation)
+                        @renderSchemePreferences
                     }
                     case PostOnlineTestsStage.ALLOCATED_TO_EVENT => {
                         <p>Confirm you can attend this final selection board</p>
@@ -313,6 +325,7 @@
 
                         @renderCannotAttend
                         @renderFindMoreAboutFsbDay(page.fsbAllocation)
+                        @renderSchemePreferences
                     }
 
                     case _ => {
@@ -326,6 +339,8 @@
                                 to arrange this.</p>
                         }
                         <p>We aim to make your results available as soon as possible.</p>
+
+                        @renderSchemePreferences
                     }
                 }
             </div>
