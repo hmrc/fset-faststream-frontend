@@ -31,9 +31,9 @@ class SelectedSchemesForm(allSchemes: Seq[Scheme], isSdipFaststream: Boolean) {
 
   private val page = SelectedSchemesPage(allSchemes)
 
-  // Sdip FS candidates are automatically given the Sdip scheme so they can have 5 in total
+  // Sdip FS candidates are automatically given the Sdip scheme so they can have one more than the max in total
   // This is why we filter out the Sdip scheme below when performing the validation checks
-  private val maxFaststreamSchemes = 4
+  private val maxFaststreamSchemes = 3
 
   def form(implicit messages: Messages) = {
     Form(

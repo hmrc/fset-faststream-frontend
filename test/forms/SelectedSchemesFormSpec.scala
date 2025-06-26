@@ -31,12 +31,11 @@ class SelectedSchemesFormSpec extends BaseFormSpec {
        form.hasGlobalErrors mustBe false
     }
 
-    "be valid when multiple schemes are selected" in {
+    "be valid when the maximum number of schemes are selected" in {
       val form = selectedSchemesForm().bind(Map(
         "scheme_0" -> "Finance",
         "scheme_1" -> "GovernmentEconomicsService",
         "scheme_2" -> "Commercial",
-        "scheme_3" -> "Digital",
         "orderAgreed" -> "true",
         "eligible" -> "true"))
       form.hasErrors mustBe false
@@ -96,7 +95,6 @@ class SelectedSchemesFormSpec extends BaseFormSpec {
         "scheme_1" -> "GovernmentEconomicsService",
         "scheme_2" -> "Commercial",
         "scheme_3" -> "Digital",
-        "scheme_4" -> "GovernmentDiplomaticService",
         "orderAgreed" -> "true",
         "eligible" -> "true"))
       form.hasErrors mustBe true
@@ -119,7 +117,6 @@ class SelectedSchemesFormSpec extends BaseFormSpec {
         "scheme_0" -> "Finance",
         "scheme_1" -> "GovernmentEconomicsService",
         "scheme_2" -> "Commercial",
-        "scheme_3" -> "Digital",
         "scheme_4" -> "Sdip",
         "orderAgreed" -> "true",
         "eligible" -> "true"))
@@ -133,7 +130,6 @@ class SelectedSchemesFormSpec extends BaseFormSpec {
         "scheme_1" -> "GovernmentEconomicsService",
         "scheme_2" -> "Commercial",
         "scheme_3" -> "Digital",
-        "scheme_4" -> "GovernmentDiplomaticService",
         "scheme_5" -> "Sdip",
         "orderAgreed" -> "true",
         "eligible" -> "true"))

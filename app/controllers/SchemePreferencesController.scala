@@ -22,14 +22,13 @@ import connectors.exchange.referencedata.{Scheme, SchemeId}
 import connectors.{ReferenceDataClient, SchemeClient}
 import forms.SelectedSchemesForm
 import helpers.NotificationTypeHelper
-
-import javax.inject.{Inject, Singleton}
 import models.ApplicationRoute
 import models.page.SelectedSchemesPage
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.Roles.SchemesRole
 import security.SilhouetteComponent
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
