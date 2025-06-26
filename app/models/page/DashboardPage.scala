@@ -41,6 +41,7 @@ case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
                          isPhase1TestFailed: Boolean,
                          isPhase2TestFailed: Boolean,
                          isPhase3TestFailed: Boolean,
+                         isPhase3TestPassedNotified: Boolean,
                          shouldDisplayPhase3TestFeedbackReport: Boolean,
                          fullName: String,
                          phase1TestsPage: Option[Phase1TestsPage2],
@@ -60,7 +61,8 @@ object DashboardPage {
             phase1TestGroup: Option[Phase1TestsPage2],
             phase2TestGroup: Option[Phase2TestsPage],
             phase3TestGroup: Option[Phase3TestsPage],
-            fsacGuideUrl: String)
+            fsacGuideUrl: String
+           )
            (implicit request: RequestHeader, messages: Messages): DashboardPage = {
 
     val (firstStepVisibility, secondStepVisibility, thirdStepVisibility,
@@ -85,6 +87,7 @@ object DashboardPage {
       isPhase1TestFailed(user),
       isPhase2TestFailed(user),
       isPhase3TestFailed(user),
+      isPhase3TestPassedNotified(user),
       shouldDisplayPhase3TestFeedbackReport(user),
       user.user.firstName + " " + user.user.lastName,
       phase1TestGroup,
@@ -192,6 +195,9 @@ object DashboardPage {
 
   private def isPhase3TestFailed(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
     Phase3TestFailedRole.isAuthorized(user)
+
+  private def isPhase3TestPassedNotified(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+    Phase3TestPassedNotifiedRole.isAuthorized(user)
 
   private def shouldDisplayPhase3TestFeedbackReport(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
     Phase3TestDisplayFeedbackRole.isAuthorized(user)

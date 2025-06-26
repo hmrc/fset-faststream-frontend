@@ -62,6 +62,25 @@ class HomeController @Inject() (
   private lazy val maxAnalysisExerciseFileSizeInBytes = 4096 * 1024
   private lazy val minAnalysisExerciseFileSizeInBytes = 1024
 
+  // Protected so the method can be tested
+  protected[controllers] def fetchCurrentSchemeStatusDescriptions(applicationId: UniqueIdentifier)(
+    implicit hc: HeaderCarrier): Future[Seq[String]] = {
+    for {
+      css <- applicationClient.getCurrentSchemeStatus(applicationId)
+    } yield {
+      css.map { scheme =>
+        val result = scheme.result match {
+          case "Green" | "Amber" => "In Progress"
+          case "Withdrawn" => "Withdrawn"
+          case "Red" => "Unsuccessful"
+        }
+        scheme.failedAt.map { failedAt =>
+          s"${scheme.schemeId.value} - $result (unsuccessful at $failedAt)"
+        }.getOrElse(s"${scheme.schemeId.value} - $result")
+      }
+    }
+  }
+
   def present(implicit displaySdipEligibilityInfo: Boolean = false): Action[AnyContent] = CSRSecureAction(ActiveUserRole) {
     implicit request =>
       implicit cachedData =>
@@ -136,6 +155,7 @@ class HomeController @Inject() (
       phase1TestsWithNames <- getPhase1DataIfCandidateIsNotFastPass
       phase2TestsWithNames <- getPhase2Test
       phase3Tests <- getPhase3Test
+      css <- fetchCurrentSchemeStatusDescriptions(application.applicationId)
     } yield {
       val phase1DataOpt = phase1TestsWithNames.map(Phase1TestsPage(_))
       val phase2DataOpt = phase2TestsWithNames.map(Phase2TestsPage(_, adjustments = None))
@@ -152,7 +172,7 @@ class HomeController @Inject() (
         phase3DataOpt,
         config.fsacGuideUrl
       )
-      Ok(views.html.home.postOnlineTestsDashboard(page))
+      Ok(views.html.home.postOnlineTestsDashboard(page, css))
     }
   }
 
@@ -212,6 +232,7 @@ class HomeController @Inject() (
       phase2TestsWithNames <- getPhase2Test
       phase3Tests <- getPhase3Test
       updatedData <- secEnv.userService.refreshCachedUser(cachedData.user.userID)(hc, request)
+      cssDescriptions <- fetchCurrentSchemeStatusDescriptions(application.applicationId)
     } yield {
       val dashboardPage = DashboardPage(
         updatedData,
@@ -223,7 +244,8 @@ class HomeController @Inject() (
       Ok(
         views.html.home.dashboard(
           updatedData, dashboardPage, assistanceDetailsOpt,
-          adjustmentsOpt, submitApplicationsEnabled = true, displaySdipEligibilityInfo
+          adjustmentsOpt, submitApplicationsEnabled = true,
+          displaySdipEligibilityInfo, cssDescriptions
         )
       )
     }
@@ -240,9 +262,17 @@ class HomeController @Inject() (
       val isDashboardEnabled = canApplicationBeSubmitted(application.overriddenSubmissionDeadline)(application.applicationRoute) ||
         applicationSubmitted
       val dashboardPage = DashboardPage(cachedData, phase1TestGroup = None, phase2TestGroup = None, phase3TestGroup = None, config.fsacGuideUrl)
-      Future.successful(Ok(views.html.home.dashboard(cachedData, dashboardPage,
-        submitApplicationsEnabled = isDashboardEnabled,
-        displaySdipEligibilityInfo = displaySdipEligibilityInfo)))
+      for {
+        cssDescriptions <- fetchCurrentSchemeStatusDescriptions(application.applicationId)
+      } yield {
+        Ok(views.html.home.dashboard(
+          cachedData,
+          dashboardPage,
+          submitApplicationsEnabled = isDashboardEnabled,
+          displaySdipEligibilityInfo = displaySdipEligibilityInfo,
+          cssDescriptions
+        ))
+      }
   }
 
   private def dashboardWithoutApplication(implicit cachedData: CachedData,
@@ -252,7 +282,9 @@ class HomeController @Inject() (
     Future.successful(
       Ok(views.html.home.dashboard(cachedData, dashboardPage,
         submitApplicationsEnabled = canApplicationBeSubmitted(None),
-        displaySdipEligibilityInfo = displaySdipEligibilityInfo))
+        displaySdipEligibilityInfo = displaySdipEligibilityInfo,
+        cssDescriptions = Nil
+      ))
     )
   }
 

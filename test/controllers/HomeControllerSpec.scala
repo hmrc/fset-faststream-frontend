@@ -459,6 +459,10 @@ class HomeControllerSpec extends BaseControllerSpec {
         .applicationId)
       )(any[HeaderCarrier])).thenReturn(Future.failed(new OnlineTestNotFound))
 
+      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(fastPassRejectedInvitedToPhase1Application.application
+        .applicationId))(any[HeaderCarrier]))
+        .thenReturnAsync(List(SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Green)))
+
       val result = controller(fastPassRejectedInvitedToPhase1Application, commonApplicationRouteState).present()(fakeRequest)
 
       status(result) mustBe OK
@@ -481,6 +485,9 @@ class HomeControllerSpec extends BaseControllerSpec {
 
       when(mockApplicationClient.getAssistanceDetails(eqTo(userId), eqTo(appId))(any[HeaderCarrier]))
         .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
+
+      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(appId))(any[HeaderCarrier]))
+        .thenReturnAsync(List(SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Green)))
 
       val result = controller(fastPassRejectedPhase1StartedApplication, commonApplicationRouteState).present()(fakeRequest)
 
@@ -618,6 +625,31 @@ class HomeControllerSpec extends BaseControllerSpec {
 
       status(result) mustBe SEE_OTHER
       flash(result).get("danger") mustBe Some("assessmentCentre.analysisExercise.upload.error")
+    }
+  }
+
+  "fetchCurrentSchemeStatusDescriptions" should {
+    "return the expected scheme status descriptions" in new TestFixture {
+      val applicationId: UniqueIdentifier = randomUUID
+      when(mockApplicationClient.getCurrentSchemeStatus(eqTo(applicationId))(any[HeaderCarrier]))
+        .thenReturnAsync(
+          List(
+            SchemeEvaluationResultWithFailureDetails(SchemeId("Commercial"), SchemeStatus.Green),
+            SchemeEvaluationResultWithFailureDetails(SchemeId("CyberSecurity"), SchemeStatus.Amber),
+            SchemeEvaluationResultWithFailureDetails(SchemeId("Digital"), SchemeStatus.Red, Some("online tests")),
+            SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Withdrawn)
+          )
+        )
+
+      val expected: Seq[String] = List(
+        "Commercial - In Progress",
+        "CyberSecurity - In Progress",
+        "Digital - Unsuccessful (unsuccessful at online tests)",
+        "DiplomaticAndDevelopment - Withdrawn"
+      )
+
+      val actual = controller().fetchCurrentSchemeStatusDescriptions(applicationId)(HeaderCarrier()).futureValue
+      actual must contain theSameElementsAs expected
     }
   }
 
