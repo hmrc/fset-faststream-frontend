@@ -74,11 +74,13 @@
 @renderSchemePreferences = {
     <details>
         <summary>View your scheme preferences</summary>
-        <ul class="schemes-list">
-        @cssDescriptions.map { description =>
-            <li>@description</li>
-        }
-        </ul>
+        <div class="panel-indent">
+            <ul class="schemes-list">
+            @cssDescriptions.map { description =>
+                <li>@description</li>
+            }
+            </ul>
+        </div>
     </details>
 }
 
