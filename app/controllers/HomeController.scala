@@ -64,7 +64,7 @@ class HomeController @Inject() (
 
   // Protected so the method can be tested
   protected[controllers] def fetchCurrentSchemeStatusDescriptions(applicationId: UniqueIdentifier)(
-    implicit hc: HeaderCarrier): Future[Seq[String]] = {
+    implicit hc: HeaderCarrier): Future[Seq[SchemeEvaluationResultWithFailureDetails]] = {
     for {
       css <- applicationClient.getCurrentSchemeStatus(applicationId)
     } yield {
@@ -74,9 +74,7 @@ class HomeController @Inject() (
           case "Withdrawn" => "Withdrawn"
           case "Red" => "Unsuccessful"
         }
-        scheme.failedAt.map { failedAt =>
-          s"${scheme.schemeId.value} - $result (unsuccessful at $failedAt)"
-        }.getOrElse(s"${scheme.schemeId.value} - $result")
+        SchemeEvaluationResultWithFailureDetails(scheme.schemeId, result, scheme.failedAt)
       }
     }
   }

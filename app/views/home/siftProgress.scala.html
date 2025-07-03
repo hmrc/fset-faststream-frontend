@@ -21,9 +21,10 @@
 @import security.RoleUtils._
 @import security.ProgressStatusRoleUtils._
 @import connectors.exchange.candidateevents.CandidateAllocationWithEvent
+@import connectors.exchange.SchemeEvaluationResultWithFailureDetails
 
 @import security.RoleUtils
-@(page: models.page.PostOnlineTestsPage, cssDescriptions: Seq[String] = Nil)(implicit request: Request[_])
+@(page: models.page.PostOnlineTestsPage, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails] = Nil)(implicit request: Request[_], messages: Messages)
 @{implicit val cachedData = page.userDataWithSchemes.toCachedData}
 
 @generateId(siftableScheme: String) = {siftSchemeQuestions@siftableScheme}
@@ -128,19 +129,6 @@
     <p><a href="@page.fsacGuideUrl" rel="external" target="_blank">
         Find out more about the assessment centre</a>
     </p>
-}
-
-@renderSchemePreferences = {
-    <details>
-        <summary>View your scheme preferences</summary>
-        <div class="panel-indent">
-            <ul class="schemes-list">
-            @cssDescriptions.map { description =>
-                <li>@description</li>
-            }
-            </ul>
-        </div>
-    </details>
 }
 
 @renderFindMoreAboutFsbDay(a: Option[CandidateAllocationWithEvent]) = {
@@ -309,7 +297,7 @@
                         @renderEventDetails(page.fsbAllocation)
                         @renderCannotAttend
                         @renderFindMoreAboutFsbDay(page.fsbAllocation)
-                        @renderSchemePreferences
+                        @(renderSchemePreferences(cssDescriptions))
                     }
                     case PostOnlineTestsStage.ALLOCATED_TO_EVENT => {
                         <p>Confirm you can attend this final selection board</p>
@@ -327,7 +315,7 @@
 
                         @renderCannotAttend
                         @renderFindMoreAboutFsbDay(page.fsbAllocation)
-                        @renderSchemePreferences
+                        @renderSchemePreferences(cssDescriptions)
                     }
 
                     case _ => {
@@ -342,7 +330,7 @@
                         }
                         <p>We aim to make your results available as soon as possible.</p>
 
-                        @renderSchemePreferences
+                        @renderSchemePreferences(cssDescriptions)
                     }
                 }
             </div>
