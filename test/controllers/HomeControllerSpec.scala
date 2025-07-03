@@ -636,16 +636,16 @@ class HomeControllerSpec extends BaseControllerSpec {
           List(
             SchemeEvaluationResultWithFailureDetails(SchemeId("Commercial"), SchemeStatus.Green),
             SchemeEvaluationResultWithFailureDetails(SchemeId("CyberSecurity"), SchemeStatus.Amber),
-            SchemeEvaluationResultWithFailureDetails(SchemeId("Digital"), SchemeStatus.Red, Some("online tests")),
+            SchemeEvaluationResultWithFailureDetails(SchemeId("Digital"), SchemeStatus.Red, failedAt = Some("online tests")),
             SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), SchemeStatus.Withdrawn)
           )
         )
 
-      val expected: Seq[String] = List(
-        "Commercial - In Progress",
-        "CyberSecurity - In Progress",
-        "Digital - Unsuccessful (unsuccessful at online tests)",
-        "DiplomaticAndDevelopment - Withdrawn"
+      val expected: Seq[SchemeEvaluationResultWithFailureDetails] = List(
+        SchemeEvaluationResultWithFailureDetails(SchemeId("Commercial"), "In Progress"),
+        SchemeEvaluationResultWithFailureDetails(SchemeId("CyberSecurity"), "In Progress"),
+        SchemeEvaluationResultWithFailureDetails(SchemeId("Digital"), "Unsuccessful", failedAt = Some("online tests")),
+        SchemeEvaluationResultWithFailureDetails(SchemeId("DiplomaticAndDevelopment"), "Withdrawn")
       )
 
       val actual = controller().fetchCurrentSchemeStatusDescriptions(applicationId)(HeaderCarrier()).futureValue

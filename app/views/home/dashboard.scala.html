@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import connectors.exchange.SchemeEvaluationResultWithFailureDetails
 @import config.TrackingConsentConfig
 @import models.ConsiderMeForSdipHelper._
 @import models.page.DashboardPage.Flags._
@@ -28,7 +29,7 @@
         assistanceDetails: Option[connectors.exchange.AssistanceDetails] = None,
         adjustments: Option[Adjustments] = None,
         submitApplicationsEnabled: Boolean,
-        displaySdipEligibilityInfo: Boolean, cssDescriptions: Seq[String])(implicit request: Request[_], flash: Flash,
+        displaySdipEligibilityInfo: Boolean, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails])(implicit request: Request[_], flash: Flash,
         user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @renderProgressElement(showLink: Boolean, checked: Boolean, id: String)(link: Call)(body: Html) = {
@@ -71,19 +72,6 @@
     @renderProgressElement(showLink = SubmitApplicationRole.isAuthorized(usr), checked = AbleToWithdrawApplicationRole.isAuthorized(usr), "submitStep")(routes.SubmitApplicationController.presentSubmit) { Submit }
 }
 
-@renderSchemePreferences = {
-    <details>
-        <summary>View your scheme preferences</summary>
-        <div class="panel-indent">
-            <ul class="schemes-list">
-            @cssDescriptions.map { description =>
-                <li>@description</li>
-            }
-            </ul>
-        </div>
-    </details>
-}
-
 @main_template(title = "Home") {
 
     @sdipFaststreamBanner(usr)
@@ -118,7 +106,7 @@
                             Withdraw from individual schemes</a></p>
                     }
 
-                    @renderSchemePreferences
+                    @renderSchemePreferences(cssDescriptions)
                 }
 
                 @if(dashboardPage.isApplicationWithdrawn) {
@@ -143,7 +131,7 @@
                     <p>(Should take 5 to 10 minutes to fill in)</p>
                 }
                 @if(dashboardPage.isPhase3TestPassedNotified) {
-                    @renderSchemePreferences
+                    @renderSchemePreferences(cssDescriptions)
                 }
             </li>
             <li class="step text second-step @activateByStep(dashboardPage.secondStepVisibility)">
