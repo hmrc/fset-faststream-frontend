@@ -95,6 +95,8 @@ class WithdrawController @Inject() (
         ).recover {
           case _: SiftExpired =>
             Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.error", data.scheme))
+          case _: CannotWithdraw =>
+            Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.failed"))
         })
       )
   }
