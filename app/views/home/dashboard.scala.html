@@ -105,7 +105,6 @@
                         <p><a class="" id="withdraw-schemes" a href="@routes.WithdrawController.presentWithdrawScheme">
                             Withdraw from individual schemes</a></p>
                     }
-
                     @renderSchemePreferences(cssDescriptions)
                 }
 
@@ -130,6 +129,7 @@
                         Start your application</a>
                     <p>(Should take 5 to 10 minutes to fill in)</p>
                 }
+
                 @if(dashboardPage.isPhase3TestPassedNotified) {
                     @renderSchemePreferences(cssDescriptions)
                 }
