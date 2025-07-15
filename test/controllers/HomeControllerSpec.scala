@@ -111,7 +111,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       content must not include phase3ResultsReportLink
     }
 
-    "display the P1 error message when candidate has been invited to more than 3 P1 tests" in new TestFixture {
+    "display the P1 error message when candidate has been invited to more than 2 P1 tests" in new TestFixture {
       val candidateState = CachedDataWithApp(ActiveCandidate.user,
         CachedDataExample.Phase1TestsPassedApplication.copy(userId = ActiveCandidate.user.userID))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(List(
@@ -129,7 +129,7 @@ class HomeControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
 
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3, phase1Test3))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test2))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -157,7 +157,7 @@ class HomeControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(AssistanceDetailsExamples.DisabilityGisAndAdjustments2))
 
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test3, phase1Test3))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test2))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -184,7 +184,7 @@ class HomeControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
 
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -214,7 +214,7 @@ class HomeControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
 
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3), List(phase2Test1))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2), List(phase2Test1))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -244,7 +244,7 @@ class HomeControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
 
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3), List(phase2Test1))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2), List(phase2Test1))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -277,7 +277,7 @@ class HomeControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(AssistanceDetailsExamples.OnlyDisabilityNoGisNoAdjustments))
 
       mockPostOnlineTestsDashboardCalls()
-      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2, phase1Test3), List(phase2Test1))
+      mockPhaseOneTwoThreeData(List(phase1Test1, phase1Test2), List(phase2Test1))
 
       val result = controller(candidateState, commonApplicationRouteState).present()(fakeRequest)
 
@@ -732,20 +732,15 @@ class HomeControllerSpec extends BaseControllerSpec {
       checkPhase3ResultsTitleAndLinks(content)
     }
 
-    val phase1Test1InventoryId = "45c7aee3-4d23-45c7-a09d-276df7db3e4c"
+    val phase1Test1InventoryId = "940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7"
     val phase1Test1 = PsiTest(inventoryId = phase1Test1InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
       invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test1Url.com"))))
 
-    val phase1Test2InventoryId = "940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7"
+    val phase1Test2InventoryId = "60b423e5-75d6-4d31-b02c-97b8686e22e6"
     val phase1Test2 = PsiTest(inventoryId = phase1Test2InventoryId, usedForResults = true,
       testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
       invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test2Url.com"))))
-
-    val phase1Test3InventoryId = "59a9a3a4-aa1d-4439-a5a0-68602e8e08e0"
-    val phase1Test3 = PsiTest(inventoryId = phase1Test3InventoryId, usedForResults = true,
-      testUrl = "http://testurl.com", orderId = UniqueIdentifier(UUID.randomUUID()),
-      invitationDate = OffsetDateTime.now, testResult = Some(PsiTestResult(testReportUrl = Some("http://phase1Test3Url.com"))))
 
     val phase2Test1InventoryId = "60b423e5-75d6-4d31-b02c-97b8686e22e6"
     val phase2Test1 = PsiTest(inventoryId = phase2Test1InventoryId, usedForResults = true,
@@ -761,7 +756,7 @@ class HomeControllerSpec extends BaseControllerSpec {
     }
 
     def checkPhase1ResultsLinks(content: String) = {
-      content must include("<div>tests.inventoryid.name.45c7aee3-4d23-45c7-a09d-276df7db3e4c</div>")
+      content must include("<div>tests.inventoryid.name.940bc1cf-3e8f-44c0-b74d-ffce1ac5b7d7</div>")
       content must include(phase1Test1ResultsReportLink)
     }
 
