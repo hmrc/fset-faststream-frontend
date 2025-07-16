@@ -98,7 +98,7 @@
                         }
                     </ul>
                 }
-                @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn) {
+                @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn || dashboardPage.isPhase3TestPassedNotified) {
                     <p><a class="" id="view-application" href="@routes.PreviewApplicationController.present">View your submitted application</a></p>
                     <p><a class="" id="edit-personal-details" href="@routes.PersonalDetailsController.present">Edit your personal details</a></p>
                     @if(!dashboardPage.isTestGroupExpired && !dashboardPage.isPhase1TestFailed) {
@@ -128,10 +128,6 @@
                     <a class="button" id="start-application" href="@routes.HomeController.create">
                         Start your application</a>
                     <p>(Should take 5 to 10 minutes to fill in)</p>
-                }
-
-                @if(dashboardPage.isPhase3TestPassedNotified) {
-                    @renderSchemePreferences(cssDescriptions)
                 }
             </li>
             <li class="step text second-step @activateByStep(dashboardPage.secondStepVisibility)">

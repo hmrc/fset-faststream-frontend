@@ -24,7 +24,7 @@
             <ul class="schemes-list">
             @cssDescriptions.map { css =>
                 @css.failedAt.map { failedAt =>
-                    <li>@{Html(Messages("scheme." + css.schemeId.value + ".description"))} - @css.result (unsuccessful at @failedAt)</li>
+                    <li>@{Html(Messages("scheme." + css.schemeId.value + ".description"))} - @css.result (at @failedAt)</li>
                 }.getOrElse {
                     <li>@{Html(Messages("scheme." + css.schemeId.value + ".description"))} - @css.result</li>
                 }
