@@ -59,37 +59,39 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
   // format: OFF
   // scalastyle:off line.size.limit
   val Applications = Table(
-    ("applicationStatus",                      "step1",          "step2",         "step3",                    "step4",                  "isApplicationSubmittedAndNotWithdrawn",  "isApplicationWithdrawn",  "isApplicationInProgress", "isUserWithNoApplication",  "isPhase1TestsPassed", "isPhase2TestsPassed", "isTestGroupExpired", "isPhase2TestGroupExpired", "isPhase3TestGroupExpired",   "isPhase1TestFailed", "isPhase2TestFailed",  "isPhase3TestFailed",  "fullName",   "testProfile", "phase2TestProfile", "phase3TestProfile",  "assessmentInProgressStatus"),
-    (REGISTERED,                               ProgressInactive, ProgressInactive, ProgressInactive,          ProgressInactive,         false,                                    false,                     false,                     true,                       false,                  false,                false,                 false,                     false,                        false,                false,                 false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (CREATED,                                  ProgressActive,   ProgressInactive, ProgressInactive,          ProgressInactive,         false,                                    false,                     false,                     true,                       false,                  false,                false,                 false,                     false,                        false,                false,                 false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (IN_PROGRESS,                              ProgressActive,   ProgressInactive, ProgressInactive,          ProgressInactive,         false,                                    false,                     true,                      false,                      false,                  false,                false,                 false,                     false,                        false,                false,                 false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (SUBMITTED,                                ProgressActive,   ProgressInactive, ProgressInactive,          ProgressInactive,         true,                                     false,                     false,                     false,                      false,                  false,                false,                 false,                     false,                        false,                false,                 false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (WITHDRAWN,                                ProgressActive,   ProgressActive,   ProgressActive,            ProgressInactiveDisabled, false,                                    true,                      false,                     false,                      true,                   true,                 false,                 false,                     false,                        false,                false,                 false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (PHASE1_TESTS,                             ProgressActive,   ProgressActive,   ProgressInactive,          ProgressInactive,         true,                                     false,                     false,                     false,                      true,                   false,                false,                 false,                     false,                        false,                false,                 false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (PHASE1_TESTS_FAILED,                      ProgressActive,   ProgressInactive, ProgressInactiveDisabled,  ProgressInactiveDisabled, true,                                     false,                     false,                     false,                      false,                  false,                false,                 false,                     false,                        true,                 false,                 false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (PHASE2_TESTS_FAILED,                      ProgressActive,   ProgressInactive, ProgressInactiveDisabled,  ProgressInactiveDisabled, true,                                     false,                     false,                     false,                      false,                  false,                false,                 false,                     false,                        false,                true,                  false,                 "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN),
-    (PHASE3_TESTS_FAILED,                      ProgressActive,   ProgressInactive, ProgressInactiveDisabled,  ProgressInactiveDisabled, true,                                     false,                     false,                     false,                      false,                  false,                false,                 false,                     false,                        false,                false,                 true,                  "John Biggs",  None,         None,                 None,                 ASSESSMENT_STATUS_UNKNOWN)
+    ("applicationStatus",                      "step1Visibility", "step2Visibility",        "step3Visibility",        "step4Visibility",          "isApplicationSubmittedAndNotWithdrawn",  "isApplicationSubmittedCheckFailed", "isApplicationWithdrawn",  "isApplicationInProgress", "isUserWithNoApplication",  "isPhase1TestsPassed",   "isPhase2TestsPassed",  "isTestGroupExpired", "isPhase1TestFailed", "isPhase2TestFailed",  "isPhase3TestFailed",  "fullName",   "testProfile", "phase2TestProfile", "phase3TestProfile",  "assessmentInProgressStatus"),
+    (REGISTERED,                               ProgressInactive,  ProgressInactive,         ProgressInactive,         ProgressInactive,           false,                                    false,                                false,                     false,                     true,                       false,                  false,                  false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (CREATED,                                  ProgressActive,    ProgressInactive,         ProgressInactive,         ProgressInactive,           false,                                    false,                                false,                     false,                     true,                       false,                  false,                  false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (IN_PROGRESS,                              ProgressActive,    ProgressInactive,         ProgressInactive,         ProgressInactive,           false,                                    false,                                false,                     true,                      false,                      false,                  false,                  false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (SUBMITTED,                                ProgressActive,    ProgressInactive,         ProgressInactive,         ProgressInactive,           true,                                     false,                                false,                     false,                     false,                      false,                  false,                  false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (SUBMITTED_CHECK_FAILED,                   ProgressActive,    ProgressInactiveDisabled, ProgressInactiveDisabled, ProgressInactiveDisabled,   true,                                     true,                                 false,                     false,                     false,                      false,                  false,                  false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (SUBMITTED_CHECK_PASSED,                   ProgressActive,    ProgressInactive,         ProgressInactive,         ProgressInactive,           true,                                     false,                                false,                     false,                     false,                      false,                  false,                  false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (WITHDRAWN,                                ProgressActive,    ProgressActive,           ProgressActive,           ProgressInactiveDisabled,   false,                                    false,                                true,                      false,                     false,                      true,                   true,                   false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (PHASE1_TESTS,                             ProgressActive,    ProgressActive,           ProgressInactive,         ProgressInactive,           true,                                     false,                                false,                     false,                     false,                      true,                   false,                  false,                false,                false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+    (PHASE1_TESTS_FAILED,                      ProgressActive,    ProgressInactive,         ProgressInactiveDisabled, ProgressInactiveDisabled,   true,                                     false,                                false,                     false,                     false,                      false,                  false,                  false,                true,                 false,                 false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN)
+// We no longer support PHASE2 OR PHASE3
+//    (PHASE2_TESTS_FAILED,                      ProgressActive,    ProgressInactive,   ProgressInactiveDisabled, ProgressInactiveDisabled,           true,                                     false,                                false,                     false,                     false,                      false,                  false,                  false,                false,                true,                  false,                 "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN),
+//    (PHASE3_TESTS_FAILED,                      ProgressActive,    ProgressInactive,   ProgressInactiveDisabled, ProgressInactiveDisabled,           true,                                     false,                                false,                     false,                     false,                      false,                  false,                  false,                false,                false,                 true,                  "John Biggs",  None,         None,                None,                 ASSESSMENT_STATUS_UNKNOWN)
   )
 
   // scalastyle:on line.size.limit
   // format: ON
-  "The Steps visibility" should {
+  "The visibility of the 4 dashboard steps" should {
     "be correctly determined by applicationStatus" in {
       forAll(Applications) {
         (status: ApplicationStatus.Value,
-         step1: ProgressStepVisibility,
-         step2: ProgressStepVisibility,
-         step3: ProgressStepVisibility,
-         step4: ProgressStepVisibility,
+         step1Visibility: ProgressStepVisibility,
+         step2Visibility: ProgressStepVisibility,
+         step3Visibility: ProgressStepVisibility,
+         step4visibility: ProgressStepVisibility,
          isApplicationSubmittedAndNotWithdrawn: Boolean,
+         isApplicationSubmittedCheckFailed: Boolean,
          isApplicationWithdrawn: Boolean,
          isApplicationInProgress: Boolean,
          isUserWithNoApplication: Boolean,
          isPhase1TestsPassed: Boolean,
          isPhase2TestsPassed: Boolean,
          isTestGroupExpired: Boolean,
-         isPhase2TestGroupExpired: Boolean,
-         isPhase3TestGroupExpired: Boolean,
          isPhase1TestFailed: Boolean,
          isPhase2TestFailed: Boolean,
          isPhase3TestFailed: Boolean,
@@ -100,11 +102,12 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
          assessmentInProgressStatus: AssessmentStageStatus
         ) => {
           val expected = DashboardPage(
-              step1,
-              step2,
-              step3,
-              step4,
+              step1Visibility,
+              step2Visibility,
+              step3Visibility,
+              step4visibility,
               isApplicationSubmittedAndNotWithdrawn,
+              isApplicationSubmittedCheckFailed,
               isApplicationWithdrawn,
               isFastPassApproved = false,
               isApplicationInProgress,
@@ -112,8 +115,6 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
               isPhase1TestsPassed,
               isPhase2TestsPassed,
               isTestGroupExpired,
-              isPhase2TestGroupExpired,
-              isPhase3TestGroupExpired,
               isPhase1TestFailed,
               isPhase2TestFailed,
               isPhase3TestFailed,
@@ -135,14 +136,13 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
           actual.thirdStepVisibility mustBe expected.thirdStepVisibility
           actual.fourthStepVisibility mustBe expected.fourthStepVisibility
           actual.isApplicationSubmittedAndNotWithdrawn mustBe expected.isApplicationSubmittedAndNotWithdrawn
+          actual.isApplicationSubmittedCheckFailed mustBe expected.isApplicationSubmittedCheckFailed
           actual.isApplicationWithdrawn mustBe expected.isApplicationWithdrawn
           actual.isApplicationInProgress mustBe expected.isApplicationInProgress
           actual.isUserWithNoApplication mustBe expected.isUserWithNoApplication
           actual.isPhase1TestsPassed mustBe expected.isPhase1TestsPassed
           actual.isPhase2TestsPassed mustBe expected.isPhase2TestsPassed
           actual.isTestGroupExpired mustBe expected.isTestGroupExpired
-          actual.isPhase2TestGroupExpired mustBe expected.isPhase2TestGroupExpired
-          actual.isPhase3TestGroupExpired mustBe expected.isPhase3TestGroupExpired
           actual.isPhase1TestFailed mustBe expected.isPhase1TestFailed
           actual.isPhase2TestFailed mustBe expected.isPhase2TestFailed
           actual.isPhase3TestFailed mustBe expected.isPhase3TestFailed
@@ -207,15 +207,14 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
               step3,
               step4,
               isApplicationSubmittedAndNotWithdrawn,
+              isApplicationSubmittedCheckFailed = false,
               isApplicationWithdrawn,
-              false,
+              isFastPassApproved = false,
               isApplicationInProgress,
               isUserWithNoApplication,
               isPhase1TestsPassed,
               isPhase2TestsPassed,
               isTestGroupExpired,
-              isPhase2TestGroupExpired,
-              isPhase3TestGroupExpired,
               isPhase1TestFailed,
               isPhase2TestFailed,
               isPhase3TestFailed,
@@ -255,12 +254,14 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
 
 object DashboardPageSpec {
 
+  // IMPORTANT:: this must be kept in sync with the applicationStatuses being tested in the Applications table
+  // above as this code determines the actual progress statuses returned
   def user(status: ApplicationStatus.Value) = {
     import models.ApplicationData.ApplicationStatus._
     status match {
      case REGISTERED => RolesSpec.registeredUser(status)
      case CREATED | IN_PROGRESS => RolesSpec.activeUser(status, InitialProgress)
-     case SUBMITTED => RolesSpec.activeUser(status, SubmittedProgress)
+     case SUBMITTED | SUBMITTED_CHECK_FAILED | SUBMITTED_CHECK_PASSED => RolesSpec.activeUser(status, SubmittedProgress)
      case WITHDRAWN => RolesSpec.activeUser(status)
      case PHASE1_TESTS => RolesSpec.activeUser(status, Phase1TestsPassed)
      case PHASE1_TESTS_FAILED => RolesSpec.activeUser(status, Phase1TestsFailed)

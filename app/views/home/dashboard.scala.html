@@ -98,6 +98,7 @@
                         }
                     </ul>
                 }
+
                 @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn || dashboardPage.isPhase3TestPassedNotified) {
                     <p><a class="" id="view-application" href="@routes.PreviewApplicationController.present">View your submitted application</a></p>
                     <p><a class="" id="edit-personal-details" href="@routes.PersonalDetailsController.present">Edit your personal details</a></p>
@@ -106,6 +107,15 @@
                             Withdraw from individual schemes</a></p>
                     }
                     @renderSchemePreferences(cssDescriptions)
+                }
+
+                @if(dashboardPage.isApplicationSubmittedCheckFailed) {
+                    <div id="submittedCheckFailed">
+                        <p>We've assessed your SEB (socio-economic background) score and unfortunately, you've been unsuccessful this time.</p>
+                        <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil
+                            Service jobs</a>
+                            site for more opportunities with us.</p>
+                    </div>
                 }
 
                 @if(dashboardPage.isApplicationWithdrawn) {
