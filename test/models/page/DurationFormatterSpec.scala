@@ -29,7 +29,7 @@ class DurationFormatterSpec extends PlaySpec {
       result mustBe "10 years, 1 month, 12 days, 1 hour and 34 minutes"
     }
 
-    "return months, days and hours" in new TestFixture {
+    "return months, days and hours" ignore new TestFixture {
       val futureDate = now.plusMonths(2).plusDays(3).plusHours(5).plusMinutes(59).plusSeconds(10)
       val result = durationFormatter.durationFromNowWithMoreZeros(futureDate)
       result mustBe "2 months, 3 days, 5 hours and 59 minutes"

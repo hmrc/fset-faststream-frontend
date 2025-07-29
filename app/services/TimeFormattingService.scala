@@ -79,7 +79,6 @@ trait TimeFormattingService {
     DateTimeDifference(years, months, days, hours, minutes)
   }
 
-
   private def getSingularOrPluralWording(value: Long): String = {
     if (value == 1) "" else "s"
   }
