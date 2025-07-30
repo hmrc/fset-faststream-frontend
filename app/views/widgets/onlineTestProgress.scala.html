@@ -270,6 +270,7 @@
                 </li>
             }
             @if(isFaststream(cachedUserData)) {
+@*
                 @(dashboardPage.isPhase2TestGroupExpired, dashboardPage.isPhase2TestsPassed, dashboardPage.isPhase2TestFailed, dashboardPage.phase2TestsPage, dashboardPage.phase1TestsPage) match {
                     case (_, true, _, _, _) => {
                         <li id="phase2TestsSection">
@@ -309,6 +310,7 @@
                     }
                     case (_, false, _, None, Some(phase1TestsPage)) => {
                         <li id="phase2TestsSection">
+*@
                             @*
                             @if(dashboardPage.isPhase1TestsPassed && hasUnconfirmedAdjustments) {
                                 @onlineExercisesForUnconfirmedAdjustments()
@@ -322,6 +324,7 @@
                             @*
                             @phase2SectionBeforeOnlineExercisesFinishes()
                                 *@
+@*
                         </li>
                     }
                     case (false, false, false, Some(phase2TestsPage), _) => {
@@ -372,6 +375,7 @@
                     }
                     case _ => {}
                 }
+*@
 @*
                 @(dashboardPage.isPhase3TestGroupExpired, dashboardPage.isPhase3TestFailed, dashboardPage.shouldDisplayPhase3TestFeedbackReport, dashboardPage.phase3TestsPage, dashboardPage.phase2TestsPage, dashboardPage.phase1TestsPage) match {
                     case (true, _, _, Some(phase3TestsPage), _, _) => {
@@ -473,7 +477,7 @@
         </ul>
     }
 }
-@if(!dashboardPage.isTestGroupExpired && !dashboardPage.isPhase2TestGroupExpired && !dashboardPage.isPhase3TestGroupExpired) {
+@if(!dashboardPage.isTestGroupExpired) {
     <p id="testsFindOutMore"><a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-online-tests/" rel="external" target="_blank">
         Find out more about the online tests</a></p>
 }

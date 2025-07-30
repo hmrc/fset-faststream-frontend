@@ -115,6 +115,11 @@ object Roles {
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasPreview(user)
   }
 
+  object SubmittedCheckFailedRole extends CsrAuthorization {
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+      activeUserWithActiveApp(user) && statusIn(user)(SUBMITTED_CHECK_FAILED)
+  }
+
   object InProgressRole extends CsrAuthorization {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS)

@@ -89,12 +89,17 @@ object RolesSpec {
   val id: UniqueIdentifier = UniqueIdentifier(UUID.randomUUID().toString)
 
   def activeUser(applicationStatus: ApplicationStatus, progress: Progress = ProgressExamples.FullProgress): CachedData = CachedData(CachedUser(
-    id,
-    "John", "Biggs", None, "aaa@bbb.com", isActive = true, "locked"
-  ), Some(ApplicationData(id, id, applicationStatus, ApplicationRoute.Faststream, progress, None, None, None)))
+    userID = id,
+    "John", "Biggs", preferredName = None, "aaa@bbb.com", isActive = true, "locked"
+  ), application = Some(
+    ApplicationData(
+      applicationId = id, userId = id, applicationStatus, ApplicationRoute.Faststream, progress,
+      civilServiceExperienceDetails = None, edipCompleted = None, overriddenSubmissionDeadline = None
+    )
+  ))
 
   def registeredUser(applicationStatus: ApplicationStatus): CachedData = CachedData(CachedUser(
-    id,
-    "John", "Biggs", None, "aaa@bbb.com", isActive = true, "locked"
-  ), None)
+    userID = id,
+    "John", "Biggs", preferredName = None, "aaa@bbb.com", isActive = true, "locked"
+  ), application = None)
 }

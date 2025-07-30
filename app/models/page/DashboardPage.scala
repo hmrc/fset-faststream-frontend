@@ -29,6 +29,7 @@ case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
                          thirdStepVisibility: ProgressStepVisibility,
                          fourthStepVisibility: ProgressStepVisibility,
                          isApplicationSubmittedAndNotWithdrawn: Boolean,
+                         isApplicationSubmittedCheckFailed: Boolean,
                          isApplicationWithdrawn: Boolean,
                          isFastPassApproved: Boolean,
                          isApplicationInProgress: Boolean,
@@ -36,8 +37,6 @@ case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
                          isPhase1TestsPassed: Boolean,
                          isPhase2TestsPassed: Boolean,
                          isTestGroupExpired: Boolean,
-                         isPhase2TestGroupExpired: Boolean,
-                         isPhase3TestGroupExpired: Boolean,
                          isPhase1TestFailed: Boolean,
                          isPhase2TestFailed: Boolean,
                          isPhase3TestFailed: Boolean,
@@ -50,6 +49,33 @@ case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
                          assessmentStageStatus: AssessmentStageStatus,
                          fsacGuideUrl: String
 ) {
+  override def toString: String =
+    "(" +
+      s"firstStepVisibility=$firstStepVisibility," +
+      s"secondStepVisibility=$secondStepVisibility," +
+      s"thirdStepVisibility=$thirdStepVisibility," +
+      s"fourthStepVisibility=$fourthStepVisibility," +
+      s"isApplicationSubmittedAndNotWithdrawn=$isApplicationSubmittedAndNotWithdrawn," +
+      s"isApplicationSubmittedCheckFailed=$isApplicationSubmittedCheckFailed," +
+      s"isApplicationWithdrawn=$isApplicationWithdrawn," +
+      s"isFastPassApproved=$isFastPassApproved," +
+      s"isApplicationInProgress=$isApplicationInProgress," +
+      s"isUserWithNoApplication=$isUserWithNoApplication," +
+      s"isPhase1TestsPassed=$isPhase1TestsPassed," +
+      s"isPhase2TestsPassed=$isPhase2TestsPassed," +
+      s"isTestGroupExpired=$isTestGroupExpired," +
+      s"isPhase1TestFailed=$isPhase1TestFailed," +
+      s"isPhase2TestFailed=$isPhase2TestFailed," +
+      s"isPhase3TestFailed=$isPhase3TestFailed," +
+      s"isPhase3TestPassedNotified=$isPhase3TestPassedNotified," +
+      s"shouldDisplayPhase3TestFeedbackReport=$shouldDisplayPhase3TestFeedbackReport," +
+      s"fullName=$fullName," +
+      s"phase1TestsPage=$phase1TestsPage," +
+      s"phase2TestsPage=$phase2TestsPage," +
+      s"phase3TestsPage=$phase3TestsPage," +
+      s"assessmentStageStatus=$assessmentStageStatus," +
+      s"fsacGuideUrl=$fsacGuideUrl" +
+      s")"
 }
 
 object DashboardPage {
@@ -65,9 +91,7 @@ object DashboardPage {
            )
            (implicit request: RequestHeader, messages: Messages): DashboardPage = {
 
-    val (firstStepVisibility, secondStepVisibility, thirdStepVisibility,
-      fourthStepVisibility
-    ) = visibilityForUser(user)
+    val (firstStepVisibility, secondStepVisibility, thirdStepVisibility, fourthStepVisibility) = visibilityForUser(user)
 
     DashboardPage(
       firstStepVisibility,
@@ -75,6 +99,7 @@ object DashboardPage {
       thirdStepVisibility,
       fourthStepVisibility,
       isApplicationSubmittedAndNotWithdrawn(user),
+      isApplicationSubmittedCheckFailed(user),
       isApplicationWithdrawn(user),
       RoleUtils.hasFastPassBeenApproved(user),
       isApplicationInProgress(user),
@@ -82,8 +107,6 @@ object DashboardPage {
       ProgressStatusRoleUtils.isPhase1TestsPassed(user),
       ProgressStatusRoleUtils.isPhase2TestsPassed(user),
       isTestGroupExpired(user),
-      isPhase2TestGroupExpired(user),
-      isPhase3TestGroupExpired(user),
       isPhase1TestFailed(user),
       isPhase2TestFailed(user),
       isPhase3TestFailed(user),
@@ -169,6 +192,9 @@ object DashboardPage {
   private def isApplicationSubmittedAndNotWithdrawn(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
     AbleToWithdrawApplicationRole.isAuthorized(user)
 
+  private def isApplicationSubmittedCheckFailed(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+    SubmittedCheckFailedRole.isAuthorized(user)
+
   private def isApplicationWithdrawn(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
     WithdrawnApplicationRole.isAuthorized(user)
 
@@ -214,7 +240,7 @@ object DashboardPage {
     }
   }
 
-  // scalastyle:off cyclomatic.complexity
+  // scalastyle:off cyclomatic.complexity method.length
   private def visibilityForUser(user: CachedData)(implicit request: RequestHeader, messages: Messages):
   (ProgressStepVisibility, ProgressStepVisibility, ProgressStepVisibility, ProgressStepVisibility) = {
 
@@ -229,6 +255,9 @@ object DashboardPage {
         case Step4 => (ProgressActive, ProgressActive, ProgressActive, ProgressInactiveDisabled)
       }
     }
+
+    def submittedCheckFailedUserVisibility =
+      (ProgressActive, ProgressInactiveDisabled, ProgressInactiveDisabled, ProgressInactiveDisabled)
 
     def activeUserVisibility(user: CachedData) = {
       //TODO FIX ME
@@ -261,6 +290,7 @@ object DashboardPage {
 
     status(user) match {
       case Some(ApplicationStatus.WITHDRAWN) => withdrawnUserVisibility(user)
+      case Some(ApplicationStatus.SUBMITTED_CHECK_FAILED) => submittedCheckFailedUserVisibility
       case _ => activeUserVisibility(user)
     }
   }
