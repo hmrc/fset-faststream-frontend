@@ -15,6 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
+@import forms.SelectedSchemesForm.maxSchemes
 @(page: _root_.models.page.SelectedSchemesPage, isCandidateCivilServant: Boolean, form: Form[_root_.forms.SelectedSchemesForm.SchemePreferences])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @import views.html.widgets.pageProgress
@@ -38,7 +39,7 @@
 
         <div class="panel-indent">
             <p>In preference order, select only the schemes you'd like to work in.</p>
-            <p>You can choose a maximum of 3 schemes.</p>
+            <p>You can choose a maximum of @maxSchemes schemes.</p>
         </div>
 
         <fieldset>
@@ -78,7 +79,7 @@
         <section class="text panel-indent">
             <p>Schemes will be offered to you in order of preference.</p>
             <p>You will not be able to reorder them after submitting your application.</p>
-            <p>You can choose a maximum of 3 schemes.</p>
+            <p>You can choose a maximum of @maxSchemes schemes.</p>
         </section>
         <section class="text">
                 @yesNoQuestion(form("orderAgreed"), question = "Are you happy with the order of your schemes?",

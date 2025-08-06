@@ -17,6 +17,7 @@
 @import helpers.CSRSkinnyFieldConstructor._
 @import _root_.connectors.exchange.referencedata.Scheme
 @import models.FieldNameHelpers._
+@import forms.SelectedSchemesForm.maxSchemes
 
 @(isCandidateCivilServant: Boolean, field: play.api.data.Field, schemes: Seq[Scheme], args: (Symbol, Any)*)(implicit messages: Messages)
 
@@ -36,7 +37,7 @@
                     </label>
                     @if(scheme.id.value == "HousesOfParliament"){
                         <span class="alwayshidden" data-hop>The Houses of Parliament Graduate Programme is no longer a Fast Stream scheme, although it
-                            will be treated as one of your 4 preferences if you choose to select this option.</span>
+                            will be treated as one of your @maxSchemes preferences if you choose to select this option.</span>
                     }
 
                     <span class="alwayshidden" data-scheme-req
