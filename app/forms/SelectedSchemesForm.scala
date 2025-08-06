@@ -18,11 +18,11 @@ package forms
 
 import connectors.exchange.SelectedSchemes
 import connectors.exchange.referencedata.Scheme
-import forms.SelectedSchemesForm.SchemePreferences
+import forms.SelectedSchemesForm.{SchemePreferences, maxSchemes}
 import models.page.SelectedSchemesPage
-import play.api.data.Forms._
+import play.api.data.Forms.*
 import play.api.data.format.Formatter
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 
 import scala.language.implicitConversions
@@ -33,7 +33,8 @@ class SelectedSchemesForm(allSchemes: Seq[Scheme], isSdipFaststream: Boolean) {
 
   // Sdip FS candidates are automatically given the Sdip scheme so they can have one more than the max in total
   // This is why we filter out the Sdip scheme below when performing the validation checks
-  private val maxFaststreamSchemes = 3
+  // Note Sdip FS is currently not supported, but we retain the code in case the business decides to reactivate it
+  private val maxFaststreamSchemes = maxSchemes
 
   def form(implicit messages: Messages) = {
     Form(
@@ -51,9 +52,9 @@ class SelectedSchemesForm(allSchemes: Seq[Scheme], isSdipFaststream: Boolean) {
         case selectedSchemes if selectedSchemes.isEmpty || (isSdipFaststream && selectedSchemes.map(_.toLowerCase) == Seq("sdip")) =>
           Left(List(FormError(formKey, Messages("schemes.required"))))
         case selectedSchemes if isSdipFaststream && selectedSchemes.filterNot(_.toLowerCase == "sdip").size > maxFaststreamSchemes =>
-          Left(List(FormError(formKey, Messages("schemes.tooMany"))))
+          Left(List(FormError(formKey, Messages("schemes.tooMany", maxFaststreamSchemes))))
         case selectedSchemes if !isSdipFaststream && selectedSchemes.size > maxFaststreamSchemes =>
-          Left(List(FormError(formKey, Messages("schemes.tooMany"))))
+          Left(List(FormError(formKey, Messages("schemes.tooMany", maxFaststreamSchemes))))
         case selectedSchemes if selectedSchemes.size > allSchemes.size =>
           Left(List(FormError(formKey, Messages("schemes.required"))))
         case selectedSchemes if page.getInvalidSchemes(selectedSchemes).nonEmpty =>
@@ -72,6 +73,8 @@ class SelectedSchemesForm(allSchemes: Seq[Scheme], isSdipFaststream: Boolean) {
 }
 
 object SelectedSchemesForm {
+
+  val maxSchemes = 3
 
   case class SchemePreferences(schemes: List[String], orderAgreed: Boolean, eligible: Boolean)
 
