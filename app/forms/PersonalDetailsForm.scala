@@ -172,7 +172,7 @@ class PersonalDetailsForm {
   def fastPassFormFormatter(ignoreValidations: Boolean)(implicit messages: Messages) = new Formatter[Option[FastPassForm.Data]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[FastPassForm.Data]] = {
       (ignoreValidations, data.isFastStream) match {
-        case (false, true) => FastPassForm.form.mapping.bind(data).right.map(Some(_))
+        case (false, true) => FastPassForm.form.mapping.bind(data).map(Some(_))
         case _ => Right(None)
       }
     }
@@ -228,7 +228,8 @@ class PersonalDetailsForm {
 
 object PersonalDetailsForm {
 
-  case class Data(firstName: String,
+  case class Data(
+    firstName: String,
     lastName: String,
     preferredName: String,
     dateOfBirth: DayMonthYear,
@@ -244,6 +245,25 @@ object PersonalDetailsForm {
     otherInternshipName: Option[String],
     otherInternshipYear: Option[String]
   ) {
+
+    override def toString: String =
+      "(" +
+        s"firstName=$firstName," +
+        s"lastName=$lastName," +
+        s"preferredName=$preferredName," +
+        s"dateOfBirth=$dateOfBirth," +
+        s"outsideUk=$outsideUk," +
+        s"address=$address," +
+        s"postCode=$postCode," +
+        s"country=$country," +
+        s"phone=$phone," +
+        s"civilServiceExperienceDetails=$civilServiceExperienceDetails," +
+        s"edipCompleted=$edipCompleted," +
+        s"edipYear=$edipYear," +
+        s"otherInternshipCompleted=$otherInternshipCompleted," +
+        s"otherInternshipName=$otherInternshipName," +
+        s"otherInternshipYear=$otherInternshipYear" +
+        ")"
 
     def insideUk = outsideUk match {
       case Some(true) => false

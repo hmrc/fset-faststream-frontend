@@ -320,6 +320,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[1]" -> FastPassForm.SDIPKey,
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[2]" -> FastPassForm.EDIPKey,
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[3]" -> FastPassForm.OtherInternshipKey,
+        "civilServiceExperienceDetails.civilServantDepartment" -> "ABC",
         "civilServiceExperienceDetails.sdipYear" -> "2020",
         "civilServiceExperienceDetails.edipYear" -> "2020",
         "civilServiceExperienceDetails.otherInternshipName" -> "Internship name",
@@ -337,7 +338,7 @@ class FastPassFormSpec extends BaseFormSpec {
       val data = Map(
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes[0]" -> FastPassForm.CivilServantKey,
+        "civilServiceExperienceDetails.civilServantDepartment" -> "ABC",
         "civilServiceExperienceDetails.sdipYear" -> "2020",
         "civilServiceExperienceDetails.edipYear" -> "2020",
         "civilServiceExperienceDetails.otherInternshipName" -> "Internship name",
@@ -348,7 +349,6 @@ class FastPassFormSpec extends BaseFormSpec {
         Map(
           "applicationRoute" -> ApplicationRoute.Faststream.toString,
           "civilServiceExperienceDetails.applicable" -> "true",
-          "civilServiceExperienceDetails.civilServantAndInternshipTypes[0]" -> FastPassForm.CivilServantKey,
           "civilServiceExperienceDetails.fastPassReceived" -> "false"
         )
     }
@@ -358,6 +358,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[0]" -> FastPassForm.CivilServantKey,
+        "civilServiceExperienceDetails.civilServantDepartment" -> "ABC",
         "fastPassReceived" -> "false",
         "certificateNumber" -> "1234567")
       data.cleanupFastPassFields must contain theSameElementsAs
@@ -365,6 +366,7 @@ class FastPassFormSpec extends BaseFormSpec {
           "applicationRoute" -> ApplicationRoute.Faststream.toString,
           "civilServiceExperienceDetails.applicable" -> "true",
           "civilServiceExperienceDetails.civilServantAndInternshipTypes[0]" -> FastPassForm.CivilServantKey,
+          "civilServiceExperienceDetails.civilServantDepartment" -> "ABC",
           "fastPassReceived" -> "false"
         )
     }

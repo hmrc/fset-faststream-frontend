@@ -30,6 +30,8 @@
     else routes.PersonalDetailsController.submitPersonalDetails
 }
 
+@isApplicationSubmitted = @{ !updateStatus }
+
 @main_template(title = "Personal details", pageForms = Seq(form), additionalJavascriptFilenames = List()) {
     @pageProgress(1, 7)
 
@@ -45,11 +47,13 @@
             @if(optCachedData.exists(cachedData => isSdipFaststream(cachedData))) {
                 @sdipFsCandidateExperienceDetailsPanel(form)
             } else {
-                @civilServiceExperienceDetailsPanel(form, schemesRequiringQualifications)
+                @if(!isApplicationSubmitted) {
+                    @civilServiceExperienceDetailsPanel(form, schemesRequiringQualifications)
+                }
             }
         }
         @if(optCachedData.exists(cachedData => EditPersonalDetailsAndContinueRole.isAuthorized(cachedData)) &&
-                isSdip(optCachedData)) {
+                isSdip(optCachedData) && !isApplicationSubmitted) {
             @sdipCandidateExperienceDetailsPanel(form)
         }
         @if(optCachedData.exists(cachedData => EditPersonalDetailsAndContinueRole.isAuthorized(cachedData)) &&
