@@ -22,13 +22,14 @@ import java.time.LocalDate
 object GeneralDetailsExamples {
   val FullDetails = GeneralDetails("firstName", "lastName", "preferredName", "email", dateOfBirth = LocalDate.now(), outsideUk = false,
     FullAddress, Some("postCode"), fsacIndicator = None, country = None, phone = Some("1234567"),
-    civilServiceExperienceDetails = Some(CivilServiceExperienceDetails(applicable = false)),
+    civilServiceExperienceDetails = Some(CivilServiceExperienceDetails(applicable = false)), // Only populated for a Faststream candidate
     edipCompleted = None, edipYear = None, otherInternshipCompleted = None, otherInternshipName = None, otherInternshipYear = None,
     updateApplicationStatus = None
   )
   val SdipFullDetailsWithEdipCompleted = GeneralDetails("firstName", "lastName", "preferredName", "email", LocalDate.now(), outsideUk = false,
     FullAddress, Some("postCode"), fsacIndicator = None, country = None, phone = Some("1234567"),
-    civilServiceExperienceDetails = Some(CivilServiceExperienceDetails(applicable = false)), edipCompleted = Some(true), edipYear = Some("2020"),
+    civilServiceExperienceDetails = None, // Not populated for a Sdip candidate
+    edipCompleted = Some(true), edipYear = Some("2020"),
     otherInternshipCompleted = None, otherInternshipName = None, otherInternshipYear = None, updateApplicationStatus = None
   )
 }

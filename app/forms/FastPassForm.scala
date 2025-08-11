@@ -84,7 +84,21 @@ object FastPassForm {
                   otherInternshipName: Option[String] = None,
                   otherInternshipYear: Option[String] = None,
                   fastPassReceived: Option[Boolean] = None,
-                  certificateNumber: Option[String] = None)
+                  certificateNumber: Option[String] = None) {
+
+    override def toString: String =
+      "(" +
+        s"applicable=$applicable," +
+        s"civilServantAndInternshipTypes=$civilServantAndInternshipTypes," +
+        s"civilServantDepartment=$civilServantDepartment," +
+        s"edipYear=$edipYear," +
+        s"sdipYear=$sdipYear" +
+        s"otherInternshipName=$otherInternshipName," +
+        s"otherInternshipYear=$otherInternshipYear" +
+        s"fastPassReceived=$fastPassReceived," +
+        s"certificateNumber=$certificateNumber" +
+        ")"
+  }
 
   def form(implicit messages: Messages) = {
     Form(mapping(
@@ -224,7 +238,8 @@ object FastPassForm {
     }
 
     // Civil servant
-    def isCivilServantSelected(implicit messages: Messages) = civilServantAndInternshipTypesParam.contains(CivilServantKey)
+    def isCivilServantSelected(implicit messages: Messages) = isCivilServantOrIntern &&
+      civilServantAndInternshipTypesParam.contains(CivilServantKey)
 
     def civilServantDepartmentParam = param(civilServantDepartment).getOrElse("")
 
@@ -282,6 +297,7 @@ object FastPassForm {
     //scalastyle:off cyclomatic.complexity
     def cleanupFastPassFields(implicit messages: Messages): Map[String, String] = request.view.filterKeys {
       case key if key.contains("civilServantAndInternshipTypes") || key.contains("fastPassReceived") => isCivilServantOrIntern
+      case key if key.endsWith("civilServantDepartment") => isCivilServantSelected
       case key if key.endsWith("sdipYear") => isSdipCandidate
       case key if key.endsWith("otherInternshipName") || key.endsWith("otherInternshipYear") => isOtherInternshipCandidate
       case key if key.endsWith("edipYear") => isEdipCandidate

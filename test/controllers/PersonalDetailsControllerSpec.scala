@@ -36,24 +36,17 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 class PersonalDetailsControllerSpec extends BaseControllerSpec {
-  "present" should {
+  "present called post application submission" should {
     "load personal details page for the new user and generate return to dashboard link" in new TestFixture {
       when(mockApplicationClient.getPersonalDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new PersonalDetailsNotFound))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
 
-      val result = controller.presentAndContinue()(fakeRequest)
+      val result = controller.present()(fakeRequest)
 
       assertPageTitle(result, "Personal details")
       val content = contentAsString(result)
       content must include(s"""name="preferredName" value="${currentCandidate.user.firstName}"""")
-      content must include("""<input name="civilServiceExperienceDetails.applicable" type="radio"""")
-      // The only scheme where civilServantEligible = false and a degree is specified
-      content must include("""<li>Project Delivery</li>""")
-      // The page should not include any schemes that do not have a degree requirement
-      ReferenceDataExamples.Schemes.schemesWithNoDegree.foreach{ scheme =>
-        content must not include s"<li>${scheme.name}</li>"
-      }
       content must include(routes.PersonalDetailsController.submitPersonalDetails.url)
     }
 
@@ -62,7 +55,7 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.failed(new PersonalDetailsNotFound))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
 
-      val result = controller(currentCandidateWithEdipApp).presentAndContinue()(fakeRequest)
+      val result = controller(currentCandidateWithEdipApp).present()(fakeRequest)
 
       assertPageTitle(result, "Personal details")
       val content = contentAsString(result)
@@ -87,7 +80,7 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
     }
   }
 
-  "present and continue" should {
+  "present and continue called pre-application submission" should {
     "load personal details page for the new user and generate submit link to continue the journey" in new TestFixture {
       when(mockApplicationClient.getPersonalDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new PersonalDetailsNotFound))
@@ -99,6 +92,12 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
       val content = contentAsString(result)
       content must include(s"""name="preferredName" value="${currentCandidate.user.firstName}"""")
       content must include("""<input name="civilServiceExperienceDetails.applicable" type="radio"""")
+      // The only scheme where civilServantEligible = false and a degree is specified
+      content must include("""<li>Project Delivery</li>""")
+      // The page should not include any schemes that do not have a degree requirement
+      ReferenceDataExamples.Schemes.schemesWithNoDegree.foreach{ scheme =>
+        content must not include s"<li>${scheme.name}</li>"
+      }
       content must include(routes.PersonalDetailsController.submitPersonalDetailsAndContinue.url)
     }
 
@@ -107,15 +106,16 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(GeneralDetailsExamples.FullDetails))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
 
-      val result = controller.present()(fakeRequest)
+      val result = controller.presentAndContinue()(fakeRequest)
 
       assertPageTitle(result, "Personal details")
       val content = contentAsString(result)
       content must include(s"""name="preferredName" value="${GeneralDetailsExamples.FullDetails.preferredName}"""")
       content must include("""<input name="civilServiceExperienceDetails.applicable" type="radio"""")
+      content must include(routes.PersonalDetailsController.submitPersonalDetailsAndContinue.url)
     }
 
-    "load edip personal details page for the new user and generate submit link for continue the journey" in new TestFixture {
+    "load edip personal details page for the new user and generate submit link to continue the journey" in new TestFixture {
       when(mockApplicationClient.getPersonalDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new PersonalDetailsNotFound))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
@@ -134,7 +134,7 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(GeneralDetailsExamples.FullDetails))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
 
-      val result = controller(currentCandidateWithEdipApp).present()(fakeRequest)
+      val result = controller(currentCandidateWithEdipApp).presentAndContinue()(fakeRequest)
 
       assertPageTitle(result, "Personal details")
       val content = contentAsString(result)
@@ -142,7 +142,7 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
       content mustNot include("""<input name="civilServiceExperienceDetails.applicable" type="radio"""")
     }
 
-    "load sdip personal details page for the new user and generate submit link for continue the journey" in new TestFixture {
+    "load sdip personal details page for the new user and generate submit link to continue the journey" in new TestFixture {
       when(mockApplicationClient.getPersonalDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new PersonalDetailsNotFound))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
@@ -162,7 +162,7 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
         .thenReturn(Future.successful(GeneralDetailsExamples.FullDetails))
       when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
 
-      val result = controller(currentCandidateWithSdipApp).present()(fakeRequest)
+      val result = controller(currentCandidateWithSdipApp).presentAndContinue()(fakeRequest)
 
       assertPageTitle(result, "Personal details")
       val content = contentAsString(result)
