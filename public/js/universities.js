@@ -427,25 +427,32 @@ $(function() {
         // Triggered when an item is selected from the menu.
         select: function(e, ui) {
             setUniversityData(ui.item.label, ui.item.hiddenValue);
-            console.log("select - data set to " + ui.item.label + ", " + ui.item.hiddenValue);
+            console.log("universityAttended: select - data set to " + ui.item.label + ", " + ui.item.hiddenValue);
         },
         // Triggered after a search completes, before the menu is shown.
         response: function(event, ui) {
             if (ui.content.length === 0) {
                 setUniversityData(otherLabel, otherValue);
-                console.log("response - data set to other");
+                console.log("universityAttended:response - data set to other");
             }
         },
         // Triggered when the field is blurred, if the value has changed.
+        // If an item is selected from the list then ui.item != null
+        // Note there is a difference between the user selecting an item vs
+        // this javascript automatically selecting the "Other" option if the
+        // user types a value that doesn't exist
         change: function (event, ui) {
             if (ui.item != null) {
-                console.log("change - ui.item.label = " + ui.item.label);
+                console.log("universityAttended: change - ui.item.label = " + ui.item.label);
             } else {
-                console.log("change - ui.item = " + ui.item);
-            }
-            if (ui.item == null) {
-                setUniversityData('', '');
-                console.log("change - data cleared");
+                var selectedText = $('#universityAttended').val();
+                console.log("universityAttended: change - ui.item = " + ui.item);
+                console.log("universityAttended: change - selectedText = " + selectedText);
+                // If nothing is selected make sure to set both the selected field and hidden field to an empty selection
+                if (selectedText === "") {
+                    console.log("universityAttended: change - clearing the university data");
+                    setUniversityData("", "");
+                }
             }
         }
     });
@@ -462,25 +469,28 @@ $(function() {
         // Triggered when an item is selected from the menu.
         select: function(e, ui) {
             setPostgradUniversityData(ui.item.label, ui.item.hiddenValue);
-            console.log("select - data set to " + ui.item.label + ", " + ui.item.hiddenValue);
+            console.log("postgradUniversityAttended: select - data set to " + ui.item.label + ", " + ui.item.hiddenValue);
         },
         // Triggered after a search completes, before the menu is shown.
         response: function(event, ui) {
             if (ui.content.length === 0) {
                 setPostgradUniversityData(otherLabel, otherValue);
-                console.log("response - data set to other");
+                console.log("postgradUniversityAttended: response - data set to other");
             }
         },
         // Triggered when the field is blurred, if the value has changed.
         change: function (event, ui) {
             if (ui.item != null) {
-                console.log("change - ui.item.label = " + ui.item.label);
+                console.log("postgradUniversityAttended: change - ui.item.label = " + ui.item.label);
             } else {
-                console.log("change - ui.item = " + ui.item);
-            }
-            if (ui.item == null) {
-                setPostgradUniversityData('', '');
-                console.log("change - data cleared");
+                var selectedText = $('#postgradUniversityAttended').val();
+                console.log("postgradUniversityAttended: change - ui.item = " + ui.item);
+                console.log("postgradUniversityAttended: change - selectedText = " + selectedText);
+                // If nothing is selected make sure to set both the selected field and hidden field to an empty selection
+                if (selectedText === "") {
+                    console.log("postgradUniversityAttended: change - clearing the university data");
+                    setPostgradUniversityData("", "");
+                }
             }
         }
     });
