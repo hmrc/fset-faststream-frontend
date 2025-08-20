@@ -86,7 +86,7 @@ class HomeController @Inject() (
           page <- cachedData.application.map { implicit application =>
             cachedData match {
               case _ if !isPhase1TestsPassedNotified && !isSiftEntered && !isSiftReady &&
-                !isPhase3TestsPassed && !isAllocatedToAssessmentCentre =>
+                !isPhase3TestsPassed && !isAllocatedToAssessmentCentre && !isAssessmentCentreFailedToAttend =>
                 // We display this dashboard while the sdip candidate has not yet passed their P1 tests and the fs candidate
                 // has not been invited to sift and has not been invited to a fsac event (in case they skip sift)
                 dashboardWithOnlineTests.recoverWith(dashboardWithoutOnlineTests)

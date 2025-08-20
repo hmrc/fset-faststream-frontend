@@ -151,7 +151,15 @@
             <p class="med-btm-margin" id="warningOnlineExercises"><i class="fa the-icon fa-exclamation-triangle" aria-hidden="true"></i>
                 Important</p>
             <div id="assessmentFailedToAttend">
-                <p>Unfortunately, you've been unsuccessful as you didn't attend the assessment centre.</p>
+                @if(page.fsacStage == PostOnlineTestsStage.FAILED_TO_ATTEND) {
+                    <p>Unfortunately, you've been unsuccessful as you didn't attend the assessment centre.</p>
+                } else {
+                    @if(page.fsbStage == PostOnlineTestsStage.FAILED_TO_ATTEND) {
+                        <p>Unfortunately, you've been unsuccessful as you didn't attend the final selection board.</p>
+                    } else {
+                        <p>Unfortunately, you've been unsuccessful.</p>
+                    }
+                }
                 <p>If you believe there's been a mistake, please <a href="@routes.ApplicationController.helpdesk">contact
                     us</a>.</p>
                 <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil
@@ -160,10 +168,12 @@
             </div>
             <ul class="list-text">
                 <li>
-                    <h3 class="bold-small">1st preference</h3>
-                    @page.userDataWithSchemes.greenAndAmberSchemesForDisplay.headOption.map { schemeResult =>
-                    <p>@{schemeResult.scheme.name}
-                        <br>(unsuccessful at the assessment centre)</p>
+                    @if(page.userDataWithSchemes.greenAndAmberSchemesForDisplay.nonEmpty) {
+                        <h3 class="bold-small">1st preference</h3>
+                        @page.userDataWithSchemes.greenAndAmberSchemesForDisplay.headOption.map { schemeResult =>
+                            <p>@{schemeResult.scheme.name}
+                                <br>(unsuccessful at the assessment centre)</p>
+                        }
                     }
                 </li>
             </ul>

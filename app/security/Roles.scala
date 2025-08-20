@@ -224,7 +224,7 @@ object Roles {
   }
 
   object AssessmentCentreFailedToAttendRole extends AuthorisedUser {
-    override def isEnabled(user: CachedData)(implicit request: RequestHeader) = assessmentCentreFailedToAttend(user)
+    override def isEnabled(user: CachedData)(implicit request: RequestHeader) = isAssessmentCentreFailedToAttend(user)
   }
 
   object SiftNumericTestRole extends CsrAuthorization {
@@ -433,7 +433,7 @@ object ProgressStatusRoleUtils {
 
   def isAllocatedToAssessmentCentre(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.allocationConfirmed) || user.application.exists(_.progress.assessmentCentre.allocationUnconfirmed)
 
-  def assessmentCentreFailedToAttend(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.failedToAttend)
+  def isAssessmentCentreFailedToAttend(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.failedToAttend)
 
   def isEligibleForJobOffer(implicit user: CachedData): Boolean = user.application.exists(_.progress.jobOffer.eligible)
 
