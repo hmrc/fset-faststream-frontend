@@ -66,9 +66,17 @@ class CachedUserWithSchemeData(
       .filter(schemeStatus =>
         schemePreferences.schemes.contains(schemeStatus.scheme.id.value))
       .filter(_.status == SchemeStatus.Red)
-      .map { schemeStatus => // NOTE: This is a temporary fix for fset-1914!
-        if (schemeStatus.scheme.id == Scheme.GESDSId && schemeStatus.failedAtStage.isEmpty) {
-          schemeStatus.copy(failedAtStage = Some("final selection board"))
+      // Handle schemes which are automatically set to Red when a candidate has not attended the fsb/fsac or it has expired
+      // The Red status is not as a result of an evaluation that resulted in a Red
+      .map { schemeStatus =>
+        if (schemeStatus.failedAtStage.isEmpty) {
+          if (application.isAssessmentCentre) {
+            schemeStatus.copy(failedAtStage = Some("assessment centre"))
+          } else if (application.isFsb) {
+            schemeStatus.copy(failedAtStage = Some("final selection board"))
+          } else {
+            schemeStatus
+          }
         } else {
           schemeStatus
         }

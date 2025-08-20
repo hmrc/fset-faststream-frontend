@@ -51,6 +51,8 @@ case class ApplicationData(
   private def isSift = applicationStatus == SIFT
   def isSiftExpired: Boolean =
     isSift && progress.siftProgress.siftExpired
+  def isAssessmentCentre: Boolean = applicationStatus == ApplicationStatus.ASSESSMENT_CENTRE
+  def isFsb: Boolean = applicationStatus == ApplicationStatus.FSB
   def isSdipFaststream: Boolean = applicationRoute == ApplicationRoute.SdipFaststream
   def isFaststream: Boolean = applicationRoute == ApplicationRoute.Faststream
   def isSdip: Boolean = applicationRoute == ApplicationRoute.Sdip
