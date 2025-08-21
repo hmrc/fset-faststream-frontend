@@ -16,11 +16,12 @@
 
 package forms
 
-import mappings.Mappings._
+import mappings.Mappings.*
 import models.ApplicationRoute
-import play.api.data.Forms._
+import models.view.questionnaire.Universities
+import play.api.data.Forms.*
 import play.api.data.format.Formatter
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 
 object FastPassForm {
@@ -243,7 +244,7 @@ object FastPassForm {
 
     def civilServantDepartmentParam = param(civilServantDepartment).getOrElse("")
 
-    def isCivilServantDepartmentValid = civilServantDepartmentParam != ""
+    def isCivilServantDepartmentValid = Universities.validUniversities.contains(civilServantDepartmentParam)
 
     // Sdip
     def sdipInternshipYearParam = param(sdipInternshipYear).getOrElse("")

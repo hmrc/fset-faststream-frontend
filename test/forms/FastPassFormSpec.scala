@@ -40,7 +40,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Test Dept",
+        "civilServiceExperienceDetails.civilServantDepartment" -> "K12-KEELE",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe false
@@ -48,7 +48,7 @@ class FastPassFormSpec extends BaseFormSpec {
       // Check the submitted data has been correctly converted
       form.value.get mustBe Data(applicable = "true",
         civilServantAndInternshipTypes = Some(Seq(FastPassForm.CivilServantKey)),
-        civilServantDepartment = Some("Test Dept"),
+        civilServantDepartment = Some("K12-KEELE"),
         fastPassReceived = Some(false)
       )
     }
@@ -61,7 +61,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[1]" -> FastPassForm.SDIPKey,
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[2]" -> FastPassForm.EDIPKey,
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[3]" -> FastPassForm.OtherInternshipKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Test Dept",
+        "civilServiceExperienceDetails.civilServantDepartment" -> "K12-KEELE",
         "civilServiceExperienceDetails.sdipYear" -> "2020",
         "civilServiceExperienceDetails.edipYear" -> "2020",
         "civilServiceExperienceDetails.otherInternshipName" -> "Internship name",
@@ -79,7 +79,7 @@ class FastPassFormSpec extends BaseFormSpec {
 
       dataWithoutStream mustBe Data(applicable = "true",
         civilServantAndInternshipTypes = None,
-        civilServantDepartment = Some("Test Dept"),
+        civilServantDepartment = Some("K12-KEELE"),
         sdipYear = Some("2020"),
         edipYear = Some("2020"),
         otherInternshipName = Some("Internship name"),
@@ -98,6 +98,21 @@ class FastPassFormSpec extends BaseFormSpec {
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
+        "civilServiceExperienceDetails.fastPassReceived" -> "false"
+      ))
+      form.hasErrors mustBe true
+      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.civilServantDepartment",
+        message = "error.civilServantDepartment.required"))
+      form.errors mustBe expectedFormErrors
+      form.hasGlobalErrors mustBe false
+    }
+
+    "be invalid when candidate is applicable and is a civil servant with no fast pass and specifies an invalid department" in {
+      val form = fastPassForm.bind(Map(
+        "applicationRoute" -> ApplicationRoute.Faststream.toString,
+        "civilServiceExperienceDetails.applicable" -> "true",
+        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
+        "civilServiceExperienceDetails.civilServantDepartment" -> "BOOM",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe true
