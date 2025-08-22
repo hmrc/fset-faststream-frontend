@@ -16,21 +16,21 @@
 
 package forms
 
-import connectors.exchange.{ Answer, Question, Questionnaire }
+import connectors.exchange.{Answer, Question, Questionnaire}
+
 import javax.inject.Singleton
-import mappings.Mappings._
-import models.view.questionnaire.{ Ethnicities, Genders, SexOrientations }
-import play.api.data.Forms._
+import mappings.Mappings.*
+import models.view.questionnaire.{Ethnicities, Sexes, SexOrientations}
+import play.api.data.Forms.*
 import play.api.data.format.Formatter
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 
 @Singleton
 class DiversityQuestionnaireForm {
   def form(implicit messages: Messages) = Form(
     mapping(
-      "gender" -> of(genderFormatter),
-      "other_gender" -> optional(nonEmptyTrimmedText("error.required.gender", DiversityQuestionnaireForm.OtherMaxSize)),
+      "sex" -> of(sexFormatter),
 
       "sexOrientation" -> of(sexOrientationFormatter),
       "other_sexOrientation" -> optional(nonEmptyTrimmedText("error.required.sexOrientation", DiversityQuestionnaireForm.OtherMaxSize)),
@@ -56,9 +56,9 @@ class DiversityQuestionnaireForm {
       Left(List(FormError(key, errMsg)))
     }
 
-  private def genderFormatter = new Formatter[String] {
+  private def sexFormatter = new Formatter[String] {
     def bind(key: String, request: Map[String, String]): Either[Seq[FormError], String] =
-      bindParam(request.isGenderValid, "error.required.gender", key, request.genderParam)
+      bindParam(request.isSexValid, "error.required.sex", key, request.sexParam)
 
     def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
   }
@@ -96,9 +96,9 @@ class DiversityQuestionnaireForm {
   implicit class RequestValidation(request: Map[String, String]) {
     def param(name: String) = request.collectFirst { case (key, value) if key == name => value }
 
-    def genderParam = param("gender").getOrElse("")
-    val validGenderOptions = Genders.list.map { case (_, value, _) => value }
-    def isGenderValid = validGenderOptions.contains(genderParam)
+    def sexParam = param("sex").getOrElse("")
+    val validSexOptions = Sexes.list.map { case (_, value, _) => value }
+    def isSexValid = validSexOptions.contains(sexParam)
 
     def sexOrientationParam = param("sexOrientation").getOrElse("")
     val validSexOrientationOptions = SexOrientations.list.map { case (_, value, _) => value }
@@ -125,17 +125,16 @@ object DiversityQuestionnaireForm {
   val OtherMaxSize = 256
 
   case class Data(
-    gender: String,
-    otherGender: Option[String],
-    sexOrientation: String,
-    otherSexOrientation: Option[String],
-    ethnicity: Option[String],
-    otherEthnicity: Option[String],
-    preferNotSayEthnicity: Option[Boolean],
-    isEnglishFirstLanguage: String
+                   sex: String,
+                   sexOrientation: String,
+                   otherSexOrientation: Option[String],
+                   ethnicity: Option[String],
+                   otherEthnicity: Option[String],
+                   preferNotSayEthnicity: Option[Boolean],
+                   isEnglishFirstLanguage: String
   ) {
     def exchange(implicit messages: Messages): Questionnaire = Questionnaire(List(
-      Question(Messages("gender.question"), Answer(Some(gender), otherGender, unknown = None)),
+      Question(Messages("sex.question"), Answer(Some(sex), otherDetails = None, unknown = None)),
       Question(Messages("sexOrientation.question"), Answer(Some(sexOrientation), otherSexOrientation, unknown = None)),
       Question(Messages("ethnicity.question"), Answer(ethnicity, otherEthnicity, preferNotSayEthnicity)),
       Question(Messages("language.question"), Answer(Some(isEnglishFirstLanguage), otherDetails = None, unknown = None))
