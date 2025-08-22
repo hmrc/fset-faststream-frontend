@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.view.questionnaire.{ Ethnicities, Genders, SexOrientations }
+@import models.view.questionnaire.{ Ethnicities, Sexes, SexOrientations }
 @import views.html.widgets.radioBoxHorizontal
 @import config.TrackingConsentConfig
 @(form: Form[forms.DiversityQuestionnaireForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
@@ -31,7 +31,7 @@
     <div class="panel-info standard-panel">
         <div class="text">
             <h2 class="heading-medium">Why do we ask these questions?</h2>
-            <p>These questions help us to gather data on people's gender identity, sexual orientation and ethnicity.</p>
+            <p>These questions help us to gather data on people's sex at birth, sexual orientation and ethnicity.</p>
             <p>We anonymise the data and use it to monitor and improve the effectiveness of our processes in enabling all candidates to do their best irrespective of their diversity characteristics.</p>
         </div>
     </div>
@@ -40,17 +40,10 @@
         @helper.CSRF.formField
         <section>
             <fieldset class="form-group">
-                    <legend><h2 class="form-label" id="gender-ques">@Messages("gender.question")</h2></legend>
-                    @radioBoxVertical(form("gender"), options = Genders.list, optionTrigger = "gender-describe")
-                    <div class="toggle-content form-group form-group-compound" id="gender-describe">
-                    @helper.inputText(form("other_gender"),
-                        Symbol("_label") -> "Provide more information (optional)",
-                        Symbol("_labelClass") -> "form-hint",
-                        Symbol("class") -> "form-control",
-                        Symbol("_showConstraints") -> false,
-                        Symbol("optional") -> "")
-                    </div>
-                </fieldset>
+                <legend><h2 class="form-label text" id="sex-ques">@Messages("sex.question")</h2></legend>
+                <span class="form-hint">This question is about your sex at birth</span>
+                @radioBoxHorizontal(form("sex"), options = Sexes.list)
+            </fieldset>
         </section>
 
         <section>

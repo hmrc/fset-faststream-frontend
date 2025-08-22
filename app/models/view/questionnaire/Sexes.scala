@@ -16,12 +16,9 @@
 
 package models.view.questionnaire
 
-object Genders {
+object Sexes {
   val list = List(
-    ("male", "Man", false),
-    ("female", "Woman", false),
-    ("other", "Other", true),
-    ("preferNotSay", "I don't know/prefer not to say", false)
+    ("male", "Male", false),
+    ("female", "Female", false)
   )
 }
-

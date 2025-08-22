@@ -249,7 +249,7 @@ last.attempt = Your account will be locked after another unsuccessful attempt to
 locked.account = You''ve made too many unsuccessful attempts to sign in and your account is now locked
 
 # Questionnaire error messages:
-error.required.gender = You must tell us your gender identity or choose ''prefer not to say''
+error.required.sex = You must tell us your sex at birth
 error.required.sexOrientation = You must tell us your sexual orientation or choose ''prefer not to say''
 error.required.ethnicity = You must tell us your ethnic group or choose ''prefer not to say''
 error.required.englishLanguage = You must tell us if English is your first language or choose ''prefer not to say''
@@ -300,7 +300,7 @@ error.supervise.invalid = The parent/guardian supervised employees is invalid
 error.required.acceptance = Confirm you understand that the information you give here won''t affect your application
 
 #Questions section for questionnaire
-gender.question = What is your gender identity?
+sex.question = What is your sex?
 sexOrientation.question = What is your sexual orientation?
 ethnicity.question = What is your ethnic group?
 language.question = Is English your first language?
