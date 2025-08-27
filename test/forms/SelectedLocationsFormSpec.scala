@@ -38,7 +38,6 @@ class SelectedLocationsFormSpec extends BaseFormSpec {
         "location_0" -> "London",
         "location_1" -> "Manchester",
         "location_2" -> "Newcastle",
-        "location_3" -> "York",
         "interests[0]" -> "Commercial",
         "interests[1]" -> "Cyber"
       ))
@@ -86,7 +85,6 @@ class SelectedLocationsFormSpec extends BaseFormSpec {
         "location_1" -> "Manchester",
         "location_2" -> "Newcastle",
         "location_3" -> "Reading",
-        "location_4" -> "York",
         "interests[0]" -> "Cyber"
       ))
       form.hasErrors mustBe true

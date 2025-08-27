@@ -236,7 +236,7 @@ location.Wolverhampton.description = Wolverhampton
 location.York.description = York
 
 locations.required = You must choose a location
-locationss.tooMany = You can only select a maximum of 4 locations
+locations.tooMany = You can only select a maximum of {0} locations
 
 # Preview
 info.cannot.preview.yet = You can''t preview your application before you finish all the sections

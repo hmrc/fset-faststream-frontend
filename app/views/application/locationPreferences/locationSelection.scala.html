@@ -15,6 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
+@import forms.SelectedLocationsForm.maxLocations
 @import views.html.application.locationPreferences.locationsCheckboxGroup
 @import views.html.application.locationPreferences.interestsCheckboxGroup
 @(page: models.page.SelectedLocationsPage, form: Form[forms.SelectedLocationsForm.LocationPreferences], interests: List[String])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
@@ -40,7 +41,7 @@
 
         <div class="panel-indent">
             <p>In preference order, select only the locations where you would like to work</p>
-            <p>You can choose a maximum of 4 locations.</p>
+            <p>You can choose a maximum of @maxLocations locations.</p>
         </div>
         <fieldset>
             <legend class="visuallyhidden">In preference order, select only the locations where you'd like to work.</legend>
@@ -72,7 +73,7 @@
         <section class="text panel-indent">
             <p>Locations will be offered to you in order of preference.</p>
             <p>You will not be able to reorder them after submitting your application.</p>
-            <p>You can choose a maximum of 4 locations.</p>
+            <p>You can choose a maximum of @maxLocations locations.</p>
         </section>
 
         <section class="grid-wrapper">
