@@ -1,6 +1,6 @@
 $(function () {
   var locationPrefArray = ['Empty'];
-  var maxLocations = 4;
+  var maxLocations = 3;
   var numberOfLocations = $('[data-location-name]').length;
 
   function getGetOrdinal(n) {

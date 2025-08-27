@@ -31,8 +31,6 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
 
   private val page = SelectedLocationsPage(locations)
 
-  private val maxLocations = 4
-
   def form(implicit messages: Messages) = {
     Form(
       mapping(
@@ -41,6 +39,8 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
       )(LocationPreferences.apply)(f => Some(Tuple.fromProductTyped(f)))
     )
   }
+
+  import SelectedLocationsForm.maxLocations
 
   //scalastyle:off cyclomatic.complexity
   def locationFormatter(formKey: String)(implicit messages: Messages) = new Formatter[List[String]] {
@@ -51,7 +51,7 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
         case selectedLocations if page.getInvalidLocations(selectedLocations).nonEmpty =>
           Left(List(FormError(formKey, Messages("locations.required"))))
         case selectedLocations if selectedLocations.size > maxLocations =>
-          Left(List(FormError(formKey, Messages("locations.tooMany"))))
+          Left(List(FormError(formKey, Messages("locations.tooMany", maxLocations))))
         case selectedLocations =>
           Right(selectedLocations)
       }
@@ -91,6 +91,8 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
 }
 
 object SelectedLocationsForm {
+
+  val maxLocations = 3
 
   val interestsList = List(
     "Commercial",
