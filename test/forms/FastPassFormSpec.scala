@@ -40,7 +40,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "K12-KEELE",
+        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe false
@@ -48,7 +48,7 @@ class FastPassFormSpec extends BaseFormSpec {
       // Check the submitted data has been correctly converted
       form.value.get mustBe Data(applicable = "true",
         civilServantAndInternshipTypes = Some(Seq(FastPassForm.CivilServantKey)),
-        civilServantDepartment = Some("K12-KEELE"),
+        civilServantDepartment = Some("Cabinet Office"),
         fastPassReceived = Some(false)
       )
     }
@@ -61,7 +61,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[1]" -> FastPassForm.SDIPKey,
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[2]" -> FastPassForm.EDIPKey,
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[3]" -> FastPassForm.OtherInternshipKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "K12-KEELE",
+        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
         "civilServiceExperienceDetails.sdipYear" -> "2020",
         "civilServiceExperienceDetails.edipYear" -> "2020",
         "civilServiceExperienceDetails.otherInternshipName" -> "Internship name",
@@ -79,7 +79,7 @@ class FastPassFormSpec extends BaseFormSpec {
 
       dataWithoutStream mustBe Data(applicable = "true",
         civilServantAndInternshipTypes = None,
-        civilServantDepartment = Some("K12-KEELE"),
+        civilServantDepartment = Some("Cabinet Office"),
         sdipYear = Some("2020"),
         edipYear = Some("2020"),
         otherInternshipName = Some("Internship name"),
