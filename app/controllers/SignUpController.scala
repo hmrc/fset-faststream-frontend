@@ -62,7 +62,9 @@ class SignUpController @Inject() (
     signupCodeValid.map { sCodeValid =>
       request.identity match {
         case Some(_) => Redirect(routes.HomeController.present()).flashing(warning("activation.already"))
-        case None => Ok(views.html.registration.signup(formWrapper.form, appRouteConfigMap, None, signupCode, sCodeValid))
+        case None => Ok(views.html.registration.signup(
+          formWrapper.form, appRouteConfigMap, notification = None, signupCode, sCodeValid, config.preGoLiveTestingEnabled)
+        )
       }
     }
   }

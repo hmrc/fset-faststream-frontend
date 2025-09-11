@@ -127,6 +127,12 @@ class FrontendAppConfig @Inject() (val config: Configuration, val environment: E
 
   lazy val marketingTrackingEnabled = config.getOptional[Boolean]("marketing.trackingEnabled").getOrElse(false)
 
+  lazy val preGoLiveTestingEnabled = {
+    val enabled = config.getOptional[Boolean]("preGoLiveTesting.enabled").getOrElse(false)
+    logger.warn(s"Pre go-live testing enabled=$enabled")
+    enabled
+  }
+
   lazy val applicationRoutesFrontend = Map(
     Faststream -> loadAppRouteConfig("faststream"),
     Edip -> loadAppRouteConfig("edip"),
