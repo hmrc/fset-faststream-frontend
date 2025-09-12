@@ -57,6 +57,12 @@
     </section>
 }
 
+@nameHintTextPanel = {
+    <section class="panel-indent text">
+        <p>This is your legal name as shown on your ID documentation.</p>
+    </section>
+}
+
 @main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {
     <h1 class="heading-xlarge">Create your account</h1>
 
@@ -77,6 +83,7 @@
 
             <section class="section-border">
                 <h2 class="heading-large">Name and email</h2>
+                @nameHintTextPanel
                 @helper.inputText(signUpForm("firstName"),
                     Symbol("_label") -> "First name",
                     Symbol("class") -> "form-control",
