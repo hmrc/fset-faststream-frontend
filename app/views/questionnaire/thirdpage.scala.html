@@ -18,7 +18,7 @@
 @import models.view.questionnaire.{ Employees, Occupations, OrganizationSizes }
 
 @import config.TrackingConsentConfig
-@(questionnaireForm: Form[_root_.forms.ParentalOccupationQuestionnaireForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(questionnaireForm: Form[_root_.forms.ParentalOccupationQuestionnaireForm.Data], isFastStream: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @import views.html.widgets.{pageProgress, radioBoxHorizontal, radioBoxVertical, radioBoxOccupation, radioBoxOccupationFirst}
 
@@ -31,7 +31,11 @@
     <div id="panel-why-collect-data" class="panel-info standard-panel">
         <div class="text">
             <h2 class="heading-medium">Why do we ask about your parents?</h2>
-            <p>Gathering anonymous data about the education and employment background of family members of applicants at age 14 can help us to understand the socio-economic background of our applicant group.</p>
+            @if(isFastStream) {
+                <p>Gathering anonymous data about the education and employment background of family members of applicants at age 14 can help us to understand the socio-economic background of our applicant group.</p>
+            } else {
+                <p>Gathering anonymous data about the education and employment background of family members of applicants at age 14 can help us to understand the socio-economic background of our applicant group. The answers you provide in this section will be used to assess your eligibility for the Summer Internship Programme.</p>
+            }
         </div>
     </div>
     @helper.form(action = routes.QuestionnaireController.submitThirdPage, Symbol("novalidate") -> "novalidate") {
