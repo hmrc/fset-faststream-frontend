@@ -297,7 +297,8 @@ error.required.organizationSize = You must tell us the size of your parent/guard
 error.organizationSize.invalid = The size of your parent/guardian''s workplace is invalid
 error.required.supervise = You must tell us if your parent/guardian supervised employees, or choose ''prefer not to say''
 error.supervise.invalid = The parent/guardian supervised employees is invalid
-error.required.acceptance = Confirm you understand that the information you give here won''t affect your application
+error.required.acceptance.faststream = Confirm you understand that the information you give here won''t affect your application
+error.required.acceptance.sdip = Confirm you understand why you are being asked these diversity related questions
 
 #Questions section for questionnaire
 sex.question = What is your sex?

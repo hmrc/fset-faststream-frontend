@@ -43,11 +43,14 @@ class DiversityQuestionnaireForm {
     )(DiversityQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
-  def acceptanceForm(implicit messages: Messages) = Form(
-    mapping(
-      "accept-terms" -> checked(Messages("error.required.acceptance"))
-    )(DiversityQuestionnaireForm.AcceptanceTerms.apply)(f => Some(f.acceptTerms))
-  )
+  def acceptanceForm(isFastStream: Boolean)(implicit messages: Messages) = {
+    val errorKey = if (isFastStream) { "error.required.acceptance.faststream" } else { "error.required.acceptance.sdip" }
+    Form(
+      mapping(
+        "accept-terms" -> checked(Messages(errorKey))
+      )(DiversityQuestionnaireForm.AcceptanceTerms.apply)(f => Some(f.acceptTerms))
+    )
+  }
 
   private def bindParam[T](validityCheck: Boolean, errMsg: String, key: String, value: => T): Either[Seq[FormError], T] =
     if (validityCheck) {

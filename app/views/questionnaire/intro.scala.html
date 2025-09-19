@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@(acceptanceForm: Form[_root_.forms.DiversityQuestionnaireForm.AcceptanceTerms])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(acceptanceForm: Form[_root_.forms.DiversityQuestionnaireForm.AcceptanceTerms], isFastStream: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @import views.html.widgets.{pageProgress, checkbox}
 
@@ -32,14 +32,20 @@
           </div>
 
           <div class="panel-info standard-panel">
-            <div class="text">
-              <p>The following questions are:</p>
-              <ul class="no-btm-margin">
-                <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
-                <li>not part of your application and will have no bearing on any selection decision</li>
-                <li>treated in strict confidence</li>
-              </ul>
-            </div>
+              <div class="text">
+                  <p>The following questions are:</p>
+                  <ul class="no-btm-margin">
+                    @if(isFastStream) {
+                        <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
+                        <li>not part of your application and will have no bearing on any selection decision</li>
+                        <li>treated in strict confidence</li>
+                    } else {
+                        <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
+                        <li>used to assess your eligibility for the Summer Internship Programme</li>
+                        <li>treated in strict confidence</li>
+                    }
+                  </ul>
+              </div>
           </div>
         <div class="text">
             <p>For security reasons, once you save a page you won't be able to go
@@ -49,8 +55,14 @@
     @helper.form(action = routes.QuestionnaireController.submitStart, Symbol("novalidate") -> "novalidate") {
         <div class="form-group">
             @helper.CSRF.formField
-            @checkbox(acceptanceForm("accept-terms")) {
-                By checking this box, I understand that answering these diversity related questions won't affect my application
+            @if(isFastStream) {
+                @checkbox(acceptanceForm("accept-terms")) {
+                    By checking this box, I understand that answering these diversity related questions won't affect my application
+                }
+            } else {
+                @checkbox(acceptanceForm("accept-terms")) {
+                    By checking this box, I understand why I am being asked these diversity related questions
+                }
             }
         </div>
         <button id="btnStart" type="submit" value="submit" class="button">Start questions</button>
