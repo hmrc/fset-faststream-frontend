@@ -366,8 +366,8 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
   trait Fixture {
     val formWrapper = new EducationQuestionnaireForm
 
-    val fastStreamForm = formWrapper.form(true, "university")(mockMessages)
-    val edipForm = formWrapper.form(false, "currentUniversity")(mockMessages)
+    val fastStreamForm = formWrapper.form(isFsOrSdipFs = true, "university")(mockMessages)
+    val edipForm = formWrapper.form(isFsOrSdipFs = false, "currentUniversity")(mockMessages)
 
     val FullValid = (EducationQuestionnaireFormExamples.FullValidForm, fastStreamForm.fill(
       EducationQuestionnaireFormExamples.FullValidForm))

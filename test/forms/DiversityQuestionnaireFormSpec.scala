@@ -16,9 +16,33 @@
 
 package forms
 
-import forms.DiversityQuestionnaireForm.Data
+import forms.DiversityQuestionnaireForm.{AcceptanceTerms, Data}
 
 class DiversityQuestionnaireFormSpec extends BaseFormSpec {
+
+  "the acceptance form" should {
+    "be valid when the accept value is correct for a faststream candidate" in new AcceptanceFixture {
+      val validForm = faststreamForm.bind(validFormValues)
+      val expectedData = validFormData
+      val actualData = validForm.get
+      actualData mustBe expectedData
+    }
+
+    "fail when no accept value is specified for a faststream candidate" in new AcceptanceFixture {
+      assertFaststreamFormFieldRequired(expectedError = "accept-terms", "accept-terms")
+    }
+
+    "be valid when the accept value is correct for a sdip candidate" in new AcceptanceFixture {
+      val validForm = sdipForm.bind(validFormValues)
+      val expectedData = validFormData
+      val actualData = validForm.get
+      actualData mustBe expectedData
+    }
+
+    "fail when no accept value is specified for a sdip candidate" in new AcceptanceFixture {
+      assertSdipFormFieldRequired(expectedError = "accept-terms", "accept-terms")
+    }
+  }
 
   "the diversity form" should {
     "be valid when all values are correct" in new Fixture {
@@ -103,6 +127,36 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
       questionList(1).answer.otherDetails mustBe Some("details")
       questionList(2).answer.unknown mustBe Some(true)
       questionList(3).answer.answer mustBe Some("Yes")
+    }
+  }
+
+  trait AcceptanceFixture {
+
+    val validFormData = AcceptanceTerms(acceptTerms = true)
+
+    val validFormValues = Map(
+      "accept-terms" -> "true"
+    )
+
+    val faststreamForm = new DiversityQuestionnaireForm().acceptanceForm(isFastStream = true)
+    val sdipForm = new DiversityQuestionnaireForm().acceptanceForm(isFastStream = false)
+
+    def assertFaststreamFormFieldRequired(expectedError: String, fieldKeysToClear: String*) =
+      assertFaststreamFormError(expectedError, validFormValues ++ fieldKeysToClear.map(k => k -> ""))
+
+    def assertFaststreamFormError(expectedKey: String, invalidFormValues: Map[String, String]) = {
+      val invalidForm = faststreamForm.bind(invalidFormValues)
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.map(_.key) mustBe Seq(expectedKey)
+    }
+
+    def assertSdipFormFieldRequired(expectedError: String, fieldKeysToClear: String*) =
+      assertSdipFormError(expectedError, validFormValues ++ fieldKeysToClear.map(k => k -> ""))
+
+    def assertSdipFormError(expectedKey: String, invalidFormValues: Map[String, String]) = {
+      val invalidForm = sdipForm.bind(invalidFormValues)
+      invalidForm.hasErrors mustBe true
+      invalidForm.errors.map(_.key) mustBe Seq(expectedKey)
     }
   }
 
