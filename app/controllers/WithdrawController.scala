@@ -72,7 +72,7 @@ class WithdrawController @Inject() (
       schemesStatus.filter(ss => List(SchemeStatus.Green.toString, SchemeStatus.Amber.toString).contains(ss.result)).map(_.schemeId) match {
         case Nil => Future(Nil)
         case schemes => refDataClient.allSchemes.map { refDataSchemes =>
-          refDataSchemes.filter(s => schemes.contains(s.id))
+          schemes.map ( cssSchemeId => refDataSchemes.find(_.id == cssSchemeId).head )
         }
       }
     }
