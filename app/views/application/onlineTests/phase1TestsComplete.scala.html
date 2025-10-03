@@ -15,9 +15,9 @@
  *@
 
 @import config.TrackingConsentConfig
-@(applicationId: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(applicationId: String, qualtricsSurveyEnabled: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@surveyUrl = @{ s"https://civilserviceinsight.qualtrics.com/jfe/form/SV_1Uhhmr5RFMMY2ai?Ref=1&Code=$applicationId" }
+@surveyUrl = @{ s"https://civilserviceinsight.qualtrics.com/jfe/form/SV_eqv5D4m7OUM9Vga?Ref=1&UID=$applicationId" }
 
 @main_template(title = "Online exercises complete | Apply for the Civil Service Fast Stream") {
     <div class="success-banner">
@@ -31,11 +31,14 @@
                 <p>We're now going to assess your answers.</p>
                 <p>You'll be sent an email once we have your results, make sure you
                     check your junk inbox. If you're successful, the next section to
-                    complete will be the work based scenarios.</p>
-                <p>
-                    <a href=@surveyUrl target="_blank" rel="external">Give feedback? (short survey)
-                        <span class="visuallyhidden">link opens new window</span></a>
+                    complete will be the work based scenarios.
                 </p>
+                @if(qualtricsSurveyEnabled) {
+                    <p>
+                        <a href=@surveyUrl target="_blank" rel="external">Give feedback? (short survey)
+                            <span class="visuallyhidden">link opens new window</span></a>
+                    </p>
+                }
             </div>
         </div>
     @if(user.isDefined){

@@ -85,7 +85,7 @@ class PsiTestController @Inject() (config: FrontendAppConfig,
             Ok(views.html.application.onlineTests.continueTests(testCompletedName))
           } else {
             // The applicationId is needed for the survey url
-            Ok(views.html.application.onlineTests.phase1TestsComplete(testGroup.applicationId))
+            Ok(views.html.application.onlineTests.phase1TestsComplete(testGroup.applicationId, config.qualtricsSurveyEnabled))
           }
         }
       }.recover {
