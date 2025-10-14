@@ -81,6 +81,7 @@ class SignUpFormSpec extends BaseFormSpec {
     }
 
     "throw an error if the applicationRoute is an invalid value" in {
+      // Can't use the SignupFormGenerator for this because the applicationRoute is typed
       val formData = Map(
         "firstName" -> "name",
         "lastName" -> "last name",
@@ -96,6 +97,13 @@ class SignUpFormSpec extends BaseFormSpec {
       signUpForm.hasErrors mustBe true
       signUpForm.errors.length mustBe 1
       signUpForm.errors("applicationRoute").head.messages mustBe Seq("Unrecognised application route: BOOM")
+    }
+
+    "throw an error if the campaign referrer exceeds the max size allowed" in {
+      val (_, signUpForm) = SignupFormGenerator(campaignReferrer = Some("A" * 101)).get
+      signUpForm.hasErrors mustBe true
+      signUpForm.errors.length mustBe 1
+      signUpForm.errors("campaignReferrer").head.messages mustBe Seq(Messages("error.maxLength"))
     }
 
 /*
