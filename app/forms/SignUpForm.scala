@@ -164,7 +164,8 @@ class SignUpForm {
       "email_confirm" -> of(emailConfirm),
       SignUpForm.passwordField -> of(passwordFormatter),
       SignUpForm.confirmPasswordField -> nonEmptyTrimmedText("error.confirmpwd", passwordMaxLength),
-      "campaignReferrer" -> optionalTrimmedText(64),
+      // This must accommodate the largest campaign referrer option in the list
+      "campaignReferrer" -> optionalTrimmedText(100),
       "campaignOther" -> of(campaignOtherFormatter),
       "applicationRoute" -> of(applicationRouteFormatter),
       "agree" -> checked(Messages("agree.accept")),
