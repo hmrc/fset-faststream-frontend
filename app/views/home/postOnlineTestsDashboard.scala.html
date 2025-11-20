@@ -89,6 +89,17 @@
             <h3 class="heading-small">Next steps</h3>
             <p>To enable us to complete your pre-appointment checks, follow the
                 <a href="https://www.civil-service-careers.gov.uk/fast-stream/starting-fast-stream/">instructions on the Fast Stream website</a>.</p>
+
+            @if(page.onboardQuestionsCompleted) {
+                <p>
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                    You have entered your additional information
+                </p>
+            } else {
+                <p>
+                    <a href="@routes.OnboardCandidateQuestionsController.present(page.userDataWithSchemes.application.applicationId)">Enter your additional information</a>
+                </p>
+            }
             @if(page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_FAILED || page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_PASSED) {
                 @renderViewAssessmentFeedback
             }

@@ -17,18 +17,18 @@
 package controllers
 
 import config.{FrontendAppConfig, SecurityEnvironment}
-import connectors.ApplicationClient._
-import connectors.exchange._
+import connectors.ApplicationClient.*
+import connectors.exchange.*
 import connectors.exchange.candidateevents.CandidateAllocations
-import connectors.{ApplicationClient, ReferenceDataClient, SchemeClient, SiftClient}
+import connectors.{ApplicationClient, OnboardQuestionsClient, ReferenceDataClient, SchemeClient, SiftClient}
 import helpers.{CachedUserWithSchemeData, NotificationTypeHelper}
 import models.ApplicationData.ApplicationStatus
-import models._
-import models.page._
+import models.*
+import models.page.*
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
-import security.ProgressStatusRoleUtils._
-import security.RoleUtils._
-import security.Roles._
+import security.ProgressStatusRoleUtils.*
+import security.RoleUtils.*
+import security.Roles.*
 import security.{Roles, SilhouetteComponent}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -46,7 +46,8 @@ class HomeController @Inject() (
   applicationClient: ApplicationClient,
   refDataClient: ReferenceDataClient,
   siftClient: SiftClient,
-  schemeClient: SchemeClient
+  schemeClient: SchemeClient,
+  onboardQuestionsClient: OnboardQuestionsClient
 )(implicit val ec: ExecutionContext) extends BaseController(config, mcc) with CampaignAwareController {
 
   val appRouteConfigMap: Map[ApplicationRoute.Value, ApplicationRouteState] = config.applicationRoutesFrontend
@@ -154,6 +155,7 @@ class HomeController @Inject() (
       phase2TestsWithNames <- getPhase2Test
       phase3Tests <- getPhase3Test
       css <- fetchCurrentSchemeStatusDescriptions(application.applicationId)
+      onboardQuestionsOpt <- onboardQuestionsClient.findQuestions(application.applicationId)
     } yield {
       val phase1DataOpt = phase1TestsWithNames.map(Phase1TestsPage(_))
       val phase2DataOpt = phase2TestsWithNames.map(Phase2TestsPage(_, adjustments = None))
@@ -168,7 +170,8 @@ class HomeController @Inject() (
         phase1DataOpt,
         phase2DataOpt,
         phase3DataOpt,
-        config.fsacGuideUrl
+        config.fsacGuideUrl,
+        onboardQuestionsCompleted = onboardQuestionsOpt.isDefined
       )
       Ok(views.html.home.postOnlineTestsDashboard(page, css))
     }

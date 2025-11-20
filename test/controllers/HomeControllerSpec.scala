@@ -796,7 +796,7 @@ class HomeControllerSpec extends BaseControllerSpec {
                    appRouteState: ApplicationRouteState = defaultApplicationRouteState) = {
       new HomeController(
         mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
-        mockApplicationClient, mockReferenceDataClient, mockSiftClient, mockSchemeClient) with TestableSecureActions {
+        mockApplicationClient, mockReferenceDataClient, mockSiftClient, mockSchemeClient, mockOnboardQuestionsClient) with TestableSecureActions {
         override val candidate: CachedData = CachedData(candWithApp.user, Some(candWithApp.application))
         override val candidateWithApp: CachedDataWithApp = candWithApp
         override val appRouteConfigMap = Map(Faststream -> appRouteState, Edip -> appRouteState, Sdip -> appRouteState)
@@ -816,6 +816,8 @@ class HomeControllerSpec extends BaseControllerSpec {
           .thenReturnAsync(None)
 
         mockPostOnlineTestsDashboardCalls()
+
+        when(mockOnboardQuestionsClient.findQuestions(eqTo(currentApplicationId))(any[HeaderCarrier])).thenReturnAsync(None)
 
         // Analysis file upload tests
         override protected def getAllBytesInFile(path: Path): Array[Byte] = {
