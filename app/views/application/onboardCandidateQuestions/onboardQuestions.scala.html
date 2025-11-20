@@ -1,0 +1,59 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.CSRFieldConstructor._
+
+@import config.TrackingConsentConfig
+@(form: Form[forms.OnboardQuestionsForm.Data], dataSaved: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@returnToHomePage = {
+    <a href="@routes.HomeController.present()">Return to homepage</a>
+}
+
+@main_template(title = "Onboarding questions") {
+    <h1 class="heading-xlarge">Onboarding questions</h1>
+
+    @if(dataSaved) {
+        <p>You have already saved your onboarding questions.</p>
+        @returnToHomePage
+    } else {
+        @returnToHomePage
+
+        <div class="panel-indent text">
+            <p>Please fill in the following question carefully. Once you have saved it you will not be able to make any changes.</p>
+        </div>
+
+        @helper.form(action = routes.OnboardCandidateQuestionsController.submit, Symbol("novalidate") -> "novalidate") {
+            @helper.CSRF.formField
+
+            <p>
+                <legend><h2 class="form-label">National Insurance number</h2></legend>
+                @helper.inputText(form("niNumber"),
+                    Symbol("_label") -> "It’s on your National Insurance card, benefit letter, payslip or P60 – for example, ‘QQ123456C’",
+                    Symbol("_labelClass") -> "form-hint",
+                    Symbol("_hasLink") -> true,
+                    Symbol("autocapitalize") -> "characters",
+                    Symbol("autocorrect") -> "off",
+                    Symbol("class") -> "form-control",
+                    Symbol("_showConstraints") -> false
+                )
+            </p>
+            <div class="form-group">
+                <button id="submit" type="submit" class="button activate-page-btn">Save</button>
+            </div>
+        }
+    }
+}

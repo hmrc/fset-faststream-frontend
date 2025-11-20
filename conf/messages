@@ -5,6 +5,8 @@ error.required.campaignOther = Tell us how you heard about us
 error.boolean = You must specify a true/false value
 session.expired = You''ve been signed out due to inactivity. Sign in again if you want to continue
 
+error.niNumber.wrong.format = Enter your National Insurance number in the correct format
+
 application.cannotbe.withdrawn = You can''nt withdraw an application before you submit it
 error.cannot.withdraw = We can''t find an application to withdraw
 error.reason.required = Select a reason for withdrawing your application

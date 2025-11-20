@@ -120,3 +120,6 @@ POST        /additional-questions/generalQuestions                  @controllers
 POST        /additional-questions/:schemeId                         @controllers.SiftQuestionsController.saveSchemeForm(schemeId: connectors.exchange.referencedata.SchemeId)
 
 POST        /sift/numeric-test/start                                @controllers.PsiTestController.startSiftNumericTest
+
+GET         /onboarding-questions/:applicationId                    @controllers.OnboardCandidateQuestionsController.present(applicationId: UniqueIdentifier)
+POST        /onboarding-questions                                   @controllers.OnboardCandidateQuestionsController.submit

@@ -48,7 +48,8 @@ case class PostOnlineTestsPage(
                                 phase1DataOpt: Option[Phase1TestsPage2],
                                 phase2DataOpt: Option[Phase2TestsPage],
                                 phase3DataOpt: Option[Phase3TestsPage],
-                                fsacGuideUrl: String
+                                fsacGuideUrl: String,
+                                onboardQuestionsCompleted: Boolean = false
 ) {
   import PostOnlineTestsStage._
 
