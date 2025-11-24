@@ -55,6 +55,7 @@ case class PostOnlineTestsPage(
 
   //lazy val fsacGuideUrl: String = config.fsacGuideUrl
 
+  val isFaststream: Boolean = userDataWithSchemes.application.isFaststream
   val isSdip: Boolean = userDataWithSchemes.application.isSdip
 
   val isOnlySdipGreen: Boolean = userDataWithSchemes.application.applicationRoute == ApplicationRoute.SdipFaststream &&
