@@ -37,10 +37,11 @@ class OnboardQuestionsForm {
    * The next 6 characters are numbers.
    * Final character can be A, B, C, D.
    */
+  val regex = "^(?!GB|BG|NK|KN|TN|NT|ZZ)(?:[A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z])[0-9]{6}([A-D])$"
   val form: Form[OnboardQuestionsForm.Data] = Form(
     mapping(
       "niNumber" -> (nonEmptyTrimmedText("error.niNumber.wrong.format", 9) verifying
-        ("error.niNumber.wrong.format", value => value.matches("^(?!GB|BG|NK|KN|TN|NT|ZZ)[^DFIQUV][^DFIOQUV][0-9]{6}[ABCD]$")))
+        ("error.niNumber.wrong.format", value => value.matches(regex)))
     )(OnboardQuestionsForm.Data.apply)(f => Some(f.niNumber))
   )
 }
