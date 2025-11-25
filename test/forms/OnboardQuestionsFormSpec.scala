@@ -28,9 +28,9 @@ class OnboardQuestionsFormSpec extends BaseFormSpec {
     "be invalid for invalid NI numbers" in new TestFixture {
       val invalidFormats = Seq(
         "123456789", // All numbers
-        "NR292055",  // Last character not in A, B, C, D
-        "NR2920555", // Last character is a number
+        "NR292055",  // Last character not in A, B, C, D - missing
         "NR292055E", // Last character not in A, B, C, D
+        "NR2920555", // Last character is a number
         "NRZ92055A", // 1st digit is a letter
         "NR2Z2055A", // 2nd digit is a letter
         "NR29Z055A", // 3nd digit is a letter
@@ -58,7 +58,17 @@ class OnboardQuestionsFormSpec extends BaseFormSpec {
         "NU292055A", // second character must not be D, F, I, O, Q, U or V.
         "NV292055A", // second character must not be D, F, I, O, Q, U or V.
         "ZZ12Z456Z", // multiple failures
-        "NR29"       // not enough characters
+        "NR29",      // not enough characters
+        "?R123456A", // special character in character 1
+        "N?123456A", // special character in character 2
+        "NR?23456A", // special character in character 3
+        "NR1?3456A", // special character in character 4
+        "NR12?456A", // special character in character 5
+        "NR123?56A", // special character in character 6
+        "NR1234?6A", // special character in character 7
+        "NR12345?A", // special character in character 8
+        "NR123456?", // special character in character 9
+        "NR123456 "  // space at the end
       )
 
       invalidFormats.foreach { niNumber =>
