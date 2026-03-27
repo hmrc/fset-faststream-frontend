@@ -69,11 +69,11 @@ class SignInController @Inject() (
           case Right(usr) if usr.lockStatus == "LOCKED" => Future.successful(
             Redirect(routes.LockAccountController.present).addingToSession("email" -> usr.email))
           case Right(usr) if usr.isActive =>
-            if (data.route.contains(ApplicationRoute.SdipFaststream.toString)) {
-              signInService.signInUser(usr, Redirect(routes.ConsiderForSdipController.present))
-            } else {
+//            if (data.route.contains(ApplicationRoute.SdipFaststream.toString)) {
+//              signInService.signInUser(usr, Redirect(routes.ConsiderForSdipController.present))
+//            } else {
               signInService.signInUser(usr)
-            }
+//            }
           case Right(usr) => signInService.signInUser(usr, redirect = Redirect(routes.ActivationController.present))
           case Left(InvalidRole) => Future.successful(signInService.showErrorLogin(data, errorMsg = "error.invalidRole"))
           case Left(InvalidCredentials) => Future.successful(signInService.showErrorLogin(data))
