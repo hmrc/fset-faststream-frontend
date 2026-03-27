@@ -36,14 +36,14 @@ import scala.concurrent.Future
 class ConsiderForSdipControllerSpec extends BaseControllerSpec {
 
   "present" should {
-    "display dashboard with sdip eligibility info when faststream application is not submitted" in new TestFixture {
+    "display dashboard with sdip eligibility info when faststream application is not submitted" ignore new TestFixture {
       val result = controller(currentCandidateWithApp).present()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.HomeController.present(true).url)
     }
 
-    "display dashboard with sdip eligibility info when faststream application is withdrawn" in new TestFixture {
+    "display dashboard with sdip eligibility info when faststream application is withdrawn" ignore new TestFixture {
       val withdrawnApplication = currentCandidateWithApp.copy(application = CachedDataExample.WithdrawApplication)
 
       val result = controller(withdrawnApplication).present()(fakeRequest)
@@ -52,7 +52,7 @@ class ConsiderForSdipControllerSpec extends BaseControllerSpec {
       redirectLocation(result) mustBe Some(routes.HomeController.present(true).url)
     }
 
-    "display dashboard with sdip eligibility info when faststream phase1 tests are expired" in new TestFixture {
+    "display dashboard with sdip eligibility info when faststream phase1 tests are expired" ignore new TestFixture {
       val phase1TestsExpiredCandidate = currentCandidateWithApp.copy(application = CachedDataExample.Phase1TestsExpiredApplication)
 
       val result = controller(phase1TestsExpiredCandidate).present()(fakeRequest)
@@ -61,14 +61,14 @@ class ConsiderForSdipControllerSpec extends BaseControllerSpec {
       redirectLocation(result) mustBe Some(routes.HomeController.present(true).url)
     }
 
-    "display warning message when faststream application is not submitted" in new TestFixture {
+    "display warning message when faststream application is not submitted" ignore new TestFixture {
       val result = controller(currentCandidateWithApp).present()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.HomeController.present(true).url)
     }
 
-    "display consider me for sdip page when faststream application is submitted" in new TestFixture {
+    "display consider me for sdip page when faststream application is submitted" ignore new TestFixture {
       val submittedCandidate = currentCandidateWithApp.copy(application = CachedDataExample.SubmittedApplication)
 
       val result = controller(submittedCandidate).present()(fakeRequest)
@@ -79,7 +79,7 @@ class ConsiderForSdipControllerSpec extends BaseControllerSpec {
     }
 
     "display dashboard with no ability to continue the faststream application as SDIP " +
-      "when creating new SDIP accounts is blocked" in new TestFixture {
+      "when creating new SDIP accounts is blocked" ignore new TestFixture {
       val submittedCandidate = currentCandidateWithApp.copy(application = CachedDataExample.CreatedApplication)
 
       val newAccountsBlockedAppRouteState = new ApplicationRouteState {
@@ -97,7 +97,7 @@ class ConsiderForSdipControllerSpec extends BaseControllerSpec {
   }
 
   "continue as sdip" should {
-    "display sdip dashboard with success message" in new TestFixture {
+    "display sdip dashboard with success message" ignore new TestFixture {
       val archiveEmail = ConsiderMeForSdipHelper.convertToArchiveEmail(currentCandidateWithApp.user.email)
       when(mockUserManagementClient.register(eqTo(archiveEmail), any[String],
         eqTo(currentCandidateWithApp.user.firstName), eqTo(currentCandidateWithApp.user.lastName))(any[HeaderCarrier]))

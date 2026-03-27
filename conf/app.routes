@@ -100,9 +100,10 @@ GET         /online-tests/phase3/feedback-report                    @controllers
 GET         /invigilated-phase2-tests                               @controllers.InvigilatedController.present
 POST        /invigilated-phase2-tests                               @controllers.InvigilatedController.verifyToken
 
-GET         /consider-for-sdip                                      @controllers.ConsiderForSdipController.present
-POST        /consider-for-sdip                                      @controllers.ConsiderForSdipController.submit
-POST        /continue-as-sdip                                       @controllers.ConsiderForSdipController.continueAsSdip
+# These endpoints are no longer supported
+#GET         /consider-for-sdip                                      @controllers.ConsiderForSdipController.present
+#POST        /consider-for-sdip                                      @controllers.ConsiderForSdipController.submit
+#POST        /continue-as-sdip                                       @controllers.ConsiderForSdipController.continueAsSdip
 
 # Assets controller
 GET         /assets/*file                                           @controllers.Assets.versioned(path="/public", file: Asset)
