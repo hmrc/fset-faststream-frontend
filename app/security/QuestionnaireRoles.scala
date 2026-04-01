@@ -28,7 +28,7 @@ object QuestionnaireRoles {
 
   object StartOrContinueQuestionnaireRole extends CsrAuthorization {
     override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
-      activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS)
+      activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasAssistanceDetails(user)
   }
 
   object QuestionnaireNotStartedRole extends CsrAuthorization {
