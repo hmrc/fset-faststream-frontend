@@ -115,6 +115,15 @@ error.civilServantAndInternshipTypes.required = Tell us whether you''ve been par
 
 error.civilServantDepartment.required = Tell us what department you currently work for
 
+error.liveDisciplinaryWarning.required = Tell us if you currently have a live disciplinary warning for misconduct
+error.liveDisciplinaryWarning.cannot.continue = Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.
+
+error.inReviewPeriodFollowingAWarning.required = Tell us if you are currently in the review period following a warning for poor performance
+error.inReviewPeriodFollowingAWarning.cannot.continue = Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.
+
+error.inImprovementPeriodFollowingAWarning.required = Tell us if you are currently in the improvement period following a warning for misconduct
+error.inImprovementPeriodFollowingAWarning.cannot.continue = Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.
+
 error.edipCompleted.required = Tell us if you have completed EDIP
 
 error.edipInternshipYear.required = You must provide the year of the EDIP internship

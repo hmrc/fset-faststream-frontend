@@ -15,6 +15,8 @@
  *@
 
 @import helpers.TemplateHelper.maybeDisplayError
+@import views.html.widgets.yesNoQuestion
+@import views.html.widgets.yesNoQuestionWithYesMessage
 
 @(form: Form[forms.PersonalDetailsForm.Data], schemesRequiringQualifications: Seq[String])(implicit messages: Messages)
 <div id="civilServiceExperienceDetails_civilServantAndInternshipTypes-CivilServant-panel" class="toggle-content" aria-hidden="true">
@@ -53,6 +55,23 @@
                 <span class="has-error">@maybeDisplayError(form("civilServiceExperienceDetails.civilServantDepartment"))</span>
                 <input id="@{id}" name="@{name}" type="text" class="form-control" value="@value">
             </div>
+
+            @yesNoQuestionWithYesMessage(
+                form("civilServiceExperienceDetails.liveDisciplinaryWarning"),
+                question = "Do you currently have a live disciplinary warning for misconduct?",
+                yesMessage = Some("Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.")
+            )
+
+            @yesNoQuestionWithYesMessage(
+                form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning"),
+                question = "Are you currently in the review period following a warning for poor performance?",
+                yesMessage = Some("Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.")
+            )
+            @yesNoQuestionWithYesMessage(
+                form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning"),
+                question = "Are you currently in the improvement period following a warning for misconduct?",
+                yesMessage = Some("Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.")
+            )
         }
 
     </div>

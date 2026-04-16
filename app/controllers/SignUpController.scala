@@ -17,23 +17,25 @@
 package controllers
 
 import _root_.forms.SignUpForm
-import _root_.forms.SignUpForm._
+import _root_.forms.SignUpForm.*
 import play.silhouette.api.SignUpEvent
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.UserManagementClient.EmailTakenException
-import connectors.exchange._
+import connectors.exchange.*
 import connectors.exchange.campaignmanagement.AfterDeadlineSignupCodeUnused
-import connectors.{ ApplicationClient, UserManagementClient }
-import helpers.NotificationType._
+import connectors.{ApplicationClient, UserManagementClient}
+import helpers.NotificationType.*
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import models.{ ApplicationRoute, SecurityUser, UniqueIdentifier }
+import models.ApplicationRoute.ApplicationRoute
+
+import javax.inject.{Inject, Singleton}
+import models.{ApplicationRoute, SecurityUser, UniqueIdentifier}
 import play.api.i18n.Messages
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Result }
-import security.{ SignInService, SilhouetteComponent }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import security.{SignInService, SilhouetteComponent}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignUpController @Inject() (
@@ -47,7 +49,7 @@ class SignUpController @Inject() (
   userManagementClient: UserManagementClient,
   formWrapper: SignUpForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) with CampaignAwareController {
-  val appRouteConfigMap = config.applicationRoutesFrontend
+  val appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState] = config.applicationRoutesFrontend
   import notificationTypeHelper._
 
   private def signupCodeUnusedAndValid(signupCode: Option[String])
