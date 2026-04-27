@@ -18,12 +18,12 @@ package controllers
 
 import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient.PersonalDetailsNotFound
-import connectors.exchange.CivilServiceExperienceDetails._
-import connectors.exchange.SelectedSchemes
+import connectors.exchange.CivilServiceExperienceDetails.*
+import connectors.exchange.{GeneralDetails, SelectedSchemes}
 import connectors.{ApplicationClient, ReferenceDataClient, SchemeClient, UserManagementClient}
-import forms.FastPassForm._
+import forms.FastPassForm.*
 import forms.PersonalDetailsForm
-import helpers.NotificationType._
+import helpers.NotificationType.*
 import helpers.NotificationTypeHelper
 
 import javax.inject.{Inject, Singleton}
@@ -188,8 +188,10 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
       val edipCompleted = cachedData.application.edipCompleted.orElse(form.edipCompleted.map(_.toBoolean))
       val otherInternshipCompleted = form.otherInternshipCompleted.map(_.toBoolean)
       for {
-        _ <- applicationClient.updatePersonalDetails(cachedData.application.applicationId, cachedData.user.userID,
-          toExchange(form, cachedData.user.email, Some(continueToTheNextStep(onSuccess)), edipCompleted, otherInternshipCompleted))
+        _ <- applicationClient.updatePersonalDetails(
+          cachedData.application.applicationId, cachedData.user.userID,
+          toExchange(form, cachedData.user.email, Some(continueToTheNextStep(onSuccess)), edipCompleted, otherInternshipCompleted)
+        )
         _ <- createDefaultSchemes
         _ <- userManagementClient.updateDetails(cachedData.user.userID, form.firstName, form.lastName, Some(form.preferredName))
       } yield {
@@ -214,7 +216,7 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
 trait PersonalDetailsToExchangeConverter {
 
   def toExchange(personalDetails: PersonalDetailsForm.Data, email: String, updateApplicationStatus: Option[Boolean],
-                 edipCompleted: Option[Boolean] = None, otherInternshipCompleted: Option[Boolean] = None) = {
+                 edipCompleted: Option[Boolean] = None, otherInternshipCompleted: Option[Boolean] = None): GeneralDetails = {
     val pd = personalDetails.insideUk match {
       case true => personalDetails.copy(country = None)
       case false => personalDetails.copy(postCode = None)

@@ -30,11 +30,11 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class SignUpForm {
-  val passwordMinLength = 9
+  private val passwordMinLength = 9
   val passwordMaxLength = 128
 
   // scalastyle:off cyclomatic.complexity
-  def passwordFormatter(implicit messages: Messages) = new Formatter[String] {
+  def passwordFormatter(implicit messages: Messages): Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val passwd = data("password").trim
       val confirm = data("confirmpwd").trim
@@ -42,7 +42,7 @@ class SignUpForm {
       def formError(id: String) = Left(List(FormError("password", Messages(id))))
 
       (passwd, confirm) match {
-        case (password, _) if password.length == 0 => formError("error.password.empty")
+        case (password, _) if password.isEmpty => formError("error.password.empty")
         case (password, _) if password.length < passwordMinLength => formError("error.password")
         case (password, _) if password.length > passwordMaxLength => formError("error.password")
         case (password, _) if "[A-Z]".r.findFirstIn(password).isEmpty => formError("error.password")
@@ -57,7 +57,7 @@ class SignUpForm {
   }
   // scalastyle:on cyclomatic.complexity
 
-  def emailConfirm(implicit messages: Messages) = new Formatter[String] {
+  private def emailConfirm(implicit messages: Messages) = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val email: Option[String] = data.get("email")
@@ -74,7 +74,7 @@ class SignUpForm {
     override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
   }
 
-  def applicationRouteFormatter(implicit messages: Messages) = new Formatter[String] {
+  private def applicationRouteFormatter(implicit messages: Messages) = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val key = "applicationRoute"
       data.get(key) match {
@@ -97,13 +97,14 @@ class SignUpForm {
 
     override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
   }
-
+/*
   private def edipEligibilityCheck(data: Map[String, String])(implicit messages: Messages): Either[Seq[FormError], String] = {
     data.get("edipEligible").map(_.toLowerCase) match {
       case Some("true") => Right(ApplicationRoute.Edip)
       case _ => Left(List(FormError("edipEligible", Messages("agree.edipEligible"))))
     }
   }
+*/
 
   private def fastStreamCheck(appRoute: String, data: Map[String, String])
     (implicit messages: Messages): Either[Seq[FormError], String] = {
@@ -119,6 +120,7 @@ class SignUpForm {
   // We check diversity strand answer as well as eligibility answer here for sdipFs
   // Note we use the sdip error messages here when dealing with sdipFs validation errors
   // (agree.sdipEligible and agree.sdipDiversity)
+/*
   private def sdipFsCheck(data: Map[String, String])
     (implicit messages: Messages): Either[Seq[FormError], String] = {
     val sdipFsEligibleError = data.get("sdipFastStreamEligible").map(_.toLowerCase) match {
@@ -139,6 +141,7 @@ class SignUpForm {
       Left(errors)
     }
   }
+*/
 
   private def sdipCheck(data: Map[String, String])
     (implicit messages: Messages): Either[Seq[FormError], String] = {
@@ -180,7 +183,7 @@ class SignUpForm {
 
   import SignUpForm.RequestValidation
 
-  def campaignOtherFormatter(implicit messages: Messages) = new Formatter[Option[String]] {
+  private def campaignOtherFormatter(implicit messages: Messages) = new Formatter[Option[String]] {
     override def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val optCampaignOther = request.get("campaignOther")
       if (request.hasOptionalInfoProvided) {
@@ -199,7 +202,7 @@ class SignUpForm {
 
 object SignUpForm {
   implicit class RequestValidation(request: Map[String, String]) {
-    def hasOptionalInfoProvided = CampaignReferrers.list.find(pair =>
+    def hasOptionalInfoProvided: Boolean = CampaignReferrers.list.find(pair =>
       pair._1 == request.getOrElse("campaignReferrer", "")).exists(_._2)
 
     def sanitize: Map[String, String] = request.view.filterKeys {
