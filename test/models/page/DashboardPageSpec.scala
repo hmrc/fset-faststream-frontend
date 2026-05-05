@@ -125,7 +125,8 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
               phase2TestProfile,
               phase3TestGroup,
               assessmentInProgressStatus,
-              FsacGuideUrl
+              FsacGuideUrl,
+              isEligibleForJobOffer = false
             )
 
           // this is rather unwieldy but makes it much easier to match up what field is wrong in the long list of booleans
@@ -225,7 +226,8 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
               phase2TestProfile,
               phase3TestGroup,
               assessmentInProgressStatus,
-              FsacGuideUrl
+              FsacGuideUrl,
+              isEligibleForJobOffer = false
             )
         }
       }
