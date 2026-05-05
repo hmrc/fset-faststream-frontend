@@ -16,12 +16,13 @@
 
 package models.page
 
-import models.page.DashboardPage.Flags._
-import models.{ CachedData, Progress }
+import models.ApplicationData.ApplicationStatus.ApplicationStatus
+import models.page.DashboardPage.Flags.*
+import models.{CachedData, Progress}
 import play.api.mvc.RequestHeader
 import security.RoleUtils
 import security.ProgressStatusRoleUtils
-import security.Roles._
+import security.Roles.*
 import play.api.i18n.Messages
 
 case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
@@ -47,7 +48,8 @@ case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
                          phase2TestsPage: Option[Phase2TestsPage],
                          phase3TestsPage: Option[Phase3TestsPage],
                          assessmentStageStatus: AssessmentStageStatus,
-                         fsacGuideUrl: String
+                         fsacGuideUrl: String,
+                         isEligibleForJobOffer: Boolean
 ) {
   override def toString: String =
     "(" +
@@ -74,7 +76,8 @@ case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
       s"phase2TestsPage=$phase2TestsPage," +
       s"phase3TestsPage=$phase3TestsPage," +
       s"assessmentStageStatus=$assessmentStageStatus," +
-      s"fsacGuideUrl=$fsacGuideUrl" +
+      s"fsacGuideUrl=$fsacGuideUrl," +
+      s"isEligibleForJobOffer=$isEligibleForJobOffer" +
       s")"
 }
 
@@ -117,7 +120,8 @@ object DashboardPage {
       phase2TestGroup,
       phase3TestGroup,
       getAssessmentInProgressStatus(user),
-      fsacGuideUrl
+      fsacGuideUrl,
+      isEligibleForJobOffer = user.application.exists( _.applicationStatus == ApplicationStatus.ELIGIBLE_FOR_JOB_OFFER )
     )
   }
 

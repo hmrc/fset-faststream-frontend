@@ -186,5 +186,7 @@
             </li>
         </ol>
     </section>
-    @withdrawSection(usr)
+    @if(!dashboardPage.isEligibleForJobOffer) {
+        @withdrawSection(usr)
+    }
 }

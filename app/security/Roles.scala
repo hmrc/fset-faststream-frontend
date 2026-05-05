@@ -41,7 +41,7 @@ object Roles {
   trait AuthorisedUser extends CsrAuthorization {
     def isEnabled(user: CachedData)(implicit request: RequestHeader): Boolean
 
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && isEnabled(user)
   }
 
@@ -51,52 +51,52 @@ object Roles {
   }
 
   object ActivationRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       !user.user.isActive
   }
 
   object ActiveUserRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       user.user.isActive
   }
 
   object ApplicationStartRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       user.user.isActive && (user.application.isEmpty || statusIn(user)(CREATED))
   }
 
   object EditPersonalDetailsAndContinueRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && addressLookupIsPermitted(user)(CREATED, IN_PROGRESS)
   }
 
   object CreatedOrInProgressRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(CREATED, IN_PROGRESS)
   }
 
   object EditPersonalDetailsRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && !statusIn(user)(WITHDRAWN)
   }
 
   object SchemesRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       isFaststreamOnly(user) && activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasPersonalDetails(user)
   }
 
   object LocationsRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       isSdip(user) && statusIn(user)(IN_PROGRESS) && hasPersonalDetails(user)
   }
 
   object ContinueAsSdipRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       isFaststreamOnly(user) && (user.application.isEmpty || statusIn(user)(WITHDRAWN) || !isSubmitted(user) || isPhase1TestsExpired(user))
   }
 
   object AssistanceDetailsRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) &&
         (
           (hasSchemes(user) && (isFaststream(user) || isEdip(user))) ||
@@ -105,38 +105,38 @@ object Roles {
   }
 
   object PreviewApplicationRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && !statusIn(user)(CREATED) &&
         hasDiversity(user) && hasEducation(user) && hasOccupation(user)
   }
 
   object SubmitApplicationRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS) && hasPreview(user)
   }
 
   object SubmittedCheckFailedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(SUBMITTED_CHECK_FAILED)
   }
 
   object InProgressRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(IN_PROGRESS)
   }
 
   object AbleToWithdrawApplicationRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && !statusIn(user)(IN_PROGRESS, WITHDRAWN, CREATED)
   }
 
   object AssessmentCentreRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(ASSESSMENT_CENTRE)
   }
 
   object WithdrawnApplicationRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       statusIn(user)(WITHDRAWN)
   }
 
@@ -160,90 +160,90 @@ object Roles {
   }
 
   object OnlineTestInvitedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && (statusIn(user)(PHASE1_TESTS) && isPhase1TestsInvited(user))
   }
 
   object OnlineTestExpiredRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && isPhase1TestsExpired(user)
   }
 
   object Phase1TestFailedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && isPhase1TestsFailed(user)
   }
 
   object Phase2TestFailedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && isPhase2TestsFailed(user)
   }
 
   object Phase2TestInvitedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && (statusIn(user)(PHASE2_TESTS) && isPhase2TestsInvited(user))
   }
 
   object Phase2TestExpiredRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && isPhase2TestsExpired(user)
   }
 
   object Phase3TestInvitedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && (statusIn(user)(PHASE3_TESTS) && isPhase3TestsInvited(user))
   }
 
   object Phase3TestExpiredRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && isPhase3TestsExpired(user)
   }
 
   object Phase3TestFailedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       isPhase3TestsFailed(user)
   }
 
   object Phase3TestDisplayFeedbackRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       isPhase3TestsPassed(user) || isPhase3TestsPassedNotified(user) || isPhase3TestsFailed(user) || isPhase3TestsFailedNotified(user) ||
         isPhase3TestsFailedSdipGreen(user)
   }
 
   object Phase3TestPassedNotifiedRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       isPhase3TestsPassedNotified(user)
   }
 
   object DisplayOnlineTestSectionRole extends CsrAuthorization {
     // format: OFF
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(PHASE1_TESTS)
 
     // format: ON
   }
 
   object AssessmentCentreFailedToAttendRole extends AuthorisedUser {
-    override def isEnabled(user: CachedData)(implicit request: RequestHeader) = isAssessmentCentreFailedToAttend(user)
+    override def isEnabled(user: CachedData)(implicit request: RequestHeader): Boolean = isAssessmentCentreFailedToAttend(user)
   }
 
   object SiftNumericTestRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(SIFT) && isSiftEntered(user) && !isSiftComplete(user)
   }
 
   object SchemeSpecificQuestionsRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && statusIn(user)(SIFT) && isSiftEntered(user) && !isSiftComplete(user)
   }
 
   object PreviewSchemeSpecificQuestionsRole extends CsrAuthorization {
-    override def isAuthorized(user: CachedData)(implicit request: RequestHeader) =
+    override def isAuthorized(user: CachedData)(implicit request: RequestHeader): Boolean =
       activeUserWithActiveApp(user) && isSiftEntered(user)
   }
 
   object WithdrawComponent extends AuthorisedUser {
-    override def isEnabled(user: CachedData)(implicit request: RequestHeader) =
+    override def isEnabled(user: CachedData)(implicit request: RequestHeader): Boolean =
       !statusIn(user)(IN_PROGRESS, WITHDRAWN, CREATED) &&
         !isSdipFaststream(user)
   }
@@ -267,33 +267,33 @@ object RoleUtils {
 
   implicit def hc(implicit request: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-  def activeUserWithActiveApp(user: CachedData)(implicit request: RequestHeader) =
+  def activeUserWithActiveApp(user: CachedData)(implicit request: RequestHeader): Boolean =
     user.user.isActive && user.application.isDefined &&
       user.application.forall(a => a.applicationStatus != PHASE3_TESTS_PASSED_NOTIFIED)
 
-  def statusIn(user: CachedData)(status: ApplicationStatus*)(implicit request: RequestHeader) =
+  def statusIn(user: CachedData)(status: ApplicationStatus*)(implicit request: RequestHeader): Boolean =
     user.application.isDefined && status.contains(user.application.get.applicationStatus)
 
-  def addressLookupIsPermitted(user: CachedData)(status: ApplicationStatus*)(implicit request: RequestHeader) = {
+  def addressLookupIsPermitted(user: CachedData)(status: ApplicationStatus*)(implicit request: RequestHeader): Boolean = {
     (user.application.isDefined && status.contains(user.application.get.applicationStatus)) ||
       // Once the candidate has entered personal details they can use address lookup from that point on
       // eg. beyond submission all the way through to job offer
       (user.application.isDefined && user.application.get.progress.personalDetails)
   }
 
-  def isCivilServant(user: CachedData)(implicit request: RequestHeader) =
+  def isCivilServant(user: CachedData)(implicit request: RequestHeader): Boolean =
     user.application
       .flatMap(_.civilServiceExperienceDetails)
       .exists(_.isCivilServant)
 
-  def hasReceivedFastPass(user: CachedData)(implicit request: RequestHeader) =
+  def hasReceivedFastPass(user: CachedData)(implicit request: RequestHeader): Boolean =
     activeUserWithActiveApp(user) && statusIn(user)(SUBMITTED) &&
       user.application
         .flatMap(_.civilServiceExperienceDetails)
         .flatMap(_.fastPassReceived)
         .getOrElse(false)
 
-  def hasFastPassRejectedAndInvitedToPhase1Tests(user: CachedData)(implicit request: RequestHeader) = {
+  def hasFastPassRejectedAndInvitedToPhase1Tests(user: CachedData)(implicit request: RequestHeader): Boolean = {
     val fastPassReceived = user.application
       .flatMap(_.civilServiceExperienceDetails)
       .flatMap(_.fastPassReceived)
@@ -307,7 +307,7 @@ object RoleUtils {
     fastPassReceived && !fastPassAccepted && isPhase1TestsInvited(user) && !isPhase1TestsStarted(user)
   }
 
-  def hasFastPassBeenApproved(user: CachedData)(implicit request: RequestHeader) = {
+  def hasFastPassBeenApproved(user: CachedData)(implicit request: RequestHeader): Boolean = {
     val isApproved = for {
       app <- user.application
       csed <- app.civilServiceExperienceDetails
@@ -317,11 +317,11 @@ object RoleUtils {
     isApproved.getOrElse(false)
   }
 
-  def isFaststream(implicit user: CachedDataWithApp) = user.application.applicationRoute == ApplicationRoute.Faststream
+  def isFaststream(implicit user: CachedDataWithApp): Boolean = user.application.applicationRoute == ApplicationRoute.Faststream
 
-  def isEdip(implicit user: CachedDataWithApp) = user.application.applicationRoute == ApplicationRoute.Edip
+  def isEdip(implicit user: CachedDataWithApp): Boolean = user.application.applicationRoute == ApplicationRoute.Edip
 
-  def isSdip(implicit user: CachedDataWithApp) = user.application.applicationRoute == ApplicationRoute.Sdip
+  def isSdip(implicit user: CachedDataWithApp): Boolean = user.application.applicationRoute == ApplicationRoute.Sdip
 
   def isFaststream(implicit user: CachedData): Boolean = user.application.forall { app =>
     app.applicationRoute == ApplicationRoute.Faststream || app.applicationRoute == ApplicationRoute.SdipFaststream
@@ -345,7 +345,7 @@ object RoleUtils {
 
   def isFastStreamFailed(implicit user: CachedData): Boolean = isFailedAtSift || isAllFsbFailed || isAssessmentCentreFailed
 
-  def isInPhase3PassedOrPassedNotified(implicit user: CachedData) = user.application.exists(cachedData =>
+  def isInPhase3PassedOrPassedNotified(implicit user: CachedData): Boolean = user.application.exists(cachedData =>
     cachedData.applicationStatus == ApplicationStatus.PHASE3_TESTS_PASSED ||
       cachedData.applicationStatus == ApplicationStatus.PHASE3_TESTS_PASSED_NOTIFIED
   )
@@ -359,81 +359,81 @@ object RoleUtils {
 
 object ProgressStatusRoleUtils {
 
-  def hasPersonalDetails(implicit user: CachedData) = user.application.exists(_.progress.personalDetails)
+  def hasPersonalDetails(implicit user: CachedData): Boolean = user.application.exists(_.progress.personalDetails)
 
-  def hasSchemes(implicit user: CachedData) = user.application.isDefined && user.application.exists(_.progress.schemePreferences)
+  def hasSchemes(implicit user: CachedData): Boolean = user.application.isDefined && user.application.exists(_.progress.schemePreferences)
 
-  def hasLocations(implicit user: CachedData) = user.application.isDefined && user.application.exists(_.progress.locationPreferences)
+  def hasLocations(implicit user: CachedData): Boolean = user.application.isDefined && user.application.exists(_.progress.locationPreferences)
 
-  def hasAssistanceDetails(implicit user: CachedData) = user.application.isDefined && user.application.exists(_.progress.assistanceDetails)
+  def hasAssistanceDetails(implicit user: CachedData): Boolean = user.application.isDefined && user.application.exists(_.progress.assistanceDetails)
 
-  def hasStartedQuest(implicit user: CachedData) = user.application.exists(_.progress.startedQuestionnaire)
+  def hasStartedQuest(implicit user: CachedData): Boolean = user.application.exists(_.progress.startedQuestionnaire)
 
-  def hasDiversity(implicit user: CachedData) = user.application.exists(_.progress.diversityQuestionnaire)
+  def hasDiversity(implicit user: CachedData): Boolean = user.application.exists(_.progress.diversityQuestionnaire)
 
-  def hasEducation(implicit user: CachedData) = user.application.exists(_.progress.educationQuestionnaire)
+  def hasEducation(implicit user: CachedData): Boolean = user.application.exists(_.progress.educationQuestionnaire)
 
-  def hasOccupation(implicit user: CachedData) = user.application.exists(_.progress.occupationQuestionnaire)
+  def hasOccupation(implicit user: CachedData): Boolean = user.application.exists(_.progress.occupationQuestionnaire)
 
-  def hasPreview(implicit user: CachedData) = user.application.exists(_.progress.preview)
+  def hasPreview(implicit user: CachedData): Boolean = user.application.exists(_.progress.preview)
 
-  def isSubmitted(implicit user: CachedData) = user.application.exists(_.progress.submitted)
+  def isSubmitted(implicit user: CachedData): Boolean = user.application.exists(_.progress.submitted)
 
-  def isPhase1TestsInvited(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsInvited)
+  def isPhase1TestsInvited(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase1TestProgress.phase1TestsInvited)
 
-  def isPhase1TestsStarted(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsStarted)
+  def isPhase1TestsStarted(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase1TestProgress.phase1TestsStarted)
 
-  def isPhase1TestsPassed(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsPassed)
+  def isPhase1TestsPassed(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase1TestProgress.phase1TestsPassed)
 
-  def isPhase1TestsPassedNotified(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsPassedNotified)
+  def isPhase1TestsPassedNotified(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase1TestProgress.phase1TestsPassedNotified)
 
-  def isPhase1TestsFailed(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsFailed)
+  def isPhase1TestsFailed(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase1TestProgress.phase1TestsFailed)
 
-  def isPhase1TestsExpired(implicit user: CachedData) = user.application.exists(_.progress.phase1TestProgress.phase1TestsExpired)
+  def isPhase1TestsExpired(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase1TestProgress.phase1TestsExpired)
 
-  def isPhase2TestsInvited(implicit user: CachedData) = user.application.exists(_.progress.phase2TestProgress.phase2TestsInvited)
+  def isPhase2TestsInvited(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase2TestProgress.phase2TestsInvited)
 
-  def isPhase2TestsStarted(implicit user: CachedData) = user.application.exists(_.progress.phase2TestProgress.phase2TestsStarted)
+  def isPhase2TestsStarted(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase2TestProgress.phase2TestsStarted)
 
-  def isPhase2TestsPassed(implicit user: CachedData) = user.application.exists(_.progress.phase2TestProgress.phase2TestsPassed)
+  def isPhase2TestsPassed(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase2TestProgress.phase2TestsPassed)
 
-  def isPhase2TestsFailed(implicit user: CachedData) = user.application.exists(_.progress.phase2TestProgress.phase2TestsFailed)
+  def isPhase2TestsFailed(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase2TestProgress.phase2TestsFailed)
 
-  def isPhase2TestsExpired(implicit user: CachedData) = user.application.exists(_.progress.phase2TestProgress.phase2TestsExpired)
+  def isPhase2TestsExpired(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase2TestProgress.phase2TestsExpired)
 
-  def isPhase3TestsInvited(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsInvited)
+  def isPhase3TestsInvited(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsInvited)
 
-  def isPhase3TestsStarted(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsStarted)
+  def isPhase3TestsStarted(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsStarted)
 
-  def isPhase3TestsPassedWithAmber(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsPassedWithAmber)
+  def isPhase3TestsPassedWithAmber(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsPassedWithAmber)
 
-  def isPhase3TestsPassed(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsPassed)
+  def isPhase3TestsPassed(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsPassed)
 
-  def isPhase3TestsPassedNotified(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsPassedNotified)
+  def isPhase3TestsPassedNotified(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsPassedNotified)
 
-  def isPhase3TestsFailed(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailed)
+  def isPhase3TestsFailed(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailed)
 
-  def isPhase3TestsFailedNotified(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailedNotified)
+  def isPhase3TestsFailedNotified(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailedNotified)
 
-  def isPhase3TestsFailedSdipAmber(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailedSdipAmber)
+  def isPhase3TestsFailedSdipAmber(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailedSdipAmber)
 
-  def isPhase3TestsFailedSdipGreen(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailedSdipGreen)
+  def isPhase3TestsFailedSdipGreen(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsFailedSdipGreen)
 
-  def isPhase3TestsExpired(implicit user: CachedData) = user.application.exists(_.progress.phase3TestProgress.phase3TestsExpired)
+  def isPhase3TestsExpired(implicit user: CachedData): Boolean = user.application.exists(_.progress.phase3TestProgress.phase3TestsExpired)
 
-  def isSiftEntered(implicit user: CachedData) = user.application.exists(_.progress.siftProgress.siftEntered)
+  def isSiftEntered(implicit user: CachedData): Boolean = user.application.exists(_.progress.siftProgress.siftEntered)
 
-  def isSiftTestInvited(implicit user: CachedData) = user.application.exists(_.progress.siftProgress.siftTestInvited)
+  def isSiftTestInvited(implicit user: CachedData): Boolean = user.application.exists(_.progress.siftProgress.siftTestInvited)
 
-  def isSiftReady(implicit user: CachedData) = user.application.exists(_.progress.siftProgress.siftReady)
+  def isSiftReady(implicit user: CachedData): Boolean = user.application.exists(_.progress.siftProgress.siftReady)
 
-  def isSiftComplete(implicit user: CachedData) = user.application.exists(_.progress.siftProgress.siftCompleted)
+  def isSiftComplete(implicit user: CachedData): Boolean = user.application.exists(_.progress.siftProgress.siftCompleted)
 
-  def isAwaitingFsacAllocation(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.awaitingAllocation)
+  def isAwaitingFsacAllocation(implicit user: CachedData): Boolean = user.application.exists(_.progress.assessmentCentre.awaitingAllocation)
 
-  def isAllocatedToAssessmentCentre(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.allocationConfirmed) || user.application.exists(_.progress.assessmentCentre.allocationUnconfirmed)
+  def isAllocatedToAssessmentCentre(implicit user: CachedData): Boolean = user.application.exists(_.progress.assessmentCentre.allocationConfirmed) || user.application.exists(_.progress.assessmentCentre.allocationUnconfirmed)
 
-  def isAssessmentCentreFailedToAttend(implicit user: CachedData) = user.application.exists(_.progress.assessmentCentre.failedToAttend)
+  def isAssessmentCentreFailedToAttend(implicit user: CachedData): Boolean = user.application.exists(_.progress.assessmentCentre.failedToAttend)
 
   def isEligibleForJobOffer(implicit user: CachedData): Boolean = user.application.exists(_.progress.jobOffer.eligible)
 
