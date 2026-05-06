@@ -292,12 +292,16 @@
                             Keep an eye on your email inbox, including your junk mail.</p>
                     }
                     case PostOnlineTestsStage.CONFIRMED_FOR_EVENT => {
-                        <p>Your final selection board is booked</p>
-                        @renderEventType(page.fsbAllocation)
-                        @renderEventDetails(page.fsbAllocation)
-                        @renderCannotAttend
-                        @renderFindMoreAboutFsbDay(page.fsbAllocation)
-                        @(renderSchemePreferences(cssDescriptions))
+                        @if(page.isWithdrawn) {
+                            <p>Your final selection board is removed</p>
+                        } else {
+                            <p>Your final selection board is booked</p>
+                            @renderEventType(page.fsbAllocation)
+                            @renderEventDetails(page.fsbAllocation)
+                            @renderCannotAttend
+                            @renderFindMoreAboutFsbDay(page.fsbAllocation)
+                            @(renderSchemePreferences(cssDescriptions))
+                        }
                     }
                     case PostOnlineTestsStage.ALLOCATED_TO_EVENT => {
                         <p>Confirm you can attend this final selection board</p>

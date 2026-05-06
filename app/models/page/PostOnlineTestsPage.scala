@@ -118,16 +118,19 @@ case class PostOnlineTestsPage(
       case _                            => OTHER
     }
 
-  def isFinalSuccess =
+  def isWithdrawn: Boolean =
+    ProgressStatusRoleUtils.isWithdrawn(userDataWithSchemes.toCachedData)
+
+  def isFinalSuccess: Boolean =
     ProgressStatusRoleUtils.isEligibleForJobOffer(userDataWithSchemes.toCachedData)
 
-  def isFinalFailure =
+  def isFinalFailure: Boolean =
     RoleUtils.isFastStreamFailed(userDataWithSchemes.toCachedData)
 
-  def isFailedFaststreamGreenSdip =
+  def isFailedFaststreamGreenSdip: Boolean =
     ProgressStatusRoleUtils.isFastStreamFailedGreenSdip(userDataWithSchemes.toCachedData)
 
-  def haveAdditionalQuestionsBeenSubmitted =
+  def haveAdditionalQuestionsBeenSubmitted: Boolean =
     additionalQuestionsStatus.contains(SiftAnswersStatus.SUBMITTED)
 
   private def dateTimeToStringWithOptionalMinutes(
