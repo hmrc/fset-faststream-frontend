@@ -18,9 +18,9 @@ package security
 
 import controllers.routes
 import models.ApplicationData.ApplicationStatus
-import models.ApplicationData.ApplicationStatus._
-import models.{ ApplicationRoute, CachedData, CachedDataWithApp }
-import play.api.mvc.{ Call, RequestHeader }
+import models.ApplicationData.ApplicationStatus.{ApplicationStatus, *}
+import models.{ApplicationRoute, CachedData, CachedDataWithApp}
+import play.api.mvc.{Call, RequestHeader}
 import security.QuestionnaireRoles.QuestionnaireInProgressRole
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -444,5 +444,7 @@ object ProgressStatusRoleUtils {
   def isFailedAtSift(implicit user: CachedData): Boolean = user.application.exists(_.progress.siftProgress.failedAtSift)
 
   def isFastStreamFailedGreenSdip(implicit user: CachedData): Boolean = user.application.exists(_.progress.assessmentCentre.failedSdipGreen)
+
+  def isWithdrawn(implicit user: CachedData): Boolean = user.application.exists(_.applicationStatus == ApplicationStatus.WITHDRAWN)
 }
 // scalastyle:on
