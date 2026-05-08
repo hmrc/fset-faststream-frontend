@@ -42,7 +42,20 @@ case class Fsb(
     failed: Boolean = false,
     allFailed: Boolean = false,
     allFailedNotified: Boolean = false
-)
+) {
+  // Use this to work out if the candidate was ever in fsb. eg. candidate may currently be withdrawn
+  // but this checks to see if any fsb related progress statuses are present in the candidate's profile
+  def wasInFsb: Boolean =
+    awaitingAllocation ||
+    allocationConfirmed ||
+    allocationUnconfirmed ||
+    failedToAttend ||
+    resultEntered ||
+    passed ||
+    failed ||
+    allFailed ||
+    allFailedNotified
+}
 
 case class Phase1ProgressResponse(
     phase1TestsInvited: Boolean = false,

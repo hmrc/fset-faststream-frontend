@@ -18,6 +18,7 @@
 @import models.page.DashboardPage.activateByStep
 @import models.page.PostOnlineTestsStage
 @import models.ApplicationData.ApplicationStatus
+@import security.Roles._
 @import security.RoleUtils._
 @import security.ProgressStatusRoleUtils._
 @import connectors.exchange.candidateevents.CandidateAllocationWithEvent
@@ -32,25 +33,26 @@
 @renderSchemeForm = {
     <section class="inner-block-padr" id="schemeForms">
         <h2 class='heading-medium'>Additional information</h2>
-
-        @if(!page.haveAdditionalQuestionsBeenSubmitted) {
-            <p>At least one of your scheme preferences require you to answer some additional questions.</p>
-            <p>You should complete this within 7 days from the date of your email. Failure to do this will cause your application to expire.</p>
-            <ul class="list-text list-withicons" data-extrainfolist>
-                <li><i class="fa fa-minus the-icon" aria-hidden="true"></i><a href="@routes.SiftQuestionsController.presentGeneralQuestions" id="siftGeneralQuestions">Nationality and higher education</a></li>
-                @for(curSiftableScheme <- page.userDataWithSchemes.schemesForSiftForms) {
-                <li><i class="fa fa-minus the-icon" aria-hidden="true"></i>
-                    <a href="@routes.SiftQuestionsController.presentSchemeForm(curSiftableScheme.id)" id="@generateId(curSiftableScheme.id.value)">@{
-                        curSiftableScheme.name
-                        } <span class="visuallyhidden"> additional questions </span></a>
-                    <span class="font-xsmall">(in this section, you'll be assessed with one or more questions)</span></li>
-                }
-                <li><i class="fa fa-minus the-icon" aria-hidden="true"></i><a href="@routes.SiftQuestionsController.presentPreview" id="previewSiftQuestions">Preview<span class="visuallyhidden"> additional questions</span> before you submit</a></li>
-            </ul>
-        } else {
-            <div id="additionalQuestionsSubmittedPanel"><p>You've submitted all the required information.</p></div>
-            <ul class="list-text list-withicons" data-extrainfolist=""><li><i class="fa fa-check the-icon" aria-hidden="true"></i><a href="@routes.SiftQuestionsController.presentPreview">View your submitted answers</a></li></ul>
-        }
+        <div class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
+            @if(!page.haveAdditionalQuestionsBeenSubmitted) {
+                <p>At least one of your scheme preferences require you to answer some additional questions.</p>
+                <p>You should complete this within 7 days from the date of your email. Failure to do this will cause your application to expire.</p>
+                <ul class="list-text list-withicons" data-extrainfolist>
+                    <li><i class="fa fa-minus the-icon" aria-hidden="true"></i><a href="@routes.SiftQuestionsController.presentGeneralQuestions" id="siftGeneralQuestions">Nationality and higher education</a></li>
+                    @for(curSiftableScheme <- page.userDataWithSchemes.schemesForSiftForms) {
+                    <li><i class="fa fa-minus the-icon" aria-hidden="true"></i>
+                        <a href="@routes.SiftQuestionsController.presentSchemeForm(curSiftableScheme.id)" id="@generateId(curSiftableScheme.id.value)">@{
+                            curSiftableScheme.name
+                            } <span class="visuallyhidden"> additional questions </span></a>
+                        <span class="font-xsmall">(in this section, you'll be assessed with one or more questions)</span></li>
+                    }
+                    <li><i class="fa fa-minus the-icon" aria-hidden="true"></i><a href="@routes.SiftQuestionsController.presentPreview" id="previewSiftQuestions">Preview<span class="visuallyhidden"> additional questions</span> before you submit</a></li>
+                </ul>
+            } else {
+                <div id="additionalQuestionsSubmittedPanel"><p>You've submitted all the required information.</p></div>
+                <ul class="list-text list-withicons" data-extrainfolist=""><li><i class="fa fa-check the-icon" aria-hidden="true"></i><a href="@routes.SiftQuestionsController.presentPreview">View your submitted answers</a></li></ul>
+            }
+        </div>
     </section>
 }
 
@@ -105,7 +107,7 @@
 @renderCompletedSectionOne = {
     <div class="inner-block-padr" id="schemeForms">
         <h2 class='heading-medium'>Additional information</h2>
-        <p id="siftCompletedMessage">You've completed this section</p>
+        <p id="siftCompletedMessage" class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">You've completed this section</p>
         <ul class="list-text list-withicons" data-extrainfolist=""><li><i class="fa fa-check the-icon" aria-hidden="true"></i><a href="@routes.SiftQuestionsController.presentPreview">View your submitted answers</a></li></ul>
     </div><br />
 }
@@ -126,7 +128,7 @@
 }
 
 @renderFindMoreAboutAssessmentDay = {
-    <p><a href="@page.fsacGuideUrl" rel="external" target="_blank">
+    <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}"><a href="@page.fsacGuideUrl" rel="external" target="_blank">
         Find out more about the assessment centre</a>
     </p>
 }
@@ -186,12 +188,15 @@
                 @renderFindMoreAboutAssessmentDay
             }
             case PostOnlineTestsStage.CONFIRMED_FOR_EVENT => {
+                <div class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
                 <p>Your assessment centre is booked.</p>
                 @renderEventDetails(page.fsacAllocation)
                 @renderCannotAttend
                 @renderFindMoreAboutAssessmentDay
+                </div>
             }
             case PostOnlineTestsStage.ALLOCATED_TO_EVENT => {
+                <div class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
                 <p>Confirm you can attend this assessment centre</p>
                 @renderEventDetails(page.fsacAllocation)
 
@@ -206,20 +211,26 @@
 
                 @renderCannotAttend
                 @renderFindMoreAboutAssessmentDay
+                </div>
             }
             case PostOnlineTestsStage.EVENT_ATTENDED | PostOnlineTestsStage.ASSESSMENT_CENTRE_FAILED | PostOnlineTestsStage.ASSESSMENT_CENTRE_PASSED => {
-                <p>Thanks for attending the assessment centre.</p>
-                <p>We'll contact you as soon as we've got your result. Keep an eye on your email inbox, including your junk mail.</p>
-                @if(page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_FAILED || page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_PASSED) {
+                @* If the candidate has moved into fsb then just display the fsac feed back link *@
+                @if(page.wasInFsb) {
                     @renderViewAssessmentFeedback
+                } else {
+                    <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">Thanks for attending the assessment centre.</p>
+                    <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">We'll contact you as soon as we've got your result. Keep an eye on your email inbox, including your junk mail.</p>
+                    @if(page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_FAILED || page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_PASSED) {
+                        @renderViewAssessmentFeedback
+                    }
                 }
             }
             case _ => {
-                <p>If you've successfully passed the previous stages, you'll be invited to an assessment centre.</p>
+                <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">If you've successfully passed the previous stages, you'll be invited to an assessment centre.</p>
                 @renderFindMoreAboutAssessmentDay
             }
             case _ => {
-                <p>Congratulations, you're through to the final stage.</p>
+                <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">Congratulations, you're through to the final stage.</p>
             }
         }
         </div>
@@ -293,7 +304,7 @@
                     }
                     case PostOnlineTestsStage.CONFIRMED_FOR_EVENT => {
                         @if(page.isWithdrawn) {
-                            <p>Your final selection board is removed</p>
+                            <p class="disabled">Your final selection board is removed</p>
                         } else {
                             <p>Your final selection board is booked</p>
                             @renderEventType(page.fsbAllocation)
@@ -304,35 +315,40 @@
                         }
                     }
                     case PostOnlineTestsStage.ALLOCATED_TO_EVENT => {
-                        <p>Confirm you can attend this final selection board</p>
-                        @renderEventType(page.fsbAllocation)
-                        @renderEventDetails(page.fsbAllocation)
+                        @if(page.isWithdrawn) {
+                            <p class="disabled">Your final selection board is removed</p>
+                        } else {
+                            <p>Confirm you can attend this final selection board</p>
+                            @renderEventType(page.fsbAllocation)
+                            @renderEventDetails(page.fsbAllocation)
 
-                        @page.fsbAllocation.map { alloc =>
-                            @alloc.event.sessions.headOption.map { session =>
-                            @helper.form(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id),
-                            Symbol("novalidate") -> "novalidate") {
-                            @helper.CSRF.formField
-                            <button type="submit" class="button" id="fsbCanAttendBtn">I can attend</button>
+                            @page.fsbAllocation.map { alloc =>
+                                @alloc.event.sessions.headOption.map { session =>
+                                    @helper.form(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id),
+                                        Symbol("novalidate") -> "novalidate") {
+                                        @helper.CSRF.formField
+                                        <button type="submit" class="button" id="fsbCanAttendBtn">I can attend</button>
+                                    }
+                                }
                             }
-                        }}
 
-                        @renderCannotAttend
-                        @renderFindMoreAboutFsbDay(page.fsbAllocation)
-                        @renderSchemePreferences(cssDescriptions)
+                            @renderCannotAttend
+                            @renderFindMoreAboutFsbDay(page.fsbAllocation)
+                            @renderSchemePreferences(cssDescriptions)
+                        }
                     }
 
                     case _ => {
                         @if(page.isSdip) {
-                            <p>You've successfully passed the previous stage. You'll need to
+                            <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">You've successfully passed the previous stage. You'll need to
                                 attend a final event for your chosen scheme. We'll contact you
                                 to arrange this.</p>
                         } else {
-                            <p>If you've successfully passed the previous stage, you may need to
+                            <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">If you've successfully passed the previous stage, you may need to
                                 attend a final event for your chosen scheme. We'll contact you
                                 to arrange this.</p>
                         }
-                        <p>We aim to make your results available as soon as possible.</p>
+                        <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">We aim to make your results available as soon as possible.</p>
 
                         @renderSchemePreferences(cssDescriptions)
                     }

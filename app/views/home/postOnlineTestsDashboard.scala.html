@@ -141,7 +141,6 @@
                     all the effort you've put in so far.</p>
                 <p>We appreciate this will be disappointing. You should be proud of
                     how far you've got through this competitive process.</p>
-
                 <p>
                     You are still in the running for the Summer Internship Programme, more information will appear below.
                 </p>
@@ -288,7 +287,7 @@
         @withdrawSection(page.userDataWithSchemes.toCachedData)
         }
     case _ => {
-        <section class="section-border @if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}" id="mainProgressPage">
+        <section class="section-border" id="mainProgressPage">
             <div class="text">
                 @if(isSdip(page.userDataWithSchemes.toCachedData) || isEdip(page.userDataWithSchemes.toCachedData)) {
                 <section>
@@ -296,7 +295,7 @@
                 </section>
 
                 } else {
-                <section>
+                <section class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
                     <p>Your current schemes are detailed below:</p>
                     <p>Check your scheme preferences, as the order may have changed.</p>
                     @if(SchemeWithdrawSiftOrFsacAwaitingAllocationRole.isAuthorized(page.userDataWithSchemes.toCachedData) && !page.userDataWithSchemes.application.isSiftExpired) {
