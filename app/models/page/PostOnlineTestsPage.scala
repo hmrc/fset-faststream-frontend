@@ -101,8 +101,7 @@ case class PostOnlineTestsPage(
       case a if a.failed || a.failedNotified => ASSESSMENT_CENTRE_FAILED
       case a if a.failedSdipGreen            => ASSESSMENT_CENTRE_FAILED_SDIP_GREEN
       case _ if hasAnalysisExercise          => EVENT_ATTENDED
-      case a if a.allocationConfirmed & assessmentCentreStarted =>
-        UPLOAD_EXERCISES
+      case a if a.allocationConfirmed & assessmentCentreStarted => UPLOAD_EXERCISES
       case a if a.allocationConfirmed   => CONFIRMED_FOR_EVENT
       case a if a.allocationUnconfirmed => ALLOCATED_TO_EVENT
       case _                            => OTHER
@@ -117,6 +116,8 @@ case class PostOnlineTestsPage(
       case e if e.allocationUnconfirmed => ALLOCATED_TO_EVENT
       case _                            => OTHER
     }
+
+  def wasInFsb: Boolean = userDataWithSchemes.application.progress.fsb.wasInFsb
 
   def isWithdrawn: Boolean =
     ProgressStatusRoleUtils.isWithdrawn(userDataWithSchemes.toCachedData)
@@ -142,7 +143,7 @@ case class PostOnlineTestsPage(
     al.map { e =>
       e.event.date.format(DateTimeFormatter.ofPattern("EEEE d MMMM YYYY")) + " at " + dateTimeToStringWithOptionalMinutes(
         e.event.sessions.head.startTime)
-    }.getOrElse("No assessment centre")
+    }.getOrElse("No assessment centre event found")
 
   def eventLocation(al: Option[CandidateAllocationWithEvent]): String =
     al.map { allocWithEvent =>

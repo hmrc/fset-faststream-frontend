@@ -99,7 +99,7 @@
                     </ul>
                 }
 
-                @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn || dashboardPage.isPhase3TestPassedNotified) {
+                @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn || (dashboardPage.isPhase3TestPassedNotified && !dashboardPage.isApplicationWithdrawn)) {
                     <p><a class="" id="view-application" href="@routes.PreviewApplicationController.present">View your submitted application</a></p>
                     <p><a class="" id="edit-personal-details" href="@routes.PersonalDetailsController.present">Edit your personal details</a></p>
                     @if(!dashboardPage.isTestGroupExpired && !dashboardPage.isPhase1TestFailed) {
