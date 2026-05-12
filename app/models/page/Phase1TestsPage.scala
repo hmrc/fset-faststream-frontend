@@ -24,6 +24,7 @@ case class Phase1TestsPage2(expirationDate: OffsetDateTime,
 
   def areStarted: Boolean = tests.exists(_.started)
   def allCompleted: Boolean = tests.forall(_.completed)
+  def hasAtLeastOneFeedbackReport: Boolean = tests.exists(_.testReportUrl.nonEmpty)
 }
 
 object Phase1TestsPage {
