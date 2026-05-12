@@ -121,8 +121,10 @@
                 @if(dashboardPage.isApplicationWithdrawn) {
                     <a class="" id="view-withdrawn-application" href="@routes.PreviewApplicationController.present">
                         View your withdrawn application</a>
-                    <p><a class="" id="view-test-results" href="@routes.TestResultsController.present">
-                        View your test results</a><p>
+                    @if(dashboardPage.phase1TestsPage.exists(_.hasAtLeastOneFeedbackReport)) {
+                        <p><a class="" id="view-test-results" href="@routes.TestResultsController.present">
+                            View your test results</a><p>
+                    }
                 }
 
                 @if(dashboardPage.isApplicationInProgress) {

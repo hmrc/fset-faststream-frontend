@@ -25,6 +25,8 @@
 @displayTestPageLink(testPage: PsiTestPage, testName: String) = {
     @testPage.testReportUrl.map { reportUrl =>
         <a href="@reportUrl" target="_blank" id="@generatePsiTestId(testPage)">Feedback report <span class="visuallyhidden">for @testName (opens pdf document in a new window)</span></a>
+    }.getOrElse {
+        <p>No feedback report found</p>
     }
 }
 
