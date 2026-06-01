@@ -38,7 +38,7 @@ object DayMonthYear {
   def emptyDate: DayMonthYear = DayMonthYear("", "", "")
 
   def validDayMonthYear(message: String, msgForFuture: String)(minInclusive: Option[LocalDate], maxInclusive: Option[LocalDate]) =
-    dayMonthYear(message) verifying validDateConstraint(message, msgForFuture)(minInclusive, maxInclusive)
+    dayMonthYear verifying validDateConstraint(message, msgForFuture)(minInclusive, maxInclusive)
 
   private def validDateConstraint(message: String, msgForFuture: String)(
     minInclusive: Option[LocalDate], maxInclusive: Option[LocalDate]
@@ -54,7 +54,7 @@ object DayMonthYear {
     }
   }
 
-  private def dayMonthYear(message: String): Mapping[DayMonthYear] = mapping(
+  private def dayMonthYear: Mapping[DayMonthYear] = mapping(
     "day" -> text,
     "month" -> text,
     "year" -> text
@@ -63,9 +63,7 @@ object DayMonthYear {
 
 object Year {
   type Year = String
-  // scalastyle:off line.size.limit
-  val yearPattern = """^([0-9]){4}$""".r
-  // scalastyle:on line.size.limit
+  private val yearPattern = """^([0-9]){4}$""".r
 
   def validYearConstraint: Constraint[Year] = Constraint[Year]("constraint.year") { year =>
     yearPattern.pattern.matcher(year).matches match {
@@ -83,11 +81,11 @@ object Year {
 
       year match {
         case None | Some("") => Left(List(FormError(key, "error.year.required")))
-        case Some(m) if !m.isEmpty && !Year.validateYear(m) => Left(List(FormError(key, "error.year.format")))
+        case Some(m) if m.nonEmpty && !Year.validateYear(m) => Left(List(FormError(key, "error.year.format")))
         case _ => Right(year.map(_.trim))
       }
     }
 
-    override def unbind(key: String, value: Option[String]) = Map(key -> value.map(_.trim).getOrElse(""))
+    override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.map(_.trim).getOrElse(""))
   }
 }

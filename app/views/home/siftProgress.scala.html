@@ -26,7 +26,9 @@
 
 @import security.RoleUtils
 @(page: models.page.PostOnlineTestsPage, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails] = Nil)(implicit request: Request[_], messages: Messages)
+@*
 @{implicit val cachedData = page.userDataWithSchemes.toCachedData}
+*@
 
 @generateId(siftableScheme: String) = {siftSchemeQuestions@siftableScheme}
 

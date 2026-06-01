@@ -23,7 +23,7 @@ import forms.SelectedLocationsForm
 import helpers.NotificationTypeHelper
 import models.page.SelectedLocationsPage
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import security.Roles.{LocationsRole, SchemesRole}
+import security.Roles.LocationsRole
 import security.SilhouetteComponent
 
 import javax.inject.{Inject, Singleton}

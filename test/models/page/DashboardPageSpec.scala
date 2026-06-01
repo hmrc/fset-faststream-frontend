@@ -167,7 +167,7 @@ class DashboardPageSpec extends UnitSpec with TableDrivenPropertyChecks with Ins
 
   // format: off
   // scalastyle:off line.size.limit
- val WithdrawnApplications = Table(
+  val WithdrawnApplications = Table(
     ("Status before Withdraw", "step1", "step2", "step3", "step4", "isApplicationSubmittedAndNotWithdrawn", "isApplicationWithdrawn", "isApplicationInProgress", "isUserWithNoApplication", "isPhase1TestsPassed", "isPhase2TestsPassed", "isTestGroupExpired", "isPhase2TestGroupExpired", "isPhase3TestGroupExpired", "isPhase1TestFailed", "isPhase2TestFailed", "isPhase3TestFailed", "fullName", "testProfile", "phase2TestProfile", "phase3TestGroup", "assessmentInProgressStatus"),
     (PersonalDetailsProgressResponse, ProgressActive, ProgressInactiveDisabled, ProgressInactiveDisabled, ProgressInactiveDisabled, false, true, false, false, false, false, false, false, false, false, false, false, "John Biggs", None, None, None, ASSESSMENT_STATUS_UNKNOWN),
     (SubmittedProgressResponse, ProgressActive, ProgressInactiveDisabled, ProgressInactiveDisabled, ProgressInactiveDisabled, false, true, false, false, false, false, false, false, false, false, false, false, "John Biggs", None, None, None, ASSESSMENT_STATUS_UNKNOWN)

@@ -19,6 +19,7 @@
 @import security.RoleUtils._
 @import models.FieldNameHelpers._
 
+@*
 @displaySupportForOnlineTestsLabel = @{
     if(isEdip(user)) {
         "Will you need any support?"
@@ -26,6 +27,7 @@
         "Will you need any support for your work based scenarios, video interview or numerical test?"
     }
 }
+*@
 
 @displayDisabilityCategories = @{
     assistanceDetails.disabilityCategories.map { disabilityCategoryList =>

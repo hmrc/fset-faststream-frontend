@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.exchange.referencedata.{ReferenceData, Scheme, SchemeId, SdipLocation}
+import connectors.exchange.referencedata.{Scheme, SchemeId, SdipLocation}
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logging
@@ -72,7 +72,7 @@ class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: HttpClient
       Future.successful(values)
     }
   }
-
+/*
   private def getReferenceDataTyped[T](
     key: String,
     endpointPath: String
@@ -92,4 +92,5 @@ class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: HttpClient
       case Some(referenceData) => Future.successful(referenceData)
     }
   }
+ */
 }

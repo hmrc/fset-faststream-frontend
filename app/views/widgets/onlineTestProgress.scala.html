@@ -26,10 +26,13 @@
 
 @import security.RoleUtils._
 
+@*
 @requiresInvigilatedETray = @{
     adjustments.flatMap(_.adjustments).exists(_.contains("etrayInvigilated"))
 }
+*@
 
+@*
 @hasUnconfirmedAdjustments = @{
     val requiresAdjustments = assistanceDetails.exists(a => a.requiresAdjustments)
     // Some(adjustments) is returned when adjustments are confirmed,
@@ -39,20 +42,26 @@
     val adjustmentsConfirmed = adjustments.flatMap(_.adjustmentsConfirmed).getOrElse(false)
     requiresAdjustments && !adjustmentsConfirmed
 }
+*@
 
+@*
 @invigilatedETraySection() = {
     <p>We're arranging for you to come in and take an invigilated work based scenarios.</p>
     <p>You'll be contacted by a member of our team with further details.</p>
 }
+*@
 
+@*
 @isInvigilatedVideoApproved = @{
     dashboardPage.phase3TestsPage.exists(_.isInvigilatedVideoApproved)
 }
+*@
 
 @isGis = @{
     assistanceDetails.exists(_.isGis)
 }
 
+@*
 @phase2Section(phase2Test: Phase2TestsPage) = {
     <div id="etrayBlurb">
         @if(requiresInvigilatedETray) {
@@ -84,7 +93,9 @@
         }
     </div>
 }
+*@
 
+@*
 @phase2SectionBeforeOnlineExercisesFinishes() = {
     <p class="med-btm-margin" id="etrayHeading"><i class="fa fa-lock the-icon" aria-hidden="true"></i>Work based scenarios
         <span class="font-xsmall">- locked</span>
@@ -93,11 +104,14 @@
         Unlocked if you're successful in the online exercises
     </p>
 }
+*@
 
+@*
 @onlineExercisesForUnconfirmedAdjustments() = {
     <p class="med-btm-margin" id="etrayHeading"><i class="fa fa-minus the-icon" aria-hidden="true"></i>Work based scenarios</p>
     <p>You will be invited to take the tests shortly.</p>
 }
+*@
 
 @generatePsiTestId(psiTestPage: PsiTestPage) = {@Messages(psiTestPage.testNameKey).replace(" ", "").concat("LinkResultsReport")}
 
@@ -114,6 +128,7 @@
     }
 }
 
+@*
 @displayPhase2TestResultsLinks() = {
     @dashboardPage.phase2TestsPage.map { testsPage =>
         @testsPage.tests.map { psiTestPage =>
@@ -122,12 +137,15 @@
         }
     }
 }
+*@
 
+@*
 @displayPhase3TestResultsLinks() = {
     <a href="@routes.Phase3FeedbackController.present" target="_blank" id="phase3ResultsReportLink" alt="Phase 3 feedback report">
         Feedback report<span class="visuallyhidden"> for video interview (opens in a new window)</span>
     </a>
 }
+*@
 
 @(dashboardPage.isTestGroupExpired, dashboardPage.isPhase1TestFailed, dashboardPage.phase1TestsPage) match {
     case (true, _, Some(testsPage)) => {

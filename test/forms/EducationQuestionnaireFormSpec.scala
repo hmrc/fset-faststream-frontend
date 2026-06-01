@@ -202,7 +202,7 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
 
     "fail when the degree type is Other and the other details provided exceed the max size" in new Fixture {
       val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap
-        + ("degreeType" -> "Other", "otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1)))
+        ++ Map("degreeType" -> "Other", "otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1)))
       invalidForm.hasErrors mustBe true
       invalidForm.errors.size mustBe 1
       invalidForm.error("otherDegreeType") mustBe Some(
@@ -211,9 +211,10 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
     }
 
     "fail when the postgrad degree type is Other and the other details provided exceed the max size" in new Fixture {
-      val invalidForm = fastStreamForm.bind(FullValidFormMap
-        + ("postgradUniversity.degreeType" -> "Other",
-        "postgradUniversity.otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1))
+      val invalidForm = fastStreamForm.bind(
+        FullValidFormMap
+        ++ Map("postgradUniversity.degreeType" -> "Other",
+               "postgradUniversity.otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1))
       )
       invalidForm.hasErrors mustBe true
       invalidForm.errors.size mustBe 1

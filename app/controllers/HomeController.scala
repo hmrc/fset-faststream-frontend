@@ -55,14 +55,6 @@ class HomeController @Inject() (
 
   import notificationTypeHelper._
 
-  private lazy val validMSWordContentTypes = List(
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  )
-
-  private lazy val maxAnalysisExerciseFileSizeInBytes = 4096 * 1024
-  private lazy val minAnalysisExerciseFileSizeInBytes = 1024
-
   // Protected so the method can be tested
   protected[controllers] def fetchCurrentSchemeStatusDescriptions(applicationId: UniqueIdentifier)(
     implicit hc: HeaderCarrier): Future[Seq[SchemeEvaluationResultWithFailureDetails]] = {
@@ -179,6 +171,15 @@ class HomeController @Inject() (
 
   protected def getAllBytesInFile(path: Path): Array[Byte] = Files.readAllBytes(path)
 
+//  private lazy val validMSWordContentTypes = List(
+//    "application/msword",
+//    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+//  )
+
+//  private lazy val maxAnalysisExerciseFileSizeInBytes = 4096 * 1024
+//  private lazy val minAnalysisExerciseFileSizeInBytes = 1024
+
+/*
   def submitAnalysisExercise(): Action[AnyContent] = CSRSecureAppAction(AssessmentCentreRole) { implicit request =>
     implicit cachedData =>
       val applicationId = cachedData.application.applicationId
@@ -222,6 +223,7 @@ class HomeController @Inject() (
         Future.successful(Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.analysisExercise.upload.error")))
       }
   }
+ */
 
   private def dashboardWithOnlineTests(implicit application: ApplicationData,
     displaySdipEligibilityInfo: Boolean,
