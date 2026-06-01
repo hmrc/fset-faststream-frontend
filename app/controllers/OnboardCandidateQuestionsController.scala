@@ -26,7 +26,6 @@ import models.UniqueIdentifier
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.Roles.ActiveUserRole
 import security.SilhouetteComponent
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,16 +50,6 @@ class OnboardCandidateQuestionsController @Inject()(
         } yield {
           Ok(views.html.application.onboardCandidateQuestions.onboardQuestions(formWrapper.form, onboardQuestionsOpt.isDefined))
         }
-  }
-
-  private def findQuestions(appId: UniqueIdentifier)(implicit hc: HeaderCarrier) = {
-    val res = onboardQuestionsClient.findQuestions(appId)
-    res.map {
-      case Some(onboardQuestions) =>
-        OnboardQuestionsForm.Data(niNumber = onboardQuestions.niNumber)
-      case _ =>
-        OnboardQuestionsForm.Data(niNumber = "")
-    }
   }
 
   def submit: Action[AnyContent] = CSRUserAwareAction { implicit request =>

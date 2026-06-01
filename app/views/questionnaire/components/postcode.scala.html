@@ -32,7 +32,7 @@
                 <span class="form-hint text">
                     The areas candidates lived in the UK at the age of 14 are used in our research to understand socio-economic background
                 </span>
-                <input id="@{id}" name="@{name}" type="text" class="form-control" value="@value" @{ if(questionnaireForm("postcodeQ").value.contains("true")) "disabled='disabled'" }>
+                <input id="@{id}" name="@{name}" type="text" class="form-control" value="@value" @if(questionnaireForm("postcodeQ").value.contains("true")) {"disabled='disabled'"}>
             }
         } else {
             @helper.inputText(questionnaireForm("postcodeQ"),

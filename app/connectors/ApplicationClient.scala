@@ -21,7 +21,6 @@ import connectors.TokenEmailPairInvalidException
 import connectors.exchange.*
 import connectors.exchange.GeneralDetails.*
 import connectors.exchange.Questionnaire.*
-import connectors.exchange.OnboardQuestions
 import connectors.exchange.campaignmanagement.AfterDeadlineSignupCodeUnused
 import connectors.exchange.candidateevents.{CandidateAllocationWithEvent, CandidateAllocations}
 import connectors.exchange.candidatescores.ExerciseAverageResult
@@ -404,7 +403,7 @@ object ApplicationClient {
   sealed class CannotUpdateRecord2(m: String) extends Exception(m)
   sealed class CannotSubmit extends Exception
   sealed class CannotSubmitOverriddenSubmissionDeadline extends Exception
-  sealed class CannotMarkSignupCodeAsUsed(applicationId: String, code: String) extends Exception
+  sealed class CannotMarkSignupCodeAsUsed(applicationId: String, code: String) extends Exception(s"applicationId=$applicationId, code=$code")
   sealed class PersonalDetailsNotFound extends Exception
   sealed class AssistanceDetailsNotFound extends Exception
   sealed class ApplicationNotFound extends Exception

@@ -19,10 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import config.{FaststreamBackendConfig, FaststreamBackendUrl, FrontendAppConfig}
 import connectors.ApplicationClient.CannotUpdateRecord2
-import connectors.SchemeClient.{CannotUpdateSchemePreferences, SchemePreferencesNotFound}
-import connectors.SchoolsClient.SchoolsNotFound
-import connectors.exchange.candidatescores.AssessmentScoresAllExercises
-import connectors.exchange.{OnboardQuestions, School, SelectedSchemes}
+import connectors.exchange.OnboardQuestions
 import models.UniqueIdentifier
 import play.api.http.Status.*
 import play.api.libs.json.Json

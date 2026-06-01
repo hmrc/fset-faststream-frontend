@@ -16,14 +16,12 @@
 
 package models.page
 
-import models.ApplicationData.ApplicationStatus.ApplicationStatus
 import models.page.DashboardPage.Flags.*
 import models.{CachedData, Progress}
-import play.api.mvc.RequestHeader
-import security.RoleUtils
-import security.ProgressStatusRoleUtils
-import security.Roles.*
 import play.api.i18n.Messages
+import play.api.mvc.RequestHeader
+import security.{ProgressStatusRoleUtils, RoleUtils}
+import security.Roles.*
 
 case class DashboardPage(firstStepVisibility: ProgressStepVisibility,
                          secondStepVisibility: ProgressStepVisibility,
@@ -193,47 +191,47 @@ object DashboardPage {
     }
   }
 
-  private def isApplicationSubmittedAndNotWithdrawn(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isApplicationSubmittedAndNotWithdrawn(user: CachedData)(implicit request: RequestHeader) =
     AbleToWithdrawApplicationRole.isAuthorized(user)
 
-  private def isApplicationSubmittedCheckFailed(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isApplicationSubmittedCheckFailed(user: CachedData)(implicit request: RequestHeader) =
     SubmittedCheckFailedRole.isAuthorized(user)
 
-  private def isApplicationWithdrawn(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isApplicationWithdrawn(user: CachedData)(implicit request: RequestHeader) =
     WithdrawnApplicationRole.isAuthorized(user)
 
-  private def isApplicationInProgress(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isApplicationInProgress(user: CachedData)(implicit request: RequestHeader) =
     InProgressRole.isAuthorized(user)
 
-  private def isUserWithNoApplication(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isUserWithNoApplication(user: CachedData)(implicit request: RequestHeader) =
     ApplicationStartRole.isAuthorized(user)
 
-  private def isTestGroupExpired(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isTestGroupExpired(user: CachedData)(implicit request: RequestHeader) =
     OnlineTestExpiredRole.isAuthorized(user)
 
-  private def isPhase1TestFailed(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isPhase1TestFailed(user: CachedData)(implicit request: RequestHeader) =
     Phase1TestFailedRole.isAuthorized(user)
 
-  private def isPhase2TestFailed(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isPhase2TestFailed(user: CachedData)(implicit request: RequestHeader) =
     Phase2TestFailedRole.isAuthorized(user)
 
-  private def isPhase2TestGroupExpired(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isPhase2TestGroupExpired(user: CachedData)(implicit request: RequestHeader) =
     Phase2TestExpiredRole.isAuthorized(user)
 
-  private def isPhase3TestGroupExpired(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isPhase3TestGroupExpired(user: CachedData)(implicit request: RequestHeader) =
     Phase3TestExpiredRole.isAuthorized(user)
 
-  private def isPhase3TestFailed(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isPhase3TestFailed(user: CachedData)(implicit request: RequestHeader) =
     Phase3TestFailedRole.isAuthorized(user)
 
-  private def isPhase3TestPassedNotified(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def isPhase3TestPassedNotified(user: CachedData)(implicit request: RequestHeader) =
     Phase3TestPassedNotifiedRole.isAuthorized(user)
 
-  private def shouldDisplayPhase3TestFeedbackReport(user: CachedData)(implicit request: RequestHeader, messages: Messages) =
+  private def shouldDisplayPhase3TestFeedbackReport(user: CachedData)(implicit request: RequestHeader) =
     Phase3TestDisplayFeedbackRole.isAuthorized(user)
 
   private def getAssessmentInProgressStatus(user: CachedData)
-  (implicit request: RequestHeader, messages: Messages): AssessmentStageStatus = {
+  (implicit request: RequestHeader): AssessmentStageStatus = {
 
     if (RoleUtils.hasFastPassBeenApproved(user)) {
       ASSESSMENT_FAST_PASS_APPROVED
@@ -245,7 +243,7 @@ object DashboardPage {
   }
 
   // scalastyle:off cyclomatic.complexity method.length
-  private def visibilityForUser(user: CachedData)(implicit request: RequestHeader, messages: Messages):
+  private def visibilityForUser(user: CachedData)(implicit request: RequestHeader):
   (ProgressStepVisibility, ProgressStepVisibility, ProgressStepVisibility, ProgressStepVisibility) = {
 
     def withdrawnUserVisibility(user: CachedData) = {
@@ -300,6 +298,6 @@ object DashboardPage {
   }
   // scalastyle:on cyclomatic.complexity
 
-  private def status(user: CachedData)(implicit request: RequestHeader, messages: Messages): Option[ApplicationStatus] =
+  private def status(user: CachedData): Option[ApplicationStatus] =
     user.application.map(_.applicationStatus)
 }

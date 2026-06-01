@@ -177,8 +177,8 @@ class SiftQuestionsController @Inject() (
            answers.status,
            answers.generalAnswers,
            enrichedAnswers
-        )
-        Ok(views.html.application.additionalquestions.previewAdditionalAnswers(page))
+         )
+         Ok(views.html.application.additionalquestions.previewAdditionalAnswers(page))
       }
   }
 

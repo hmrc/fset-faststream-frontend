@@ -16,15 +16,15 @@
 
 package config
 
-import java.util.Base64
-
 import org.scalatest.TestData
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers._
-import play.api.test._
+import play.api.test.*
+import play.api.test.Helpers.*
 import play.api.{Application, Environment, Mode}
+
+import java.util.Base64
 
 class FaststreamWhitelistFilterConfigSpec extends PlaySpec with GuiceOneAppPerTest {
 
@@ -66,51 +66,44 @@ class FaststreamWhitelistFilterConfigSpec extends PlaySpec with GuiceOneAppPerTe
     "let requests pass" when {
       "coming from an IP in the white list must work as normal" in {
         val request = FakeRequest(GET, "/fset-fast-stream/signup").withHeaders("True-Client-IP" -> dummyIP1)
-        val Some(result) = route(app, request)
-
+        val result = route(app, request).get
         status(result) mustBe OK
       }
 
       "coming from an IP NOT in the white-list and not with a white-listed path must be redirected" in {
         val request = FakeRequest(GET, "/fset-fast-stream/signup").withHeaders("True-Client-IP" -> dummyIP3)
-        val Some(result) = route(app, request)
-
+        val result = route(app, request).get
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("https://www.apply-civil-service-fast-stream.service.gov.uk/shutter/fset-faststream/index.html")
       }
 
       "coming from an IP NOT in the white-list, but with a white-listed path must work as normal" in {
         val request = FakeRequest(GET, "/ping/ping").withHeaders("True-Client-IP" -> dummyIP3)
-        val Some(result) = route(app, request)
-
+        val result = route(app, request).get
         status(result) mustBe OK
       }
 
       "coming without an IP header must fail" in {
         val request = FakeRequest(GET, "/fset-fast-stream/signup")
-        val Some(result) = route(app, request)
-
+        val result = route(app, request).get
         status(result) mustBe NOT_IMPLEMENTED
       }
 
       "Uploading a file from an IP not on the main whitelist" in {
         val request = FakeRequest(GET, "/fset-fast-stream/file-submission/foobar").withHeaders("True-Client-IP" -> dummyIP3)
-        val Some(result) = route(app, request)
-
+        val result = route(app, request).get
         status(result) mustBe FORBIDDEN
       }
 
       "Uploading a file from an IP on the main whitelist, but not on the file upload whitelist" in {
         val request = FakeRequest(GET, "/fset-fast-stream/file-submission/foobar").withHeaders("True-Client-IP" -> dummyIP1)
-        val Some(result) = route(app, request)
-
+        val result = route(app, request).get
         status(result) mustBe FORBIDDEN
       }
 
       "Uploading a file from an IP on the main whitelist, and on the file upload whitelist" in {
         val request = FakeRequest(GET, "/fset-fast-stream/file-submission/foobar").withHeaders("True-Client-IP" -> dummyIP2)
-        val Some(result) = route(app, request)
-
+        val result = route(app, request).get
         status(result) mustBe NOT_FOUND
       }
     }

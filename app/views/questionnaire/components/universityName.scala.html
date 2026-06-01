@@ -47,7 +47,7 @@
         </label>
         <div id="university_field_wrapper" class="form-group @if(form("university").hasErrors) {has-an-error input-validation-error}">
             <span class="has-error">@maybeDisplayError(form("university"))</span>
-            <input id="@{id}" name="@{name}" type="text" class="form-control" value="@value" @{ if (form("preferNotSay_university").value.contains("true")) "disabled='disabled'" }>
+            <input id="@{id}" name="@{name}" type="text" class="form-control" value="@value" @if(form("preferNotSay_university").value.contains("true")) {"disabled='disabled'"}>
         </div>
     }
 

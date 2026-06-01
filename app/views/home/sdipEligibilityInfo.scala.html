@@ -17,12 +17,14 @@
 @import models.ConsiderMeForSdipHelper._
 
 @(usr: CachedData)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, messages: Messages)
-
+@*
 @displayInformation = @{
     if(faststreamerNotEligibleForSdip(usr).isDefinedAt(usr.application)) {
         faststreamerNotEligibleForSdip(usr).apply(usr.application)
     }
 }
+*@
+
 @*
 <div class="panel-info standard-panel">
     <div class="text">

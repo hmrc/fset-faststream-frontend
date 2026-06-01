@@ -22,7 +22,7 @@ import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, StringContextOps, UpstreamErrorResponse}
 
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
@@ -53,11 +53,14 @@ class AddressLookupClient @Inject()(config: FrontendAppConfig, http: HttpClientV
       .map {
         case Right(response) => response
         case Left(ex) if ex.statusCode == NOT_FOUND =>
-          logger.debug(s"AddressLookupClient received NOT_FOUND for postcode: $postcode. Error message: ${ex.getMessage()}")
+          logger.debug(s"AddressLookupClient received NOT_FOUND for postcode: $postcode. Error message: ${ex.getMessage}")
           Nil
         case Left(ex) if ex.statusCode == BAD_REQUEST =>
-          logger.debug(s"AddressLookupClient received BAD_REQUEST for postcode: $postcode. Error message: ${ex.getMessage()}")
-          throw new BadRequestException(ex.getMessage())
+          logger.debug(s"AddressLookupClient received BAD_REQUEST for postcode: $postcode. Error message: ${ex.getMessage}")
+          throw new BadRequestException(ex.getMessage)
+        case Left(_) =>
+          logger.debug(s"AddressLookupClient received BAD_REQUEST for postcode: $postcode.")
+          throw new BadRequestException(s"AddressLookupClient received BAD_REQUEST for postcode: $postcode.")
       }
   }
 
@@ -69,8 +72,11 @@ class AddressLookupClient @Inject()(config: FrontendAppConfig, http: HttpClientV
       .map {
         case Right(response) => response.head
         case Left(ex) if ex.statusCode == BAD_REQUEST =>
-          logger.debug(s"AddressLookupClient received BAD_REQUEST for uprn: $uprn. Error message: ${ex.getMessage()}")
-          throw new BadRequestException(ex.getMessage())
+          logger.debug(s"AddressLookupClient received BAD_REQUEST for uprn: $uprn. Error message: ${ex.getMessage}")
+          throw new BadRequestException(ex.getMessage)
+        case Left(_) =>
+          logger.debug(s"AddressLookupClient received BAD_REQUEST for uprn: $uprn.")
+          throw new BadRequestException(s"AddressLookupClient received BAD_REQUEST for uprn: $uprn.")
       }
   }
 
@@ -78,13 +84,13 @@ class AddressLookupClient @Inject()(config: FrontendAppConfig, http: HttpClientV
 
   case class LookupAddressByPostcodeRequest(postcode: String, filter: Option[String])
 
-  object LookupAddressByPostcodeRequest {
+  private object LookupAddressByPostcodeRequest {
     implicit val writes: Writes[LookupAddressByPostcodeRequest] = Json.writes[LookupAddressByPostcodeRequest]
   }
 
   case class LookupAddressByUprnRequest(uprn: String)
 
-  object LookupAddressByUprnRequest {
+  private object LookupAddressByUprnRequest {
     implicit val writes: Writes[LookupAddressByUprnRequest] = Json.writes[LookupAddressByUprnRequest]
   }
 }

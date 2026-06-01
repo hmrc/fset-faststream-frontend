@@ -16,16 +16,18 @@
 
 package helpers
 
-import play.api.libs.ws.DefaultBodyWritables
-import uk.gov.hmrc.http.hooks.{HttpHooks, RequestData, ResponseData}
-import uk.gov.hmrc.http.logging.ConnectionTracing
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, HttpVerb}
-import uk.gov.hmrc.play.http.ws.{WSHttpResponse, WSRequest}
+//import play.api.libs.ws.DefaultBodyWritables
+//import uk.gov.hmrc.http.hooks.{HttpHooks, RequestData, ResponseData}
+//import uk.gov.hmrc.http.logging.ConnectionTracing
+//import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, HttpVerb}
+//import uk.gov.hmrc.play.http.ws.{WSHttpResponse, WSRequest}
 
-import java.net.URL
-import scala.concurrent.{ExecutionContext, Future}
+//import java.net.URL
+//import scala.concurrent.{ExecutionContext, Future}
 
 // TODO: the functionality this supports is no longer used so think about removing this file
+trait WSBinaryPost{}
+/*
 trait WSBinaryPost extends HttpBinaryPost with WSRequest {
 
   override protected def doBinaryPost(url: String, body: Array[Byte])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
@@ -47,3 +49,4 @@ trait HttpBinaryPost extends HttpVerb with ConnectionTracing with HttpHooks {
     }
   }// scalastyle:on
 }
+*/

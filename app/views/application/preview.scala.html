@@ -32,10 +32,11 @@
     @if(!AbleToWithdrawApplicationRole.isAuthorized(user.get) && !WithdrawnApplicationRole.isAuthorized(user.get)) {@body}
 }
 
-
+@*
 @renderFullName(user: CachedData) = {
     @user.user.firstName @user.user.lastName
 }
+*@
 
 @edit_link(id: String, title: String, navigation: play.api.mvc.Call) = {
     @if(!ApplicationData.isReadOnly(user.get.application.get.applicationStatus)) {

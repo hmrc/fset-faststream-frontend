@@ -44,7 +44,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings() *)
   .settings(playDefaultPort := 9284)
   .settings(
-    targetJvm := "jvm-1.8",
     routesImport += "controllers.Binders._",
     libraryDependencies ++= appDependencies,
     Test / parallelExecution := false,
@@ -57,8 +56,10 @@ lazy val microservice = Project(appName, file("."))
 //    scalacOptions += "-Ydebug-cyclic",
 //    scalacOptions += "-explain-cyclic",
 //    scalacOptions += "-explain",
+    scalacOptions.+=("-Wconf:msg=unused import&src=html/.*:s"), // Suppresses unused import warnings in twirl files
+    scalacOptions.+=("-Wconf:src=routes/.*:s")                  // Suppresses all warnings in routes files
     // Currently don't enable warning in value discard in tests until ScalaTest 3
-    Compile / compile / scalacOptions += "-Ywarn-value-discard"
+//    Compile / compile / scalacOptions += "-Ywarn-value-discard"
   )
   // Even though log4j does not appear in the dependency graph, sbt still downloads it into the Coursier cache
   // when we compile. It is version log4j-1.2.17.jar, which contains the security vulnerabilities so as a workaround

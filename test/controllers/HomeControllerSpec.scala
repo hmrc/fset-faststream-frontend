@@ -578,6 +578,7 @@ class HomeControllerSpec extends BaseControllerSpec {
 
   // This functionality is no longer available in the candidate ui.
   // It can only be done via the admin ui
+/*
   "submitAnalysisExercise" should {
     "show a too big message when file is too large" ignore new TestFixture {
       mockPostOnlineTestsDashboardCalls()
@@ -629,6 +630,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       flash(result).get("danger") mustBe Some("assessmentCentre.analysisExercise.upload.error")
     }
   }
+ */
 
   "fetchCurrentSchemeStatusDescriptions" should {
     "return the expected scheme status descriptions" in new TestFixture {
