@@ -2,4 +2,3 @@
 
 ->         /fset-fast-stream              app.Routes
 ->         /                              health.Routes
-->         /hmrc-frontend                 hmrcfrontend.Routes
