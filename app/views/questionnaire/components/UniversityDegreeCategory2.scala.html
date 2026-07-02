@@ -1,0 +1,77 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.questionnaire.components.postgradUniversityName
+@import views.html.widgets.radioBoxHorizontal
+@import helpers.TemplateHelper.maybeDisplayError
+@import views.html.questionnaire.components.postgradUniversity
+@import views.html.widgets.selectValueDifferentFromDisplayedText
+@import views.html.widgets.radioBoxVertical
+@import models.view.questionnaire.DegreeTypes
+
+@import views.html.components.InputSelect
+@import views.html.components.InputRadios
+
+@this(
+        inputSelect: InputSelect,
+        inputRadios: InputRadios
+)
+
+@(form: Form[forms.EducationQuestionnaireForm.Data])(implicit user: Option[CachedData], messages: Messages)
+
+@inputSelect(
+    field = form("universityDegreeCategory"),
+    id = "universityDegreeCategory",
+    name = "universityDegreeCategory",
+    items = models.view.questionnaire.UniversityDegreeCategories.asSelectItems,
+    label = messages("universityDegreeCategory.question")
+)
+
+@inputRadios(
+    field = form("degreeType"),
+    name = "degreeType",
+    items = models.view.questionnaire.DegreeTypes.asRadioItems,
+    label = messages("degreeType.question")
+)
+
+@*
+<section>
+    @selectValueDifferentFromDisplayedText(
+        form("universityDegreeCategory"),
+        models.view.questionnaire.UniversityDegreeCategories.list.toList,
+        Symbol("_disabled") -> (form("preferNotSay_universityDegreeCategory").value.getOrElse("false"))
+    )(
+        "Select one") {
+        @Messages("universityDegreeCategory.question")
+    }
+</section>
+
+<section>
+    <fieldset class="form-group">
+        <legend><h2 class="form-label" id="degreeType">@Messages("degreeType.question")</h2></legend>
+        @radioBoxVertical(form("degreeType"), options = DegreeTypes.list, optionTrigger = "degree-describe")
+        <div class="toggle-content form-group form-group-compound @if(form("otherDegreeType").hasErrors) {has-an-error input-validation-error}" id="degree-describe">
+            <span class="has-error">@maybeDisplayError(form("otherDegreeType"))</span>
+            @helper.inputText(form("otherDegreeType"),
+                Symbol("_label") -> "Please describe your degree",
+                Symbol("_labelClass") -> "form-hint",
+                Symbol("class") -> "form-control",
+                Symbol("_showConstraints") -> false,
+                Symbol("optional") -> "")
+        </div>
+    </fieldset>
+</section>
+*@

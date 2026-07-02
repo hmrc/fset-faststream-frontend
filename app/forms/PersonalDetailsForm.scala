@@ -17,17 +17,19 @@
 package forms
 
 import connectors.exchange.GeneralDetails
+
 import javax.inject.Singleton
-import mappings.Mappings._
+import mappings.Mappings.*
 import mappings.PhoneNumberMapping.PhoneNumber
-import mappings.PostCodeMapping._
-import mappings._
+import mappings.PostCodeMapping.*
+import mappings.*
 import models.ApplicationRoute
-import models.ApplicationRoute._
+import models.ApplicationRoute.*
+
 import java.time.LocalDate
-import play.api.data.Forms._
+import play.api.data.Forms.*
 import play.api.data.format.Formatter
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 
 @Singleton
@@ -52,11 +54,11 @@ class PersonalDetailsForm {
 
   def ageReference(implicit now: LocalDate) = LocalDate.of(now.getYear, 8, 31)
 
-  def maxDob(implicit now: LocalDate) = Some(ageReference.minusYears(MinAge))
+  private def maxDob(implicit now: LocalDate) = Some(ageReference.minusYears(MinAge))
 
   val otherInternshipNameMaxSize = 60
 
-  def form(implicit now: LocalDate, ignoreFastPassValidations: Boolean = false, messages: Messages) = Form(
+  def form(implicit now: LocalDate, ignoreFastPassValidations: Boolean = false, messages: Messages): Form[PersonalDetailsForm.Data] = Form(
     mapping(
       firstName -> nonEmptyTrimmedText("error.firstName", 256),
       lastName -> nonEmptyTrimmedText("error.lastName", 256),
@@ -110,7 +112,7 @@ class PersonalDetailsForm {
     def hasCompletedOtherInternship = otherInternshipCompletedParam == "true"
 
     def otherInternshipNameParam = param(otherInternshipName).getOrElse("")
-    def isOtherInternshipNameFilled = hasCompletedOtherInternship && otherInternshipNameParam.length > 0
+    def isOtherInternshipNameFilled = hasCompletedOtherInternship && otherInternshipNameParam.nonEmpty
     def isOtherInternshipNameSizeValid(max: Int) = hasCompletedOtherInternship &&
       isOtherInternshipNameFilled && otherInternshipNameParam.length <= max
 
@@ -118,7 +120,7 @@ class PersonalDetailsForm {
     def isOtherInternshipYearValid = hasCompletedOtherInternship && otherInternshipYearParam.matches("[0-9]{4}")
   }
 
-  def edipYearFormatter = new Formatter[Option[String]] {
+  private def edipYearFormatter = new Formatter[Option[String]] {
     def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       bindOptionalParam(request.hasCompletedEdip, request.isEdipInternshipYearValid,
         "error.edipYear.required")(key, request.edipYearParam)
@@ -177,7 +179,7 @@ class PersonalDetailsForm {
       }
     }
 
-    override def unbind(key: String, fastPassData: Option[FastPassForm.Data]) =
+    override def unbind(key: String, fastPassData: Option[FastPassForm.Data]): Map[String, String] =
       fastPassData.map(fpd => FastPassForm.form.fill(fpd).data).getOrElse(Map(key -> ""))
   }
 
@@ -207,10 +209,10 @@ class PersonalDetailsForm {
       }
     }
 
-    override def unbind(key: String, value: Option[String]) = Map(key -> value.getOrElse(""))
+    override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
   }
 
-  val countryFormatter = new Formatter[Option[String]] {
+  private val countryFormatter = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val outsideUK = data.getOrElse(outsideUk, "false").toBoolean
       val country = data.getOrElse(key, "").trim
@@ -222,7 +224,7 @@ class PersonalDetailsForm {
       }
     }
 
-    override def unbind(key: String, value: Option[String]) = Map(key -> value.getOrElse(""))
+    override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
   }
 }
 
@@ -265,13 +267,13 @@ object PersonalDetailsForm {
         s"otherInternshipYear=$otherInternshipYear" +
         ")"
 
-    def insideUk = outsideUk match {
+    def insideUk: Boolean = outsideUk match {
       case Some(true) => false
       case _ => true
     }
 
     def toExchange(email: String, updateApplicationStatus: Option[Boolean],
-                   overrideEdipCompleted: Option[Boolean] = None, overrideOtherInternshipCompleted: Option[Boolean] = None) = {
+                   overrideEdipCompleted: Option[Boolean] = None, overrideOtherInternshipCompleted: Option[Boolean] = None): GeneralDetails = {
       GeneralDetails(
         firstName,
         lastName,

@@ -263,13 +263,13 @@ object AssistanceDetailsForm {
       )
     }
 
-    def toOptBoolean(optString: Option[String]) = optString match {
+    private def toOptBoolean(optString: Option[String]) = optString match {
       case Some("Yes") => Some(true)
       case Some("No") => Some(false)
       case _ => None
     }
 
-    def toOptString(optBoolean: Option[Boolean]) = optBoolean match {
+    private def toOptString(optBoolean: Option[Boolean]) = optBoolean match {
       case Some(true) => Some("Yes")
       case Some(false) => Some("No")
       case _ => None

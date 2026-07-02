@@ -1,0 +1,193 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import forms.SelectedSchemesForm.maxSchemes
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukErrorSummary, GovukRadios, Hint, HtmlContent, Legend, RadioItem, Radios, Text}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
+@import views.html.components.{Heading1, Heading2, Layout, PageTitle}
+
+@this(
+        mainLayout: Layout,
+        govukErrorSummary: GovukErrorSummary,
+        formWithCSRF: FormWithCSRF,
+        h1: Heading1,
+        h2: Heading2,
+        govukButton: GovukButton,
+        govukRadios : GovukRadios,
+        pageTitle: PageTitle
+)
+
+@(page: models.page.SelectedSchemesPage, isCandidateCivilServant: Boolean, form: Form[forms.SelectedSchemesForm.SchemePreferences])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@import views.html.application.schemePreferences.schemesCheckboxGroup
+@import views.html.helper.CSPNonce
+@import views.html.widgets.{checkbox, pageProgress, radioBox, yesNoQuestion}
+
+@selectedSchemes = @{
+    form.value match {
+        case Some(formObject) => formObject.schemes.lift(_)
+        case _ => page.getValidSchemesByPriority(form.data).lift(_)
+    }
+}
+
+@javaScripts = {
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/schemeSelection.js")' type="text/javascript"></script>
+}
+
+@css = {
+    <link href='@routes.Assets.versioned("css/main.css")' media="all" rel="stylesheet" type="text/css">
+    <link href='@routes.Assets.versioned("css/font-awesome/css/font-awesome.min.css")' rel="stylesheet" type="text/css">
+}
+
+@noOrderAgreedHtml = {
+    <p>Review your preferences and confirm you're happy with the order to continue</p>
+}
+
+@notEligibleHtml = {
+    <p>You can only select preferences you're eligible for</p>
+}
+
+@mainLayout(pageTitle(form, "Choose your schemes").toString, javaScripts = Some(javaScripts), css = Some(css)) {
+@*main_template(title = "Choose your schemes", pageForms = Seq(form)) {*@
+    @*pageProgress(2, 7)*@
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+    }
+
+    @formWithCSRF(action = routes.SchemePreferencesController.submit) {
+        @h1(content = Text("Choose your schemes"))
+
+        <div class="panel-indent">
+            <p>In preference order, select only the schemes you'd like to work in.</p>
+            <p>You can choose a maximum of @maxSchemes schemes.</p>
+        </div>
+
+        <fieldset>
+            <legend class="visuallyhidden">In preference order, select only the schemes you'd like to work in.</legend>
+            <section class="grid-wrapper scheme-wrapper">
+                <div class="scheme-input-container">
+                @schemesCheckboxGroup(isCandidateCivilServant, form("schemes"), page.visibleSchemes,
+                    Symbol("_label") -> "",
+                    Symbol("_class") -> ""
+                )
+                </div>
+            </section>
+        </fieldset>
+
+        <section id="selectedPreferences" class="hide-nojs">
+            @h2(content = Text("Your chosen schemes"))
+            <section class="text">
+                Please ensure you have read and understand the
+                <a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" target="_blank" rel="external">eligibility</a>
+                requirements for the Fast Stream and
+                for each of your chosen schemes. If you are later found to be ineligible, we will not be able to
+                progress your application.
+            </section>
+            <div data-scheme-placeholder="">
+                <div class="scheme-warning text">
+                    <p>Your schemes will appear here as you select them from the list</p>
+                </div>
+            </div>
+            @for(i <- page.visibleSchemes.indices) {
+                <input type="hidden" id="scheme_@i" name="scheme_@i" value='@selectedSchemes(i).getOrElse("")' />
+            }
+            <ol id="selectedPrefList" class="list-text">
+                <li></li>
+            </ol>
+            <span class="visuallyhidden" id="schemeRemovedMessage" aria-live="assertive"></span>
+        </section>
+        <section class="text panel-indent">
+            <p>Schemes will be offered to you in order of preference.</p>
+            <p>You will not be able to reorder them after submitting your application.</p>
+            <p>You can choose a maximum of @maxSchemes schemes.</p>
+        </section>
+@*
+        <section class="text">
+                @yesNoQuestion(form("orderAgreed"), question = "Are you happy with the order of your schemes?",
+                noMessage = Some("Review your preferences and confirm you're happy with the order to continue"))
+        </section>
+*@
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Are you happy with the order of your schemes?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "orderAgreed",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true")
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                    conditionalHtml = Some(noOrderAgreedHtml)
+                )
+            )//,
+            //classes = "govuk-radios--inline"
+        ).withFormField(form("orderAgreed")))
+
+        @*
+        <section class="text">
+            @yesNoQuestion(form("eligible"), question = "Are you eligible for your chosen schemes?",
+            noMessage = Some("You can only select preferences you're eligible for"),
+            description = Some("""Make sure you're <a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" target="_blank" rel="external">eligible<span class="visuallyhidden"> for your chosen schemes</span></a> for your chosen schemes."""))
+        </section>*@
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Are you eligible for your chosen schemes?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            hint = Some(Hint(
+                content = HtmlContent("""Make sure you're <a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" target="_blank" rel="external">eligible<span class="visuallyhidden"> for your chosen schemes</span></a> for your chosen schemes.""")
+            )),
+            name = "eligible",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true")
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                    conditionalHtml = Some(notEligibleHtml)
+                )
+            )//,
+            //classes = "govuk-radios--inline"
+        ).withFormField(form("eligible")))
+
+        @*
+        <div class="form-group no-btm-margin">
+            <button id="schemeSaveBtn" type="submit" value="submit" class="button">Save and continue</button>
+        </div>
+        *@
+        <div>
+            @govukButton(Button(
+                content = Text("Save and continue"),
+                inputType = Some("submit"),
+                preventDoubleClick = Some(true)
+            ))
+        </div>
+    }
+}

@@ -257,9 +257,13 @@ class PersonalDetailsControllerSpec extends BaseControllerSpec {
   trait TestFixture extends BaseControllerTestFixture {
     // scalastyle:off method.name
     def controller(implicit candWithApp: CachedDataWithApp = currentCandidateWithApp) = {
+      val personalDetailsTemplate = mock[views.html.application.PersonalDetails2]
+
       val formWrapper = new PersonalDetailsForm
-      new PersonalDetailsController(mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
-      mockApplicationClient, mockSchemeClient, mockUserManagementClient, mockReferenceDataClient, formWrapper) with TestableSecureActions {
+      new PersonalDetailsController(mockConfig, stubMcc, personalDetailsTemplate, mockSecurityEnv, mockSilhouetteComponent,
+        mockNotificationTypeHelper, mockApplicationClient, mockSchemeClient, mockUserManagementClient, mockReferenceDataClient,
+        formWrapper
+      ) with TestableSecureActions {
         override val candidateWithApp: CachedDataWithApp = candWithApp
       }
     }

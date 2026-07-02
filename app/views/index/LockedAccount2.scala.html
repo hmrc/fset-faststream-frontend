@@ -1,0 +1,50 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, FormWithCSRF, GovukButton, Text}
+@import views.html.components.{Heading1, InputHidden, Layout}
+
+@this(
+        mainLayout: Layout,
+        h1: Heading1,
+        formWithCSRF: FormWithCSRF,
+        govukButton: GovukButton,
+        inputHidden: InputHidden
+)
+
+@(lockAccountForm: Form[forms.LockAccountForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@mainLayout("Locked user account") {
+    @h1(content = Text("Account locked"))
+    <div class="text">
+        <p>Your account has been locked due to a large number of incorrect sign in attempts.</p>
+        <p>You should receive a 7 character code in your email. Enter the code to
+            reset your password and unlock your account.</p>
+
+        @formWithCSRF(action = routes.LockAccountController.submit, Symbol("id") -> "account-locked-form") {
+
+            @inputHidden(lockAccountForm("email"))
+
+            @govukButton(Button(
+                id = Some("btnReset"),
+                content = Text("Reset password"),
+                inputType = Some("submit"),
+                preventDoubleClick = Some(true)
+            ))
+        }
+    </div>
+}

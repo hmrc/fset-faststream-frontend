@@ -43,7 +43,7 @@ class DiversityQuestionnaireForm {
     )(DiversityQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
-  def acceptanceForm(isFastStream: Boolean)(implicit messages: Messages) = {
+  def acceptanceForm(isFastStream: Boolean)(implicit messages: Messages): Form[DiversityQuestionnaireForm.AcceptanceTerms] = {
     val errorKey = if (isFastStream) { "error.required.acceptance.faststream" } else { "error.required.acceptance.sdip" }
     Form(
       mapping(

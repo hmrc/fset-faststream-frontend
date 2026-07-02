@@ -30,24 +30,28 @@ import models.ApplicationRoute.ApplicationRoute
 
 import javax.inject.{Inject, Singleton}
 import models.{ApplicationRoute, SecurityUser, UniqueIdentifier}
+import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.twirl.api.Html
 import security.{SignInService, SilhouetteComponent}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+import views.html.registration.SignUp2
 
 @Singleton
-class SignUpController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  signInService: SignInService,
-  applicationClient: ApplicationClient,
-  userManagementClient: UserManagementClient,
-  formWrapper: SignUpForm)(implicit val ec: ExecutionContext)
+class SignUpController @Inject()(
+                                  config: FrontendAppConfig,
+                                  mcc: MessagesControllerComponents,
+                                  signUpTemplate: SignUp2,
+                                  val secEnv: SecurityEnvironment,
+                                  val silhouetteComponent: SilhouetteComponent,
+                                  val notificationTypeHelper: NotificationTypeHelper,
+                                  signInService: SignInService,
+                                  applicationClient: ApplicationClient,
+                                  userManagementClient: UserManagementClient,
+                                  signUpForm: SignUpForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) with CampaignAwareController {
   val appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState] = config.applicationRoutesFrontend
   import notificationTypeHelper._
@@ -64,12 +68,28 @@ class SignUpController @Inject() (
     signupCodeValid.map { sCodeValid =>
       request.identity match {
         case Some(_) => Redirect(routes.HomeController.present()).flashing(warning("activation.already"))
-        case None => Ok(views.html.registration.signup(
-          formWrapper.form, appRouteConfigMap, notification = None, signupCode, sCodeValid, config.preGoLiveTestingEnabled)
-        )
+        case None => Ok(signUpView(signUpForm.form, signupCode, sCodeValid))
       }
     }
   }
+
+  private def signUpView(
+                          form: Form[SignUpForm.Data], signUpCode: Option[String] = None, sCodeValid: Boolean = false,
+                          notification: Option[(helpers.NotificationType, String)] = None)(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcSignUpView) {
+      signUpTemplate(
+        form, appRouteConfigMap, notification, afterDeadlineSignupCode = signUpCode,
+        validAfterDeadlineSignupCode = sCodeValid,
+        preGoLiveTestingEnabled = config.preGoLiveTestingEnabled
+      )
+    } else {
+      views.html.registration.signup(
+        form, appRouteConfigMap, notification, afterDeadlineSignupCode = signUpCode,
+        validAfterDeadlineSignupCode = sCodeValid,
+        preGoLiveTestingEnabled = config.preGoLiveTestingEnabled
+      )
+    }
 
   // scalastyle:off method.length
   def signUp(signupCode: Option[String]): Action[AnyContent] = CSRUserAwareAction { implicit request =>
@@ -111,9 +131,24 @@ class SignUpController @Inject() (
         }
       }
 
-      formWrapper.form.bindFromRequest().fold(
+      signUpForm.form.bindFromRequest().fold(
         invalidForm => {
-          Future.successful(Ok(views.html.registration.signup(formWrapper.form.bind(invalidForm.data.sanitize), appRouteConfigMap)))
+//          val vv: Form[SignUpForm.Data] = signUpForm.form.fill(signUpForm.form.bind(invalidForm.data.sanitize))
+//          val vv = signUpForm.form.fill(signUpForm.form.bind(invalidForm.data.sanitize))
+
+
+          Future.successful(Ok(views.html.registration.signup(signUpForm.form.bind(invalidForm.data.sanitize), appRouteConfigMap)))
+//          val xx = signUpForm.form.fill(signUpForm.form.bind(invalidForm.data.sanitize))
+//          Future.successful(Ok(signUpView(signUpForm.form.fill(signUpForm.form.bind(invalidForm.data.sanitize))))
+//          Future.successful(Ok(signUpView(signUpForm.form.fill(vv))
+
+          if (config.enablePlayHmrcSignUpView) {
+            Future.successful(Ok(signUpTemplate(signUpForm.form.bind(invalidForm.data.sanitize), appRouteConfigMap)))
+          } else {
+            Future.successful(Ok(views.html.registration.signup(signUpForm.form.bind(invalidForm.data.sanitize), appRouteConfigMap)))
+          }
+
+
         },
         data => {
           val selectedAppRoute = ApplicationRoute.withName(data.applicationRoute)
@@ -121,7 +156,7 @@ class SignUpController @Inject() (
             case (ApplicationRoute.Faststream, Some(true)) => ApplicationRoute.SdipFaststream
             case (_, _) => selectedAppRoute
           }
-          checkAppWindowBeforeProceeding(formWrapper.form.fill(data).data, {
+          checkAppWindowBeforeProceeding(signUpForm.form.fill(data).data, {
             (for {
               u <- userManagementClient.register(data.email.toLowerCase, data.password, data.firstName, data.lastName)
               _ <- applicationClient.addReferral(u.userId, extractMediaReferrer(data))
@@ -141,10 +176,11 @@ class SignUpController @Inject() (
             }).flatMap(identity)
             }).recover {
                 case e: EmailTakenException =>
-                  Ok(views.html.registration.signup(
-                    formWrapper.form.fill(data),
-                    appRouteConfigMap,
-                    Some(danger("user.exists"))))
+//                  Ok(views.html.registration.signup(
+//                    formWrapper.form.fill(data),
+//                    appRouteConfigMap,
+//                    Some(danger("user.exists"))))
+                  Ok(signUpView(signUpForm.form.fill(data), notification = Some(danger("user.exists"))))
               }
           })
         }

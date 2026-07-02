@@ -16,8 +16,10 @@
 
 package models.view.questionnaire
 
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+
 object UniversityDegreeCategories {
-  val list = Seq(
+  val list: Seq[(String, String)] = Seq(
     "Agriculture, food and related studies" -> "Agriculture, food and related studies",
     "Architecture, building and planning" -> "Architecture, building and planning",
     "Biosciences" -> "Biosciences",
@@ -54,5 +56,8 @@ object UniversityDegreeCategories {
     "Veterinary sciences" -> "Veterinary sciences"
   )
 
-  val validDegreeCategories = list.map { case (_, value) => value }
+  val validDegreeCategories: Seq[String] = list.map { case (_, value) => value }
+
+  def asSelectItems: List[SelectItem] = List(SelectItem(value = None, text = "")) ++ list.map( (_, v) =>
+    SelectItem(value = Some(v), text = v))
 }

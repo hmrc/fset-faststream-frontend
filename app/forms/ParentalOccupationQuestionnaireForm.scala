@@ -112,6 +112,6 @@ object ParentEmploymentAnswers extends ValidAnswers {
   val longTermUnemployed = "Long term unemployed"
   val retired = "Retired"
   val unknown = "Unknown"
-  override val values = List(employed, unemployedButSeekingWork, longTermUnemployed, retired, unknown)
+  override val values: List[String] = List(employed, unemployedButSeekingWork, longTermUnemployed, retired, unknown)
 }
 

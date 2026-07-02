@@ -26,6 +26,7 @@ import play.api.test.Helpers._
 import testkit.MockitoImplicits._
 import testkit.{TestableSecureActionsWithAuthorizationForFsCandidate, TestableSecureActionsWithAuthorizationForSdipCandidate}
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.application.locationPreferences.LocationSelection2
 
 import scala.concurrent.Future
 
@@ -100,12 +101,14 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
     )))
     when(mockReferenceDataClient.sdipLocations(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Locations.AllLocations)
 
+    val locationSelectionTemplate = mock[LocationSelection2]
+
     def sdipController = new LocationPreferencesController(mockConfig,
-      stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      stubMcc, locationSelectionTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
       mockSdipLocationsClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForSdipCandidate
 
     def fsController = new LocationPreferencesController(mockConfig,
-      stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      stubMcc, locationSelectionTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
       mockSdipLocationsClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForFsCandidate
   }
 }

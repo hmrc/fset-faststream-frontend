@@ -1,3 +1,12 @@
+service.name = Apply for the Civil Service Fast Stream
+
+footer.cookies.url = /fset-fast-stream/cookies
+footer.privacy.url = /fset-fast-stream/privacy
+footer.termsConditions.url = /fset-fast-stream/terms
+
+footer.contact.text = Contact us
+footer.contact.url = /fset-fast-stream/helpdesk
+
 error.invalidRole = You don''t have access to this application.
 error.required.signIn = Enter your email
 error.required.password = Enter your password

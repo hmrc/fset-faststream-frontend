@@ -1,0 +1,97 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.TemplateHelper.maybeDisplayError
+@import models.view.questionnaire.DegreeTypes
+@import security.RoleUtils.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Fieldset, GovukRadios, Legend, RadioItem, Radios, Text}
+@import views.html.components.InputSelectAutoComplete
+@import views.html.questionnaire.components.{PostgradDegreeCategory2, PostgradUniversityName2, postgradUniversityName}
+@import views.html.widgets.{radioBoxHorizontal, radioBoxVertical, selectValueDifferentFromDisplayedText}
+
+@this(
+        govukRadios: GovukRadios,
+        postgradUniversityName2: PostgradUniversityName2,
+        postgradDegreeCategory2: PostgradDegreeCategory2
+)
+
+@(form: Form[forms.EducationQuestionnaireForm.Data])(implicit user: Option[CachedData], messages: Messages)
+
+@hasPostgradDegreeHtml = {
+    @postgradUniversityName2(form)
+    @postgradDegreeCategory2(form)
+}
+
+@if(isFaststream(user)) {
+
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("hasPostgradDegree.question")),
+                classes = "govuk-fieldset__legend--s"
+            ))
+        )),
+        name = "hasPostgradDegree",
+        items = Seq(
+            RadioItem(
+                content = Text("Yes"),
+                value = Some("Yes"),
+                conditionalHtml = Some(hasPostgradDegreeHtml)
+            ),
+            RadioItem(
+                content = Text("No"),
+                value = Some("No")
+            )
+        )
+    ).withFormField(form("hasPostgradDegree")))
+
+@*
+<section class="clearfix" id="postgradQuestion">
+    <fieldset>
+        <legend><h2 class="form-label text">@Messages("hasPostgradDegree.question")</h2></legend>
+        @radioBoxHorizontal(form("hasPostgradDegree"), options = List(("yes", "Yes", true), ("no", "No", false)),
+            optionTrigger = "hasPostgradDegree-panel")
+        <div id="hasPostgradDegree-panel" class="toggle-content" aria-hidden="true">
+            @postgradUniversityName(form)
+
+            @selectValueDifferentFromDisplayedText(
+                form("postgradUniversity.degreeCategory"),
+                models.view.questionnaire.UniversityDegreeCategories.list.toList
+            )("Select one") {
+                @Messages("postgradDegree.degreeCategory.question")
+            }
+
+            <section>
+                <fieldset class="form-group">
+                    <legend><h2 class="form-label" id="postGraduateDegreeType">@Messages("postgradDegree.degreeType.question")</h2></legend>
+                    @radioBoxVertical(form("postgradUniversity.degreeType"), options = DegreeTypes.list, optionTrigger = "postgrad-degree-describe")
+                    <div class="toggle-content form-group form-group-compound @if(form("postgradUniversity.otherDegreeType").hasErrors) {has-an-error input-validation-error}" id="postgrad-degree-describe">
+                        <span class="has-error">@maybeDisplayError(form("postgradUniversity.otherDegreeType"))</span>
+                        @helper.inputText(form("postgradUniversity.otherDegreeType"),
+                            Symbol("_label") -> "Please describe your degree",
+                            Symbol("_labelClass") -> "form-hint",
+                            Symbol("class") -> "form-control",
+                            Symbol("_showConstraints") -> false,
+                            Symbol("optional") -> "")
+                    </div>
+                </fieldset>
+            </section>
+        </div>
+    </fieldset>
+</section>
+*@
+}

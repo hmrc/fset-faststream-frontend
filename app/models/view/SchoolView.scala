@@ -20,6 +20,7 @@ import connectors.exchange.School
 
 import scala.language.implicitConversions
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 case class SchoolView(id: String, name: String, label: String)
 
@@ -45,5 +46,10 @@ object SchoolView {
 
       SchoolView(s"${school.typeId}_${school.id}", school.name, label)
     }
+  }
+
+  implicit class SchoolViewImplicits(schoolViewList: List[SchoolView]) {
+    def asSelectItems: List[SelectItem] = List(SelectItem(value = None, text = "")) ++ schoolViewList.map ( item =>
+      SelectItem(value = Some(item.name), text = item.name) )
   }
 }

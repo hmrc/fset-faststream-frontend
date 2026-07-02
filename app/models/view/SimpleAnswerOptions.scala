@@ -16,11 +16,18 @@
 
 package models.view
 
+import uk.gov.hmrc.govukfrontend.views.html.components.RadioItem
+import uk.gov.hmrc.govukfrontend.views.html.components.Text
+
 object SimpleAnswerOptions extends ValidAnswers {
-  val list = List(
+  val list: List[(String, String, Boolean)] = List(
     ("yes", "Yes", false),
     ("no", "No", false),
     ("unknown", "I don't know/prefer not to say", false)
   )
-  override val values = list.map { case (_, value, _) => value }
+  override val values: List[String] = list.map { case (_, value, _) => value }
+
+  def asRadioItems: Seq[RadioItem] = list.map( (_, answer, _) =>
+    RadioItem(value = Some(answer), content = Text(answer))
+  )
 }

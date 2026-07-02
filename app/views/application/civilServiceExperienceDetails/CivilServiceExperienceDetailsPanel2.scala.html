@@ -1,0 +1,294 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.TemplateHelper.maybeDisplayError
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.{CheckboxItem, Checkboxes, Fieldset, GovukCheckboxes, GovukInput, GovukRadios, Hint, Input, Label, Legend, RadioItem, Radios, Text}
+@import views.html.components.Heading3
+@import views.html.components.InputSelectAutoComplete
+
+@this(
+        govukCheckboxes : GovukCheckboxes,
+        govukRadios: GovukRadios,
+        govukInput : GovukInput,
+        h3: Heading3,
+        inputSelectAutoComplete: InputSelectAutoComplete
+)
+
+@(form: Form[forms.PersonalDetailsForm.Data], schemesRequiringQualifications: Seq[String])(implicit messages: Messages)
+
+@currentlyCivilServantHtml = {
+    @h3(content = Text("Current civil servants"))
+    <div class="govuk-template__body">
+        <p>As a current civil servant you're eligible to apply for most of the schemes without a degree.</p>
+        <p>The schemes you'll need specific qualifications for are:</p>
+        <ul>
+            @schemesRequiringQualifications.map{ schemeName => <li>@schemeName</li> }
+        </ul>
+        <p>Check the <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" rel="external" target="_blank">eligibility
+            requirements<span class="visuallyhidden"> for Faststream</span> (link opens new window)</a>for more information.</p>
+    </div>
+
+    <div class="">
+@*
+        <div class="form-group">
+        @helper.input(form("civilServiceExperienceDetails.civilServantDepartment"),
+            Symbol("_label") -> "",
+            Symbol("class") -> "form-control",
+            Symbol("_showConstraints") -> false
+        ) { (id, name, value, args) =>
+            <input id="@id" name="@name" type="hidden" class="form-control" value="@value">
+        }
+        </div>
+*@
+        @* Populated via javascript *@
+@*
+        <input type="hidden" id="civilServiceExperienceDetails.civilServantDepartment" name="civilServiceExperienceDetails.civilServantDepartment" />
+
+        @helper.input(form("civilServiceExperienceDetails_civilServantDepartmentSelected"),
+            Symbol("id") -> "civilServiceExperienceDetails_civilServantDepartmentSelected",
+            Symbol("_label") -> "",
+            Symbol("_showConstraints") -> false
+        ) { (id, name, value, args) =>
+            <label for="@id" class="form-label">What Department do you currently work for?</label>
+            <div id="department_field_wrapper" class="form-group @if(form("civilServiceExperienceDetails.civilServantDepartment").hasErrors) {has-an-error input-validation-error}">
+                <span class="has-error">@maybeDisplayError(form("civilServiceExperienceDetails.civilServantDepartment"))</span>
+                <input id="@{id}" name="@{name}" type="text" class="govuk-!-width-full" value="@value">
+            </div>
+        }
+*@
+        @inputSelectAutoComplete(
+            form("civilServiceExperienceDetails.civilServantDepartment"),
+            id = "civilServiceExperienceDetails.civilServantDepartment",
+            name = "civilServiceExperienceDetails.civilServantDepartment",
+            items = models.view.CivilServantDepartments.asSelectItems,
+            label = "What Department do you currently work for?"
+        )
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Do you currently have a live disciplinary warning for misconduct?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "civilServiceExperienceDetails.liveDisciplinaryWarning",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true"),
+                    checked = "true".equals(form("civilServiceExperienceDetails.liveDisciplinaryWarning").value.getOrElse("")),
+                    conditionalHtml = Some(civilServantCannotContinueHtml)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                    checked = "false".equals(form("civilServiceExperienceDetails.liveDisciplinaryWarning").value.getOrElse(""))
+                )
+            )
+        ))
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Are you currently in the review period following a warning for poor performance?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true"),
+                    checked = "true".equals(form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning").value.getOrElse("")),
+                    conditionalHtml = Some(civilServantCannotContinueHtml)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                    checked = "false".equals(form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning").value.getOrElse(""))
+                )
+            )
+        ))
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Are you currently in the improvement period following a warning for misconduct?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true"),
+                    checked = "true".equals(form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning").value.getOrElse("")),
+                    conditionalHtml = Some(civilServantCannotContinueHtml)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                    checked = "false".equals(form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning").value.getOrElse(""))
+                )
+            )
+        ))
+    </div>
+}
+
+@completedEdipHtml = {
+    @govukInput(Input(
+        id = "civilServiceExperienceDetails.edipYear",
+        name = "civilServiceExperienceDetails.edipYear",
+        inputType = "text",
+        label = Label(content = Text("What year did you complete the EDIP?")),
+        classes = "govuk-!-width-one-third",
+    ).withFormField(form("civilServiceExperienceDetails.edipYear")))
+}
+
+@completedSdipHtml = {
+    @govukInput(Input(
+        id = "civilServiceExperienceDetails.sdipYear",
+        name = "civilServiceExperienceDetails.sdipYear",
+        inputType = "text",
+        label = Label(content = Text("What year did you complete the SIP/SDIP?")),
+        classes = "govuk-!-width-one-third"
+    ).withFormField(form("civilServiceExperienceDetails.sdipYear")))
+}
+
+@completedAnotherInternshipHtml = {
+    @govukInput(Input(
+        id = "civilServiceExperienceDetails.otherInternshipName",
+        name = "civilServiceExperienceDetails.otherInternshipName",
+        inputType = "text",
+        label = Label(content = Text("What was the name of the internship you completed?")),
+        classes = "govuk-!-width-one-third"
+    ).withFormField(form("civilServiceExperienceDetails.otherInternshipName")))
+    @govukInput(Input(
+        id = "civilServiceExperienceDetails.otherInternshipYear",
+        name = "civilServiceExperienceDetails.otherInternshipYear",
+        inputType = "text",
+        label = Label(content = Text("What year did you complete the internship?")),
+        classes = "govuk-!-width-one-third"
+    ).withFormField(form("civilServiceExperienceDetails.otherInternshipYear")))
+}
+
+@fastPassCertificateHtml = {
+    @*<div class="govuk-inset-text">*@
+    <div class="">
+        <p>
+            Fast Pass allows you to be fast tracked to the final stages of the Fast Stream selection process. You won't
+            need to do the online tests. You can apply using your Fast Pass if you have not used it before.
+        </p>
+        <p>Some schemes require you to pass the additional information stage before attending the assessment centre.</p>
+    </div>
+
+    @govukInput(Input(
+        id = "civilServiceExperienceDetails.certificateNumber",
+        name = "civilServiceExperienceDetails.certificateNumber",
+        inputType = "text",
+        label = Label(content = Text("Enter your certificate number")),
+        hint = Some(Hint(
+            content = Text("You can find this at the top of the certificate")
+        )),
+        classes = "govuk-!-width-one-third"
+    ).withFormField(form("civilServiceExperienceDetails.certificateNumber")))
+}
+
+@civilServantHtml = {
+    @govukCheckboxes(Checkboxes(
+        hint = Some(Hint(
+            content = Text("Select all options that are relevant to you")
+        )),
+        name = "civilServiceExperienceDetails.civilServantAndInternshipTypes[]",
+        items = Seq(
+            CheckboxItem(
+                content = Text("I am currently a civil servant"),
+                value = "CivilServant",
+                conditionalHtml = Some(currentlyCivilServantHtml)
+            ),
+            CheckboxItem(
+                content = Text("I completed the EDIP"),
+                value = "EDIP",
+                conditionalHtml = Some(completedEdipHtml)
+            ),
+            CheckboxItem(
+                content = Text("I completed the SIP/SDIP"),
+                value = "SDIP",
+                conditionalHtml = Some(completedSdipHtml)
+            ),
+            CheckboxItem(
+                content = Text("I completed another internship"),
+                value = "OtherInternship",
+                conditionalHtml = Some(completedAnotherInternshipHtml)
+            )
+        )
+    ).withFormField(form("civilServiceExperienceDetails.civilServantAndInternshipTypes")))
+
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text("Do you have a Fast Pass certificate?"),
+                classes = "govuk-fieldset__legend--s"
+            ))
+        )),
+        name = "civilServiceExperienceDetails.fastPassReceived",
+        items = Seq(
+            RadioItem(
+                content = Text("Yes"),
+                value = Some("true"),
+                checked = "true".equals(form("civilServiceExperienceDetails.fastPassReceived").value.getOrElse("")),
+                conditionalHtml = Some(fastPassCertificateHtml)
+            ),
+            RadioItem(
+                content = Text("No"),
+                value = Some("false"),
+                checked = "false".equals(form("civilServiceExperienceDetails.fastPassReceived").value.getOrElse(""))
+            )
+        )//,
+        //    classes = "govuk-radios--inline"
+    ))
+
+}
+
+@civilServantCannotContinueHtml = {
+    <div class="">
+        <p>Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.</p>
+    </div>
+}
+
+@govukRadios(Radios(
+    fieldset = Some(Fieldset(
+        legend = Some(Legend(
+            content = Text("Are you a civil servant, or have you been on an internship?"),
+            classes = "govuk-fieldset__legend--m"
+        ))
+    )),
+    hint = Some(Hint(
+        content = Text("An internship could include our Early Diversity Internship Programme (EDIP) or our Summer Internship Programme (SIP)")
+    )),
+    name = "civilServiceExperienceDetails.applicable",
+    items = Seq(
+        RadioItem(
+            content = Text("Yes"),
+            value = Some("true"),
+            conditionalHtml = Some(civilServantHtml)
+        ),
+        RadioItem(
+            content = Text("No"),
+            value = Some("false")
+        )
+    )//,
+//    classes = "govuk-radios--inline"
+).withFormField(form("civilServiceExperienceDetails.applicable")))

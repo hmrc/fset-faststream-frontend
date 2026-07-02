@@ -19,14 +19,15 @@ package controllers
 import connectors.ReferenceDataExamples
 import connectors.SchemeClient.SchemePreferencesNotFound
 import connectors.exchange.SchemePreferencesExamples
-import forms.SelectedSchemesForm._
-import models._
-import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import play.api.test.Helpers._
-import testkit.MockitoImplicits._
+import forms.SelectedSchemesForm.*
+import models.*
+import org.mockito.ArgumentMatchers.{eq as eqTo, *}
+import org.mockito.Mockito.*
+import play.api.test.Helpers.*
+import testkit.MockitoImplicits.*
 import testkit.{TestableSecureActionsWithAuthorizationForFsCandidate, TestableSecureActionsWithAuthorizationForSdipCandidate}
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.application.schemePreferences.SchemeSelection2
 
 import scala.concurrent.Future
 
@@ -97,12 +98,14 @@ class SchemePreferencesControllerSpec extends BaseControllerSpec {
     )))
     when(mockReferenceDataClient.allSchemes(any[HeaderCarrier])).thenReturnAsync(ReferenceDataExamples.Schemes.AllSchemes)
 
+    val schemeSelectionTemplate = mock[SchemeSelection2]
+    
     def fsController = new SchemePreferencesController(mockConfig,
-      stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      stubMcc, schemeSelectionTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
       mockSchemeClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForFsCandidate
 
     def sdipController = new SchemePreferencesController(mockConfig,
-      stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      stubMcc, schemeSelectionTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
       mockSchemeClient, mockReferenceDataClient) with TestableSecureActionsWithAuthorizationForSdipCandidate
   }
 }

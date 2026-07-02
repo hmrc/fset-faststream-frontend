@@ -16,8 +16,10 @@
 
 package models.view
 
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+
 object CampaignReferrers {
-  val list = List(
+  val list: List[(String, Boolean)] = List(
     ("Social Media (Facebook, Twitter, LinkedIn or Instagram)", false),
     ("Online search (Google)", false),
     ("Friend or family in the Civil Service", false),
@@ -30,4 +32,7 @@ object CampaignReferrers {
     ("Inservice activity (intranet, networks)", false),
     ("Other", true)
   )
+
+  val asSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "-- Select one --")) ++
+    list.map( (referrer, _) => SelectItem(value = Some(referrer), text = referrer))
 }

@@ -17,13 +17,19 @@
 package models.view.questionnaire
 
 import models.view.ValidAnswers
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 object Employees extends ValidAnswers {
-  val list = List(
+  val list: List[(String, String, Boolean)] = List(
     ("employee", "Employee", false),
     ("self-with-employees", "Self-employed with employees", false),
     ("self-without-employees", "Self-employed/freelancer without employees", false),
     ("unknown", "I don't know/prefer not to say", false)
   )
-  override val values = list.map { case (_, value, _) => value }
+  override val values: List[String] = list.map { case (_, value, _) => value }
+
+  def asRadioItems: Seq[RadioItem] = values.map( value =>
+    RadioItem(value = Some(value), content = Text(value))
+  )
 }

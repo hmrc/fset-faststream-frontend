@@ -160,6 +160,7 @@ abstract class BaseControllerSpec extends BaseSpec {
     val mockSdipLocationsClient  = mock[SdipLocationsClient]
     val mockReferenceDataClient = mock[ReferenceDataClient]
     val mockApplicationClient = mock[ApplicationClient]
+    val mockSchoolsClient = mock[SchoolsClient]
     val mockAssessmentScoresClient = mock[AssessmentScoresClient]
     val mockSiftClient = mock[SiftClient]
     val mockOnboardQuestionsClient = mock[OnboardQuestionsClient]

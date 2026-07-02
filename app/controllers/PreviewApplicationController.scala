@@ -25,23 +25,27 @@ import helpers.NotificationTypeHelper
 
 import javax.inject.{Inject, Singleton}
 import models.CachedDataWithApp
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import security.RoleUtils._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
+import security.RoleUtils.*
 import security.Roles.PreviewApplicationRole
 import security.SilhouetteComponent
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.application.Preview2
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PreviewApplicationController @Inject()(
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  applicationClient: ApplicationClient,
-  schemeClient: SchemeClient, sdipLocationsClient: SdipLocationsClient)(implicit val ec: ExecutionContext)
+                                              config: FrontendAppConfig,
+                                              mcc: MessagesControllerComponents,
+                                              previewTemplate: Preview2,
+                                              val secEnv: SecurityEnvironment,
+                                              val silhouetteComponent: SilhouetteComponent,
+                                              val notificationTypeHelper: NotificationTypeHelper,
+                                              applicationClient: ApplicationClient,
+                                              schemeClient: SchemeClient,
+                                              sdipLocationsClient: SdipLocationsClient)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
 
   private def fetchLocationPreferences(implicit user: CachedDataWithApp, hc: HeaderCarrier) = {
@@ -67,7 +71,7 @@ class PreviewApplicationController @Inject()(
         ad <- assistanceDetailsFut
         lp <- fetchLocationPreferences
       } yield {
-        Ok(views.html.application.preview(gd, sp, lp, ad, user.application))
+        Ok(previewView(gd, sp, lp, ad))
       }).recover {
         case _: PersonalDetailsNotFound | _: SchemePreferencesNotFound | _: LocationPreferencesNotFound | _: AssistanceDetailsNotFound =>
           import notificationTypeHelper._
@@ -75,10 +79,20 @@ class PreviewApplicationController @Inject()(
       }
   }
 
+  private def previewView(gd: connectors.exchange.GeneralDetails,
+                          sp: connectors.exchange.SelectedSchemes,
+                          lp: Option[connectors.exchange.SelectedLocations],
+                          ad: connectors.exchange.AssistanceDetails)(implicit request: Request[_], user: CachedDataWithApp): Html =
+    if (config.enablePlayHmrcPreviewView) {
+      previewTemplate(gd, sp, lp, ad, user.application)
+    } else {
+      views.html.application.preview(gd, sp, lp, ad, user.application)
+    }
+
   def submit: Action[AnyContent] = CSRSecureAppAction(PreviewApplicationRole) { implicit request =>
     implicit user =>
       applicationClient.updatePreview(user.application.applicationId).map { _ =>
-          Redirect(routes.SubmitApplicationController.presentSubmit)
+        Redirect(routes.SubmitApplicationController.presentSubmit)
       }
   }
 

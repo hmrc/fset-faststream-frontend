@@ -31,7 +31,7 @@ import play.api.i18n.Messages
 @Singleton
 class EducationQuestionnaireForm {
   // TODO: the universityQuestionKey looks to now be redundant
-  def form(isFsOrSdipFs: Boolean, universityQuestionKey: String)(implicit messages: Messages) = Form(
+  def form(isFsOrSdipFs: Boolean, universityQuestionKey: String)(implicit messages: Messages): Form[EducationQuestionnaireForm.Data] = Form(
     mapping(
       "liveInUKBetween14and18" -> nonEmptyTrimmedText("error.liveInUKBetween14and18.required", 31),
       "postcodeQ" -> of(requiredFormatterWithValidationCheckAndSeparatePreferNotToSay("liveInUKBetween14and18",

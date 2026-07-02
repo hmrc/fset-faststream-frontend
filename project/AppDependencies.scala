@@ -19,16 +19,14 @@ import sbt.*
 
 object AppDependencies {
 
-  object Versions {
-    val bootstrapVersion  = "10.7.0"
-    val silhouetteVersion = "10.0.1"
-  }
+  val bootstrapVersion  = "10.7.0"
+  val silhouetteVersion = "10.0.1"
+  val playVersion       = "play-30"
 
-  import Versions.*
-
-  val compile = Seq(
-    "uk.gov.hmrc"                   %% "bootstrap-frontend-play-30"               % bootstrapVersion,
-    "uk.gov.hmrc"                   %% "http-caching-client-play-30"              % "12.2.0",
+  val compile: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc"                   %% s"bootstrap-frontend-$playVersion"         % bootstrapVersion,
+    "uk.gov.hmrc"                   %% s"play-frontend-hmrc-$playVersion"         % "13.9.0",
+    "uk.gov.hmrc"                   %% s"http-caching-client-$playVersion"        % "12.2.0",
     "org.playframework.silhouette"  %% "play-silhouette"                          % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-password-bcrypt"          % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-crypto-jca"               % silhouetteVersion,
@@ -37,10 +35,10 @@ object AppDependencies {
     ws
   )
 
-  val test = Seq(
-    "uk.gov.hmrc"                   %% "bootstrap-test-play-30"   % bootstrapVersion  % Test,
-    "org.playframework.silhouette"  %% "play-silhouette-testkit"  % silhouetteVersion % Test
+  val test: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc"                   %% s"bootstrap-test-$playVersion"   % bootstrapVersion  % Test,
+    "org.playframework.silhouette"  %% "play-silhouette-testkit"        % silhouetteVersion % Test
   )
 
-  def apply() = compile ++ test
+  def apply(): Seq[ModuleID] = compile ++ test
 }

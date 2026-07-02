@@ -1,0 +1,66 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.ServiceURLs
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.Banners
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.TemplateOverrides
+@import views.html.helper.CSPNonce
+
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteCss
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteJavascript
+
+@this(
+        hmrcStandardPage: HmrcStandardPage,
+        standardBetaBanner: StandardBetaBanner,
+        autocompleteCss: HmrcAccessibleAutocompleteCss,
+        autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
+)@*(implicit cfConfig: ContactFrontendConfig)*@
+
+@(pageTitle: String, isWelshTranslationAvailable: Boolean = true, backLink: Option[String] = None, javaScripts: Option[Html] = None, css: Option[Html] = None)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages, feedbackUrl: String)
+
+@scripts = {
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-3.6.3.min.js")' type="text/javascript"></script>
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-ui-1.13.2.custom.min.js")' type="text/javascript"></script>
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/fastclick-1.0.6.min.js")' type="text/javascript"></script>
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/scripts.js")' type="text/javascript"></script>
+    @autocompleteJavascript()
+    @javaScripts
+}
+
+@theHead = {
+    @autocompleteCss()
+    @css
+}
+
+@hmrcStandardPage(
+    HmrcStandardPageParams(
+        serviceURLs = ServiceURLs(
+            serviceUrl = Some(routes.HomeController.present().url),
+            signOutUrl = Some(routes.SignInController.signOut.url),
+            accessibilityStatementUrl = Some(routes.ApplicationController.accessibility.url)
+        ),
+        templateOverrides = TemplateOverrides(
+            additionalHeadBlock = Some(theHead),
+            additionalScriptsBlock = Some(scripts)
+        ),
+        banners = Banners(phaseBanner = Some(standardBetaBanner(feedbackUrl))),
+        pageTitle = Some(pageTitle)
+    )
+)(contentBlock)

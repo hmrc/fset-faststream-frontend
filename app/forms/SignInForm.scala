@@ -25,7 +25,7 @@ import play.api.data.Forms._
 class SignInForm {
   val passwordField = "signInPassword"
 
-  val form = Form(
+  val form: Form[SignInForm.Data] = Form(
     mapping(
       "signIn" -> nonEmptyTrimmedText("error.required.signIn", 128),
       passwordField -> nonEmptyTrimmedText("error.required.password", 128),

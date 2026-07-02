@@ -21,48 +21,68 @@ import connectors.ApplicationClient
 import connectors.ApplicationClient.CannotSubmit
 import helpers.NotificationTypeHelper
 import models.ApplicationRoute.ApplicationRoute
-
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.MessagesControllerComponents
+import models.CachedDataWithApp
+import play.api.mvc.{MessagesControllerComponents, Request}
+import play.twirl.api.Html
 import security.Roles.{AbleToWithdrawApplicationRole, SubmitApplicationRole}
 import security.SilhouetteComponent
+import views.html.application.{Submit2, Submitted2}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitApplicationController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  applicationClient: ApplicationClient
-)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) with CampaignAwareController {
+class SubmitApplicationController @Inject()(
+                                             config: FrontendAppConfig,
+                                             mcc: MessagesControllerComponents,
+                                             submitTemplate: Submit2,
+                                             submittedTemplate: Submitted2,
+                                             val secEnv: SecurityEnvironment,
+                                             val silhouetteComponent: SilhouetteComponent,
+                                             val notificationTypeHelper: NotificationTypeHelper,
+                                             applicationClient: ApplicationClient
+                                           )(
+  implicit val ec: ExecutionContext) extends BaseController(config, mcc) with CampaignAwareController {
 
   val appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState] = config.applicationRoutesFrontend
-  import notificationTypeHelper._
+
+  import notificationTypeHelper.*
 
   implicit val marketingTrackingEnabled: Boolean = config.marketingTrackingEnabled
 
   def presentSubmit = CSRSecureAppAction(SubmitApplicationRole) { implicit request =>
     implicit user =>
       if (canApplicationBeSubmitted(user.application.overriddenSubmissionDeadline)(user.application.applicationRoute)) {
-        Future.successful(Ok(views.html.application.submit()))
+        Future.successful(Ok(submitView()))
       } else {
         Future.successful(Redirect(routes.HomeController.present()))
       }
   }
 
+  private def submitView()(implicit request: Request[_], user: CachedDataWithApp): Html =
+    if (config.enablePlayHmrcSubmitView) {
+      submitTemplate()
+    } else {
+      views.html.application.submit()
+    }
+
   def presentSubmitted = CSRSecureAppAction(AbleToWithdrawApplicationRole) { implicit request =>
     implicit user =>
-      Future.successful(Ok(views.html.application.submitted(marketingTrackingEnabled)))
+      Future.successful(Ok(submittedView()))
   }
+
+  private def submittedView(implicit request: Request[_], user: CachedDataWithApp): Html =
+    if (config.enablePlayHmrcSubmittedView) {
+      submittedTemplate()
+    } else {
+      views.html.application.submitted(marketingTrackingEnabled)
+    }
 
   def submit = CSRSecureAppAction(SubmitApplicationRole) { implicit request =>
     implicit user =>
       if (canApplicationBeSubmitted(user.application.overriddenSubmissionDeadline)(user.application.applicationRoute)) {
         applicationClient.submitApplication(user.user.userID, user.application.applicationId).map { _ =>
-            Redirect(routes.SubmitApplicationController.presentSubmitted)
+          Redirect(routes.SubmitApplicationController.presentSubmitted)
         }.recover {
           case _: CannotSubmit => Redirect(routes.PreviewApplicationController.present).flashing(
             danger("error.cannot.submit"))

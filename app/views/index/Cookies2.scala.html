@@ -1,0 +1,128 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.{Heading1, Heading2, Layout}
+
+@this(
+		mainLayout: Layout,
+		h1: Heading1,
+		h2: Heading2
+)
+
+@()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@mainLayout("Privacy and cookies") {
+	@h1(content = Text("Cookies"))
+
+	<section class="text">
+		<p>This service puts small files (known as 'cookies') on to your computer. Most websites do this. These cookies are used to:</p>
+		<ul>
+			<li>help us understand how you use the service, so we can improve it</li>
+			<li>remember what notifications you've seen so you're not shown them again</li>
+			<li>temporarily store the information you enter (eg informational messages)</li>
+		</ul>
+		<p>The cookies aren't used to identify you personally. They're put on to your computer to make the service work better for you. You can edit or delete the cookies.</p>
+		<p>Find out how to <a class="govuk-link" rel="external" target="_blank" href="http://www.aboutcookies.org/">edit and delete cookies</a>.</p>
+	</section>
+
+	<section class="text">
+		@h2(content = Text("Google Analytics cookie"))
+		<p>We use Google Analytics to collect information about how you use the service. This information helps us to make improvements.</p>
+	  	<p>The Google Analytics cookie collects and stores information about:</p>
+		<ul>
+			<li>the pages you visit</li>
+			<li>how long you spend on each page</li>
+			<li>how you got to the service</li>
+			<li>what you click on while you're using the service</li>
+		</ul>
+		<p>Google Analytics isn't allowed to use or share our analytics data with anyone, but you can <a class="govuk-link" href="https://tools.google.com/dlpage/gaoptout" rel="external" target="_blank">opt out</a> if you wish.</p>
+	<table>
+		<colgroup>
+			<col class="t20">
+			<col class="t60">
+			<col class="t20">
+			<col>
+		</colgroup>
+		<thead>
+			<tr>
+				<th>
+					Name
+				</th>
+				<th>
+					Purpose
+				</th>
+				<th>
+					Expires
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					_ga
+				</td>
+				<td>
+					This helps us identify how you use GOV.UK so we can make the site better
+				</td>
+				<td>
+					2 years
+				</td>
+			</tr>
+			<tr>
+				<td>
+					userConsent
+				</td>
+				<td>
+					Saves a message to let us know that you have seen our cookie message and have responded
+				</td>
+				<td>
+					1 year
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</section>
+
+	<section class="text">
+	@h2(content = Text("Session cookies"))
+	<p>We store session cookies on your computer to help keep your information secure while you use the service.</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Purpose</th>
+				<th>Expires</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>mdtp</td>
+				<td>Stores session data</td>
+				<td>When you close your browser</td>
+			</tr>
+			<tr>
+				<td>mdtpdi</td>
+				<td>Creates a unique ID for your device to prevent unauthorised access to the service</td>
+				<td>10 years</td>
+			</tr>
+		</tbody>
+	</table>
+	</section>
+
+	<a class="govuk-link" href="@routes.ApplicationController.trackingConsentCookies">Change cookie settings</a>
+}

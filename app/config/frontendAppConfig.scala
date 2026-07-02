@@ -115,28 +115,105 @@ object ApplicationRouteFrontendConfig {
 
 @Singleton
 class FrontendAppConfig @Inject() (val config: Configuration, val environment: Environment) extends Logging {
-  lazy val authConfig = config.get[AuthConfig](s"microservice.services.auth")
-  lazy val userManagementConfig = config.get[UserManagementConfig]("microservice.services.user-management")
-  lazy val faststreamBackendConfig = config.get[FaststreamBackendConfig]("microservice.services.faststream")
+  lazy val authConfig: AuthConfig = config.get[AuthConfig](s"microservice.services.auth")
+  lazy val userManagementConfig: UserManagementConfig = config.get[UserManagementConfig]("microservice.services.user-management")
+  lazy val faststreamBackendConfig: FaststreamBackendConfig = config.get[FaststreamBackendConfig]("microservice.services.faststream")
 
-  lazy val addressLookupConfig = config.get[AddressLookupConfig]("microservice.services.address-lookup")
+  lazy val addressLookupConfig: AddressLookupConfig = config.get[AddressLookupConfig]("microservice.services.address-lookup")
 
-  lazy val fsacGuideUrl = config.get[String]("microservice.fsacGuideUrl")
+  lazy val fsacGuideUrl: String = config.get[String]("microservice.fsacGuideUrl")
 
-  lazy val feedbackUrl = config.getOptional[String]("feedback.url").getOrElse("")
+  lazy val feedbackUrl: String = config.getOptional[String]("feedback.url").getOrElse("")
 
-  lazy val marketingTrackingEnabled = config.getOptional[Boolean]("marketing.trackingEnabled").getOrElse(false)
+  lazy val marketingTrackingEnabled: Boolean = config.getOptional[Boolean]("marketing.trackingEnabled").getOrElse(false)
 
-  lazy val preGoLiveTestingEnabled = {
+  lazy val preGoLiveTestingEnabled: Boolean = {
     val enabled = config.getOptional[Boolean]("preGoLiveTesting.enabled").getOrElse(false)
     logger.warn(s"Pre go-live testing enabled=$enabled")
     enabled
   }
 
-  lazy val qualtricsSurveyEnabled = config.getOptional[Boolean]("qualtrics.survey.enabled").getOrElse(false)
+  // Switches to control which version of the views to display (play HMRC components vs legacy)
+
+  lazy val playHmrcViews: Boolean = {
+    val enabled = config.getOptional[Boolean]("playHmrcViews").getOrElse(false)
+    logger.warn(s"playHmrcViews enabled=$enabled")
+    enabled
+  }
+
+  lazy val enablePlayHmrcSignInView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSignInView").getOrElse(false)
+
+  lazy val enablePlayHmrcPersonalDetailsView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcPersonalDetailsView").getOrElse(false)
+
+  lazy val enablePlayHmrcSignUpView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSignUpView").getOrElse(false)
+
+  lazy val enablePlayHmrcActivationView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcActivationView").getOrElse(false)
+
+  lazy val enablePlayHmrcLockedAccountView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcLockedAccountView").getOrElse(false)
+
+  lazy val enablePlayHmrcRequestPasswordResetView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcRequestPasswordResetView").getOrElse(false)
+
+  lazy val enablePlayHmrcResetPasswordView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcResetPasswordView").getOrElse(false)
+
+  lazy val enablePlayHmrcHelpdeskView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcHelpdeskView").getOrElse(false)
+
+  lazy val enablePlayHmrcCookiesView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcCookiesView").getOrElse(false)
+
+  lazy val enablePlayHmrcAccessibilityView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcAccessibilityView").getOrElse(false)
+
+  lazy val enablePlayHmrcPrivacyView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcPrivacyView").getOrElse(false)
+
+  lazy val enablePlayHmrcTermsView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcTermsView").getOrElse(false)
+
+  lazy val enablePlayHmrcSchemeSelectionView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSchemeSelectionView").getOrElse(false)
+
+  lazy val enablePlayHmrcLocationSelectionView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcLocationSelectionView").getOrElse(false)
+
+  lazy val enablePlayHmrcAssistanceDetailsView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcAssistanceDetailsView").getOrElse(false)
+
+  lazy val enablePlayHmrcQuestionnaireIntroView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcQuestionnaireIntroView").getOrElse(false)
+
+  lazy val enablePlayHmrcQuestionnaireContinueView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcQuestionnaireContinueView").getOrElse(false)
+
+  lazy val enablePlayHmrcQuestionnaireDiversityView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcQuestionnaireDiversityView").getOrElse(false)
+
+  lazy val enablePlayHmrcQuestionnaireEducationView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcQuestionnaireEducationView").getOrElse(false)
+
+  lazy val enablePlayHmrcQuestionnaireParentsView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcQuestionnaireParentsView").getOrElse(false)
+
+  lazy val enablePlayHmrcPreviewView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcPreviewView").getOrElse(false)
+
+  lazy val enablePlayHmrcSubmitView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSubmitView").getOrElse(false)
+
+  lazy val enablePlayHmrcSubmittedView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSubmittedView").getOrElse(false)
+
+  lazy val qualtricsSurveyEnabled: Boolean = config.getOptional[Boolean]("qualtrics.survey.enabled").getOrElse(false)
   logger.warn(s"Qualtrics survey enabled=$qualtricsSurveyEnabled")
 
-  lazy val applicationRoutesFrontend = Map(
+  lazy val applicationRoutesFrontend: Map[Value, ApplicationRouteState] = Map(
     Faststream -> loadAppRouteConfig("faststream"),
     Edip -> loadAppRouteConfig("edip"),
     Sdip -> loadAppRouteConfig("sdip"),

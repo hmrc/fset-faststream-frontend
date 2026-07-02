@@ -1,0 +1,252 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import controllers.ApplicationRouteState
+@import models.ApplicationRoute.*
+@import models.view.CampaignReferrers
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukSelect, Hint, HtmlContent, Label, Legend, Text}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
+@import views.html.components.{Heading1, Heading2, InputSelect, InputText, Layout}
+@import views.html.registration.ChooseYourRoute2
+@import views.html.template.FlashMessage2
+
+@this(
+        mainLayout: Layout,
+        h1: Heading1,
+        h2: Heading2,
+        formWithCSRF: FormWithCSRF,
+        inputText: InputText,
+        govukButton: GovukButton,
+        govukErrorSummary: GovukErrorSummary,
+        govukCheckboxes: GovukCheckboxes,
+        chooseYourRoute: ChooseYourRoute2,
+        inputSelect: InputSelect
+)
+
+@(signUpForm: Form[forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], notification: Option[(helpers.NotificationType, String)] = None, afterDeadlineSignupCode: Option[String] = None, validAfterDeadlineSignupCode: Boolean = false, preGoLiveTestingEnabled: Boolean = false)(
+        implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@import helpers.CSRFieldConstructor.*
+@import views.html.widgets.{checkbox, select_guard, yesNoQuestion}
+
+@allAppRouteWindowsClosed = @{
+    if (validAfterDeadlineSignupCode) {
+        false
+    } else {
+        !appRouteConfigMap.get(Faststream).forall(_.newAccountsEnabled) &&
+        !appRouteConfigMap.get(Sdip).forall(_.newAccountsEnabled) &&
+        !appRouteConfigMap.get(Edip).forall(_.newAccountsEnabled)
+    }
+}
+
+@existingAccountPanel = {
+    <section class="panel-indent text">
+        <p>If you already have an account, you can return to <a class="govuk-link" href="@routes.SignInController.present">sign in</a>.</p>
+        <p>If you've applied previously or have an account on Civil Service Jobs, you will need to create a new account to apply this year.</p>
+    </section>
+}
+
+@preGoLiveTestingMessage = {
+    <section class="panel-info standard-panel" id="preGoLiveTesting">
+        <div class="text" style="background-color: red;">
+            @h2(content = Text("The Fast Stream service is only open for pre go-live testing"))
+            <p>Do not create an account unless you are authorised to do so by the service owner <a href="mailto:paul.wilson@@cabinetoffice.gov.uk">Paul Wilson</a>.</p>
+            <P>Any accounts created will be deleted before the service goes live.</p>
+        </div>
+    </section>
+}
+
+@nameHintTextPanel = {
+    <section class="govuk-inset-text">
+        <p>This is your legal name as shown on your ID documentation.</p>
+    </section>
+}
+
+@mainLayout("Create your account") {
+@*main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {*@
+
+    @* TODO: this need to be in the main template *@
+    @if(signUpForm.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(signUpForm))
+    }
+
+    @FlashMessage2(notification)
+
+    @h1(content = Text("Create your account"))
+
+    @if(!allAppRouteWindowsClosed) {
+        @if(preGoLiveTestingEnabled) {
+            @preGoLiveTestingMessage
+        }
+
+        @existingAccountPanel
+
+        @formWithCSRF(action = routes.SignUpController.signUp(afterDeadlineSignupCode), Symbol("id") -> "sign-up-form") {
+
+        @*helper.form(action = routes.SignUpController.signUp(afterDeadlineSignupCode), Symbol("novalidate") -> "novalidate") {
+            @helper.CSRF.formField*@
+
+            @*
+            <!-- The following will stop browsers from trying to autofill the username and password fields in the create account page -->
+            <input type="text" title="Hidden username" class="alwayshidden">
+            <input type="password" name="Hidden password" class="alwayshidden">
+            <!-- End -->
+                *@
+
+            <section class="section-border">
+                @h2(content = Text("Name and email"))
+                @nameHintTextPanel
+
+                @inputText(
+                    signUpForm("firstName"),
+                    label = "First name",
+                    labelClasses = "govuk-label--s",
+                    classes = "govuk-!-width-two-thirds"
+                )
+                @inputText(
+                    signUpForm("lastName"),
+                    label = "Last name",
+                    labelClasses = "govuk-label--s",
+                    classes = "govuk-!-width-two-thirds"
+                )
+                @inputText(
+                    signUpForm("email"),
+                    label = "Email",
+                    labelClasses = "govuk-label--s",
+                    classes = "govuk-!-width-two-thirds",
+                    inputType = "email",
+                    hint = Some("You'll need this to sign in to your account")
+                )
+
+                <div class="govuk-inset-text">
+                    <p>
+                        You'll need access to this email address over the next year. </br>
+                        Please use a personal email address, not your work or university email address.
+                    </p>
+                </div>
+
+                @inputText(
+                    signUpForm("email_confirm"),
+                    label = "Confirm your email",
+                    labelClasses = "govuk-label--s",
+                    classes = "govuk-!-width-two-thirds",
+                )
+            </section>
+            <section class="section-border">
+                @h2(content = Text("Set your password"))
+                <div class="form-group">
+                    <label for="password" class="form-label" id="firstPassLabel">Create password</label>
+                    @*<span class="visuallyhidden" id="hiddenPasswordRequirements">Must have: uppercase letters, lowercase letters, a number, and at least 9 characters</span>*@
+                    <div class="form-hint text">
+                        <p class="no-btm-margin">Must have:</p>
+                        <ul id="passwordRequirements" class="list-withicons list-text">
+                            <li id="includesUppercase" class=""><i class="fa the-icon fa-times fa-minus" aria-hidden="true"></i>uppercase letters</li>
+                            <li id="includesLowercase" class=""><i class="fa the-icon fa-times fa-minus" aria-hidden="true"></i>lowercase letters</li>
+                            <li id="includesNumber" class=""><i class="fa the-icon fa-times fa-minus" aria-hidden="true"></i>a number</li>
+                            <li id="includes9Characters" class=""><i class="fa the-icon fa-times fa-minus" aria-hidden="true"></i>at least 9 characters</li>
+                        </ul>
+                    </div>
+                    <div class="form-group password-wrapper">
+                        @inputText(
+                            signUpForm("password"),
+                            label = "",
+                            inputType = "password",
+                            labelClasses = "govuk-label--s",
+                            classes = "govuk-!-width-two-thirds",
+                        )
+                    </div>
+
+                    <div class="password-second form-group">
+                        <div id="confirmpwd_field" class="form-group">
+                            @*
+                            <label for="confirmpwd" class="form-label">Confirm password</label>
+                            <input id="confirmpwd" name="confirmpwd" type="password" class="form-control confirm-password">
+                                *@
+
+                            @inputText(
+                                signUpForm("confirmpwd"),
+                                label = "Confirm password",
+                                inputType = "password",
+                                labelClasses = "govuk-label--s",
+                                classes = "govuk-!-width-two-thirds",
+                            )
+
+@*                            Removing this as it's causes duplicate elements which fails accessibility test. It is *@
+@*                            dynamically added via javascript*@
+@*                            <div id="matchingHint" class="invisible">*@
+@*                                <p class="form-hint">Password matching:*@
+@*                                    <span id="pass_match" class="strength-weak"></span>*@
+@*                                </p>*@
+@*                            </div>*@
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            @chooseYourRoute(signUpForm, appRouteConfigMap, validAfterDeadlineSignupCode)
+
+            <section class="section-border">
+                @h2(content = Text("How did you hear about us?"))
+
+                @inputSelect(
+                    field = signUpForm("campaignReferrer"),
+                    id = "campaignReferrer",
+                    name = "campaignReferrer",
+                    items = models.view.CampaignReferrers.asSelectItems,
+//                    label = Label(content = Text("Select how you heard about us (optional)"))
+                    label = "Select how you heard about us (optional)")
+                )
+            </section>
+            <section>
+                @h2(content = Text("Terms and conditions"))
+                @govukCheckboxes(Checkboxes(
+                    name = "agree",
+                    items = Seq(
+                        CheckboxItem(
+                            content = HtmlContent(s"I accept the <a class=\"govuk-link\" href=\"${routes.ApplicationController.terms}\" target=\"_blank\">terms and conditions</a>"),
+                            value = "true",
+                            checked = "true".equals(signUpForm("agree").value.getOrElse(""))
+                        )
+                    )
+                ).withFormField(signUpForm("agree")))
+            </section>
+
+            @govukButton(Button(
+                content = Text("Create account"),
+                inputType = Some("submit"),
+                preventDoubleClick = Some(true)
+            ))
+        }
+    } else {
+        <section class="panel-info standard-panel toggle-content" id="applicationsClosed" style="display: block ;">
+            <div class="text">
+                @h2(content = Text("Applications are now closed"))
+                <p>Applications for the Civil Service Fast Stream and
+                    Summer Internship Programme (SIP) are now closed.</p>
+                <p>Visit the <a class="govuk-link" href="https://www.civilservicejobs.service.gov.uk" target="_blank"
+                rel="external">Civil Service jobs</a> site for more opportunities
+                    with us. Or alternatively you can apply when the next application
+                    window opens.</p>
+            </div>
+        </section>
+
+        @existingAccountPanel
+    }
+}

@@ -17,17 +17,23 @@
 package models.view.questionnaire
 
 import models.view.ValidAnswers
+import uk.gov.hmrc.govukfrontend.views.html.components.RadioItem
+import uk.gov.hmrc.govukfrontend.views.html.components.Text
 
 object ParentQualifications extends ValidAnswers {
   // The first data item in the tuple specifies what the generated id will be for the widget
   // eg. id="parentsDegree-degree", id="parentsDegree-below-degree" etc
   // The second data item is the text to display next to the field as well as the value posted
   // The third data item specifies whether selecting the field should trigger displaying another control
-  val seq = Seq(
+  val seq: Seq[(String, String, Boolean)] = Seq(
     ("degree", "Degree level qualification", false),
     ("below-degree", "Qualifications below degree level", false),
     ("none", "No formal qualifications", false),
     ("unknown", "I don't know/prefer not to say", false)
   )
-  override val values = seq.map { case (_, value, _) => value }.toList
+  override val values: List[String] = seq.map { case (_, value, _) => value }.toList
+
+  def asRadioItems: Seq[RadioItem] = values.map( value =>
+    RadioItem(value = Some(value), content = Text(value))
+  )
 }

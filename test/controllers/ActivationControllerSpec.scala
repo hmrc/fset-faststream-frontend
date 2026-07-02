@@ -110,10 +110,14 @@ class ActivationControllerSpec extends BaseControllerSpec {
   }
 
   trait TestFixture extends BaseControllerTestFixture {
+
+//    val activationTemplate = instanceOf[views.html.registration.Activation2]
+    val activationTemplate = mock[views.html.registration.Activation2]
+
     val formWrapper = new ActivateAccountForm
     def controller(givenCandidate: CachedData) = {
-      new ActivationController(mockConfig,
-        stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockUserManagementClient,
+      new ActivationController(mockConfig, stubMcc, activationTemplate,
+        mockSecurityEnv, mockSilhouetteComponent, mockUserManagementClient,
         mockNotificationTypeHelper, mockSignInService, formWrapper) with TestableSecureActions {
         override val candidate: CachedData = givenCandidate
       }

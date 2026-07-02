@@ -19,7 +19,7 @@
 @import controllers.ApplicationRouteState
 
 @import config.TrackingConsentConfig
-@(signUpForm: Form[_root_.forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], notification: Option[(helpers.NotificationType, String)] = None, afterDeadlineSignupCode: Option[String] = None, validAfterDeadlineSignupCode: Boolean = false, preGoLiveTestingEnabled: Boolean = false)(
+@(signUpForm: Form[forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], notification: Option[(helpers.NotificationType, String)] = None, afterDeadlineSignupCode: Option[String] = None, validAfterDeadlineSignupCode: Boolean = false, preGoLiveTestingEnabled: Boolean = false)(
         implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @import helpers.CSRFieldConstructor._

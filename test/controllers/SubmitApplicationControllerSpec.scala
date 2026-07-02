@@ -90,9 +90,16 @@ class SubmitApplicationControllerSpec extends BaseControllerSpec {
 
     def controller(implicit candWithApp: CachedDataWithApp = currentCandidateWithApp,
       appRouteConfig: ApplicationRouteState) = {
+
+      val personalDetailsTemplate = mock[views.html.application.PersonalDetails2]
+
+      val submitTemplate = mock[views.html.application.Submit2]
+      val submittedTemplate = mock[views.html.application.Submitted2]
+
       val appRouteConfigMap = Map(Faststream -> appRouteConfig, Edip -> appRouteConfig, Sdip -> appRouteConfig)
       when(mockConfig.applicationRoutesFrontend).thenReturn(appRouteConfigMap)
-      new SubmitApplicationController(mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      new SubmitApplicationController(mockConfig, stubMcc, submitTemplate, submittedTemplate,
+        mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
         mockApplicationClient) with TestableSecureActions {
         override val candidateWithApp: CachedDataWithApp = candWithApp
       }

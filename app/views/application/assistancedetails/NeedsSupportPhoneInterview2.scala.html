@@ -1,0 +1,104 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import security.RoleUtils._
+@import models.CachedData
+@import helpers.CSRFieldConstructor._
+@import views.html.widgets.radioBoxHorizontal
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukRadios, GovukTextarea, Hint, Label, RadioItem, Radios, Text, Textarea}
+@import views.html.components.Heading2
+
+@this(
+        h2: Heading2,
+        govukRadios : GovukRadios,
+        govukTextarea : GovukTextarea
+)
+
+@(form: Form[forms.AssistanceDetailsForm.Data])(implicit messages: Messages, user: Option[CachedData])
+
+@*
+<section>
+    <fieldset>
+        <legend><h2 class="form-label">Will you need any support for your video interview?</h2></legend>
+        <p class="form-hint text">
+            We want to ensure you are able to give your best performance at the interview and we will endeavour to support any reasonable adjustments we can make. We encourage you to give us as clear a picture of your needs, if you feel comfortable sharing with us, to help us do this.
+        </p>
+        @radioBoxHorizontal(form("needsSupportForPhoneInterview"), options = List(("yes", "Yes", true), ("no", "No", false)),
+            optionTrigger = "needsSupportForOnlineAssessment-describe")
+        <div id="needsSupportForOnlineAssessment-describe" class="toggle-content" aria-hidden="true">
+            <div class="form-group">
+                <label for="needsSupportForPhoneInterviewDescription" class="form-label">What adjustments will you need <span class='visuallyhidden'>for your video interview?</span></label>
+                @helper.textarea(form("needsSupportForPhoneInterviewDescription"),
+                    Symbol("_label") -> "",
+                    Symbol("class") -> "form-control",
+                    Symbol("rows") -> 4,
+                    Symbol("dataValLengthMax") -> "2048",
+                    Symbol("_showConstraints") -> false)
+                <span class="visuallyhidden aria-limit" aria-live="polite"></span>
+            </div>
+            <div class="panel-indent text">
+                <p>If you want to talk about your adjustment needs in more detail, please
+                    <a id="contactUsForPhoneInterview" href="@routes.ApplicationController.helpdesk" class="">contact us</a>.</p>
+                <p>It's important you let us know this information now, as there won't
+                    be another opportunity to do this unless your situation changes.</p>
+            </div>
+        </div>
+    </fieldset>
+</section>
+*@
+
+@h2(content = Text("Will you need any support for your video interview?"))
+<p class="form-hint text">
+    We want to ensure you are able to give your best performance at the interview and we will endeavour to support any reasonable adjustments we can make. We encourage you to give us as clear a picture of your needs, if you feel comfortable sharing with us, to help us do this.
+</p>
+
+@yesHtml = {
+    @govukTextarea(Textarea(
+        id = "needsSupportForPhoneInterviewDescription",
+        name = "needsSupportForPhoneInterviewDescription",
+        label = Label(
+            classes = "govuk-label--s",
+            content = Text("What adjustments will you need for your video interview?")
+        ),
+        hint = Some(Hint(
+            content = Text("Please give us as much detail as possible about what you need")
+        ))
+    ).withFormField(form("needsSupportForPhoneInterviewDescription")))
+
+    <div>
+        <p>If you want to talk about your adjustment needs in more detail, please
+            <a id="contactUsForPhoneInterview" href="@routes.ApplicationController.helpdesk" class="govuk-link">contact us</a>.</p>
+        <p>It's important you let us know this information now, as there won't
+            be another opportunity to do this unless your situation changes.</p>
+    </div>
+}
+
+@govukRadios(Radios(
+    name = "needsSupportForPhoneInterview",
+    items = Seq(
+        RadioItem(
+            content = Text("Yes"),
+            value = Some("Yes"),
+            conditionalHtml = Some(yesHtml)
+        ),
+        RadioItem(
+            content = Text("No"),
+            value = Some("No")
+        )
+    )
+).withFormField(form("needsSupportForPhoneInterview")))

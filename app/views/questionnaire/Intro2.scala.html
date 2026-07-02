@@ -1,0 +1,134 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, Checkboxes, CheckboxItem, ErrorSummary, GovukButton, GovukCheckboxes, GovukErrorSummary, Text, FormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichCheckboxes
+@import views.html.components.*
+
+@import views.html.widgets.{pageProgress, checkbox}
+
+@this(
+        govukButton: GovukButton,
+        govukErrorSummary: GovukErrorSummary,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout,
+        h1: Heading1,
+        govukCheckboxes: GovukCheckboxes,
+        pageTitle: PageTitle
+)
+
+@(acceptanceForm: Form[forms.DiversityQuestionnaireForm.AcceptanceTerms], isFastStream: Boolean)(implicit request: Request[_], user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@mainLayout(pageTitle(acceptanceForm, "Before you continue").toString) {
+@*main_template(title = "Before you continue", pageForms = Seq(acceptanceForm)) {*@
+    @*pageProgress(4, 7)*@
+
+    @if(acceptanceForm.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(acceptanceForm))
+    }
+
+    @h1(content = Text("Before you continue"))
+    <p class="subtitle">Diversity questions</p>
+@*
+    <div class="hgroup">
+        <h1 class="heading-xlarge">Before you continue</h1>
+        <p class="subtitle">Diversity questions</p>
+    </div>
+*@
+    <section>
+        <div class="text">
+            <p>We have a few more questions before you submit your application, relating to diversity. We are committed to promoting diversity and valuing everyone, irrespective of ethnicity or nationality, disability, gender identity, sexual orientation, age or socio-economic status.</p>
+          </div>
+
+          <div class="panel-info standard-panel">
+              <div class="text">
+                  <p>The following questions are:</p>
+                  <ul class="no-btm-margin">
+                    @if(isFastStream) {
+                        <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
+                        <li>not part of your application and will have no bearing on any selection decision</li>
+                        <li>treated in strict confidence</li>
+                    } else {
+                        <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
+                        <li>used to assess your eligibility for the Summer Internship Programme</li>
+                        <li>treated in strict confidence</li>
+                    }
+                  </ul>
+              </div>
+          </div>
+        <div class="text">
+            <p>For security reasons, once you save a page you won't be able to go
+                back and change your answers.</p>
+        </div>
+    </section>
+@*
+    @helper.form(action = routes.QuestionnaireController.submitStart, Symbol("novalidate") -> "novalidate") {
+        <div class="form-group">
+            @helper.CSRF.formField
+            @if(isFastStream) {
+                @checkbox(acceptanceForm("accept-terms")) {
+                    By checking this box, I understand that answering these diversity related questions won't affect my application
+                }
+            } else {
+                @checkbox(acceptanceForm("accept-terms")) {
+                    By checking this box, I understand why I am being asked these diversity related questions
+                }
+            }
+        </div>
+        <button id="btnStart" type="submit" value="submit" class="button">Start questions</button>
+    }
+*@
+    @formWithCSRF(action = routes.QuestionnaireController.submitStart) {
+        <div class="form-group">
+            @if(isFastStream) {
+                @*
+                @checkbox(acceptanceForm("accept-terms")) {
+                    By checking this box, I understand that answering these diversity related questions won't affect my application
+                }*@
+                @govukCheckboxes(Checkboxes(
+                    name = "accept-terms",
+                    items = Seq(
+                        CheckboxItem(
+                            content = Text("By checking this box, I understand that answering these diversity related questions won't affect my application"),
+                            value = "true"
+                        )
+                    )
+                ).withFormField(acceptanceForm("accept-terms")))
+            } else {
+                @*
+                @checkbox(acceptanceForm("accept-terms")) {
+                    By checking this box, I understand why I am being asked these diversity related questions
+                }*@
+                @govukCheckboxes(Checkboxes(
+                    name = "accept-terms",
+                    items = Seq(
+                        CheckboxItem(
+                            content = Text("By checking this box, I understand why I am being asked these diversity related questions"),
+                            value = "true"
+                        )
+                    )
+                ).withFormField(acceptanceForm("accept-terms")))
+            }
+        </div>
+        @govukButton(Button(
+            content = Text("Start questions"),
+            inputType = Some("submit"),
+            preventDoubleClick = Some(true)
+        ))
+    }
+}

@@ -49,7 +49,14 @@ class ApplicationControllerSpec extends BaseControllerSpec {
   }
 
   trait TestFixture extends BaseControllerTestFixture {
+    val helpdeskTemplate = mock[views.html.index.Helpdesk2]
+    val cookiesTemplate = mock[views.html.index.Cookies2]
+    val accessibilityTemplate = mock[views.html.index.Accessibility2]
+    val privacyTemplate = mock[views.html.index.Privacy2]
+    val termsTemplate = mock[views.html.index.Terms2]
     val controller = new ApplicationController(
-      mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper) with TestableSecureActions
+      mockConfig, stubMcc, helpdeskTemplate, cookiesTemplate, accessibilityTemplate, privacyTemplate, termsTemplate,
+      mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper
+    ) with TestableSecureActions
   }
 }

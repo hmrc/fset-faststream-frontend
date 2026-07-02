@@ -16,12 +16,17 @@
 
 package models.view.questionnaire
 
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
+
 object SexOrientations {
-  val list = List(
+  val list: Seq[(String, String, Boolean)] = List(
     ("straight", "Heterosexual/straight", false),
     ("gay", "Gay/lesbian", false),
     ("bisexual", "Bisexual", false),
     ("other", "Other", true),
     ("preferNotSay", "I don't know/prefer not to say", false)
   )
+
+  val asRadioItems: Seq[RadioItem] = list.map((_, displayText, _) => RadioItem(content = Text(displayText), value = Some(displayText)))
 }

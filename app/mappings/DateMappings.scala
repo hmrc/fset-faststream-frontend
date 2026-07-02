@@ -37,7 +37,8 @@ object DayMonthYear {
 
   def emptyDate: DayMonthYear = DayMonthYear("", "", "")
 
-  def validDayMonthYear(message: String, msgForFuture: String)(minInclusive: Option[LocalDate], maxInclusive: Option[LocalDate]) =
+  def validDayMonthYear(message: String, msgForFuture: String)(
+    minInclusive: Option[LocalDate], maxInclusive: Option[LocalDate]): Mapping[DayMonthYear] =
     dayMonthYear verifying validDateConstraint(message, msgForFuture)(minInclusive, maxInclusive)
 
   private def validDateConstraint(message: String, msgForFuture: String)(
@@ -75,7 +76,7 @@ object Year {
 
   def validateYear(year: String): Boolean = yearPattern.pattern.matcher(year).matches
 
-  val yearFormatter = new Formatter[Option[String]] {
+  val yearFormatter: Formatter[Option[Year]] = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val year: Option[String] = data.get(key)
 
