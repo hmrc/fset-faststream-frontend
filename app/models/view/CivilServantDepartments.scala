@@ -16,9 +16,11 @@
 
 package models.view
 
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+
 // If you need to make any changes to this list note the list is also defined in javascript and also needs to be changed there
 object CivilServantDepartments {
-  val departments = Seq(
+  val departments: Seq[String] = Seq(
     "Accountant in Bankruptcy",
     "Advisory, Conciliation and Arbitration Service",
     "Animal and Plant Health Agency",
@@ -126,4 +128,7 @@ object CivilServantDepartments {
     "Welsh Revenue Authority",
     "Wilton Park"
   )
+
+  val asSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "")) ++
+    departments.map(department => SelectItem(value = Some(department), text = department))
 }

@@ -1,0 +1,140 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.{Heading1, Heading2, Layout}
+
+@this(
+        mainLayout: Layout,
+        h1: Heading1,
+        h2: Heading2
+)
+
+@()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@mainLayout("Terms and conditions") {
+    @h1(content = Text("Terms and conditions"))
+
+    <section class="text">
+        <p>This service is run by Government People Group
+        <a class="govuk-link" href="https://www.gov.uk/government/organisations/government-people-group" target="_blank" rel="external">(GPG)
+            <span class="visuallyhidden">link opens new window</span>
+        </a>.
+        We'll handle the information you give to us in accordance with the
+        <a class="govuk-link" href="https://www.gov.uk/data-protection" rel="external" target="_blank">General Data Protection Regulation Act
+          <span class="visuallyhidden">link opens new window</span>
+        </a>.
+        Our <a class="govuk-link" href="@routes.ApplicationController.privacy">privacy</a> and <a class="govuk-link" href="@routes.ApplicationController.cookies">cookies</a> statements explains how we will use your information.</p>
+        <p>In accepting these terms and conditions you're agreeing for us to contact you in regards to your application.</p>
+
+        @h2(content = Text("Responsibility for the service"))
+        <p>Our aim is to make sure this service is constantly available, free from viruses and that the information we give is accurate and complete.</p>
+
+        <p>GPG doesn't accept liability for:</p>
+
+        <ul>
+            <li>you being unable to access the service (eg because of excessive demand or because we've taken the service down for maintenance)</li>
+            <li>delay or failure in receiving data</li>
+            <li>indirect damages arising from you using the service or relying on its content</li>
+            <li>the content and availability of external websites that link to the service or which are linked from it</li>
+        </ul>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("What happens if you misuse your account"))
+
+        <p>We may delete your account if you:</p>
+
+        <ul>
+            <li>use an inappropriate email address for your username</li>
+            <li>submit an application posing as someone else</li>
+            <li>create duplicate accounts</li>
+        </ul>
+
+        <div class="govuk-inset-text">
+            <p>If you make a false declaration of disability any offer of employment will be withdrawn. You may not be able to apply again in the future.</p>
+        </div>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("Fast Stream Assessments"))
+        @h2(content = Text("Terms of Use, Confidentiality, Disclaimer, Copyright and General"))
+        <p>The conditions set out below pertain to the following assessments:</p>
+        <ul>
+            <li>FS Work Based Scenarios</li>
+            <li>FS Case Study</li>
+            <li>Fast Stream Assessment Centre</li>
+            <li>Final Selection Board</li>
+        </ul>
+        <p>Failure to comply with these Terms and Conditions may result in disqualification, so it is important that you read through them in detail and understand them before starting your assessment.  By clicking the 'I Agree' button, you accept and agree to the following:</p>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("Terms of Use/Appropriate assessment completion"))
+        <p>By taking the assessments, you confirm that you are the named user for the account which is logged into the assessments. You are required to complete the assessments on your own without seeking assistance or support from any other person or source. This includes any technological assistance, such as Artificial Intelligence. More information on our policy on the use of Generative Artificial Intelligence can be found <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-gen-ai/" target="_blank" rel="external">here</a>. Failure to comply may result in your application being withdrawn. We reserve the right to request that you resit any part or parts of the assessment process under supervised conditions.</p>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("Confidentiality"))
+        <p>All content provided to you during the assessments is the Crown’s confidential information and you are prohibited from making copies of any content provided to you and you may not disclose the content to any other person.  Failure to comply may result in your application being withdrawn.</p>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("Disclaimer"))
+        <p>In no event will the Crown be liable for any loss or damage to you or any other party that may arise from use of the content (other than those liabilities that cannot be excluded by law) including:</p>
+        <ul>
+            <li>any direct, indirect or consequential losses;</li>
+            <li>any loss or damage caused by any causes of action whether based on contract, warranty, tort or any other legal theories;</li>
+            <li>the use of the online assessment portal; and </li>
+            <li>the inability to use the online assessment portal.</li>
+        </ul>
+        <p>This applies if the loss or damage was foreseeable, arose in the normal course of events or you advised us that it might happen, including (but not limited to) the loss of income or revenue; salary; benefits or other payments; business; profits or contracts; opportunity; anticipated savings; data; goodwill or reputation; tangible property; and intangible property (including loss, corruption or damage to data or any computer system).</p>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("Copyright Notice"))
+        <p>All content in this online assessment is owned by the Crown and subject to © Crown Copyright 2020.  All rights are reserved and any unauthorised re-use, transmission, broadcast, public performance, distribution, copying, re-recording or other non-permitted use of the content will constitute an infringement of copyright.  You are authorised to use the content for the purposes of the undertaking the following assessments only:</p>
+        <ul>
+            <li>FS Work Based Scenarios</li>
+            <li>FS Case Study</li>
+            <li>Fast Stream Assessment Centre</li>
+            <li>Final Selection Board</li>
+        </ul>
+        <p>If any content is not subject to Crown Copyright protection and/or belongs to a third party we’ll usually credit the author or copyright holder within the content itself.</p>
+        <p>The copyright in all your answers to the assessments shall be assigned on creation to the Crown.  Candidate answers are exempt from the Data Protection Act 2018 under Paragraph 25 of Part 4 to Schedule 2 of that Act.</p>
+        <p>The Fast Stream assessment content is not available under the <a class="govuk-link" href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government License v3.0</a></p>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("General"))
+        <p>These Terms and Conditions are governed by and construed in accordance with the laws of England and Wales.</p>
+        <p>Any dispute you have which relates to these Terms and Conditions, or your use of the assessment portals (whether it be contractual or non-contractual), will be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+        <p>We’re not liable if we fail to comply with these Terms and Conditions because of circumstances beyond our reasonable control.</p>
+        <p>We might decide not to exercise or enforce any right available to us under these Terms and Conditions. We can always decide to exercise or enforce that right at a later date.</p>
+        <p>Doing this once will not mean we automatically waive the right on any other occasion.</p>
+        <p>If any of these Terms and Conditions are held to be invalid, unenforceable or illegal for any reason, the remaining Terms and Conditions will still apply.</p>
+    </section>
+
+    <section class="text">
+        @h2(content = Text("Privacy Policy"))
+        <p>The GPG
+            <a class="govuk-link" href="@routes.ApplicationController.privacy" target="_blank" rel="external">Privacy Notice
+                <span class="visuallyhidden">link opens new window</span>
+            </a>
+            sets out how we use your personal data, and your rights in relation to the assessments. It is made under Articles 13 and/or 14 of the General Data Protection Regulation (GDPR).</p>
+    </section>
+}

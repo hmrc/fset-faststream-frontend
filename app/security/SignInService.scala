@@ -33,16 +33,20 @@ import helpers.NotificationTypeHelper
 
 import javax.inject.{Inject, Singleton}
 import models.*
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.*
 import play.api.mvc.Results.Ok
+import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.index.SignIn2
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignInService @Inject() (
   config: FrontendAppConfig,
+  signInTemplate: SignIn2,
   secEnv: _root_.config.SecurityEnvironment,
   applicationClient: ApplicationClient,
   notificationTypeHelper: NotificationTypeHelper,
@@ -74,12 +78,27 @@ class SignInService @Inject() (
 
   def showErrorLogin(data: Data, errorMsg: String = "signIn.invalid")(
     implicit user: Option[CachedData], request: Request[_], flash: Flash, messages: Messages): Result = {
-    implicit val feedBackUrl: String = config.feedbackUrl
-    implicit val trackingConsentConfig: TrackingConsentConfig = config.trackingConsentConfig
-    Ok(views.html.index.signin(
+//    implicit val feedBackUrl: String = config.feedbackUrl
+//    implicit val trackingConsentConfig: TrackingConsentConfig = config.trackingConsentConfig
+//    Ok(views.html.index.signin(
+//      formWrapper.form.fill(SignInForm.Data(signIn = data.signIn, signInPassword = "", route = data.route)),
+//      Some(danger(errorMsg))
+//    ))
+    Ok(signInView(
       formWrapper.form.fill(SignInForm.Data(signIn = data.signIn, signInPassword = "", route = data.route)),
       Some(danger(errorMsg))
     ))
+  }
+
+  private def signInView(form: Form[SignInForm.Data], notification: Option[(helpers.NotificationType, String)] = None)(
+    implicit request: Request[_], user: Option[models.CachedData], flash: Flash, messages: Messages): Html = {
+    implicit val feedBackUrl: String = config.feedbackUrl
+    implicit val trackingConsentConfig: TrackingConsentConfig = config.trackingConsentConfig
+    if (config.enablePlayHmrcSignInView) {
+      signInTemplate(form, notification)
+    } else {
+      views.html.index.signin(form, notification)
+    }
   }
 
   def logOutAndRedirectUserAware(successAction: Result, failAction: Result)(implicit request: Request[_]): Future[Result] = {

@@ -1,0 +1,186 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import models.view.questionnaire.{Ethnicities, SexOrientations, Sexes}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukErrorSummary, GovukRadios, GovukSelect, Hint, Label, Legend, Radios, RadioItem, Select, SelectItem, Text}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichSelect
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
+@import views.html.components.{Heading1, Layout, PageTitle}
+@import views.html.widgets.radioBoxHorizontal
+
+@this(
+        govukButton: GovukButton,
+        govukErrorSummary: GovukErrorSummary,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout,
+        h1: Heading1,
+        govukRadios : GovukRadios,
+        govukSelect : GovukSelect,
+        pageTitle: PageTitle
+)
+
+@(form: Form[forms.DiversityQuestionnaireForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@import helpers.CSRFieldConstructor.*
+@import views.html.widgets.{checkbox, pageProgress, radioBoxVertical, select_guard_multi}
+
+@mainLayout(pageTitle(form, "About you").toString) {
+@*main_template(title = "About you", pageForms = Seq(form)) {*@
+    @*pageProgress(5,7)*@
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+    }
+
+    @h1(content = Text("About you"))
+    <p class="subtitle">Diversity questions</p>
+
+@*
+    <div class="hgroup">
+        <h1 class="heading-xlarge">About you</h1>
+        <p class="subtitle">Diversity questions</p>
+    </div>
+*@
+    <div class="panel-info standard-panel">
+        <div class="text">
+            <h2 class="heading-medium">Why do we ask these questions?</h2>
+            <p>These questions help us to gather data on people's sex at birth, sexual orientation and ethnicity.</p>
+            <p>We anonymise the data and use it to monitor and improve the effectiveness of our processes in enabling all candidates to do their best irrespective of their diversity characteristics.</p>
+        </div>
+    </div>
+
+    @formWithCSRF(action = routes.QuestionnaireController.submitFirstPage) {
+@*
+        <section>
+            <fieldset class="form-group">
+                <legend><h2 class="form-label text" id="sex-ques">@Messages("sex.question")</h2></legend>
+                <span class="form-hint">This question is about your sex at birth</span>
+                @radioBoxHorizontal(form("sex"), options = Sexes.list)
+            </fieldset>
+        </section>
+*@
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("sex.question")),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            hint = Some(Hint(
+                content = Text("This question is about your sex at birth")
+            )),
+            name = "sex",
+            items = Sexes.asRadioItems,
+            classes = "govuk-radios--inline"
+        ).withFormField(form("sex")))
+@*
+        <section>
+            <fieldset class="form-group">
+                <legend><h2 class="form-label" id="orientation-ques">@Messages("sexOrientation.question")</h2></legend>
+                @radioBoxVertical(form("sexOrientation"), options = SexOrientations.list, optionTrigger = "orientation-describe")
+                <div class="toggle-content form-group form-group-compound" id="orientation-describe">
+                @helper.inputText(form("other_sexOrientation"),
+                    Symbol("_label") -> "Provide more information (optional)",
+                    Symbol("_labelClass") -> "form-hint",
+                    Symbol("class") -> "form-control",
+                    Symbol("_showConstraints") -> false,
+                    Symbol("optional") -> "")
+                </div>
+            </fieldset>
+        </section>
+*@
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("sexOrientation.question")),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "sexOrientation",
+            items = SexOrientations.asRadioItems,
+        ).withFormField(form("sexOrientation")))
+
+        @*
+        <section>
+            <fieldset class="form-group">
+                <legend><h2 class="form-label" id="ethnicity-ques">@Messages("ethnicity.question")</h2></legend>
+                @select_guard_multi(form("ethnicity"), Ethnicities.map, "ethnicity-describe", "Select one", "ethnicity-ques")
+
+                <div class="toggle-content form-group form-group-compound" id="ethnicity-describe">
+                    @helper.inputText(form("other_ethnicity"),
+                        Symbol("_label") -> "Provide more information (optional)",
+                        Symbol("_labelClass") -> "form-hint",
+                        Symbol("class") -> "form-control",
+                        Symbol("_showConstraints") -> false,
+                        Symbol("optional") -> "")
+                </div>
+                <div data-optional>
+                    @checkbox(form("preferNotSay_ethnicity"), Some("ethnicity")) {
+                        I don't know/prefer not to say
+                    }
+                </div>
+            </fieldset>
+        </section>
+            *@
+
+        @govukSelect(Select(
+            name = "ethnicity",
+            items = models.view.questionnaire.Ethnicities.asSelectItems,
+            label = Label(content = Text(messages("ethnicity.question")))
+        ).withFormField(form("ethnicity")))
+
+        @*
+        <section>
+            <fieldset class="form-group">
+                <legend><h2 class="form-label">Is English your first language?</h2></legend>
+                @radioBoxHorizontal(form("isEnglishFirstLanguage"), options = List(("yes", "Yes", true), ("no", "No", false),
+                    ("preferNotToSay", "I don't know/prefer not to say", false)))
+            </fieldset>
+        </section>
+        *@
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Is English your first language?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "isEnglishFirstLanguage",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("Yes")
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("No")
+                ),
+                RadioItem(
+                    content = Text("I don't know/prefer not to say"),
+                    value = Some("I don't know/prefer not to say")
+                )
+            )).withFormField(form("isEnglishFirstLanguage")))
+
+        @govukButton(Button(
+            content = Text("Save and continue"),
+            inputType = Some("submit"),
+            preventDoubleClick = Some(true)
+        ))
+    }
+}

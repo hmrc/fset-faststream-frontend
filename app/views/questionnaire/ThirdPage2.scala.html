@@ -1,0 +1,144 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import forms.ParentEmploymentAnswers
+@import models.view.SimpleAnswerOptions
+@import models.view.questionnaire.{Employees, Occupations, OrganizationSizes}
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukRadios, Legend, RadioItem, Radios, Text}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
+@import views.html.components.{Heading1, InputRadios, Layout, PageTitle}
+@import views.html.widgets.*
+
+@this(
+        govukErrorSummary: GovukErrorSummary,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout,
+        h1: Heading1,
+        govukRadios: GovukRadios,
+        inputRadios: InputRadios,
+        pageTitle: PageTitle,
+)
+
+@(questionnaireForm: Form[forms.ParentalOccupationQuestionnaireForm.Data], isFastStream: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@parentEmployedHtml = {
+
+    @inputRadios(
+        field = questionnaireForm("parentsOccupation"),
+        name = "parentsOccupation",
+        items = models.view.questionnaire.Occupations.asRadioItemsWithHints,
+        label = messages("parentsOccupation.question")
+    )
+
+    @inputRadios(
+        field = questionnaireForm("employee"),
+        name = "employee",
+        items = models.view.questionnaire.Employees.asRadioItems,
+        label = messages("employee.question")
+    )
+
+    @inputRadios(
+        field = questionnaireForm("organizationSize"),
+        name = "organizationSize",
+        items = models.view.questionnaire.OrganizationSizes.asRadioItems,
+        label = messages("organizationSize.question")
+    )
+
+    @inputRadios(
+        field = questionnaireForm("supervise"),
+        name = "supervise",
+        items = SimpleAnswerOptions.asRadioItems,
+        label = messages("supervise.question")//,
+//        classes = "govuk-radios--inline"
+    )
+}
+
+@mainLayout(pageTitle(questionnaireForm, "About your parents").toString) {
+
+    @if(questionnaireForm.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))
+    }
+    @h1(content = Text("About your parents"))
+    <div id="panel-why-collect-data" class="panel-info standard-panel">
+        <div class="text">
+            <h2 class="heading-medium">Why do we ask about your parents?</h2>
+            @if(isFastStream) {
+                <p>Gathering anonymous data about the education and employment background of family members of applicants at age 14 can help us to understand the socio-economic background of our applicant group.</p>
+            } else {
+                <p>Gathering anonymous data about the education and employment background of family members of applicants at age 14 can help us to understand the socio-economic background of our applicant group. The answers you provide in this section will be used to assess your eligibility for the Summer Internship Programme.</p>
+            }
+        </div>
+    </div>
+
+    @formWithCSRF(action = routes.QuestionnaireController.submitThirdPage) {
+
+        @inputRadios(
+            field = questionnaireForm("socioEconomicBackground"),
+            name = "socioEconomicBackground",
+            items = SimpleAnswerOptions.asRadioItems,
+            label = messages("socioEconomic.question")
+        )
+
+        @inputRadios(
+            field = questionnaireForm("parentsDegree"),
+            name = "parentsDegree",
+            items = models.view.questionnaire.ParentQualifications.asRadioItems,
+            label = messages("parentsDegree.question")
+        )
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("employedParent.question")),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "employedParent",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes, employed or self-employed"),
+                    value = Some(ParentEmploymentAnswers.employed),
+                    conditionalHtml = Some(parentEmployedHtml)
+                ),
+                RadioItem(
+                    content = Text("No, unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for less than a year"),
+                    value = Some(ParentEmploymentAnswers.unemployedButSeekingWork),
+                ),
+                RadioItem(
+                    content = Text("No, long term unemployed (claimed Jobseeker's Allowance or earlier unemployment benefit for more than a year"),
+                    value = Some(ParentEmploymentAnswers.longTermUnemployed),
+                ),
+                RadioItem(
+                    content = Text("No, retired"),
+                    value = Some(ParentEmploymentAnswers.retired),
+                ),
+                RadioItem(
+                    content = Text("I don't know/prefer not to say"),
+                    value = Some(ParentEmploymentAnswers.unknown),
+                )
+            )
+        ).withFormField(questionnaireForm("employedParent")))
+
+        @govukButton(Button(
+            content = Text("Save and continue"),
+            inputType = Some("submit"),
+            preventDoubleClick = Some(true)
+        ))
+    }
+}

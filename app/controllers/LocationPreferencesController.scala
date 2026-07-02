@@ -22,9 +22,12 @@ import connectors.{ReferenceDataClient, SdipLocationsClient}
 import forms.SelectedLocationsForm
 import helpers.NotificationTypeHelper
 import models.page.SelectedLocationsPage
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
 import security.Roles.LocationsRole
 import security.SilhouetteComponent
+import views.html.application.locationPreferences.LocationSelection2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class LocationPreferencesController @Inject()(
                                                config: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
+                                               locationSelectionTemplate: LocationSelection2,
                                                val secEnv: SecurityEnvironment,
                                                val silhouetteComponent: SilhouetteComponent,
                                                val notificationTypeHelper: NotificationTypeHelper,
@@ -47,15 +51,23 @@ class LocationPreferencesController @Inject()(
         val formObj = new SelectedLocationsForm(locations)
 
         locationClient.getLocationPreferences(cachedData.application.applicationId).map { selectedLocations =>
-          Ok(views.html.application.locationPreferences.locationSelection(
-            page, formObj.form.fill(selectedLocations), SelectedLocationsForm.interestsList)
-          )
+          Ok(locationSelectionView(page, formObj.form.fill(selectedLocations), SelectedLocationsForm.interestsList))
         }.recover {
           case _: LocationPreferencesNotFound =>
-            Ok(views.html.application.locationPreferences.locationSelection(page, formObj.form, SelectedLocationsForm.interestsList))
+            Ok(locationSelectionView(page, formObj.form, SelectedLocationsForm.interestsList))
         }
       }
   }
+
+  private def locationSelectionView(page: SelectedLocationsPage,
+                                  form: Form[forms.SelectedLocationsForm.LocationPreferences],
+                                  interests: List[String])(
+                                   implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcLocationSelectionView) {
+      locationSelectionTemplate(page, form, interests)
+    } else {
+      views.html.application.locationPreferences.locationSelection(page, form, interests)
+    }
 
   def submit: Action[AnyContent] = CSRSecureAppAction(LocationsRole) { implicit request =>
     implicit cachedData =>
@@ -63,9 +75,7 @@ class LocationPreferencesController @Inject()(
         new SelectedLocationsForm(locations).form.bindFromRequest().fold(
           invalidForm => {
             val page = SelectedLocationsPage(locations)
-            Future.successful(Ok(views.html.application.locationPreferences.locationSelection(
-              page, invalidForm, SelectedLocationsForm.interestsList))
-            )
+            Future.successful(Ok(locationSelectionView(page, invalidForm, SelectedLocationsForm.interestsList)))
           },
           selectedSchemes => {
             for {

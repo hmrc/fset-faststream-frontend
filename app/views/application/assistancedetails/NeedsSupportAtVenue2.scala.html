@@ -1,0 +1,71 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, FormWithCSRF, GovukButton, GovukRadios, GovukTextarea, Hint, Label, RadioItem, Radios, Text, Textarea}
+@import views.html.components.Heading2
+
+@this(
+        h2: Heading2,
+        govukRadios : GovukRadios,
+        govukTextarea : GovukTextarea
+)
+
+@(form: Form[forms.AssistanceDetailsForm.Data])(implicit messages: Messages)
+
+@h2(content = Text("Will you need any support at the virtual assessment centre?"))
+<p class="form-hint text">
+    The virtual assessment centre has been built with inclusivity and accessibility in mind.
+    Further information on the assessments and reasonable adjustments can be found
+    <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-reasonable-adjustments/" target="_blank" rel="external">here
+        <span class="visuallyhidden">link opens new window</span></a>.
+</p>
+
+@yesHtml = {
+    @govukTextarea(Textarea(
+        id = "needsSupportAtVenueDescription",
+        name = "needsSupportAtVenueDescription",
+        label = Label(
+            classes = "govuk-label--s",
+            content = Text("What adjustments will you need at the assessment centre?")
+        ),
+        hint = Some(Hint(
+            content = Text("Please give us as much detail as possible about what you need")
+        ))
+    ).withFormField(form("needsSupportAtVenueDescription")))
+
+    <div class="govuk-inset-text">
+        <p>If you want to talk about your adjustment needs in more detail, please
+            <a id="contactUsForVenueAssessment" class="govuk-link" href="@routes.ApplicationController.helpdesk">contact us</a>.</p>
+        <p>It's important you let us know this information now, as there won't
+            be another opportunity to do this unless your situation changes.</p>
+    </div>
+}
+
+@govukRadios(Radios(
+    name = "needsSupportAtVenue",
+    items = Seq(
+        RadioItem(
+            content = Text("Yes"),
+            value = Some("Yes"),
+            conditionalHtml = Some(yesHtml)
+        ),
+        RadioItem(
+            content = Text("No"),
+            value = Some("No")
+        )
+    )
+).withFormField(form("needsSupportAtVenue")))

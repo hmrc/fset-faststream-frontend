@@ -16,6 +16,8 @@
 
 package models.view.questionnaire
 
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+
 // If you need to make any changes to this list note the list is also defined in javascript and also needs to be changed there
 object Universities {
   val map = Map(
@@ -424,5 +426,8 @@ object Universities {
     reverseMap(code)
   }
 
-  val validUniversities = map.values.view.toSeq
+  val validUniversities: Seq[String] = map.values.view.toSeq
+
+  def asSelectItems: List[SelectItem] = List(SelectItem(value = None, text = "")) ++ map.map( (k, v) =>
+    SelectItem(value = Some(v), text = k))
 }

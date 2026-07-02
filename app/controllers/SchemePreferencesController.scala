@@ -24,39 +24,53 @@ import forms.SelectedSchemesForm
 import helpers.NotificationTypeHelper
 import models.ApplicationRoute
 import models.page.SelectedSchemesPage
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
 import security.Roles.SchemesRole
 import security.SilhouetteComponent
+import views.html.application.schemePreferences.SchemeSelection2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SchemePreferencesController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  schemeClient: SchemeClient,
-  referenceDataClient: ReferenceDataClient
-)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
+class SchemePreferencesController @Inject()(
+                                             config: FrontendAppConfig,
+                                             mcc: MessagesControllerComponents,
+                                             schemeSelectionTemplate: SchemeSelection2,
+                                             val secEnv: SecurityEnvironment,
+                                             val silhouetteComponent: SilhouetteComponent,
+                                             val notificationTypeHelper: NotificationTypeHelper,
+                                             schemeClient: SchemeClient,
+                                             referenceDataClient: ReferenceDataClient
+                                           )(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
   def present: Action[AnyContent] = CSRSecureAppAction(SchemesRole) { implicit request =>
     implicit cachedData =>
       referenceDataClient.allSchemes.flatMap { schemes =>
         val page = SelectedSchemesPage(sortSchemes(schemes))
         val formObj = new SelectedSchemesForm(schemes, cachedData.application.isSdipFaststream)
-        val civilServant = cachedData.application.civilServiceExperienceDetails.exists(_.isCivilServant)
+        val isCivilServant = cachedData.application.civilServiceExperienceDetails.exists(_.isCivilServant)
 
         schemeClient.getSchemePreferences(cachedData.application.applicationId).map { selectedSchemes =>
-          Ok(views.html.application.schemePreferences.schemeSelection(page, civilServant, formObj.form.fill(selectedSchemes)))
+          Ok(schemeSelectionView(page, isCivilServant, formObj.form.fill(selectedSchemes)))
         }.recover {
           case _: SchemePreferencesNotFound =>
-            Ok(views.html.application.schemePreferences.schemeSelection(page, civilServant, formObj.form))
+            Ok(schemeSelectionView(page, isCivilServant, formObj.form))
         }
       }
   }
+
+  private def schemeSelectionView(page: SelectedSchemesPage,
+                                  isCandidateCivilServant: Boolean,
+                                  form: Form[forms.SelectedSchemesForm.SchemePreferences])(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcSchemeSelectionView) {
+      schemeSelectionTemplate(page, isCandidateCivilServant, form)
+    } else {
+      views.html.application.schemePreferences.schemeSelection(page, isCandidateCivilServant, form)
+    }
 
   private def sortSchemes(schemes: List[Scheme]) = {
     // Sort the schemes so HoP is last
@@ -73,7 +87,7 @@ class SchemePreferencesController @Inject() (
         new SelectedSchemesForm(schemes, cachedData.application.isSdipFaststream).form.bindFromRequest().fold(
           invalidForm => {
             val page = SelectedSchemesPage(sortSchemes(schemes))
-            Future.successful(Ok(views.html.application.schemePreferences.schemeSelection(page, isCivilServant, invalidForm)))
+            Future.successful(Ok(schemeSelectionView(page, isCivilServant, invalidForm)))
           },
           selectedSchemes => {
             val sdip = SchemeId("Sdip")

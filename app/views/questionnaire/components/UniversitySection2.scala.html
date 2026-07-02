@@ -1,0 +1,47 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.Heading2
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+
+@import security.RoleUtils._
+@import views.html.widgets.{ checkbox, selectValueDifferentFromDisplayedText }
+@import views.html.questionnaire.components.{ postcode, PostgradUniversity2, school, UniversityName2, UniversityDegreeCategory2 }
+
+@this(
+        h2: Heading2,
+        universityName2: UniversityName2,
+        universityDegreeCategory2: UniversityDegreeCategory2,
+        postgradUniversity2: PostgradUniversity2
+)
+
+@(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data])(implicit user: Option[CachedData], messages: Messages)
+
+@h2(content = Text("University"))
+@*<div class="panel-indent text">*@
+<div>
+    @if(isFaststream(user) || isEdip(user)) {
+        <p>This data helps us compare the average performance of certain universities
+            to the national average.</p>
+    } else {@if(isSdip(user)) {
+        <p>This data helps us monitor the application rates and performance of applicants from different universities and disciplines
+            enabling us to target maximum opportunity for all.</p>
+    }}
+
+</div>
+@universityName2(questionnaireForm)
+@universityDegreeCategory2(questionnaireForm)
+@postgradUniversity2(questionnaireForm)

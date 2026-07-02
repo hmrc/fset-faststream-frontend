@@ -16,10 +16,12 @@
 
 package models.view.questionnaire
 
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+
 import scala.collection.immutable.ListMap
 
 object Ethnicities {
-  val map = ListMap(
+  val map: Map[String, List[(String, Boolean)]] = ListMap(
     "White" -> List(
       ("English/Welsh/Scottish/Northern Irish/British", false),
       ("Irish", false),
@@ -49,4 +51,27 @@ object Ethnicities {
       ("Other ethnic group", true)
     )
   )
+
+  val asSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "-- Select one --")) ++
+    Seq(
+      "English/Welsh/Scottish/Northern Irish/British",
+      "Irish",
+      "Gypsy or Irish Traveller",
+      "Other White background",
+      "White and Black Caribbean",
+      "White and Black African",
+      "White and Asian",
+      "Other mixed/multiple ethnic background",
+      "Indian",
+      "Pakistani",
+      "Bangladeshi",
+      "Chinese",
+      "Other Asian background",
+      "African",
+      "Caribbean",
+      "Other Black/African/Caribbean background",
+      "Arab",
+      "Other ethnic group",
+      "I don't know/prefer not to say" // This is an additional item to the list
+  ).map(ethnicity => SelectItem(value = Some(ethnicity), text = ethnicity))
 }

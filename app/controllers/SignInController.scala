@@ -16,55 +16,69 @@
 
 package controllers
 
-import _root_.forms.SignInForm
+import forms.SignInForm
 import play.silhouette.api.util.Credentials
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import helpers.NotificationTypeHelper
-import javax.inject.{ Inject, Singleton }
-import models.ApplicationRoute
-import play.api.mvc.MessagesControllerComponents
-import security._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import models.ApplicationRoute
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
+import security.*
+
+import scala.concurrent.{ExecutionContext, Future}
+import views.html.index.SignIn2
 
 @Singleton
-class SignInController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  val signInService: SignInService,
-  formWrapper: SignInForm)(implicit val ec: ExecutionContext)
+class SignInController @Inject()(
+                                  config: FrontendAppConfig,
+                                  mcc: MessagesControllerComponents,
+                                  signInTemplate: SignIn2,
+                                  val secEnv: SecurityEnvironment,
+                                  val silhouetteComponent: SilhouetteComponent,
+                                  val notificationTypeHelper: NotificationTypeHelper,
+                                  val signInService: SignInService,
+                                  signInForm: SignInForm)(implicit val ec: ExecutionContext)
   extends BaseController(config,mcc) {
   import notificationTypeHelper._
 
-  def present = CSRUserAwareAction { implicit request =>
+  def present: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       request.identity match {
         case None =>
-          Future.successful(Ok(views.html.index.signin(formWrapper.form)))
+          Future.successful(Ok(signInView(signInForm.form)))
         case Some(u) =>
           Future.successful(Redirect(routes.HomeController.present()))
       }
   }
 
-  def sdipPresent = CSRUserAwareAction { implicit request =>
+  private def signInView(form: Form[SignInForm.Data])(implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcSignInView) {
+      signInTemplate(form)
+    } else {
+      views.html.index.signin(form)
+    }
+
+  def sdipPresent: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       request.identity match {
         case None =>
-          Future.successful(Ok(views.html.index.signin(formWrapper.form.fill(SignInForm.Data("", "", Some(ApplicationRoute.SdipFaststream))))))
+          Future.successful(
+            Ok(signInView(signInForm.form.fill(SignInForm.Data(signIn = "", signInPassword = "", Some(ApplicationRoute.SdipFaststream)))))
+          )
         case Some(u) =>
           Future.successful(Redirect(routes.HomeController.present()))
       }
   }
 
   // scalastyle:off cyclomatic.complexity
-  def signIn = CSRUserAwareAction { implicit request =>
+  def signIn: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
-      formWrapper.form.bindFromRequest().fold(
+      signInForm.form.bindFromRequest().fold(
         invalidForm =>
-          Future.successful(Ok(views.html.index.signin(invalidForm))),
+          Future.successful(Ok(signInView(invalidForm))),
         data => secEnv.credentialsProvider.authenticate(Credentials(data.signIn, data.signInPassword)).flatMap {
           case Right(usr) if usr.lockStatus == "LOCKED" => Future.successful(
             Redirect(routes.LockAccountController.present).addingToSession("email" -> usr.email))
@@ -85,7 +99,7 @@ class SignInController @Inject() (
   }
   // scalastyle:on cyclomatic.complexity
 
-  def signOut = CSRUserAwareAction { implicit request =>
+  def signOut: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       signInService.logOutAndRedirectUserAware(
         successAction = Redirect(routes.SignInController.present)

@@ -195,10 +195,15 @@ class SignUpControllerSpec extends BaseControllerSpec {
 
     val defaultAppRouteConfigMap = Map(Faststream -> defaultAppRouteState, Edip -> defaultAppRouteState, Sdip -> defaultAppRouteState)
 
+    val signUpTemplate = mock[views.html.registration.SignUp2]
+    
     def controller(newAppRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState]) = {
       val formWrapper = new SignUpForm
-      new SignUpController(mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper, mockSignInService,
-      mockApplicationClient, mockUserManagementClient, formWrapper) with TestableSecureActions {
+      new SignUpController(
+        mockConfig, stubMcc, signUpTemplate, mockSecurityEnv, mockSilhouetteComponent,
+        mockNotificationTypeHelper, mockSignInService, mockApplicationClient,
+        mockUserManagementClient, formWrapper
+      ) with TestableSecureActions {
         override val appRouteConfigMap = newAppRouteConfigMap
       }
     }

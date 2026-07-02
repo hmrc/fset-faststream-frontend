@@ -1,0 +1,181 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.ApplicationRouteState
+@import models.ApplicationRoute.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Fieldset, GovukRadios, Legend, RadioItem, Radios, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+@import views.html.components.{Heading2, Heading3}
+
+@this(
+        h2: Heading2,
+        h3: Heading3,
+        govukRadios: GovukRadios
+)
+
+@(form: Form[_root_.forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], validAfterDeadlineSubmissionCode: Boolean)(implicit messages: Messages)
+
+@import models.ApplicationRoute
+@import views.html.widgets.{radioBoxVerticalMultiToggle, yesNoQuestion, yesNoRadioWithTogglePanel}
+
+@faststreamOpen = @{ appRouteConfigMap.get(Faststream).forall(_.newAccountsEnabled) || validAfterDeadlineSubmissionCode }
+@sdipOpen = @{ (appRouteConfigMap.get(Sdip).forall(_.newAccountsStarted) && appRouteConfigMap.get(Sdip).forall(_.newAccountsEnabled)) || validAfterDeadlineSubmissionCode }
+
+@sdipUrl = @{ "https://www.civil-service-careers.gov.uk/fast-stream/fs-summer-internship-programme/" }
+
+@rightToWorkBullet = {
+    <li>I have the
+        <a class="govuk-link" href="https://www.gov.uk/prove-right-to-work" rel="external" target="_blank">
+            right to work<span class="visuallyhidden">(link opens new window)</span>
+        </a>in the UK
+    </li>
+}
+
+@eligibleToWorkInCivilServiceBullet = {
+    <li>I am eligible to work in the UK Civil Service under the Civil Service
+        <a class="govuk-link" href="https://www.gov.uk/government/publications/nationality-rules" rel="external" target="_blank">
+            nationality rules<span class="visuallyhidden">(link opens new window)</span>
+        </a>
+    </li>
+}
+
+<section class="section-border clearfix" id="routeElig">
+    @h2(content = Text("Choose your route"))
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text("Which route do you want to choose?"),
+                classes = "govuk-fieldset__legend--s"
+            ))
+        )),
+        name = "applicationRoute",
+        items = Seq(
+            RadioItem(
+                content = Text("Civil Service Fast Stream"),
+                value = Some(ApplicationRoute.Faststream.toString),
+                checked = ApplicationRoute.Faststream.toString.equals(form("applicationRoute").value.getOrElse("")),
+                conditionalHtml = Some(faststreamRouteHtml)
+            ),
+            RadioItem(
+                content = Text("Summer Internship Programme (SIP)"),
+                value = Some(ApplicationRoute.Sdip.toString),
+                checked = ApplicationRoute.Sdip.toString.equals(form("applicationRoute").value.getOrElse("")),
+                conditionalHtml = Some(sdipRouteHtml)
+            )
+        )
+    ).withFormField(form("applicationRoute")))
+
+    @fastStreamEligibleHtml = {
+        <p class="govuk-warning-text">You must be eligible to apply for the Civil Service Fast Stream.</p>
+    }
+
+    @sdipEligibleHtml = {
+        <p class="govuk-warning-text">You must be eligible to apply for the Summer Internship Programme.</p>
+    }
+
+    @faststreamRouteHtml = {
+        <div class="toggle-content form-group form-group-compound" id="faststream-elig-describe">
+        @if(faststreamOpen) {
+            <div class="text">
+                @h3(content = Text("Confirm the following statements are true"))
+            </div>
+            <ul class="para-btm-margin text">
+                <li>I am eligible to work in the UK Civil Service under the Civil Service
+                    <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/nationality-requirements/" target="_blank" rel="external">nationality rules
+                        <span class="visuallyhidden">(link opens new window)</span>
+                    </a>
+                </li>
+                <li>I have a relevant degree or qualify as a current civil servant</li>
+                <li>I meet my schemes eligibility requirements</li>
+            </ul>
+
+            @govukRadios(Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text("Are you eligible to apply for the Civil Service Fast Stream?"),
+                        classes = "govuk-fieldset__legend--s"
+                    ))
+                )),
+                name = "faststreamEligible",
+                items = Seq(
+                    RadioItem(
+                        content = Text("Yes"),
+                        value = Some("true"),
+                        checked = "true".equals(form("faststreamEligible").value.getOrElse(""))
+                    ),
+                    RadioItem(
+                        content = Text("No"),
+                        value = Some("false"),
+                        checked = "false".equals(form("faststreamEligible").value.getOrElse("")),
+                        conditionalHtml = Some(fastStreamEligibleHtml)
+                    )
+                )
+            ).withFormField(form("faststreamEligible")))
+        } else {
+            <div class="panel-info standard-panel">
+                <p class="text">Unfortunately, applications for the Civil Service Fast Stream are now closed.</p>
+            </div>
+        }
+        </div>
+    }
+
+    @sdipRouteHtml = {
+        <div class="toggle-content form-group form-group-compound" id="sip-elig-describe">
+        @if(sdipOpen) {
+            <div class="text">
+                @h3(content = Text("To be considered for SIP, you will need to confirm the following statements are true"))
+            </div>
+            <ul id="sip-eligibility-list" class="para-btm-margin text">
+                <li>I'm not currently a civil servant</li>
+                <li>I'm in the final 2 years at university</li>
+                @rightToWorkBullet
+                @eligibleToWorkInCivilServiceBullet
+                <li>I qualify to apply according to the
+                    <a class="govuk-link" href="@sdipUrl" rel="external" target="_blank">
+                        eligibility requirements<span class="visuallyhidden">(link opens new window)</span>
+                    </a>for SIP
+                </li>
+            </ul>
+            @govukRadios(Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text("Are you eligible to apply for the Summer Internship Programme (SIP)?"),
+                        classes = "govuk-fieldset__legend--s"
+                    ))
+                )),
+                name = "sdipEligible",
+                items = Seq(
+                    RadioItem(
+                        content = Text("Yes"),
+                        value = Some("true"),
+                        checked = "true".equals(form("sdipEligible").value.getOrElse(""))
+                    ),
+                    RadioItem(
+                        content = Text("No"),
+                        value = Some("false"),
+                        checked = "false".equals(form("sdipEligible").value.getOrElse("")),
+                        conditionalHtml = Some(sdipEligibleHtml)
+                    )
+                )
+            ).withFormField(form("sdipEligible")))
+        } else {
+            <div class="panel-info standard-panel">
+                <p class="text">Unfortunately, applications for the Summer Internship Programme are now closed.</p>
+            </div>
+        }
+        </div>
+    }
+</section>

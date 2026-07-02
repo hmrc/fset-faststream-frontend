@@ -60,14 +60,15 @@ class LockAccountControllerSpec extends BaseControllerSpec {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.PasswordResetController.presentReset.toString)
-      val sess = session(result)
-      sess.get("email") mustBe Some("testEmail123@mailinator.com")
+      val mySession = session(result)
+      mySession.get("email") mustBe Some("testEmail123@mailinator.com")
     }
   }
 
   trait TestFixture extends BaseControllerTestFixture {
     def lockAccountController = {
-      new LockAccountController(mockConfig, stubMcc, mockSecurityEnv,
+      val lockedAccountTemplate = mock[views.html.index.LockedAccount2]
+      new LockAccountController(mockConfig, stubMcc, lockedAccountTemplate, mockSecurityEnv,
         mockSilhouetteComponent, mockNotificationTypeHelper) with NoIdentityTestableCSRUserAwareAction
     }
   }

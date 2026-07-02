@@ -16,12 +16,15 @@
 
 package models.view.questionnaire
 
+import uk.gov.hmrc.govukfrontend.views.html.components.RadioItem
+import uk.gov.hmrc.govukfrontend.views.html.components.Text
+
 /**
  * Created by bste on 12/06/17.
  */
 object SchoolType {
 
-  val list = List(
+  val list: Seq[(String, String, Boolean)] = List(
     ("stateRunOrFunded-selective", "A state-run or state-funded school - Selective on academic, faith or other grounds", false),
     ("stateRunOrFunded-nonSelective", "A state-run or state-funded school - Non-selective", false),
     ("indyOrFeePaying-bursary", "Independent or fee-paying school - Bursary", false),
@@ -29,4 +32,8 @@ object SchoolType {
     ("preferNotSay", "I don't know/prefer not to say", false)
   )
 
+  def asRadioItems: Seq[RadioItem] = list.map( (_, schoolType, _) =>
+//    RadioItem(value = Some(schoolType), label = Some(Label(content = Text(schoolType))))
+    RadioItem(value = Some(schoolType), content = Text(schoolType))
+  )
 }

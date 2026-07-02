@@ -16,31 +16,49 @@
 
 package controllers
 
-import _root_.forms.LockAccountForm
-import config.{FrontendAppConfig, SecurityEnvironment}
+import forms.LockAccountForm
+import config.{FrontendAppConfig, SecurityEnvironment, TrackingConsentConfig}
 import helpers.NotificationTypeHelper
+import play.api.data.Form
+import play.api.i18n.Messages
+import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents, Request}
+import play.twirl.api.Html
+import security.SilhouetteComponent
+import views.html.index.LockedAccount2
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import security.SilhouetteComponent
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LockAccountController @Inject() (config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper
-)(implicit val ec: ExecutionContext)
+class LockAccountController @Inject()(config: FrontendAppConfig,
+                                      mcc: MessagesControllerComponents,
+                                      lockedAccountTemplate: LockedAccount2,
+                                      val secEnv: SecurityEnvironment,
+                                      val silhouetteComponent: SilhouetteComponent,
+                                      val notificationTypeHelper: NotificationTypeHelper
+                                     )(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
 
   def present: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       val email = request.session.get("email")
-      Future.successful(Ok(views.html.index.locked(
+//      Future.successful(Ok(views.html.index.locked(
+//        LockAccountForm.form.fill(LockAccountForm.Data(email.getOrElse("")))
+//      )))
+      Future.successful(Ok(lockedAccountView(
         LockAccountForm.form.fill(LockAccountForm.Data(email.getOrElse("")))
       )))
+  }
+
+  private def lockedAccountView(form: Form[LockAccountForm.Data])(
+    implicit request: Request[_], user: Option[models.CachedData], flash: Flash, messages: Messages): Html = {
+    implicit val feedBackUrl: String = config.feedbackUrl
+    implicit val trackingConsentConfig: TrackingConsentConfig = config.trackingConsentConfig
+    if (config.enablePlayHmrcLockedAccountView) {
+      lockedAccountTemplate(form)
+    } else {
+      views.html.index.locked(form)
+    }
   }
 
   def submit: Action[AnyContent] = CSRUserAwareAction { implicit request =>
@@ -48,7 +66,7 @@ class LockAccountController @Inject() (config: FrontendAppConfig,
       LockAccountForm.form.bindFromRequest().fold(
         _ => Future.successful(Redirect(routes.LockAccountController.present)),
         data => Future.successful(Redirect(routes.PasswordResetController.presentReset)
-          addingToSession("email" -> data.email))
+          addingToSession ("email" -> data.email))
       )
   }
 }

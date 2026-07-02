@@ -1,0 +1,136 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.CSRFieldConstructor._
+@import views.html.widgets.yesNoRadioWithTogglePanel
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Fieldset, GovukRadios, Legend, Radios, RadioItem, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
+@import views.html.components.InputText
+
+@this(
+        govukRadios : GovukRadios,
+        inputText: InputText,
+)
+
+@(form: Form[forms.PersonalDetailsForm.Data])(implicit messages: Messages)
+
+@edipCompletedHtml = {
+    @inputText(
+        form("edipYear"),
+        label = "What year did you complete the EDIP?",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds"
+    )
+}
+
+@govukRadios(Radios(
+    fieldset = Some(Fieldset(
+        legend = Some(Legend(
+            content = Text("Have you completed the Early Diversity Internship Programme (EDIP)?"),
+            classes = "govuk-fieldset__legend--s"
+        ))
+    )),
+    name = "edipCompleted",
+    items = Seq(
+        RadioItem(
+            content = Text("Yes"),
+            value = Some("true"),
+            conditionalHtml = Some(edipCompletedHtml)
+        ),
+        RadioItem(
+            content = Text("No"),
+            value = Some("false")
+        )
+    )
+).withFormField(form("edipCompleted")))
+
+@otherInternshipCompletedHtml = {
+    @inputText(
+        form("otherInternshipName"),
+        label = "What was the name of the internship you completed?",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds"
+    )
+    @inputText(
+        form("otherInternshipYear"),
+        label = "What year did you complete the internship?",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds"
+    )
+}
+
+@govukRadios(Radios(
+    fieldset = Some(Fieldset(
+        legend = Some(Legend(
+            content = Text("Have you completed another internship programme?"),
+            classes = "govuk-fieldset__legend--s"
+        ))
+    )),
+    name = "otherInternshipCompleted",
+    items = Seq(
+        RadioItem(
+            content = Text("Yes"),
+            value = Some("true"),
+            conditionalHtml = Some(otherInternshipCompletedHtml)
+        ),
+        RadioItem(
+            content = Text("No"),
+            value = Some("false")
+        )
+    )
+).withFormField(form("otherInternshipCompleted")))
+
+@*
+<section class="clearfix section-border" id="civilServantQuestion">
+    @yesNoRadioWithTogglePanel(form("edipCompleted"),
+        Symbol("id") -> "edipCompleted",
+        Symbol("_label") -> "Have you completed the Early Diversity Internship Programme (EDIP)?",
+        Symbol("_legendClass") -> "text heading-medium") {
+
+        <div id="edipCompleted-panel-yes" class="toggle-content">
+            <div class="panel-indent">
+                @helper.inputText(form("edipYear"),
+                    Symbol("id") -> "edipYear",
+                    Symbol("_label") -> "What year did you complete the EDIP?",
+                    Symbol("class") -> "form-control form-control-1-3 med-btm-margin",
+                    Symbol("_showConstraints") -> false)
+            </div>
+        </div>
+    }
+
+    @yesNoRadioWithTogglePanel(form("otherInternshipCompleted"),
+        Symbol("id") -> "otherInternshipCompleted",
+        Symbol("_label") -> "Have you completed another internship programme?",
+        Symbol("_legendClass") -> "text heading-medium") {
+
+        <div id="otherInternshipCompleted-panel-yes" class="toggle-content">
+            <div class="panel-indent">
+                @helper.inputText(form("otherInternshipName"),
+                    Symbol("id") -> "otherInternshipName",
+                    Symbol("_label") -> "What was the name of the internship you completed?",
+                    Symbol("class") -> "form-control form-control-1-3 med-btm-margin",
+                    Symbol("_showConstraints") -> false)
+                @helper.inputText(form("otherInternshipYear"),
+                    Symbol("id") -> "otherInternshipYear",
+                    Symbol("_label") -> "What year did you complete the internship?",
+                    Symbol("class") -> "form-control form-control-1-3 med-btm-margin",
+                    Symbol("_showConstraints") -> false)
+            </div>
+        </div>
+    }
+</section>
+*@

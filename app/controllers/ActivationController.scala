@@ -16,64 +16,82 @@
 
 package controllers
 
-import _root_.forms.ActivateAccountForm
+import forms.ActivateAccountForm
 import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.{TokenEmailPairInvalidException, UserManagementClient}
 import connectors.UserManagementClient.TokenExpiredException
 import helpers.NotificationType.*
 import helpers.NotificationTypeHelper
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
 import security.Roles.*
 import security.{SignInService, SilhouetteComponent}
+import views.html.registration.Activation2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ActivationController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  userManagementClient: UserManagementClient,
-  val notificationTypeHelper: NotificationTypeHelper,
-  signInService: SignInService,
-  formWrapper: ActivateAccountForm)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
+                                      config: FrontendAppConfig,
+                                      mcc: MessagesControllerComponents,
+                                      activationTemplate: Activation2,
+                                      val secEnv: SecurityEnvironment,
+                                      val silhouetteComponent: SilhouetteComponent,
+                                      userManagementClient: UserManagementClient,
+                                      val notificationTypeHelper: NotificationTypeHelper,
+                                      signInService: SignInService,
+                                      formWrapper: ActivateAccountForm)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
   import notificationTypeHelper.*
 
-  implicit val marketingTrackingEnabled: Boolean = config.marketingTrackingEnabled
+  val marketingTrackingEnabled: Boolean = config.marketingTrackingEnabled
 
   def present: Action[AnyContent] = CSRSecureAction(NoRole) { implicit request =>
     implicit user => if (user.user.isActive) {
       Future.successful(Redirect(routes.HomeController.present()).flashing(warning("activation.already")))
     } else {
-      Future.successful(Ok(views.html.registration.activation(user.user.email, formWrapper.form,
-        marketingTrackingEnabled = marketingTrackingEnabled)))
+//      Future.successful(Ok(views.html.registration.activation(user.user.email, formWrapper.form,
+//        marketingTrackingEnabled = marketingTrackingEnabled)))
+      Future.successful(Ok(activationView(user.user.email, formWrapper.form)))
     }
   }
+
+  private def activationView(
+                              email: String, form: Form[ActivateAccountForm.Data],
+                              notification: Option[(helpers.NotificationType, String)] = None)(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcActivationView) {
+      activationTemplate(email, form, notification, marketingTrackingEnabled)
+    } else {
+      views.html.registration.activation(email, form, notification, marketingTrackingEnabled)
+    }
 
   def submit: Action[AnyContent] = CSRSecureAction(ActivationRole) { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
         invalidForm =>
-          Future.successful(Ok(views.html.registration.activation(user.user.email, invalidForm))),
+//          Future.successful(Ok(views.html.registration.activation(user.user.email, invalidForm))),
+          Future.successful(Ok(activationView(user.user.email, invalidForm))),
         data => {
           userManagementClient.activate(user.user.email, data.activationCode).flatMap { _ =>
             signInService.signInUser(user.user.copy(isActive = true))
           }.recover {
             case _: TokenExpiredException =>
-              Ok(views.html.registration.activation(
-                user.user.email,
-                formWrapper.form,
-                notification = Some(danger("expired.activation-code"))
-              ))
+//              Ok(views.html.registration.activation(
+//                user.user.email,
+//                formWrapper.form,
+//                notification = Some(danger("expired.activation-code"))
+//              ))
+              Ok(activationView(user.user.email, formWrapper.form, notification = Some(danger("expired.activation-code"))))
             case _: TokenEmailPairInvalidException =>
-              Ok(views.html.registration.activation(
-                user.user.email,
-                formWrapper.form,
-                notification = Some(danger("wrong.activation-code"))
-              ))
+//              Ok(views.html.registration.activation(
+//                user.user.email,
+//                formWrapper.form,
+//                notification = Some(danger("wrong.activation-code"))
+//              ))
+              Ok(activationView(user.user.email, formWrapper.form, notification = Some(danger("wrong.activation-code"))))
           }
         }
       )

@@ -20,13 +20,14 @@ import play.silhouette.api.services.AuthenticatorResult
 import play.silhouette.impl.authenticators.SessionAuthenticator
 import forms.SignInForm
 import models.CachedDataExample
-import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import play.api.mvc._
-import play.api.test.Helpers._
-import security._
+import org.mockito.ArgumentMatchers.{eq as eqTo, *}
+import org.mockito.Mockito.*
+import play.api.mvc.*
+import play.api.test.Helpers.*
+import security.*
 import testkit.{NoIdentityTestableCSRUserAwareAction, TestableCSRUserAwareAction}
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.index.SignIn2
 
 import scala.concurrent.Future
 
@@ -208,12 +209,14 @@ class SignInControllerSpec extends BaseControllerSpec {
 
     val mockAuthenticator = mock[SessionAuthenticator]
 
+    val signInTemplate = mock[views.html.index.SignIn2]
+
     val formWrapper = new SignInForm
     // In same tests mockSignInService is not appropriate and it is easier to use the real implementation with mocked dependencies.
-    val signInService = new SignInService(mockConfig, mockSecurityEnv, mockApplicationClient, mockNotificationTypeHelper, formWrapper)
+    val signInService = new SignInService(mockConfig, signInTemplate, mockSecurityEnv, mockApplicationClient, mockNotificationTypeHelper, formWrapper)
 
     class TestableSignInController extends SignInController(
-      mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      mockConfig, stubMcc, signInTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
       mockSignInService, formWrapper)
 
     // In same tests mockSignInService is not appropriate and it is easier to use the real implementation with mocked dependencies.

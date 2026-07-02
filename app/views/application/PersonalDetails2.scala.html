@@ -1,0 +1,130 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, FormWithCSRF, GovukButton, GovukErrorSummary, Text}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
+@import views.html.application.civilServiceExperienceDetails.CivilServiceExperienceDetailsPanel2
+@import views.html.application.personaldetails.ContactDetails2
+@import views.html.components.*
+@import views.html.helper.CSPNonce
+@import views.html.template.UserDetails2
+@import views.html.widgets.{applicationRoute, applicationStatus}
+@import security.Roles.EditPersonalDetailsAndContinueRole
+@import security.RoleUtils._
+@import views.html.application.diversityExperienceDetails.SdipCandidateExperienceDetailsPanel2
+@import views.html.application.diversityExperienceDetails.sdipCandidateExperienceDetailsPanel
+
+@this(
+        inputText: InputText,
+        dateInput: FSDateInput,
+        govukButton: GovukButton,
+        govukErrorSummary: GovukErrorSummary,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout,
+        h1: Heading1,
+        h3: Heading3,
+        contactDetailsPanel: ContactDetails2,
+        civilServicePanel: CivilServiceExperienceDetailsPanel2,
+        sdipCandidateExperienceDetailsPanel2: SdipCandidateExperienceDetailsPanel2,
+        pageTitle: PageTitle
+)
+
+@(form: Form[forms.PersonalDetailsForm.Data], updateStatus: Boolean, schemesRequiringQualifications: Seq[String]
+)(implicit request: Request[_], flash: Flash, optCachedData: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@isApplicationSubmitted = @{ !updateStatus }
+
+@redirectUrl = @{
+    if(updateStatus) routes.PersonalDetailsController.submitPersonalDetailsAndContinue
+    else routes.PersonalDetailsController.submitPersonalDetails
+}
+
+@javaScripts = {
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/civilServantDepartments.js")' type="text/javascript"></script>
+}
+
+@mainLayout(pageTitle(form, "Personal details").toString, javaScripts = Some(javaScripts)) {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+    }
+
+    @h1(content = Text("Personal details"))
+    @UserDetails2(optCachedData)
+    @h3(content = Text("Name and date of birth"))
+
+    <div class="govuk-inset-text">
+        <p>This is your legal name as shown on your ID documentation.</p>
+    </div>
+
+    @formWithCSRF(action = redirectUrl, Symbol("id") -> "personal-details-form") {
+
+        @* Hidden fields *@
+        @applicationRoute(optCachedData)
+        @applicationStatus(optCachedData)
+
+        @inputText(
+            form("firstName"),
+            label = "First name",
+            labelClasses = "govuk-label--s",
+            classes = "govuk-!-width-two-thirds",
+            spellcheck = Some(false),
+            autocomplete = Some("name")
+        )
+        @inputText(
+            form("lastName"),
+            label = "Last name",
+            labelClasses = "govuk-label--s",
+            classes = "govuk-!-width-two-thirds",
+            spellcheck = Some(false),
+            autocomplete = Some("name")
+        )
+        @inputText(
+            form("preferredName"),
+            label = "Preferred name",
+            labelClasses = "govuk-label--s",
+            classes = "govuk-!-width-two-thirds",
+            spellcheck = Some(false),
+            autocomplete = Some("name"),
+            hint = Some("This is the name that you prefer to be called. We'll use your preferred name in correspondence")
+        )
+        @dateInput(
+            form("dateOfBirth"),
+            hint = Some("For example, 27 3 2007"),
+            legendKey = "Date of birth"
+        )
+
+        @contactDetailsPanel(form)
+
+        @if(optCachedData.exists(cachedData => EditPersonalDetailsAndContinueRole.isAuthorized(cachedData)) && isFaststream(optCachedData)){
+            @if(!isApplicationSubmitted) {
+                @*civilServiceExperienceDetailsPanel(form, schemesRequiringQualifications)*@
+                @civilServicePanel(form, schemesRequiringQualifications)
+            }
+        }
+        @if(optCachedData.exists(cachedData => EditPersonalDetailsAndContinueRole.isAuthorized(cachedData)) &&
+                isSdip(optCachedData) && !isApplicationSubmitted) {
+            @sdipCandidateExperienceDetailsPanel2(form)
+        }
+
+        @govukButton(Button(
+            content = Text("Save and continue"),
+            inputType = Some("submit"),
+            preventDoubleClick = Some(true)
+        ))
+    }
+}

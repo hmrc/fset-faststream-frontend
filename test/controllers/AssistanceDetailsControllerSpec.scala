@@ -48,7 +48,9 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Disability and health conditions")
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(
+        s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>"""
+      )
     }
 
     "load assistance details page for the already created assistance details" in new TestFixture {
@@ -60,7 +62,9 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Disability and health conditions")
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(
+        s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>"""
+      )
       content must include("Some fsac adjustments")
     }
 
@@ -74,7 +78,9 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       val content = contentAsString(result)
       content must include("<title>Disability and health conditions")
       content must include(interviewText)
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(
+        s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>"""
+      )
     }
 
     "load edip assistance details page for the already created assistance details" in new TestFixture {
@@ -87,7 +93,9 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
       val content = contentAsString(result)
       content must include("<title>Disability and health conditions")
       content must include(interviewText)
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(
+        s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>"""
+      )
       content must include("Some phone adjustments")
     }
   }
@@ -129,8 +137,9 @@ class AssistanceDetailsControllerSpec extends BaseControllerSpec {
     val interviewText = "Will you need any support for your video interview?"
 
     def controller(implicit candWithApp: CachedDataWithApp = currentCandidateWithApp) = {
+      val assistanceDetailsTemplate = mock[views.html.application.AssistanceDetails2]
       val formWrapper = new AssistanceDetailsForm
-      new AssistanceDetailsController(mockConfig, stubMcc,mockSecurityEnv, mockSilhouetteComponent,
+      new AssistanceDetailsController(mockConfig, stubMcc, assistanceDetailsTemplate, mockSecurityEnv, mockSilhouetteComponent,
       mockNotificationTypeHelper, mockApplicationClient, formWrapper) with TestableSecureActions {
         override val candidateWithApp: CachedDataWithApp = candWithApp
       }

@@ -113,7 +113,7 @@ object DashboardPage {
       isPhase3TestFailed(user),
       isPhase3TestPassedNotified(user),
       shouldDisplayPhase3TestFeedbackReport(user),
-      user.user.firstName + " " + user.user.lastName,
+      user.user.preferredName.map( _ + " " + user.user.lastName ).getOrElse(user.user.firstName + " " + user.user.lastName),
       phase1TestGroup,
       phase2TestGroup,
       phase3TestGroup,

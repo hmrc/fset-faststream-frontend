@@ -18,23 +18,28 @@ package controllers
 
 import config.{FrontendAppConfig, SecurityEnvironment}
 import helpers.NotificationTypeHelper
-
-import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import security.SilhouetteComponent
+import views.html.index.{Accessibility2, Cookies2, Helpdesk2, Privacy2, Terms2}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Provide all the peripheral links from this controller, like T&C link
  */
 @Singleton
-class ApplicationController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper)(implicit val ec: ExecutionContext)
+class ApplicationController @Inject()(
+                                       config: FrontendAppConfig,
+                                       mcc: MessagesControllerComponents,
+                                       helpdeskTemplate: Helpdesk2,
+                                       cookiesTemplate: Cookies2,
+                                       accessibilityTemplate: Accessibility2,
+                                       privacyTemplate: Privacy2,
+                                       termsTemplate: Terms2,
+                                       val secEnv: SecurityEnvironment,
+                                       val silhouetteComponent: SilhouetteComponent,
+                                       val notificationTypeHelper: NotificationTypeHelper)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
 
   def index: Action[AnyContent] = Action {
@@ -43,12 +48,20 @@ class ApplicationController @Inject() (
 
   def terms: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
-      Future.successful(Ok(views.html.index.terms()))
+      if (config.enablePlayHmrcTermsView) {
+        Future.successful(Ok(termsTemplate()))
+      } else {
+        Future.successful(Ok(views.html.index.terms()))
+      }
   }
 
   def cookies: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
-      Future.successful(Ok(views.html.index.cookies()))
+      if (config.enablePlayHmrcCookiesView) {
+        Future.successful(Ok(cookiesTemplate()))
+      } else {
+        Future.successful(Ok(views.html.index.cookies()))
+      }
   }
 
   // For this to work on a dev machine you need to run the following service manager command:
@@ -61,16 +74,28 @@ class ApplicationController @Inject() (
 
   def privacy: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
-      Future.successful(Ok(views.html.index.privacy()))
+      if (config.enablePlayHmrcPrivacyView) {
+        Future.successful(Ok(privacyTemplate()))
+      } else {
+        Future.successful(Ok(views.html.index.privacy()))
+      }
   }
 
   def helpdesk: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
-      Future.successful(Ok(views.html.index.helpdesk()))
+      if (config.enablePlayHmrcHelpdeskView) {
+        Future.successful(Ok(helpdeskTemplate()))
+      } else {
+        Future.successful(Ok(views.html.index.helpdesk()))
+      }
   }
 
   def accessibility: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
-      Future.successful(Ok(views.html.index.accessibility()))
+      if (config.enablePlayHmrcAccessibilityView) {
+        Future.successful(Ok(accessibilityTemplate()))
+      } else {
+        Future.successful(Ok(views.html.index.accessibility()))
+      }
   }
 }

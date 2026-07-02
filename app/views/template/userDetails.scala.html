@@ -21,7 +21,7 @@
         <div class="small-btm-margin">
             @data.user.preferredName match {
                 case Some(name) => {
-                    <span class="your-name" id="bannerUserName">@data.user.preferredName</span>
+                    <span class="your-name" id="bannerUserName">@data.user.preferredName @data.user.lastName</span>
                 }
                 case None => {
                     <span class="your-name" id="bannerUserName">@data.user.firstName @data.user.lastName</span>

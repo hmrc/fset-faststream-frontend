@@ -16,7 +16,7 @@
 
 @import config.TrackingConsentConfig
 @import forms.SelectedSchemesForm.maxSchemes
-@(page: _root_.models.page.SelectedSchemesPage, isCandidateCivilServant: Boolean, form: Form[_root_.forms.SelectedSchemesForm.SchemePreferences])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(page: models.page.SelectedSchemesPage, isCandidateCivilServant: Boolean, form: Form[forms.SelectedSchemesForm.SchemePreferences])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @import views.html.widgets.pageProgress
 @import views.html.widgets.{checkbox, radioBox, yesNoQuestion}

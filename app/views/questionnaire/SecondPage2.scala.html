@@ -1,0 +1,155 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import views.html.helper.CSPNonce
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukRadios, Legend, RadioItem, Radios, Text}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
+@import views.html.components.{Heading1, Layout, PageTitle}
+@import views.html.questionnaire.components.{Postcode2, School2, UniversitySection2}
+
+@this(
+        govukErrorSummary: GovukErrorSummary,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout,
+        h1: Heading1,
+        govukRadios: GovukRadios,
+        postcode2: Postcode2,
+        school2: School2,
+        pageTitle: PageTitle,
+        universitySection2: UniversitySection2
+)
+
+@(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data], isCandidateCivilServant: String, schools: List[models.view.SchoolView])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@import views.html.questionnaire.components.{postcode, school, universitySection}
+@import views.html.widgets.{pageProgress, radioBoxHorizontal}
+
+@livedInUKBetween14and18Html = {
+    @postcode2(questionnaireForm)
+    @school2(questionnaireForm, schools)
+}
+
+@civilServantHasADegreeHtml = {
+    @universitySection2(questionnaireForm)
+}
+
+@mainLayout(pageTitle(questionnaireForm, "Your education").toString) {
+@*main_template(title = "Your education", pageForms = Seq(questionnaireForm)) {*@
+    @*pageProgress(6, 7)*@
+
+    @if(questionnaireForm.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))
+    }
+
+    @*
+    <div class="hgroup">
+        <h1 class="heading-xlarge">Your education</h1>
+        <p class="subtitle">Diversity questions</p>
+    </div>*@
+    @h1(content = Text("Your education"))
+    <p class="subtitle">Diversity questions</p>
+
+    <div class="panel-info standard-panel">
+        <div class="text">
+    <h2 class="heading-medium">Why do we ask about your education?</h2>
+    <p>These questions help us to gather data on the areas applicants grew up in and the schools they went to.</p>
+    <p>This is one method we use to help track and improve the effectiveness of our processes in enabling candidates to succeed, irrespective of background.</p>
+    </div>
+    </div>
+
+    @formWithCSRF(action = routes.QuestionnaireController.submitSecondPage) {
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("liveInUKBetween14and18.question")),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "liveInUKBetween14and18",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("Yes"),
+                    conditionalHtml = Some(livedInUKBetween14and18Html)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("No")
+                )
+            )
+        ).withFormField(questionnaireForm("liveInUKBetween14and18")))
+@*
+        <fieldset class="form-group">
+            <legend><h2 class="form-label text">@Messages("liveInUKBetween14and18.question")</h2></legend>
+            @radioBoxHorizontal(questionnaireForm("liveInUKBetween14and18"), options = List(("yes", "Yes", true), ("no", "No", false)),
+                optionTrigger = "liveInUKBetween14and18-panel")
+            <div id="liveInUKBetween14and18-panel" class="toggle-content" aria-hidden="true">
+                @postcode(questionnaireForm)
+                @school(questionnaireForm)
+            </div>
+        </fieldset>
+*@
+        <input type="hidden" id="isCandidateCivilServant" name="isCandidateCivilServant" value="@isCandidateCivilServant">
+
+        @if(isCandidateCivilServant=="Yes") {
+@*
+            <fieldset>
+                <legend><h2 class="form-label text">@Messages("hasDegree.question")</h2></legend>
+                @radioBoxHorizontal(questionnaireForm("hasDegree"), options = List(("yes", "Yes", true), ("no", "No", false)),
+                    optionTrigger = "hasDegree-panel")
+                <div id="hasDegree-panel" class="toggle-content" aria-hidden="true">
+                    @universitySection(questionnaireForm)
+                </div>
+            </fieldset>
+*@
+
+            @govukRadios(Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(messages("hasDegree.question")),
+                        classes = "govuk-fieldset__legend--s"
+                    ))
+                )),
+                name = "hasDegree",
+                items = Seq(
+                    RadioItem(
+                        content = Text("Yes"),
+                        value = Some("Yes"),
+                        conditionalHtml = Some(civilServantHasADegreeHtml)
+                    ),
+                    RadioItem(
+                        content = Text("No"),
+                        value = Some("No")
+                    )
+                )
+            ).withFormField(questionnaireForm("hasDegree")))
+
+        } else {
+            <input type="hidden" id="hasDegree" name="hasDegree" value="Yes">
+            @universitySection2(questionnaireForm)
+        }
+
+        @govukButton(Button(
+            content = Text("Save and continue"),
+            inputType = Some("submit"),
+            preventDoubleClick = Some(true)
+        ))
+    }
+}

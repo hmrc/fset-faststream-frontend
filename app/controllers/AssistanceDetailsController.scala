@@ -24,43 +24,54 @@ import connectors.ApplicationClient.AssistanceDetailsNotFound
 import javax.inject.{Inject, Singleton}
 import models.CachedData
 import security.SilhouetteComponent
-import security.ProgressStatusRoleUtils._
+import security.ProgressStatusRoleUtils.*
 import security.Roles.AssistanceDetailsRole
 
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import helpers.NotificationTypeHelper
+import play.api.data.Form
+import play.twirl.api.Html
+import views.html.application.AssistanceDetails2
 
 @Singleton
-class AssistanceDetailsController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  applicationClient: ApplicationClient,
-  formWrapper: AssistanceDetailsForm)(implicit val ec: ExecutionContext)
+class AssistanceDetailsController @Inject()(
+                                             config: FrontendAppConfig,
+                                             mcc: MessagesControllerComponents,
+                                             assistanceDetailsTemplate: AssistanceDetails2,
+                                             val secEnv: SecurityEnvironment,
+                                             val silhouetteComponent: SilhouetteComponent,
+                                             val notificationTypeHelper: NotificationTypeHelper,
+                                             applicationClient: ApplicationClient,
+                                             formWrapper: AssistanceDetailsForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
 
   def present: Action[AnyContent] = CSRSecureAppAction(AssistanceDetailsRole) { implicit request =>
     implicit user =>
       applicationClient.getAssistanceDetails(user.user.userID, user.application.applicationId).map { ad =>
         val form = formWrapper.form.fill(AssistanceDetailsForm.Data(ad))
-        Ok(views.html.application.assistanceDetails(form, AssistanceDetailsForm.disabilityCategoriesList))
+        Ok(assistanceDetailsView(form))
       }.recover {
-        case _: AssistanceDetailsNotFound => Ok(views.html.application.assistanceDetails(formWrapper.form,
-          AssistanceDetailsForm.disabilityCategoriesList))
+        case _: AssistanceDetailsNotFound => Ok(assistanceDetailsView(formWrapper.form))
       }
   }
+
+  private def assistanceDetailsView(form: Form[AssistanceDetailsForm.Data])(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcAssistanceDetailsView) {
+      assistanceDetailsTemplate(form, AssistanceDetailsForm.disabilityCategoriesList)
+    } else {
+      views.html.application.assistanceDetails(form, AssistanceDetailsForm.disabilityCategoriesList)
+    }
 
   def submit: Action[AnyContent] = CSRSecureAppAction(AssistanceDetailsRole) { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
         invalidForm =>
-          Future.successful(Ok(views.html.application.assistanceDetails(invalidForm, AssistanceDetailsForm.disabilityCategoriesList))),
+          Future.successful(Ok(assistanceDetailsView(invalidForm))),
         data => {
-          applicationClient.updateAssistanceDetails(user.application.applicationId, user.user.userID,
-            data.sanitizeData.exchange).map { _ =>
+          applicationClient.updateAssistanceDetails(
+            user.application.applicationId, user.user.userID, data.sanitizeData.exchange).map { _ =>
             if (hasOccupation(CachedData(user.user, Some(user.application)))) {
               Redirect(routes.PreviewApplicationController.present)
             } else {

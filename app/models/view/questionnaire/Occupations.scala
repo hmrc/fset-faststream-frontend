@@ -17,10 +17,11 @@
 package models.view.questionnaire
 
 import models.view.ValidAnswers
+import uk.gov.hmrc.govukfrontend.views.html.components.{Hint, RadioItem, Text}
 
 // scalastyle:off line.size.limit
 object Occupations extends ValidAnswers {
-  val seq = Seq(
+  val seq: Seq[(String, String)] = Seq(
     ("Traditional professional", "Accountant, solicitor, medical practitioner, scientist, civil/mechanical engineer"),
     ("Modern professional", "Teacher/lecturer, nurse, physiotherapist, social worker, welfare officer, artist, musician, police officer (sergeant or above), software designer"),
     ("Clerical (office work) and intermediate", "Secretary, personal assistant, clerical worker, office clerk, call centre agent, nursing auxiliary, nursery nurse"),
@@ -30,5 +31,9 @@ object Occupations extends ValidAnswers {
     ("Semi-routine manual and service", "Postal worker, machine operative, security guard, caretaker, farm worker, catering assistant, receptionist, sales assistant"),
     ("Middle or junior managers", "Office manager, retail manager, bank manager, restaurant manager, warehouse manager, publican")
   )
-  override val values = seq.map { case (value, _) => value }.toList
+  override val values: List[String] = seq.map { (value, _) => value }.toList
+
+  def asRadioItemsWithHints: Seq[RadioItem] = seq.map( (value, hint) =>
+    RadioItem(value = Some(value), content = Text(value), hint = Some(Hint(content = Text(hint))))
+  )
 }

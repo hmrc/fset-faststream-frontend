@@ -1,0 +1,132 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import views.html.application.previewapplication.locationPreferencesViewSection
+@import views.html.application.previewapplication.{assistanceDetailsViewSection, personalDetailsViewSection, schemePreferencesViewSection, diversityQuestionnaireViewSection}
+@import models.ApplicationData.ApplicationStatus._
+@import security.Roles._
+@import security.RoleUtils._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, Fieldset, FormWithCSRF, GovukButton, Legend, Text}
+@import views.html.components.Layout
+
+@this(
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout
+)
+
+@(
+        generalDetails: connectors.exchange.GeneralDetails,
+        schemePreferences: connectors.exchange.SelectedSchemes,
+        locationPreferences: Option[connectors.exchange.SelectedLocations],
+        assistanceDetails: connectors.exchange.AssistanceDetails,
+        applicationData: models.ApplicationData)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@appNotReadOnly(body: Html)= {
+    @if(!AbleToWithdrawApplicationRole.isAuthorized(user.get) && !WithdrawnApplicationRole.isAuthorized(user.get)) {@body}
+}
+
+@*
+@renderFullName(user: CachedData) = {
+    @user.user.firstName @user.user.lastName
+}
+*@
+
+@edit_link(id: String, title: String, navigation: play.api.mvc.Call) = {
+    @if(!ApplicationData.isReadOnly(user.get.application.get.applicationStatus)) {
+        <a id="@id" class="icon-with-text govuk-link" href="@navigation">
+            <i class="the-icon fa fa-pencil" aria-hidden="true"></i>
+            <span>Edit <span class="visuallyhidden editSection"></span>@title section</span>
+        </a>
+    }
+}
+
+@mainLayout("Check your application") {
+
+    <div class="grid-wrapper">
+      <div class="grid grid-2-3">
+        <h1 class="heading-xlarge" id="checkApplicationHeading">
+            @(applicationData.applicationStatus match {
+                case SUBMITTED => "View your submitted application"
+                case WITHDRAWN => "View your withdrawn application"
+                case _ => "Check your application"
+            })
+        </h1>
+      </div>
+
+      <div class="grid grid-1-3">
+        <div class="page-link">
+          <a href="" class="print-trigger govuk-link" id="printLink"><i class="fa fa-print" aria-hidden="true"></i>Print this page</a>
+        </div>
+      </div>
+    </div>
+
+    @personalDetailsViewSection(generalDetails)(edit_link("editPersonalDetails", "Personal Details", routes.PersonalDetailsController.presentAndContinue))
+
+    @if(isFaststream(user)) {
+        @schemePreferencesViewSection(schemePreferences)(edit_link("editSchemePreferences", "Scheme Preferences", routes.SchemePreferencesController.present))
+    }
+
+    @if(isSdip(user)) {
+        @locationPreferences.map { lp =>
+            @locationPreferencesViewSection(lp)(edit_link("editLocationPreferences", "Location Preferences", routes.LocationPreferencesController.present))
+        }
+    }
+
+    @assistanceDetailsViewSection(assistanceDetails)(edit_link("editAssistanceDetails", "Disability and health conditions", routes.AssistanceDetailsController.present))
+
+    @diversityQuestionnaireViewSection()
+
+    @if(ApplicationData.isReadOnly(user.get.application.get.applicationStatus)) {
+        <section class="section-border">
+            <div class="form-group">
+                <a class="govuk-link" href="@routes.HomeController.present()" class="button" id="returnToHome">Return to home</a>
+            </div>
+        </section>
+    }
+
+    @if(WithdrawComponent.isAuthorized(user.get) && ApplicationData.isReadOnly(user.get.application.get.applicationStatus)) {
+        <section>
+            <h2 class="heading-large">
+                <span class="sectionTitle">Withdraw your application</span>
+            </h2>
+            <section>
+                <p>If you no longer want to be considered, you can withdraw
+                    your application.</p>
+                <a id="withdraw-app" class="govuk-link" href="@routes.WithdrawController.presentWithdrawApplication">Withdraw your application</a>
+            </section>
+        </section>
+    }
+
+    @appNotReadOnly {
+        @*
+        @helper.form(action = routes.PreviewApplicationController.submit, Symbol("novalidate") -> "novalidate") {
+            @helper.CSRF.formField
+            <div>
+                <button id="submit" type="submit" value="submit" class="button">Save and continue</button>
+            </div>
+        }*@
+        @formWithCSRF(action = routes.PreviewApplicationController.submit) {
+            @govukButton(Button(
+                content = Text("Save and continue"),
+                inputType = Some("submit"),
+                preventDoubleClick = Some(true)
+            ))
+        }
+    }
+}
+

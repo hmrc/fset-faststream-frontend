@@ -34,9 +34,11 @@ import java.time.LocalDate
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.twirl.api.Html
 import security.Roles.{EditPersonalDetailsAndContinueRole, EditPersonalDetailsRole}
 import security.SilhouetteComponent
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.application.PersonalDetails2
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,14 +46,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class PersonalDetailsController @Inject() (
   config: FrontendAppConfig,
   mcc: MessagesControllerComponents,
+  personalDetailsTemplate: PersonalDetails2,
   val secEnv: SecurityEnvironment,
   val silhouetteComponent: SilhouetteComponent,
   val notificationTypeHelper: NotificationTypeHelper,
   applicationClient: ApplicationClient,
-                                         schemeClient: SchemeClient,
-                                         userManagementClient: UserManagementClient,
-                                         refDataClient: ReferenceDataClient,
-formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
+  schemeClient: SchemeClient,
+  userManagementClient: UserManagementClient,
+  refDataClient: ReferenceDataClient,
+  formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) with PersonalDetailsToExchangeConverter {
   import notificationTypeHelper._
 
@@ -84,50 +87,40 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
 
     (for {
       schemesRequiringQualifications <- getCivilServantSchemeNamesRequiringQualifications
-      gd <- applicationClient.getPersonalDetails(user.user.userID, user.application.applicationId)
+      pd <- applicationClient.getPersonalDetails(user.user.userID, user.application.applicationId)
     } yield {
       val form = formWrapper.form.fill(PersonalDetailsForm.Data(
-        gd.firstName,
-        gd.lastName,
-        gd.preferredName,
-        gd.dateOfBirth,
-        Some(gd.outsideUk),
-        gd.address,
-        gd.postCode,
-        gd.country,
-        gd.phone,
-        gd.civilServiceExperienceDetails,
-        gd.edipCompleted.map(_.toString),
-        gd.edipYear,
-        gd.otherInternshipCompleted.map(_.toString),
-        gd.otherInternshipName,
-        gd.otherInternshipYear
+        pd.firstName, pd.lastName, pd.preferredName,
+        pd.dateOfBirth, Some(pd.outsideUk), pd.address, pd.postCode, pd.country, pd.phone,
+        pd.civilServiceExperienceDetails,
+        pd.edipCompleted.map(_.toString), pd.edipYear,
+        pd.otherInternshipCompleted.map(_.toString), pd.otherInternshipName, pd.otherInternshipYear
       ))
-      Future.successful(Ok(views.html.application.personalDetails(form, continueToTheNextStepValue, schemesRequiringQualifications)))
+      Future.successful(Ok(personalDetailsView(form, continueToTheNextStepValue, schemesRequiringQualifications)))
     }).recover {
       case _: PersonalDetailsNotFound =>
         getCivilServantSchemeNamesRequiringQualifications.map { schemesRequiringQualifications =>
-          val formFromUser = formWrapper.form.fill(PersonalDetailsForm.Data(
-            user.user.firstName,
-            user.user.lastName,
-            user.user.firstName,
-            DayMonthYear.emptyDate,
-            outsideUk = None,
-            address = Address.EmptyAddress,
-            postCode = None,
-            country = None,
-            phone = None,
+          val filledForm = formWrapper.form.fill(PersonalDetailsForm.Data(
+            user.user.firstName, user.user.lastName, user.user.firstName,
+            DayMonthYear.emptyDate, outsideUk = None, address = Address.EmptyAddress, postCode = None, country = None, phone = None,
             civilServiceExperienceDetails = EmptyCivilServiceExperienceDetails,
-            edipCompleted = None,
-            edipYear = None,
-            otherInternshipCompleted = None,
-            otherInternshipName = None,
-            otherInternshipYear = None
+            edipCompleted = None, edipYear = None,
+            otherInternshipCompleted = None, otherInternshipName = None, otherInternshipYear = None
           ))
-          Ok(views.html.application.personalDetails(formFromUser, continueToTheNextStepValue, schemesRequiringQualifications))
+          Ok(personalDetailsView(filledForm, continueToTheNextStepValue, schemesRequiringQualifications))
         }
     }.flatMap(identity)
   }
+
+  private def personalDetailsView(form: Form[PersonalDetailsForm.Data],
+                                  continueToTheNextStep: Boolean,
+                                  schemesRequiringQualifications: List[String])(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcPersonalDetailsView) {
+      personalDetailsTemplate(form, continueToTheNextStep, schemesRequiringQualifications)
+    } else {
+      views.html.application.personalDetails(form, continueToTheNextStep, schemesRequiringQualifications)
+    }
 
   def submitPersonalDetailsAndContinue2: Action[AnyContent] =
     CSRSecureAppAction(EditPersonalDetailsAndContinueRole) { implicit request =>
@@ -178,9 +171,9 @@ formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
         } else {
           errorForm.data
         }
-        Ok(views.html.application.personalDetails(
-          personalDetailsForm.bind(data), continueToTheNextStep(onSuccess), schemesRequiringQualifications)
-        )
+          Ok(personalDetailsView(
+            personalDetailsForm.bind(data), continueToTheNextStep(onSuccess), schemesRequiringQualifications)
+          )
       }
     }
 

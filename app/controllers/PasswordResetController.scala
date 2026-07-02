@@ -22,26 +22,32 @@ import connectors.UserManagementClient.{InvalidEmailException, TokenExpiredExcep
 import connectors.{ApplicationClient, TokenEmailPairInvalidException, UserManagementClient}
 import helpers.NotificationTypeHelper
 import models.CachedData
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.silhouette.api.actions.UserAwareRequest
 import play.silhouette.api.util.Credentials
+import play.twirl.api.Html
 import security.{InvalidRole, SignInService, SilhouetteComponent}
+import views.html.registration.{RequestPasswordReset2, ResetPassword2}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PasswordResetController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val applicationClient: ApplicationClient,
-  val notificationTypeHelper: NotificationTypeHelper,
-  userManagementClient: UserManagementClient,
-  signInService: SignInService,
-  formWrapper: ResetPasswordForm)(implicit val ec: ExecutionContext)
+class PasswordResetController @Inject()(
+                                         config: FrontendAppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         requestPasswordResetTemplate: RequestPasswordReset2,
+                                         resetPasswordTemplate: ResetPassword2,
+                                         val secEnv: SecurityEnvironment,
+                                         val silhouetteComponent: SilhouetteComponent,
+                                         val applicationClient: ApplicationClient,
+                                         val notificationTypeHelper: NotificationTypeHelper,
+                                         userManagementClient: UserManagementClient,
+                                         signInService: SignInService,
+                                         formWrapper: ResetPasswordForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) {
+
   import notificationTypeHelper.*
 
   def presentCode: Action[AnyContent] = CSRUserAwareAction { implicit request =>
@@ -49,15 +55,24 @@ class PasswordResetController @Inject() (
       val email = request.session.get("email")
       email.filter(e => formWrapper.validateEmail(e)).map(e => sendCode(e, isResend = true)).getOrElse {
         Future.successful {
-          Ok(views.html.registration.request_reset(RequestResetPasswordForm.form))
+          Ok(requestPasswordResetView(RequestResetPasswordForm.form))
         }
       }
   }
 
+  private def requestPasswordResetView(form: Form[RequestResetPasswordForm.Data],
+                                       notification: Option[(helpers.NotificationType, String)] = None)(
+                                        implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcRequestPasswordResetView) {
+      requestPasswordResetTemplate(form, notification)
+    } else {
+      views.html.registration.request_reset(form, notification)
+    }
+
   def submitCode: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       RequestResetPasswordForm.form.bindFromRequest().fold(
-        invalidForm => Future.successful(Ok(views.html.registration.request_reset(invalidForm))),
+        invalidForm => Future.successful(Ok(requestPasswordResetView(invalidForm))),
         data => sendCode(data.email, isResend = false)
       )
   }
@@ -67,35 +82,43 @@ class PasswordResetController @Inject() (
       val email = request.session.get("email")
       email.filter(e => formWrapper.validateEmail(e)).map { e =>
         Future.successful(
-          Ok(views.html.registration.reset_password(
+          Ok(resetPasswordView(
             formWrapper.form.fill(
-
               ResetPasswordForm.Data(email = email.getOrElse(""), code = "", password = "", confirmpwd = "")
             )
           ))
         )
       }.getOrElse {
-        Future.successful(Ok(views.html.registration.request_reset(RequestResetPasswordForm.form)))
+        Future.successful(Ok(requestPasswordResetView(RequestResetPasswordForm.form)))
       }
   }
+
+  private def resetPasswordView(form: Form[ResetPasswordForm.Data],
+                                notification: Option[(helpers.NotificationType, String)] = None)(
+                                 implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcResetPasswordView) {
+      resetPasswordTemplate(form, notification)
+    } else {
+      views.html.registration.reset_password(form, notification)
+    }
 
   def submitReset: Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
-        invalidForm => Future.successful(Ok(views.html.registration.reset_password(invalidForm))),
+        invalidForm => Future.successful(Ok(resetPasswordView(invalidForm))),
         reset => resetPassword(reset.email, reset.code, reset.password)
       )
   }
 
   private def sendCode(email: String, isResend: Boolean)
-                      (implicit request: UserAwareRequest[_,_], user: Option[CachedData]) = {
+                      (implicit request: UserAwareRequest[_, _], user: Option[CachedData]) = {
     userManagementClient.sendResetPwdCode(email).map { _ =>
       Redirect(routes.PasswordResetController.presentReset)
         .flashing(info(if (isResend) "resetpwd.code-resent" else "resetpwd.code-sent"))
         .addingToSession("email" -> email)
     }.recover {
       case _: InvalidEmailException =>
-        Ok(views.html.registration.request_reset(
+        Ok(requestPasswordResetView(
           RequestResetPasswordForm.form,
           notification = Some(danger("error.email.not.registered"))
         ))
@@ -103,9 +126,9 @@ class PasswordResetController @Inject() (
   }
 
   private def resetPassword(email: String, code: String, newPassword: String)
-                           (implicit request: UserAwareRequest[_,_], user: Option[CachedData]) = {
+                           (implicit request: UserAwareRequest[_, _], user: Option[CachedData]) = {
     def renderError(error: String) = {
-      Future.successful(Future.successful(Ok(views.html.registration.reset_password(
+      Future.successful(Future.successful(Ok(resetPasswordView(
         formWrapper.form.fill(
           ResetPasswordForm.Data(email = email, code = "", password = "", confirmpwd = "")
         ),

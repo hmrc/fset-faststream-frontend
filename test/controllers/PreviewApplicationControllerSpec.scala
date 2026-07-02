@@ -44,7 +44,9 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Check your application")
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(
+        s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>"""
+      )
       content must include("""<ul id="schemePreferenceList" class="list-text">""")
     }
 
@@ -57,7 +59,9 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Check your application")
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(
+        s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>"""
+      )
       content mustNot include("""<ul id="schemePreferenceList" class="list-text">""")
       content must include(interviewText)
     }
@@ -75,7 +79,9 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Check your application")
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(
+        s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>"""
+      )
       content mustNot include("""<ul id="schemePreferenceList" class="list-text">""")
       content must include("""<ul id="locationPreferenceList" class="list-text">""")
       content must include(interviewText)
@@ -141,8 +147,10 @@ class PreviewApplicationControllerSpec extends BaseControllerSpec {
     when(mockApplicationClient.getAssistanceDetails(eqTo(currentUserId), eqTo(currentApplicationId))(any[HeaderCarrier]))
       .thenReturn(Future.successful(AssistanceDetailsExamples.DisabilityGisAndAdjustments))
 
+    val previewTemplate = mock[views.html.application.Preview2]
+
     def controller(implicit candWithApp: CachedDataWithApp = currentCandidateWithApp) = {
-      new PreviewApplicationController(mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent,
+      new PreviewApplicationController(mockConfig, stubMcc, previewTemplate, mockSecurityEnv, mockSilhouetteComponent,
       mockNotificationTypeHelper, mockApplicationClient, mockSchemeClient, mockSdipLocationsClient) with TestableSecureActions {
         override val candidateWithApp: CachedDataWithApp = candWithApp
       }

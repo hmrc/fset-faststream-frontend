@@ -17,12 +17,18 @@
 package models.view.questionnaire
 
 import models.view.ValidAnswers
+import uk.gov.hmrc.govukfrontend.views.html.components.{RadioItem, Text}
 
 object OrganizationSizes extends ValidAnswers {
-  val list = List(
+  val list: List[(String, String, Boolean)] = List(
     ("small", "Small (1 to 24 employees)", false),
     ("large", "Large (over 24 employees)", false),
     ("unknown", "I don't know/prefer not to say", false)
   )
-  override val values = list.map { case (_, value, _) => value }
+
+  override val values: List[String] = list.map { case (_, value, _) => value }
+
+  def asRadioItems: Seq[RadioItem] = values.map( value =>
+    RadioItem(value = Some(value), content = Text(value))
+  )
 }

@@ -53,7 +53,7 @@ class WithdrawControllerSpec extends BaseControllerSpec {
       status(result) mustBe OK
       val content = contentAsString(result)
       content must include("<title>Withdraw your application")
-      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get}</span>""")
+      content must include(s"""<span class="your-name" id="bannerUserName">${currentCandidate.user.preferredName.get} ${currentCandidate.user.lastName}</span>""")
     }
   }
 

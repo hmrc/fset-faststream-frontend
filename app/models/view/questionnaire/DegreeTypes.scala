@@ -16,8 +16,11 @@
 
 package models.view.questionnaire
 
+import uk.gov.hmrc.govukfrontend.views.html.components.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
+
 object DegreeTypes {
-  val list = List(
+  val list: Seq[(String, String, Boolean)] = List(
     // Display text, value, display hidden panel
     ("BSc/MSc/Eng", "BSc/MSc/Eng", false),
     ("BA/MA/LLB/MBA", "BA/MA/LLB/MBA", false),
@@ -26,5 +29,9 @@ object DegreeTypes {
     ("Other", "Other", true)
   )
 
-  val validDegreeTypes = list.map { case (_, value, _) => value }
+  val validDegreeTypes: Seq[String] = list.map { (_, value, _) => value }
+
+  def asRadioItems: Seq[RadioItem] = validDegreeTypes.map( dt =>
+    RadioItem(content = Text(dt), value = Some(dt))
+  )
 }
