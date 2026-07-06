@@ -15,6 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
+@import helpers.ServiceNavigationItems
 @import forms.ParentEmploymentAnswers
 @import models.view.SimpleAnswerOptions
 @import models.view.questionnaire.{Employees, Occupations, OrganizationSizes}
@@ -69,7 +70,7 @@
     )
 }
 
-@mainLayout(pageTitle(questionnaireForm, "About your parents").toString) {
+@mainLayout(pageTitle(questionnaireForm, "About your parents").toString, navigation = ServiceNavigationItems(user)) {
 
     @if(questionnaireForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))

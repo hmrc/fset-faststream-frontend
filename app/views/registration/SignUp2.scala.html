@@ -16,6 +16,7 @@
 
 @import config.TrackingConsentConfig
 @import controllers.ApplicationRouteState
+@import helpers.ServiceNavigationItems
 @import models.ApplicationRoute.*
 @import models.view.CampaignReferrers
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
@@ -78,7 +79,7 @@
     </section>
 }
 
-@mainLayout("Create your account") {
+@mainLayout("Create your account", navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {*@
 
     @* TODO: this need to be in the main template *@

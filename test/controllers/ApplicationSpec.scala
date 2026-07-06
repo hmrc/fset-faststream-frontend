@@ -32,7 +32,7 @@ class ApplicationSpec extends BaseSpec with GuiceOneAppPerSuite {
 
   "Application" should {
     "send 404 on a bad request" in {
-      val result = route(app, FakeRequest(GET, "/boo")).get
+      val result = route(app, FakeRequest(GET, "/bam")).get
       status(result) mustBe NOT_FOUND
     }
   }

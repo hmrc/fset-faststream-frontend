@@ -21,20 +21,31 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Request, RequestHeader}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import views.html.ErrorTemplate2
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
 class FaststreamErrorHandler @Inject() (
   val messagesApi: MessagesApi,
-  val config: FrontendAppConfig)(implicit val ec: ExecutionContext) extends FrontendErrorHandler {
-
-  private implicit def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
+  val config: FrontendAppConfig,
+  errorTemplate: ErrorTemplate2)(implicit val ec: ExecutionContext) extends FrontendErrorHandler {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: RequestHeader): Future[Html] = {
     val messages = implicitly[Messages]
     Future.successful(
-      views.html.error_template(pageTitle, heading, message)(rh, config.feedbackUrl, config.trackingConsentConfig, messages)
+      errorTemplateView(pageTitle, heading, message)(rh, messages)
     )
   }
+
+  private implicit def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
+
+  private def errorTemplateView(pageTitle: String,
+                                heading: String,
+                                message: String)(implicit rh: RequestHeader, messages: Messages): Html =
+    if (config.enablePlayHmrcErrorHandlerView) {
+      errorTemplate(pageTitle, heading, message)(rh, config.feedbackUrl, config.trackingConsentConfig, messages)
+    } else {
+      views.html.error_template(pageTitle, heading, message)(rh, config.feedbackUrl, config.trackingConsentConfig, messages)
+    }
 }

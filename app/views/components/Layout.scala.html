@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.{ServiceNavigation, ServiceNavigationItem}
 @import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.ServiceURLs
@@ -33,7 +35,7 @@
         autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
 )@*(implicit cfConfig: ContactFrontendConfig)*@
 
-@(pageTitle: String, isWelshTranslationAvailable: Boolean = true, backLink: Option[String] = None, javaScripts: Option[Html] = None, css: Option[Html] = None)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages, feedbackUrl: String)
+@(pageTitle: String, isWelshTranslationAvailable: Boolean = true, backLink: Option[String] = None, navigation: Seq[ServiceNavigationItem] = Nil, javaScripts: Option[Html] = None, css: Option[Html] = None)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages, feedbackUrl: String)
 
 @scripts = {
     <script @CSPNonce.attr src='@routes.Assets.versioned("js/vendor/jquery-3.6.3.min.js")' type="text/javascript"></script>
@@ -53,7 +55,7 @@
     HmrcStandardPageParams(
         serviceURLs = ServiceURLs(
             serviceUrl = Some(routes.HomeController.present().url),
-            signOutUrl = Some(routes.SignInController.signOut.url),
+//            signOutUrl = Some(routes.SignInController.signOut.url),
             accessibilityStatementUrl = Some(routes.ApplicationController.accessibility.url)
         ),
         templateOverrides = TemplateOverrides(
@@ -61,6 +63,11 @@
             additionalScriptsBlock = Some(scripts)
         ),
         banners = Banners(phaseBanner = Some(standardBetaBanner(feedbackUrl))),
-        pageTitle = Some(pageTitle)
+        pageTitle = Some(pageTitle),
+        serviceNavigation = Some(ServiceNavigation(
+            serviceName = Some(messages("service.name")),
+            serviceUrl  = Some(routes.HomeController.present().url),
+            navigation  = navigation
+        ))
     )
 )(contentBlock)

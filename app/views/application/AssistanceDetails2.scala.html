@@ -14,7 +14,13 @@
  * limitations under the License.
  *@
 
+@import views.html.application.assistancedetails.{ hasDisability, needsSupportAtVenue, needsSupportPhoneInterview }
+@import views.html.widgets.{ pageProgress, saveAndContinueButton }
+@import security.RoleUtils._
+@import models.ApplicationRoute._
+
 @import config.TrackingConsentConfig
+@import helpers.ServiceNavigationItems
 @import views.html.helper.CSPNonce
 @import views.html.application.assistancedetails.needsSupportOnlineAssessmentsSdip
 @import views.html.application.assistancedetails.needsSupportOnlineAssessmentsFaststream
@@ -48,46 +54,40 @@
 
 @(form: Form[forms.AssistanceDetailsForm.Data], disabilityCategories: List[String])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-    @import views.html.application.assistancedetails.{ hasDisability, needsSupportAtVenue, needsSupportPhoneInterview }
-    @import views.html.widgets.{ pageProgress, saveAndContinueButton }
-    @import security.RoleUtils._
-    @import models.ApplicationRoute._
+@applicationRoute = @{
+    user.flatMap(_.application).map(_.applicationRoute).getOrElse(Faststream)
+}
 
-    @applicationRoute = @{
-        user.flatMap(_.application).map(_.applicationRoute).getOrElse(Faststream)
+@mainLayout(pageTitle(form, "Disability and health conditions").toString, navigation = ServiceNavigationItems(user)) {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
     }
 
-    @mainLayout(pageTitle(form, "Disability and health conditions").toString) {
+    @h1(content = Text("Disability and health conditions"))
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+    @formWithCSRF(action = routes.AssistanceDetailsController.submit, Symbol("id") -> "assistance-details-form") {
+        <input type="hidden" id="applicationRoute" name="applicationRoute" value="@applicationRoute" />
+        @hasDisability2(form, disabilityCategories)
+        @if(isFaststream(user)) {
+            @needsSupportOnlineAssessmentsFaststream2(form)
+            @needsSupportAtVenue2(form)
+
+            @h2(content = Text("Final Selection Board"))
+            <p class="form-hint text">
+                The assessments conducted during the Final Selection Board stage vary depending on the scheme.
+                Candidates who require a Reasonable Adjustment at Final Selection Board should <a class="govuk-link" href="@routes.ApplicationController.helpdesk" class="">contact us</a> once their application reaches this stage.
+            </p>
+        }
+        @if(isEdip(user) || isSdip(user)) {
+            @needsSupportOnlineAssessmentsSdip2()
+            @needsSupportPhoneInterview2(form)
         }
 
-        @h1(content = Text("Disability and health conditions"))
-
-        @formWithCSRF(action = routes.AssistanceDetailsController.submit, Symbol("id") -> "assistance-details-form") {
-            <input type="hidden" id="applicationRoute" name="applicationRoute" value="@applicationRoute" />
-            @hasDisability2(form, disabilityCategories)
-            @if(isFaststream(user)) {
-                @needsSupportOnlineAssessmentsFaststream2(form)
-                @needsSupportAtVenue2(form)
-
-                @h2(content = Text("Final Selection Board"))
-                <p class="form-hint text">
-                    The assessments conducted during the Final Selection Board stage vary depending on the scheme.
-                    Candidates who require a Reasonable Adjustment at Final Selection Board should <a class="govuk-link" href="@routes.ApplicationController.helpdesk" class="">contact us</a> once their application reaches this stage.
-                </p>
-            }
-            @if(isEdip(user) || isSdip(user)) {
-                @needsSupportOnlineAssessmentsSdip2()
-                @needsSupportPhoneInterview2(form)
-            }
-
-            @govukButton(Button(
-                content = Text("Save and continue"),
-                inputType = Some("submit"),
-                preventDoubleClick = Some(true)
-            ))
-        }
+        @govukButton(Button(
+            content = Text("Save and continue"),
+            inputType = Some("submit"),
+            preventDoubleClick = Some(true)
+        ))
     }
-<script @CSPNonce.attr src='@routes.Assets.versioned("js/disabilityCategorySelection.js")' type="text/javascript"></script>
+}

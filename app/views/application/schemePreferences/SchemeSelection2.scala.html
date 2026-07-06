@@ -16,6 +16,7 @@
 
 @import config.TrackingConsentConfig
 @import forms.SelectedSchemesForm.maxSchemes
+@import helpers.ServiceNavigationItems
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukErrorSummary, GovukRadios, Hint, HtmlContent, Legend, RadioItem, Radios, Text}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
@@ -62,7 +63,7 @@
     <p>You can only select preferences you're eligible for</p>
 }
 
-@mainLayout(pageTitle(form, "Choose your schemes").toString, javaScripts = Some(javaScripts), css = Some(css)) {
+@mainLayout(pageTitle(form, "Choose your schemes").toString, navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
 @*main_template(title = "Choose your schemes", pageForms = Seq(form)) {*@
     @*pageProgress(2, 7)*@
 
