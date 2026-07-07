@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import models.view.questionnaire.{Ethnicities, SexOrientations, Sexes}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukErrorSummary, GovukRadios, GovukSelect, Hint, Label, Legend, Radios, RadioItem, Select, SelectItem, Text}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
@@ -40,7 +40,7 @@
 @import helpers.CSRFieldConstructor.*
 @import views.html.widgets.{checkbox, pageProgress, radioBoxVertical, select_guard_multi}
 
-@mainLayout(pageTitle(form, "About you").toString, navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(form, Title("About you")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "About you", pageForms = Seq(form)) {*@
     @*pageProgress(5,7)*@
 
@@ -49,7 +49,7 @@
     }
 
     @h1(content = Text("About you"))
-    <p class="subtitle">Diversity questions</p>
+    <p class="govuk-body-l">Diversity questions</p>
 
 @*
     <div class="hgroup">
@@ -57,12 +57,10 @@
         <p class="subtitle">Diversity questions</p>
     </div>
 *@
-    <div class="panel-info standard-panel">
-        <div class="text">
-            <h2 class="heading-medium">Why do we ask these questions?</h2>
-            <p>These questions help us to gather data on people's sex at birth, sexual orientation and ethnicity.</p>
-            <p>We anonymise the data and use it to monitor and improve the effectiveness of our processes in enabling all candidates to do their best irrespective of their diversity characteristics.</p>
-        </div>
+    <div class="govuk-body">
+        <h2 class="heading-medium">Why do we ask these questions?</h2>
+        <p>These questions help us to gather data on people's sex at birth, sexual orientation and ethnicity.</p>
+        <p>We anonymise the data and use it to monitor and improve the effectiveness of our processes in enabling all candidates to do their best irrespective of their diversity characteristics.</p>
     </div>
 
     @formWithCSRF(action = routes.QuestionnaireController.submitFirstPage) {

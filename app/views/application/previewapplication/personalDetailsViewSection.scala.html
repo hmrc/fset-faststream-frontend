@@ -15,10 +15,10 @@
  *@
 
 @import java.time.format.DateTimeFormatter
-@(personalDetails: connectors.exchange.GeneralDetails)(edit: Html)(implicit user: Option[CachedData], messages: Messages)
-
 @import forms.FastPassForm
 @import security.RoleUtils._
+
+@(personalDetails: connectors.exchange.GeneralDetails)(edit: Html)(implicit user: Option[CachedData], messages: Messages)
 
 @displayFastPassSection(id: String, display: Boolean, heading: String, text: => String) = {
     @if(display){

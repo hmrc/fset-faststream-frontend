@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, Checkboxes, CheckboxItem, ErrorSummary, GovukButton, GovukCheckboxes, GovukErrorSummary, Text, FormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichCheckboxes
@@ -35,7 +35,7 @@
 
 @(acceptanceForm: Form[forms.DiversityQuestionnaireForm.AcceptanceTerms], isFastStream: Boolean)(implicit request: Request[_], user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout(pageTitle(acceptanceForm, "Before you continue").toString, navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(acceptanceForm, Title("Before you continue")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Before you continue", pageForms = Seq(acceptanceForm)) {*@
     @*pageProgress(4, 7)*@
 

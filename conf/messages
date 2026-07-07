@@ -353,13 +353,13 @@ accept-terms.question = I understand this won''t affect my application
 
 success.allocation.confirmed = You''ve successfully confirmed your assessment date.
 
-global.error.badRequest400.title=Bad request - 400
+global.error.badRequest400.title=Bad request
 global.error.badRequest400.heading=Bad request
 global.error.badRequest400.message=Something went wrong, return to the start and try again.
-global.error.pageNotFound404.title=Page not found - 404
+global.error.pageNotFound404.title=Page not found
 global.error.pageNotFound404.heading=Page not found
 global.error.pageNotFound404.message=The page you were looking for could not be found. Make sure you''ve typed the correct web address
-global.error.InternalServerError500.title=Service unavailable - 500
+global.error.InternalServerError500.title=Service unavailable
 global.error.InternalServerError500.heading=Service unavailable
 global.error.InternalServerError500.message=Something went wrong, try again in a few minutes.
 

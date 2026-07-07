@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
 @import views.html.components.{Heading1, Heading2, Layout}
 
@@ -27,7 +27,7 @@
 
 @()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout("Privacy and cookies", navigation = ServiceNavigationItems(user)) {
+@mainLayout(Title("Cookies"), navigation = ServiceNavigationItems(user)) {
 	@h1(content = Text("Cookies"))
 
 	<section class="text">

@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import views.html.application.previewapplication.locationPreferencesViewSection
 @import views.html.application.previewapplication.{assistanceDetailsViewSection, personalDetailsViewSection, schemePreferencesViewSection, diversityQuestionnaireViewSection}
 @import models.ApplicationData.ApplicationStatus._
@@ -56,7 +56,7 @@
     }
 }
 
-@mainLayout("Check your application", navigation = ServiceNavigationItems(user)) {
+@mainLayout(Title("Check your application"), navigation = ServiceNavigationItems(user)) {
 
     <div class="grid-wrapper">
       <div class="grid grid-2-3">

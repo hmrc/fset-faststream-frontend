@@ -15,6 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
+@import helpers.{ServiceNavigationItems, Title}
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
 @import views.html.components.{Heading1, Heading2, Layout}
 
@@ -30,8 +31,8 @@
     <a class="govuk-link" href="https://cabinetofficefset.freshdesk.com/support/home" target="_blank" rel="external">https://cabinetofficefset.freshdesk.com/support/home</a>
 }
 
-@mainLayout("Privacy and cookies") {
-    @h1(content = Text("Fast Stream Privacy Notice"))
+@mainLayout(Title("Privacy policy"), navigation = ServiceNavigationItems(user)) {
+    @h1(content = Text("Privacy policy"))
 
     <section class="text">
         <p>
@@ -40,7 +41,7 @@
     </section>
 
 	<section class="text">
-        @h1(content = Text("Your data"))
+        @h2(content = Text("Your data"))
         <p><strong>The data</strong></p>
 	    <p>We will process the following personal data:</p>
 	    <p>When you create an account:</p>
@@ -160,7 +161,7 @@
 	</section>
 
 	<section class="text">
-    	<h2 class="heading-medium">Purpose</h2>
+        @h2(content = Text("Purpose"))
 	    <p>The purposes for which we are processing your personal data are:</p>
         <ul>
             <li>to manage recruitment for Civil Service organisations and non-departmental public bodies. This includes an online application service, online tests and sift tests.</li>
@@ -176,7 +177,7 @@
 	</section>
 
 	<section class="text">
-    	<h2 class="heading-medium">Legal basis of processing</h2>
+        @h2(content = Text("Legal basis of processing"))
 	    <p>The legal basis for processing your personal data is:</p>
         <ul>
             <li>Contractual: it is necessary for the performance of a contract to which you are a party - an employment contract</li>

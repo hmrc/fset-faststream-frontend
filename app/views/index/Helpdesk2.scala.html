@@ -15,20 +15,30 @@
  *@
 
 @import config.TrackingConsentConfig
+@import helpers.Title
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
 @import views.html.components.{Heading1, Layout}
 
 @this(
         mainLayout: Layout,
-        h1: Heading1
+        h1: Heading1,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @()(implicit request: Request[_], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout("Contact us") {
+@mainLayout(Title("Contact us")) {
     @h1(content = Text("Contact us"))
     <div class="govuk-inset-text">
         <p>If you have made an application, then please include the email address that you used to register to help us deal with your query effectively.</p>
     </div>
-    <p><a class="govuk-link" href="https://fsetatso.freshdesk.com/support/home" target="_blank" rel="external">Submit a ticket</a></p>
+    <p>
+        @*<a class="govuk-link" href="https://fsetatso.freshdesk.com/support/home" target="_blank" rel="external">Submit a ticket</a>*@
+        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = "Submit a ticket",
+            href = Some("https://fsetatso.freshdesk.com/support/home")
+        ))
+    </p>
 }

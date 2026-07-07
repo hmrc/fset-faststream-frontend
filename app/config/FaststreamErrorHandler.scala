@@ -16,6 +16,8 @@
 
 package config
 
+import helpers.Title
+
 import javax.inject.Inject
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Request, RequestHeader}
@@ -34,7 +36,7 @@ class FaststreamErrorHandler @Inject() (
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: RequestHeader): Future[Html] = {
     val messages = implicitly[Messages]
     Future.successful(
-      errorTemplateView(pageTitle, heading, message)(rh, messages)
+      errorTemplateView(Title(pageTitle), heading, message)(rh, messages)
     )
   }
 

@@ -15,10 +15,9 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, Fieldset, FormWithCSRF, GovukButton, Legend, Text}
 @import views.html.components.{Heading1, Layout}
-
 
 @this(
         govukButton: GovukButton,
@@ -29,9 +28,9 @@
 
 @()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout("Submit your application", navigation = ServiceNavigationItems(user)) {
+@mainLayout(Title("Submit your application"), navigation = ServiceNavigationItems(user)) {
 
-    @h1(content = Text("Submit application"))
+    @h1(content = Text("Submit your application"))
     <div class="govuk-inset-text">
         <p>Once you submit your application you will not be able to amend any of your details.</p>
         <p>After your application is submitted, you will receive an invitation to complete your online exercises. Your timer will start and you will have <strong>7 days</strong> to complete your online exercises once you have received your invitation.</p>

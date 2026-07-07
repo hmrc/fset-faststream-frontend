@@ -20,7 +20,7 @@
 @import models.ApplicationRoute._
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import views.html.helper.CSPNonce
 @import views.html.application.assistancedetails.needsSupportOnlineAssessmentsSdip
 @import views.html.application.assistancedetails.needsSupportOnlineAssessmentsFaststream
@@ -58,7 +58,7 @@
     user.flatMap(_.application).map(_.applicationRoute).getOrElse(Faststream)
 }
 
-@mainLayout(pageTitle(form, "Disability and health conditions").toString, navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(form, Title("Disability and health conditions")).toString, navigation = ServiceNavigationItems(user)) {
 
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

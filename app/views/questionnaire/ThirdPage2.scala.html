@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import forms.ParentEmploymentAnswers
 @import models.view.SimpleAnswerOptions
 @import models.view.questionnaire.{Employees, Occupations, OrganizationSizes}
@@ -70,14 +70,14 @@
     )
 }
 
-@mainLayout(pageTitle(questionnaireForm, "About your parents").toString, navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(questionnaireForm, Title("About your parents")).toString, navigation = ServiceNavigationItems(user)) {
 
     @if(questionnaireForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))
     }
     @h1(content = Text("About your parents"))
     <div id="panel-why-collect-data" class="panel-info standard-panel">
-        <div class="text">
+        <div class="govuk-body">
             <h2 class="heading-medium">Why do we ask about your parents?</h2>
             @if(isFastStream) {
                 <p>Gathering anonymous data about the education and employment background of family members of applicants at age 14 can help us to understand the socio-economic background of our applicant group.</p>
