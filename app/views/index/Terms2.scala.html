@@ -15,6 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
+@import helpers.ServiceNavigationItems
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
 @import views.html.components.{Heading1, Heading2, Layout}
 
@@ -26,7 +27,7 @@
 
 @()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout("Terms and conditions") {
+@mainLayout("Terms and conditions", navigation = ServiceNavigationItems(user)) {
     @h1(content = Text("Terms and conditions"))
 
     <section class="text">
