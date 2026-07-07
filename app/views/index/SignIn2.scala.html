@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
 @import views.html.components.*
 @import views.html.template.FlashMessage2
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 
 @this(
         inputText: InputText,
@@ -36,7 +36,7 @@
 @(signInForm: Form[forms.SignInForm.Data], notification: Option[(helpers.NotificationType, String)] = None
 )(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout(pageTitle(signInForm, "Sign in").toString, navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(signInForm, Title("Sign in")).toString, navigation = ServiceNavigationItems(user)) {
 
     @if(signInForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(signInForm))

@@ -16,14 +16,14 @@
 
 @import config.TrackingConsentConfig
 @import controllers.ApplicationRouteState
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import models.ApplicationRoute.*
 @import models.view.CampaignReferrers
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukSelect, Hint, HtmlContent, Label, Legend, Text}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
-@import views.html.components.{Heading1, Heading2, InputSelect, InputText, Layout}
+@import views.html.components.{Heading1, Heading2, InputSelect, InputText, Layout, PageTitle}
 @import views.html.registration.ChooseYourRoute2
 @import views.html.template.FlashMessage2
 
@@ -37,7 +37,8 @@
         govukErrorSummary: GovukErrorSummary,
         govukCheckboxes: GovukCheckboxes,
         chooseYourRoute: ChooseYourRoute2,
-        inputSelect: InputSelect
+        inputSelect: InputSelect,
+        pageTitle: PageTitle
 )
 
 @(signUpForm: Form[forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], notification: Option[(helpers.NotificationType, String)] = None, afterDeadlineSignupCode: Option[String] = None, validAfterDeadlineSignupCode: Boolean = false, preGoLiveTestingEnabled: Boolean = false)(
@@ -79,7 +80,7 @@
     </section>
 }
 
-@mainLayout("Create your account", navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(signUpForm, Title("Create your account")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {*@
 
     @* TODO: this need to be in the main template *@

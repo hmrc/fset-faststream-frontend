@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.ServiceNavigationItems
+@import helpers.{ServiceNavigationItems, Title}
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukRadios, Legend, RadioItem, Radios, Text}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
@@ -50,7 +50,7 @@
     @universitySection2(questionnaireForm)
 }
 
-@mainLayout(pageTitle(questionnaireForm, "Your education").toString, navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Your education", pageForms = Seq(questionnaireForm)) {*@
     @*pageProgress(6, 7)*@
 
@@ -64,14 +64,12 @@
         <p class="subtitle">Diversity questions</p>
     </div>*@
     @h1(content = Text("Your education"))
-    <p class="subtitle">Diversity questions</p>
+    <p class="govuk-body-l">Diversity questions</p>
 
-    <div class="panel-info standard-panel">
-        <div class="text">
-    <h2 class="heading-medium">Why do we ask about your education?</h2>
-    <p>These questions help us to gather data on the areas applicants grew up in and the schools they went to.</p>
-    <p>This is one method we use to help track and improve the effectiveness of our processes in enabling candidates to succeed, irrespective of background.</p>
-    </div>
+    <div class="govuk-body">
+        <h2 class="heading-medium">Why do we ask about your education?</h2>
+        <p>These questions help us to gather data on the areas applicants grew up in and the schools they went to.</p>
+        <p>This is one method we use to help track and improve the effectiveness of our processes in enabling candidates to succeed, irrespective of background.</p>
     </div>
 
     @formWithCSRF(action = routes.QuestionnaireController.submitSecondPage) {
