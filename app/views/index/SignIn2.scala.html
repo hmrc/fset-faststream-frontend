@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
 @import views.html.components.*
 @import views.html.template.FlashMessage2
+@import helpers.ServiceNavigationItems
 
 @this(
         inputText: InputText,
@@ -35,9 +36,8 @@
 @(signInForm: Form[forms.SignInForm.Data], notification: Option[(helpers.NotificationType, String)] = None
 )(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout(pageTitle(signInForm, "Sign in").toString) {
+@mainLayout(pageTitle(signInForm, "Sign in").toString, navigation = ServiceNavigationItems(user)) {
 
-    @* TODO: this should be in the main template !!!*@
     @if(signInForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(signInForm))
     }
@@ -49,13 +49,6 @@
         <p>If you don't have an account you can <a class="govuk-link" href="@routes.SignUpController.present(None)" id="createAccount">create your account</a>.</p>
         <p>If you've applied previously or have an account on Civil Service Jobs, you will need to create a new account to apply this year.</p>
     </div>
-
-@*
-
-    @h1(content = Text(messages("accessibility.heading")))
-    @p(content = Text(messages("accessibility.message.para1")))
-    @p(content = Text(messages("accessibility.message.para2")))
-*@
 
     @formWithCSRF(action = routes.SignInController.signIn, Symbol("id") -> "sign-in-form") {
 

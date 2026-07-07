@@ -15,6 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
+@import helpers.ServiceNavigationItems
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukRadios, Legend, RadioItem, Radios, Text}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
@@ -49,7 +50,7 @@
     @universitySection2(questionnaireForm)
 }
 
-@mainLayout(pageTitle(questionnaireForm, "Your education").toString) {
+@mainLayout(pageTitle(questionnaireForm, "Your education").toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Your education", pageForms = Seq(questionnaireForm)) {*@
     @*pageProgress(6, 7)*@
 
