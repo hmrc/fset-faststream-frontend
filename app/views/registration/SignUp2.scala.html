@@ -57,7 +57,7 @@
 }
 
 @existingAccountPanel = {
-    <section class="panel-indent text">
+    <section class="govuk-body">
         <p>If you already have an account, you can return to <a class="govuk-link" href="@routes.SignInController.present">sign in</a>.</p>
         <p>If you've applied previously or have an account on Civil Service Jobs, you will need to create a new account to apply this year.</p>
     </section>
@@ -212,9 +212,10 @@
                     name = "campaignReferrer",
                     items = models.view.CampaignReferrers.asSelectItems,
 //                    label = Label(content = Text("Select how you heard about us (optional)"))
-                    label = "Select how you heard about us (optional)")
+                    label = "Select how you heard about us (optional)"
                 )
             </section>
+
             <section>
                 @h2(content = Text("Terms and conditions"))
                 @govukCheckboxes(Checkboxes(

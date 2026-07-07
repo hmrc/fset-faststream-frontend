@@ -20,6 +20,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukErrorSummary, GovukRadios, Hint, HtmlContent, Legend, RadioItem, Radios, Text}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import views.html.components.{Heading1, Heading2, Layout, PageTitle}
 
 @this(
@@ -30,6 +32,7 @@
         h2: Heading2,
         govukButton: GovukButton,
         govukRadios : GovukRadios,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper,
         pageTitle: PageTitle
 )
 
@@ -95,7 +98,11 @@
             @h2(content = Text("Your chosen schemes"))
             <section class="text">
                 Please ensure you have read and understand the
-                <a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" target="_blank" rel="external">eligibility</a>
+                @*<a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" target="_blank" rel="external">eligibility</a>*@
+                @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                    text = "eligibility",
+                    href = Some("https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/")
+                ))
                 requirements for the Fast Stream and
                 for each of your chosen schemes. If you are later found to be ineligible, we will not be able to
                 progress your application.

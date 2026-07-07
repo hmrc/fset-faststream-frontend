@@ -18,12 +18,15 @@
 @import models.ApplicationRoute.*
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Fieldset, GovukRadios, Legend, RadioItem, Radios, Text}
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import views.html.components.{Heading2, Heading3}
 
 @this(
         h2: Heading2,
         h3: Heading3,
-        govukRadios: GovukRadios
+        govukRadios: GovukRadios,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @(form: Form[_root_.forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], validAfterDeadlineSubmissionCode: Boolean)(implicit messages: Messages)
@@ -38,17 +41,27 @@
 
 @rightToWorkBullet = {
     <li>I have the
+        @*
         <a class="govuk-link" href="https://www.gov.uk/prove-right-to-work" rel="external" target="_blank">
             right to work<span class="visuallyhidden">(link opens new window)</span>
-        </a>in the UK
+        </a>in the UK*@
+        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = "right to work",
+            href = Some("https://www.gov.uk/prove-right-to-work")
+        ))
+        in the UK
     </li>
 }
 
 @eligibleToWorkInCivilServiceBullet = {
     <li>I am eligible to work in the UK Civil Service under the Civil Service
-        <a class="govuk-link" href="https://www.gov.uk/government/publications/nationality-rules" rel="external" target="_blank">
+        @*<a class="govuk-link" href="https://www.gov.uk/government/publications/nationality-rules" rel="external" target="_blank">
             nationality rules<span class="visuallyhidden">(link opens new window)</span>
-        </a>
+        </a>*@
+        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = "nationality rules",
+            href = Some("https://www.gov.uk/government/publications/nationality-rules")
+        ))
     </li>
 }
 
@@ -89,14 +102,17 @@
     @faststreamRouteHtml = {
         <div class="toggle-content form-group form-group-compound" id="faststream-elig-describe">
         @if(faststreamOpen) {
-            <div class="text">
-                @h3(content = Text("Confirm the following statements are true"))
-            </div>
-            <ul class="para-btm-margin text">
+            <p class="govuk-body">Confirm the following statements are true:</p>
+            <ul class="govuk-list govuk-list--bullet">
                 <li>I am eligible to work in the UK Civil Service under the Civil Service
+                    @*
                     <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/nationality-requirements/" target="_blank" rel="external">nationality rules
                         <span class="visuallyhidden">(link opens new window)</span>
-                    </a>
+                    </a>*@
+                    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                        text = "nationality rules",
+                        href = Some("https://www.gov.uk/government/publications/nationality-requirements/")
+                    ))
                 </li>
                 <li>I have a relevant degree or qualify as a current civil servant</li>
                 <li>I meet my schemes eligibility requirements</li>
@@ -135,18 +151,23 @@
     @sdipRouteHtml = {
         <div class="toggle-content form-group form-group-compound" id="sip-elig-describe">
         @if(sdipOpen) {
-            <div class="text">
-                @h3(content = Text("To be considered for SIP, you will need to confirm the following statements are true"))
-            </div>
-            <ul id="sip-eligibility-list" class="para-btm-margin text">
+
+            <p class="govuk-body">To be considered for SIP, you will need to confirm the following statements are true:</p>
+            <ul id="sip-eligibility-list" class="govuk-list govuk-list--bullet">
                 <li>I'm not currently a civil servant</li>
                 <li>I'm in the final 2 years at university</li>
                 @rightToWorkBullet
                 @eligibleToWorkInCivilServiceBullet
                 <li>I qualify to apply according to the
+                    @*
                     <a class="govuk-link" href="@sdipUrl" rel="external" target="_blank">
                         eligibility requirements<span class="visuallyhidden">(link opens new window)</span>
-                    </a>for SIP
+                    </a>for SIP*@
+                    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                        text = "eligibility requirements",
+                        href = Some(sdipUrl)
+                    ))
+                    for SIP
                 </li>
             </ul>
             @govukRadios(Radios(
