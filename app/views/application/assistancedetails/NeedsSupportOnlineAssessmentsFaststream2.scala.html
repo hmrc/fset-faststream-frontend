@@ -16,20 +16,31 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
 @import views.html.components.Heading2
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 
 @this(
-        h2: Heading2
+        h2: Heading2,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @(form: Form[forms.AssistanceDetailsForm.Data])(implicit messages: Messages)
 
 @h2(content = Text("Online tests"))
 
-<p class="form-hint text">
+<p class="govuk-body">
     The online tests are untimed and have been built with inclusivity and accessibility in mind.
     Further information on the assessments and reasonable adjustments can be found
+
+    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+        text = "here",
+        href = Some("https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-reasonable-adjustments/")
+    )).</br>
+
+    @*
     <a id="adjustmentsFurtherInformation" class="govuk-link"
         href="https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-reasonable-adjustments/" target="_blank" rel="external">here
         <span class="visuallyhidden">link opens new window</span></a>.</br>
+        *@
     Please <a id="contactUsForOnlineAssessment" class="govuk-link" href="@routes.ApplicationController.helpdesk" class="">contact us</a> if you have an adjustment need for the online tests.
 </p>

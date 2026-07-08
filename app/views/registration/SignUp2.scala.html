@@ -80,6 +80,15 @@
     </section>
 }
 
+@passwordRequirements = {
+    <p class="govuk-body">You must have:</p><
+    <ul id="passwordRequirements" class="govuk-list govuk-list--bullet">
+        <li id="includesUppercase">uppercase letters</li>
+        <li id="includesLowercase">lowercase letters</li>
+        <li id="includesNumber">a number</li>
+        <li id="includes9Characters">at least 9 characters</li>
+    </ul>
+}
 @mainLayout(pageTitle(signUpForm, Title("Create your account")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {*@
 
@@ -153,8 +162,9 @@
             <section class="section-border">
                 @h2(content = Text("Set your password"))
                 <div class="form-group">
-                    <label for="password" class="form-label" id="firstPassLabel">Create password</label>
+                    @*<label for="password" class="form-label" id="firstPassLabel">Create password</label>*@
                     @*<span class="visuallyhidden" id="hiddenPasswordRequirements">Must have: uppercase letters, lowercase letters, a number, and at least 9 characters</span>*@
+@*
                     <div class="form-hint text">
                         <p class="no-btm-margin">Must have:</p>
                         <ul id="passwordRequirements" class="list-withicons list-text">
@@ -164,13 +174,15 @@
                             <li id="includes9Characters" class=""><i class="fa the-icon fa-times fa-minus" aria-hidden="true"></i>at least 9 characters</li>
                         </ul>
                     </div>
+*@
                     <div class="form-group password-wrapper">
                         @inputText(
                             signUpForm("password"),
-                            label = "",
+                            label = "Enter your password",
                             inputType = "password",
                             labelClasses = "govuk-label--s",
                             classes = "govuk-!-width-two-thirds",
+                            htmlHint = Some(helpers.PasswordRequirements())
                         )
                     </div>
 
@@ -183,7 +195,7 @@
 
                             @inputText(
                                 signUpForm("confirmpwd"),
-                                label = "Confirm password",
+                                label = "Confirm your password",
                                 inputType = "password",
                                 labelClasses = "govuk-label--s",
                                 classes = "govuk-!-width-two-thirds",
