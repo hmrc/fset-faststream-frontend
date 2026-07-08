@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichInput
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukInput, Hint, Input, Label, Text}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 @this(govukInput: GovukInput)
 
@@ -24,6 +25,7 @@
         inputType: String = "text",
         label: String,
         labelClasses: String = "",
+        htmlHint: Option[HtmlContent] = None,
         hint: Option[String] = None,
         classes: String = "",
         spellcheck: Option[Boolean] = None,
@@ -32,7 +34,7 @@
 @govukInput(Input(
     inputType = inputType,
     label = Label(classes = labelClasses, content = Text(label)),
-    hint = hint.map(h => Hint(content = Text(h))),
+    hint = htmlHint.map( hh => Hint(content = hh)).orElse( hint.map(h => Hint(content = Text(h))) ),
     classes = classes,
     spellcheck = spellcheck,
     autocomplete = autocomplete).withFormField(field)
