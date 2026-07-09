@@ -17,21 +17,21 @@
 @import helpers.TemplateHelper.maybeDisplayError
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 @import uk.gov.hmrc.govukfrontend.views.html.components.{CheckboxItem, Checkboxes, Fieldset, GovukCheckboxes, GovukInput, GovukRadios, Hint, Input, Label, Legend, RadioItem, Radios, Text}
-@import views.html.components.Heading3
+@import views.html.components.Heading2
 @import views.html.components.InputSelectAutoComplete
 
 @this(
         govukCheckboxes : GovukCheckboxes,
         govukRadios: GovukRadios,
         govukInput : GovukInput,
-        h3: Heading3,
+        h2: Heading2,
         inputSelectAutoComplete: InputSelectAutoComplete
 )
 
 @(form: Form[forms.PersonalDetailsForm.Data], schemesRequiringQualifications: Seq[String])(implicit messages: Messages)
 
 @currentlyCivilServantHtml = {
-    @h3(content = Text("Current civil servants"))
+    @h2(content = Text("Current civil servants"))
     <div class="govuk-template__body">
         <p>As a current civil servant you're eligible to apply for most of the schemes without a degree.</p>
         <p>The schemes you'll need specific qualifications for are:</p>
