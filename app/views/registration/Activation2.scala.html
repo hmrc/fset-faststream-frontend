@@ -51,14 +51,14 @@
 
         @h1(content = Text("Activate your account"))
         <p class="govuk-body">
-            We've sent an email to <b class="break-word">@email</b> with a <span class="inl-block">7-character</span> code you'll need to activate your account.
+            We've sent a 7-character activation code to <b>@email</b>.
         </p>
 
         @formWithCSRF(action = routes.ActivationController.submit, Symbol("id") -> "activation-form") {
 
             @inputText(
                 activationForm("activation"),
-                label = "Activation code",
+                label = "Enter activation code",
                 labelClasses = "govuk-label--s",
                 classes = "govuk-!-width-two-thirds"
             )
