@@ -14,8 +14,10 @@
  * limitations under the License.
  *@
 
+@import play.twirl.api.Html
+
 @this()
 
 @(form: Form[_], title: String)
 
-@if(form.hasErrors) { @{"Error: " + title} } else { @title }
+@if(form.hasErrors) { @{Html("Error: " + title)} } else { @Html(title) }
