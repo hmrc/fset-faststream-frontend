@@ -15,13 +15,13 @@
  *@
 
 @import views.html.components.InputText
-@import views.html.components.Heading3
+@import views.html.components.Heading2
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
 
 @this(
     inputText: InputText,
-    h3: Heading3
+    h2: Heading2
 )
 
 @(form: Form[forms.PersonalDetailsForm.Data])(implicit messages: Messages)
@@ -68,38 +68,43 @@
     </div>
 *@
 @*    <fieldset id="addressManualInput"> *@
-        @h3(content = Text("What is your address?"))
+        @h2(content = Text("What is your address?"))
         @*<legend><h2 class="form-label">What is your address?</h2></legend>*@
 
         @inputText(
             form("address.line1"),
-            label = "Address line 1 of 4",
+            label = "Address line 1",
             labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds"
+            classes = "govuk-!-width-two-thirds",
+            autocomplete = Some("address.line1")
         )
         @inputText(
             form("address.line2"),
-            label = "",
+            label = "Address line 2 (optional)",
             labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds"
+            classes = "govuk-!-width-two-thirds",
+            autocomplete = Some("address.line2")
         )
         @inputText(
             form("address.line3"),
-            label = "",
+            label = "Address line 3 (optional)",
             labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds"
+            classes = "govuk-!-width-two-thirds",
+            autocomplete = Some("address.line3")
         )
         @inputText(
             form("address.line4"),
-            label = "",
+            label = "Address line 4 (optional)",
             labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds"
+            classes = "govuk-!-width-two-thirds",
+            autocomplete = Some("address.line4")
         )
         @inputText(
             form("postCode"),
             label = "Postcode",
             labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds"
+            classes = "govuk-!-width-two-thirds",
+            autocomplete = Some("postCode")
         )
 
         @inputText(
