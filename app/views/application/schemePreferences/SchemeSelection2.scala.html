@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import views.html.application.schemePreferences.schemesCheckboxGroup2
+@import views.html.helper.CSPNonce
+@import views.html.widgets.{checkbox, pageProgress, radioBox, yesNoQuestion}
 @import config.TrackingConsentConfig
 @import forms.SelectedSchemesForm.maxSchemes
 @import helpers.{ServiceNavigationItems, Title}
@@ -37,10 +40,6 @@
 )
 
 @(page: models.page.SelectedSchemesPage, isCandidateCivilServant: Boolean, form: Form[forms.SelectedSchemesForm.SchemePreferences])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
-
-@import views.html.application.schemePreferences.schemesCheckboxGroup
-@import views.html.helper.CSPNonce
-@import views.html.widgets.{checkbox, pageProgress, radioBox, yesNoQuestion}
 
 @selectedSchemes = @{
     form.value match {
@@ -66,6 +65,12 @@
     <p>You can only select preferences you're eligible for</p>
 }
 
+@eligibilityLink(text: String) = {
+    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+        text = text,
+        href = Some("https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/")
+    ))
+}
 @mainLayout(pageTitle(form, Title("Choose your schemes")).toString, navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
 @*main_template(title = "Choose your schemes", pageForms = Seq(form)) {*@
     @*pageProgress(2, 7)*@
@@ -86,7 +91,7 @@
             <legend class="visuallyhidden">In preference order, select only the schemes you'd like to work in.</legend>
             <section class="grid-wrapper scheme-wrapper">
                 <div class="scheme-input-container">
-                @schemesCheckboxGroup(isCandidateCivilServant, form("schemes"), page.visibleSchemes,
+                @schemesCheckboxGroup2(isCandidateCivilServant, form("schemes"), page.visibleSchemes,
                     Symbol("_label") -> "",
                     Symbol("_class") -> ""
                 )
@@ -99,10 +104,7 @@
             <section class="text">
                 Please ensure you have read and understand the
                 @*<a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" target="_blank" rel="external">eligibility</a>*@
-                @hmrcNewTabLinkHelper(NewTabLinkHelper(
-                    text = "eligibility",
-                    href = Some("https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/")
-                ))
+                @eligibilityLink(text = "eligibility")
                 requirements for the Fast Stream and
                 for each of your chosen schemes. If you are later found to be ineligible, we will not be able to
                 progress your application.
@@ -168,7 +170,7 @@
                 ))
             )),
             hint = Some(Hint(
-                content = HtmlContent("""Make sure you're <a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" target="_blank" rel="external">eligible<span class="visuallyhidden"> for your chosen schemes</span></a> for your chosen schemes.""")
+                content = HtmlContent("Make sure you're " + eligibilityLink(text = "eligible") + "for your chosen schemes.")
             )),
             name = "eligible",
             items = Seq(

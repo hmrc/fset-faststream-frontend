@@ -16,22 +16,24 @@
 
 @import config.TrackingConsentConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, FormWithCSRF, GovukButton, GovukErrorSummary, Text}
-@import views.html.components.{Heading1, Layout}
+@import views.html.components.{Heading1, Layout, PageTitle}
+@import helpers.{ServiceNavigationItems, Title}
 
 @this(
         govukButton: GovukButton,
         formWithCSRF: FormWithCSRF,
         mainLayout: Layout,
-        h1: Heading1
+        h1: Heading1,
+        pageTitle: PageTitle
 )
 
 @(isFastStream: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout("Before you continue") {
+@mainLayout(Title("Before you continue"), navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Before you continue") {*@
 
     @h1(content = Text("Before you continue"))
-    <p class="">Diversity questions</p>
+    <p class="govuk-body-l">Diversity questions</p>
 
     @*
     <div class="hgroup">
@@ -41,39 +43,37 @@
     *@
 
     <section>
-        <div class="text">
+        <div class="govuk-body">
             <p>We have a few more questions before you submit your application, relating to diversity. We are committed to promoting diversity and valuing everyone, irrespective of ethnicity or nationality, disability, gender identity, sexual orientation, age or socio-economic status.</p>
         </div>
 
-        <div class="panel-info standard-panel">
-            <div class="text">
-                <p>The following questions are:</p>
-                @if(isFastStream) {
-                    <ul class="no-btm-margin">
-                        <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
-                        <li>not part of your application and will have no bearing on any selection decision</li>
-                        <li>treated in strict confidence</li>
-                    </ul>
-                } else {
-                    <ul class="no-btm-margin">
-                        <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
-                        <li>used to assess your eligibility for the Summer Internship Programme</li>
-                        <li>treated in strict confidence</li>
-                    </ul>
-                }
-            </div>
+        <div class="govuk-body">
+            <p>The following questions are:</p>
+            @if(isFastStream) {
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
+                    <li>not part of your application and will have no bearing on any selection decision</li>
+                    <li>treated in strict confidence</li>
+                </ul>
+            } else {
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>for information monitoring only, to understand the effectiveness of our processes in terms of diversity and how we could improve</li>
+                    <li>used to assess your eligibility for the Summer Internship Programme</li>
+                    <li>treated in strict confidence</li>
+                </ul>
+            }
         </div>
-        <div class="text">
+        <div class="govuk-body">
             <p>For security reasons, once you save a page you won't be able to go
                 back and change your answers.</p>
         </div>
     </section>
 
-    <div>
+    <div class="govuk-body">
         @if(user.get.application.get.progress.diversityQuestionnaire) {
-            <p class="small-btm-margin">So far you've completed:</p>
+            <p>So far you've completed:</p>
         }
-        <ul class="list-bullet">
+        <ul class="govuk-list govuk-list--bullet">
             @if(user.get.application.get.progress.diversityQuestionnaire) {
                 <li>About you</li>
             }
