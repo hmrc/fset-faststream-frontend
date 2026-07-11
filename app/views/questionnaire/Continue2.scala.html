@@ -16,15 +16,14 @@
 
 @import config.TrackingConsentConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, FormWithCSRF, GovukButton, GovukErrorSummary, Text}
-@import views.html.components.{Heading1, Layout, PageTitle}
+@import views.html.components.{Heading1, Layout}
 @import helpers.{ServiceNavigationItems, Title}
 
 @this(
         govukButton: GovukButton,
         formWithCSRF: FormWithCSRF,
         mainLayout: Layout,
-        h1: Heading1,
-        pageTitle: PageTitle
+        h1: Heading1
 )
 
 @(isFastStream: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)

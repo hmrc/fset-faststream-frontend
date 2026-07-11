@@ -22,9 +22,6 @@ import models.{CachedDataWithApp, Progress}
 import play.api.mvc.Result
 import play.api.test.Helpers.*
 import testkit.TestableSecureActions
-import uk.gov.hmrc.http.HeaderCarrier
-import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers._
 
 import scala.concurrent.*
 
@@ -153,8 +150,6 @@ class QuestionnaireControllerSpec extends BaseControllerSpec {
     val candWithApp = currentCandidateWithApp.copy(
       application = currentCandidateWithApp.application.copy(applicationStatus = IN_PROGRESS))
 
-    when(mockReferenceDataClient.allSchools(any[HeaderCarrier])).thenReturn(Future.successful(Nil))
-
     def controller(appStatus: Progress) = {
       val introTemplate = mock[views.html.questionnaire.Intro2]
       val continueTemplate = mock[views.html.questionnaire.Continue2]
@@ -168,7 +163,7 @@ class QuestionnaireControllerSpec extends BaseControllerSpec {
       new QuestionnaireController(mockConfig, stubMcc, introTemplate, continueTemplate,
         firstPageTemplate, secondPageTemplate, thirdPageTemplate,
         mockSecurityEnv, mockSilhouetteComponent,
-        mockNotificationTypeHelper, mockApplicationClient, mockReferenceDataClient,
+        mockNotificationTypeHelper, mockApplicationClient,
         diversityFormWrapper, educationFormWrapper, parentalOccupationFormWrapper) with TestableSecureActions {
 
         override val candidateWithApp: CachedDataWithApp = candWithApp

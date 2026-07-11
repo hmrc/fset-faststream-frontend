@@ -19,17 +19,17 @@
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
 @import views.html.components.{Heading2, InputRadios}
 @import views.html.widgets.{checkbox, radioBox, radioBoxVertical}
-@import views.html.components.InputSelectAutoComplete
+@import views.html.components.InputText
 @import models.view.SchoolView
 
 @this(
         h2: Heading2,
         govukRadios: GovukRadios,
         inputRadios: InputRadios,
-        inputSelectAutoComplete: InputSelectAutoComplete
+        inputText: InputText
 )
 
-@(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data], schools: List[SchoolView])(implicit messages: Messages)
+@(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data])(implicit messages: Messages)
 
     @h2(content = Text("School"))
     @*<h2 class="heading-medium">School</h2>*@
@@ -61,11 +61,16 @@
         </div>
         *@
 
-        @inputSelectAutoComplete(
+        @*inputSelectAutoComplete(
             questionnaireForm("schoolName14to16"),
             id = "schoolName14to16",
             name = "schoolName14to16",
             items = schools.asSelectItems,
+            label = Messages("schoolName14to16.question")
+        )*@
+
+        @inputText(
+            questionnaireForm("schoolName14to16"),
             label = Messages("schoolName14to16.question")
         )
 
@@ -122,11 +127,16 @@
     </section>
     *@
 
-    @inputSelectAutoComplete(
+    @*inputSelectAutoComplete(
         questionnaireForm("schoolName16to18"),
         id = "schoolName16to18",
         name = "schoolName16to18",
         items = schools.asSelectItems,
+        label = Messages("schoolName16to18.question")
+    )*@
+
+    @inputText(
+        questionnaireForm("schoolName16to18"),
         label = Messages("schoolName16to18.question")
     )
 
