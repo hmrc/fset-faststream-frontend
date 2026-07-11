@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.exchange.School
 import connectors.exchange.referencedata.{Scheme, SchemeId, SdipLocation}
 
 import javax.inject.{Inject, Singleton}
@@ -48,10 +47,6 @@ class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: HttpClient
 
   def sdipLocations(implicit hc: HeaderCarrier): Future[List[SdipLocation]] = {
     getReferenceDataAsList[SdipLocation]("sdipLocations", "/reference/sdip/locations")
-  }
-
-  def allSchools(implicit hc: HeaderCarrier): Future[List[School]] = {
-    getReferenceDataAsList[School]("schools", "/reference/schools")
   }
 
   private def getReferenceDataAsList[T](

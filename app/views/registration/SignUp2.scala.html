@@ -80,15 +80,6 @@
     </section>
 }
 
-@passwordRequirements = {
-    <p class="govuk-body">You must have:</p><
-    <ul id="passwordRequirements" class="govuk-list govuk-list--bullet">
-        <li id="includesUppercase">uppercase letters</li>
-        <li id="includesLowercase">lowercase letters</li>
-        <li id="includesNumber">a number</li>
-        <li id="includes9Characters">at least 9 characters</li>
-    </ul>
-}
 @mainLayout(pageTitle(signUpForm, Title("Create your account")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {*@
 

@@ -36,23 +36,35 @@
         universitySection2: UniversitySection2
 )
 
-@(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data], isCandidateCivilServant: String, schools: List[models.view.SchoolView])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data], isCandidateCivilServant: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @import views.html.questionnaire.components.{postcode, school, universitySection}
 @import views.html.widgets.{pageProgress, radioBoxHorizontal}
 
 @livedInUKBetween14and18Html = {
     @postcode2(questionnaireForm)
-    @school2(questionnaireForm, schools)
+    @school2(questionnaireForm)
 }
 
 @civilServantHasADegreeHtml = {
     @universitySection2(questionnaireForm)
 }
 
-@mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user)) {
+@javaScripts = {
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/schools.js")' type="text/javascript"></script>
+}
+
+@css = {
+    <link href='@routes.Assets.versioned("css/legacy.css")' media="all" rel="stylesheet" type="text/css">
+}
+
+@mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
 @*main_template(title = "Your education", pageForms = Seq(questionnaireForm)) {*@
     @*pageProgress(6, 7)*@
+
+    @helper.javascriptRouter("jsRoutes")(
+        routes.javascript.SchoolsController.getSchools
+    )
 
     @if(questionnaireForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))

@@ -18,10 +18,9 @@ package controllers
 
 import forms.{DiversityQuestionnaireForm, EducationQuestionnaireForm, ParentalOccupationQuestionnaireForm}
 import config.FrontendAppConfig
-import connectors.{ApplicationClient, ReferenceDataClient}
+import connectors.ApplicationClient
 import connectors.exchange.Questionnaire
 import helpers.{NotificationType, NotificationTypeHelper}
-import models.view.SchoolView
 import models.{ApplicationRoute, CachedDataWithApp}
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -49,7 +48,6 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
                                         val silhouetteComponent: SilhouetteComponent,
                                         val notificationTypeHelper: NotificationTypeHelper,
                                         applicationClient: ApplicationClient,
-                                        refDataClient: ReferenceDataClient,
                                         diversityFormWrapper: DiversityQuestionnaireForm,
                                         educationFormWrapper: EducationQuestionnaireForm,
                                         parentalFormWrapper: ParentalOccupationQuestionnaireForm
@@ -91,7 +89,7 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
     implicit user =>
       presentPageIfNotFilledInPreviously(
         DiversityQuestionnaireCompletedRole,
-        Future.successful(Ok(firstPageView(diversityFormWrapper.form)))
+        Ok(firstPageView(diversityFormWrapper.form))
       )
   }
 
@@ -103,37 +101,21 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
       views.html.questionnaire.firstpage(form)
     }
 
-//  def presentSecondPage: Action[AnyContent] = CSRSecureAppAction(EducationQuestionnaireRole) { implicit request =>
-//    implicit user =>
-//      presentPageIfNotFilledInPreviously(EducationQuestionnaireCompletedRole,
-//        Ok(secondPageView(
-//          educationFormWrapper.form(isFsOrSdipFs, universityMessageKey),
-//          user.application.civilServiceExperienceDetails.exists(_.isCivilServant)
-//        ))
-//      )
-//  }
-
   def presentSecondPage: Action[AnyContent] = CSRSecureAppAction(EducationQuestionnaireRole) { implicit request =>
     implicit user =>
-      val resultFut = for {
-        schools <- getSchools
-      } yield {
-        Ok(secondPageView(
-          educationFormWrapper.form(isFsOrSdipFs, universityMessageKey),
-          user.application.civilServiceExperienceDetails.exists(_.isCivilServant),
-          schools
-        ))
-      }
-      presentPageIfNotFilledInPreviously(EducationQuestionnaireCompletedRole, resultFut)
+      val result = Ok(secondPageView(
+        educationFormWrapper.form(isFsOrSdipFs, universityMessageKey),
+        user.application.civilServiceExperienceDetails.exists(_.isCivilServant)
+      ))
+      presentPageIfNotFilledInPreviously(EducationQuestionnaireCompletedRole, result)
   }
 
   private def secondPageView(form: Form[EducationQuestionnaireForm.Data],
-                             isCandidateCivilServant: Boolean,
-                             schools: List[models.view.SchoolView])(
+                             isCandidateCivilServant: Boolean)(
     implicit request: Request[_], user: CachedDataWithApp): Html = {
     val isCivilServant = if (isCandidateCivilServant) "Yes" else "No"
     if (config.enablePlayHmrcQuestionnaireEducationView) {
-      secondPageTemplate(form, isCivilServant, schools)
+      secondPageTemplate(form, isCivilServant)
     } else {
       views.html.questionnaire.secondpage(form, isCivilServant)
     }
@@ -142,7 +124,8 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
   def presentThirdPage: Action[AnyContent] = CSRSecureAppAction(ParentalOccupationQuestionnaireRole) { implicit request =>
     implicit user =>
       presentPageIfNotFilledInPreviously(ParentalOccupationQuestionnaireCompletedRole,
-        Future.successful(Ok(thirdPageView(parentalFormWrapper.form, isFsOrSdipFs))))
+        Ok(thirdPageView(parentalFormWrapper.form, isFsOrSdipFs))
+      )
   }
 
   private def thirdPageView(form: Form[ParentalOccupationQuestionnaireForm.Data],
@@ -220,9 +203,9 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
 //              Ok(secondPageView(errorForm, user.application.civilServiceExperienceDetails.exists(_.isCivilServant)))
 //            )
 
-            for {
-              schools <- getSchools
-            } yield Ok(secondPageView(errorForm, user.application.civilServiceExperienceDetails.exists(_.isCivilServant), schools))
+            Future.successful(
+              Ok(secondPageView(errorForm, user.application.civilServiceExperienceDetails.exists(_.isCivilServant)))
+            )
           },
           data => {
             submitQuestionnaire(data.sanitizeData.toExchange(isFsOrSdipFs), "education_questionnaire")(
@@ -248,7 +231,6 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
       }
   }
 
-/*
   private def presentPageIfNotFilledInPreviously(pageFilledPreviously: CsrAuthorization, presentPage: => Result)
                                                 (implicit user: CachedDataWithApp, requestHeader: RequestHeader) = {
     Future.successful {
@@ -257,16 +239,6 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
         case (true, _) => Redirect(routes.QuestionnaireController.presentStartOrContinue).flashing(questionnaireCompletedBanner)
         case _ => presentPage
       }
-    }
-  }
- */
-
-  private def presentPageIfNotFilledInPreviously(pageFilledPreviously: CsrAuthorization, presentPage: => Future[Result])
-                                                (implicit user: CachedDataWithApp, requestHeader: RequestHeader) = {
-    (pageFilledPreviously.isAuthorized(user), PreviewApplicationRole.isAuthorized(user)) match {
-      case (_, true) => Future.successful(Redirect(routes.HomeController.present()).flashing(questionnaireCompletedBanner))
-      case (true, _) => Future.successful(Redirect(routes.QuestionnaireController.presentStartOrContinue).flashing(questionnaireCompletedBanner))
-      case _ => presentPage
     }
   }
 
@@ -281,11 +253,4 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
   }
 
   private def isFsOrSdipFs(implicit user: CachedDataWithApp) = user.application.isFaststream || user.application.isSdipFaststream
-
-  private def getSchools(implicit hc: HeaderCarrier): Future[List[SchoolView]] = {
-    import models.view.SchoolView.SchoolImplicits
-    for {
-      schools <- refDataClient.allSchools
-    } yield schools.map(_.toSchoolView)
-  }
 }
