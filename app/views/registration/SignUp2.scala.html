@@ -226,7 +226,7 @@
                     name = "agree",
                     items = Seq(
                         CheckboxItem(
-                            content = HtmlContent(s"I accept the <a class=\"govuk-link\" href=\"${routes.ApplicationController.terms}\" target=\"_blank\">terms and conditions</a>"),
+                            content = HtmlContent(s"I accept the <a class=\"govuk-link\" href=\"${routes.ApplicationController.terms}\" target=\"_blank\" rel=\"noopener noreferrer\">terms and conditions (opens in new tab)</a>"),
                             value = "true",
                             checked = "true".equals(signUpForm("agree").value.getOrElse(""))
                         )

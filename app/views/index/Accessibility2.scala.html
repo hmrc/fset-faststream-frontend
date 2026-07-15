@@ -17,12 +17,15 @@
 @import config.TrackingConsentConfig
 @import helpers.{ServiceNavigationItems, Title}
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import views.html.components.{Heading1, Heading2, Layout}
 
 @this(
         mainLayout: Layout,
         h1: Heading1,
-        h2: Heading2
+        h2: Heading2,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
@@ -36,22 +39,25 @@
 }
 
 @externalLink(url: String, text: String) = {
-    <a class="govuk-link" href="@url" target="_blank" rel="external">@text (link opens new window)</a>
+    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+        text = text,
+        href = Some(url)
+    ))
 }
 
 @wcagExternalLink(text: String) = {
-    <a class="govuk-link" href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="external">@text (link opens new window)</a>
+    @externalLink("https://www.w3.org/TR/WCAG21/", text)
 }
 
 @mainLayout(Title("Accessibility statement"), navigation = ServiceNavigationItems(user)) {
     @h1(content = Text("Accessibility statement"))
 
-    <section class="text">
+    <section class="govuk-body">
         <p>This accessibility statement applies to the ‘Apply for the Civil Service Fast Stream’ service.</p>
         <p>This website is run by Cabinet Office, Civil Service Human Resources. We want as many people as possible
             to be able to use this website. For example, that means you should be able to:
         </p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>change colours, contrast levels and fonts</li>
             <li>zoom in up to 300% without the text spilling off the screen</li>
             <li>navigate most of the website using just a keyboard</li>
@@ -60,13 +66,13 @@
         </ul>
     </section>
 
-    <section class="text">
+    <section class="govuk-body">
         <p>We’ve also made the website text as simple as possible to understand.</p>
         <p>AbilityNet has advice on making your device easier to use if you have a disability.</p>
     </section>
 
     @h2(content = Text("How accessible this website is"))
-    <section class="text">
+    <section class="govuk-body">
         <p>This website is partially compliant with the
             @wcagExternalLink("Web Content Accessibility Guidelines version 2.1")
             AA standard.
@@ -86,22 +92,23 @@
     </section>
 
     @h2(content = Text("Feedback and contact information"))
-    <section class="text">
+    <section class="govuk-body">
         <p>If you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>email us at: @faststreamEmail</li>
         </ul>
         <p>It will help us if you can tell us what assistive technology you use.</p>
     </section>
 
     @h2(content = Text("Reporting accessibility problems with this website"))
-    <section class="text">
+    <section class="govuk-body">
         <p>We’re always looking to improve the accessibility of this website. If you find any problems not listed on this page or think we’re
-            not meeting accessibility requirements, @contactUsFaststreamEmail.</p>
+            not meeting accessibility requirements, @contactUsFaststreamEmail.
+        </p>
     </section>
 
     @h2(content = Text("Enforcement procedure"))
-    <section class="text">
+    <section class="govuk-body">
         <p>The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications)
             (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’). If you’re not happy with how we respond to your complaint,
             @externalLink("https://www.equalityadvisoryservice.com", "contact the Equality Advisory and Support Service (EASS)").
@@ -114,7 +121,7 @@
     </section>
 
     @h2(content = Text("Compliance status"))
-    <section class="text">
+    <section class="govuk-body">
         <p>This website is partially compliant with the
             @wcagExternalLink("Web Content Accessibility Guidelines version 2.1") AA standard.
             We plan to test and resolve any issues by March 2022.
@@ -122,12 +129,12 @@
     </section>
 
     @h2(content = Text("Disproportionate burden"))
-    <section class="text">
+    <section class="govuk-body">
         <p>At this time, we have not made any disproportionate burden claims.</p>
     </section>
 
     @h2(content = Text("Preparation of this accessibility statement"))
-    <section class="text">
+    <section class="govuk-body">
         <p>This statement was prepared on 22 September 2021.</p>
         <p>It was last reviewed on 22 September 2021.</p>
         <p>This website was last tested on 08 September 2021 and was checked for compliance with WCAG 2.1 AA.
