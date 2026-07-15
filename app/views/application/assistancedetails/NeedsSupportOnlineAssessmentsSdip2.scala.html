@@ -15,10 +15,13 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import views.html.components.Heading2
 
 @this(
-        h2: Heading2
+        h2: Heading2,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @()(implicit messages: Messages)
@@ -43,13 +46,18 @@
 
 @h2(content = Text("Online tests"))
 
-<p class="form-hint text">
+<p class="govuk-body">
     The online tests are untimed.</br>
     We want to support you if you have an adjustment need.</br>
     Further information on adjustments can be found
+    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+        text = "here",
+        href = Some("https://www.gov.uk/government/publications/civil-service-fast-stream-promoting-diversity-and-inclusion")
+    ))
+@*
     <a class="govuk-link" id="adjustmentsFurtherInformation"
     href="https://www.gov.uk/government/publications/civil-service-fast-stream-promoting-diversity-and-inclusion" target="_blank" rel="external">here
         <span class="visuallyhidden">link opens new window</span></a>.</br>
-
+*@
     Please <a id="contactUsForOnlineAssessment" href="@routes.ApplicationController.helpdesk" class="govuk-link">contact us</a> if you have an adjustment need.
 </p>

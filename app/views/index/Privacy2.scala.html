@@ -17,43 +17,52 @@
 @import config.TrackingConsentConfig
 @import helpers.{ServiceNavigationItems, Title}
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import views.html.components.{Heading1, Heading2, Layout}
 
 @this(
         mainLayout: Layout,
         h1: Heading1,
-        h2: Heading2
+        h2: Heading2,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @()(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @contactUs = {
+    @*
     <a class="govuk-link" href="https://cabinetofficefset.freshdesk.com/support/home" target="_blank" rel="external">https://cabinetofficefset.freshdesk.com/support/home</a>
+    *@
+    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+        text = "https://cabinetofficefset.freshdesk.com/support/home",
+        href = Some("https://cabinetofficefset.freshdesk.com/support/home")
+    ))
 }
 
 @mainLayout(Title("Privacy policy"), navigation = ServiceNavigationItems(user)) {
     @h1(content = Text("Privacy policy"))
 
-    <section class="text">
+    <section class="govuk-body">
         <p>
             This notice sets out how we will use your personal data, and your rights. It is made under Articles 13 and/or 14 of the General Data Protection Regulation (GDPR).
         </p>
     </section>
 
-	<section class="text">
+	<section class="govuk-body">
         @h2(content = Text("Your data"))
         <p><strong>The data</strong></p>
 	    <p>We will process the following personal data:</p>
 	    <p>When you create an account:</p>
-	    <ul>
+	    <ul class="govuk-list govuk-list--bullet">
             <li>full name</li>
             <li>personal email address</li>
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>When you make an application to the Fast Stream or Summer Internship Programme we ask for:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>full contact details, including address and telephone number</li>
             <li>date of birth</li>
             <li>eligibility – nationality and immigration status</li>
@@ -64,7 +73,7 @@
             <li>physical or mental health condition, illness, impairment or disability information</li>
             <li>reasonable adjustment requirements</li>
             <li>diversity and inclusion information, including</li>
-            <ul>
+            <ul class="govuk-list govuk-list--bullet">
                 <li>gender, sexual orientation and ethnicity</li>
                 <li>type of school attended</li>
                 <li>university/universities attended</li>
@@ -76,9 +85,9 @@
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>If you pass the online tests we may also ask for:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>additional information about your nationality and immigration status</li>
             <li>degree and detailed module information</li>
             <li>personal statement</li>
@@ -86,19 +95,19 @@
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>When you are invited to an assessment centre or later interview we may also ask you to provide:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>evidence of your identity and right to work in the UK - such as your passport, utility bills or other documentation</li>
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>When you undergo pre-employment checks we may also ask for:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>bank account details</li>
             <li>ID / address verification documentation such as:</li>
-            <ul>
+            <ul class="govuk-list govuk-list--bullet">
                 <li>drivers licence</li>
                 <li>birth certificate</li>
                 <li>marriage / civil partnerships</li>
@@ -128,9 +137,9 @@
         <p>The list above only applies for applications made through the apply civil service fast stream service. Some advertisers may use their own application systems, in which their privacy notice will apply</p>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>For applicants who are current civil servants we also ask for:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>work email address</li>
             <li>line manager’s email address</li>
             <li>employer</li>
@@ -138,32 +147,32 @@
         </ul>
 	</section>
 
-    <section class="text">
+    <section class="govuk-body">
         <p>When accessing our OnBoarding Zone we will process your:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>personal email address</li>
         </ul>
     </section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>When you contact us with feedback or an enquiry we will process:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>personal email address</li>
             <li>the details of your request, which could include any of the above data</li>
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>When we conduct feedback surveys we will process your:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>anonymised feedback and answers provided</li>
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
         @h2(content = Text("Purpose"))
 	    <p>The purposes for which we are processing your personal data are:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>to manage recruitment for Civil Service organisations and non-departmental public bodies. This includes an online application service, online tests and sift tests.</li>
             <li>to enable the creation of user accounts</li>
             <li>to provide general and technical support to candidates</li>
@@ -176,10 +185,10 @@
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
         @h2(content = Text("Legal basis of processing"))
 	    <p>The legal basis for processing your personal data is:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>Contractual: it is necessary for the performance of a contract to which you are a party - an employment contract</li>
             <li>Contractual: it is necessary in order to take steps at your request prior to entering into a contract for employment</li>
             <li>Legal obligation: it is necessary to comply with a legal obligation placed on us as the data controller - we are required to report on equality of opportunity; and onboarding processes have specific requirements</li>
@@ -188,9 +197,9 @@
         <p>Sensitive personal data is personal data revealing racial or ethnic origin, political opinions, religious or philosophical beliefs, or trade union membership, and the processing of genetic data, biometric data for the purpose of uniquely identifying a natural person, data concerning health or data concerning a natural person's sex life or sexual orientation.</p>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>The legal basis for processing your sensitive personal data is:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>it is necessary for reasons of substantial public interest for the exercise of a function of the Crown, a Minister of the Crown, or a government department; the exercise of a function conferred on a person by an enactment. Civil Service Fast Stream facilitates recruitment of high-quality candidates to roles across government departments, agencies and other public bodies. It provides recruitment tools and processes that support Civil Service Fast Stream recruitment strategy.</li>
             <li>it is necessary for the purposes of performing or exercising our obligations or rights as the controller, or your obligations or rights as the data subject, under employment law, social security law or the law relating to social protection. External recruitment is required to follow the Civil Service Commission Recruitment Principles. Personal data is processed to ensure that these requirements are met. We are required under the Equality Act 2010 to make appropriate reasonable adjustments for candidates with a disability.</li>
             <li>processing is of a specific category of personal data and it is necessary for the purposes of identifying or keeping under review the existence or absence of equality of opportunity or treatment between groups of people with a view to enabling such equality to be promoted or maintained. Diversity and inclusion data is used anonymously: ethnicity, religion, and sexual orientation.</li>
@@ -198,25 +207,25 @@
         </ul>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
 	    <p>The processing by us of personal data relating to criminal convictions and offences or related security measures is not carried out under official authority, but is authorised because it meets the following condition:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>it is necessary for reasons of substantial public interest for the exercise of a function of the Crown, a Minister of the Crown, or a government department; the exercise of a function conferred on a person by an enactment.</li>
         </ul>
 	</section>
 
-    <section class="text">
+    <section class="govuk-body">
         @h2(content = Text("Recipients"))
         <p>Your personal data will be shared by us with:</p>
         <p>Account data:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>our technical suppliers and their approved staff</li>
         </ul>
     </section>
 
-    <section class="text">
+    <section class="govuk-body">
         <p>Once you have made an application, your information may be shared with:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>approved staff managing vacancies (including recruiters and interview panel members)</li>
             <li>Fast Stream recruitment team </li>
             <li>Fast Stream Emerging Talent team</li>
@@ -225,16 +234,16 @@
         </ul>
     </section>
 
-    <section class="text">
+    <section class="govuk-body">
         <p>If you request support with your application or for a technical issue:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>approved staff from Cabinet Office </li>
             <li>our technical suppliers and their approved staff</li>
             <li>service management system</li>
             <li>technical suppliers of online tests</li>
         </ul>
         <p>Once you have been appointed into a role:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>approved staff from Cabinet Office</li>
             <li>your Activity Manager within the department you are posted to</li>
             <li>with secondment host organisations you are posted to</li>
@@ -245,7 +254,7 @@
             <li>the Profession Assessor</li>
         </ul>
         <p>While on the Fast Stream or Summer Internship Programme:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>approved staff from Cabinet Office</li>
             <li>our technical suppliers and their approved staff for our service management system, and HR and payroll systems</li>
             <li>your Activity Manager within the department you are posted to</li>
@@ -256,7 +265,7 @@
             <li>the Profession Assessor</li>
         </ul>
         <p>When you leave the Fast Stream or Summer Internship Programme:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>approved staff from Cabinet Office</li>
             <li>our technical suppliers and their approved staff for our service management system, and HR and payroll systems</li>
             <li>your Activity Manager within the department you were posted to</li>
@@ -269,7 +278,7 @@
         <p>As your personal data will be stored on our IT infrastructure it will also be shared with our data processors who provide email and document management and storage services to us.</p>
     </section>
 
-    <section class="text">
+    <section class="govuk-body">
         @h2(content = Text("Retention"))
         <p>Your personal data will be kept by us in for the following durations:</p>
         <p>Enquiries made through our Service Management Platform will be held in identifiable form in line with the below user status (applicant, candidate, successful candidate, Employees on-scheme, on exit). This data will then be anonymised and used for historical trend analysis of the enquiries including query category and response times.</p>
@@ -281,7 +290,7 @@
         <p>Feedback during surveys will be retained within our Civil Service data analysis systems for up to 10 years for research and analysis purposes. This data will be processed at an aggregate (group) level, so no individual participant can be identified from any analysis outputs.</p>
     </section>
 
-    <section class="text">
+    <section class="govuk-body">
         @h2(content = Text("Automated decision making"))
         <p>Your personal data will be subject to automated decision making when online psychometric tests are used.</p>
         <p>The Fast Stream use online psychometric tests. in the early stages of recruitment.</p>
@@ -289,12 +298,12 @@
         <p>Your score is calculated from the responses you give during the test, and no other information about you is used. We compare your score to those gained by a peer group who previously took the test, to give you a standardised normative score. The Fast Stream will have a minimum standardised normative score requirement, and if your score is lower than this, you will be rejected and your application will not be considered further.</p>
     </section>
 
-    <section class="text">
+    <section class="govuk-body">
         @h2(content = Text("Your rights"))
         <p>You have the right to request information about how your personal data is processed, and to request a copy of that personal data.
             You have the right to request a copy of any personal data you have provided, and for this to be provided in a structured, commonly used and machine-readable format.
         </p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>your personal data except diversity data is available to view in your online account at any time</li>
             <li>you can request a copy of your personal data, in machine-readable format, by contacting us here @contactUs - this request may take up to four weeks to process</li>
         </ul>
@@ -302,29 +311,29 @@
         <p>You have the right to request that any incomplete personal data are completed.</p>
         <p>You have the right to request that your personal data is erased if there is no longer a justification for it to be processed.</p>
         <p>You have the right in certain circumstances (for example, where accuracy is contested) to request that the processing of your personal data is restricted.</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>if your data is restricted from processing, you cannot be considered for a job</li>
         </ul>
         <p>You have the right to object to the processing of your personal data where it is processed for direct marketing purposes.</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>your data is not processed for direct marketing purposes</li>
         </ul>
         <p>You have the right to object to the processing of your personal data.</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>you can object to processing, although you will then be unable to be considered for a job</li>
         </ul>
         <p>You have the right, in relation to automatic profiling, to obtain human intervention in the outcome, to express your point of view, and to contest the decision reached by automatic profiling.</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             <li>you can contact us here @contactUs</li>
         </ul>
     </section>
 
-	<section class="text">
+	<section class="govuk-body">
         @h2(content = Text("International transfers"))
 	    <p>As your personal data is stored on our IT infrastructure, and shared with our data processors who provide email, and document management and storage services, it may be transferred and stored securely outside the European Economic Area. Where that is the case it will be subject to equivalent legal protection through the use of Model Contract Clauses.</p>
 	</section>
 
-	<section class="text">
+	<section class="govuk-body">
         @h2(content = Text("Complaints"))
 	    <p>
             If you consider that your personal data has been misused or mishandled, you may make a complaint to the Information Commissioner, who is an independent regulator. The Information Commissioner can be contacted at:</br>
@@ -340,7 +349,7 @@
     <p>Any complaint to the Information Commissioner is without prejudice to your right to seek redress through the courts.</p>
 	</section>
 
-    <section class="text">
+    <section class="govuk-body">
         @h2(content = Text("Contact details"))
         <p>Cabinet Office is the data controller for your account details, and for any applications you have not yet submitted.</p>
         <p>Cabinet Office and the department you apply to are joint data controllers for your personal data within your submitted applications.</p>
@@ -365,7 +374,7 @@
         <p>The Data Protection Officer provides independent advice and monitoring of Cabinet Office’s use of personal information.</p>
     </section>
 
-    <section class="text">
+    <section class="govuk-body">
         @h2(content = Text("Updates to this notice"))
         <p>If this privacy notice changes in any way, we will place an updated version on this page. Regularly reviewing this page ensures you are always aware of what information we collect, how we use it, and under what circumstances we will share it with other parties. Last updated: 08 Oct 2025</p>
     </section>
