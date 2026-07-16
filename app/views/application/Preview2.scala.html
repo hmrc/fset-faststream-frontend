@@ -23,10 +23,12 @@
 @import security.RoleUtils._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, Fieldset, FormWithCSRF, GovukButton, Legend, Text}
 @import views.html.components.Layout
+@import views.html.components.Heading1
 
 @this(
         govukButton: GovukButton,
         formWithCSRF: FormWithCSRF,
+        h1: Heading1,
         mainLayout: Layout
 )
 
@@ -56,10 +58,19 @@
     }
 }
 
+@headingText: String = @{
+    applicationData.applicationStatus match {
+        case SUBMITTED => "View your submitted application"
+        case WITHDRAWN => "View your withdrawn application"
+        case _ => "Check your application"
+    }
+}
+
 @mainLayout(Title("Check your application"), navigation = ServiceNavigationItems(user)) {
 
     <div class="grid-wrapper">
       <div class="grid grid-2-3">
+@*
         <h1 class="heading-xlarge" id="checkApplicationHeading">
             @(applicationData.applicationStatus match {
                 case SUBMITTED => "View your submitted application"
@@ -67,6 +78,9 @@
                 case _ => "Check your application"
             })
         </h1>
+*@
+        @* TODO : does this need to support an id ???*@
+        @h1(content = Text(headingText))
       </div>
 
       <div class="grid grid-1-3">

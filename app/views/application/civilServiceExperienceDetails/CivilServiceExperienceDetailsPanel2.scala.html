@@ -17,6 +17,8 @@
 @import helpers.TemplateHelper.maybeDisplayError
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 @import uk.gov.hmrc.govukfrontend.views.html.components.{CheckboxItem, Checkboxes, Fieldset, GovukCheckboxes, GovukInput, GovukRadios, Hint, Input, Label, Legend, RadioItem, Radios, Text}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import views.html.components.Heading2
 @import views.html.components.InputSelectAutoComplete
 
@@ -25,24 +27,33 @@
         govukRadios: GovukRadios,
         govukInput : GovukInput,
         h2: Heading2,
-        inputSelectAutoComplete: InputSelectAutoComplete
+        inputSelectAutoComplete: InputSelectAutoComplete,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @(form: Form[forms.PersonalDetailsForm.Data], schemesRequiringQualifications: Seq[String])(implicit messages: Messages)
 
 @currentlyCivilServantHtml = {
     @h2(content = Text("Current civil servants"))
-    <div class="govuk-template__body">
+    <div class="govuk-body">
         <p>As a current civil servant you're eligible to apply for most of the schemes without a degree.</p>
         <p>The schemes you'll need specific qualifications for are:</p>
-        <ul>
+        <ul class="govuk-list govuk-list--bullet">
             @schemesRequiringQualifications.map{ schemeName => <li>@schemeName</li> }
         </ul>
+        @*
         <p>Check the <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" rel="external" target="_blank">eligibility
             requirements<span class="visuallyhidden"> for Faststream</span> (link opens new window)</a>for more information.</p>
+            *@
+        <p>
+            @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                text = "eligibility requirements for Faststream",
+                href = Some("https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/")
+            )) for more information.
+        </p>
     </div>
 
-    <div class="">
+    <div>
 @*
         <div class="form-group">
         @helper.input(form("civilServiceExperienceDetails.civilServantDepartment"),
