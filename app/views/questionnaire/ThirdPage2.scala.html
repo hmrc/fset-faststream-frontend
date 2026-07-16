@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukRadios, Legend, RadioItem, Radios, Text}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
-@import views.html.components.{Heading1, InputRadios, Layout, PageTitle}
+@import views.html.components.{Heading1, Heading2, InputRadios, Layout, PageTitle}
 @import views.html.widgets.*
 
 @this(
@@ -31,6 +31,7 @@
         formWithCSRF: FormWithCSRF,
         mainLayout: Layout,
         h1: Heading1,
+        h2: Heading2,
         govukRadios: GovukRadios,
         inputRadios: InputRadios,
         pageTitle: PageTitle,
@@ -78,7 +79,7 @@
     @h1(content = Text("About your parents"))
     <div id="panel-why-collect-data" class="panel-info standard-panel">
         <div class="govuk-body">
-            <h2 class="heading-medium">Why do we ask about your parents?</h2>
+            @h2(content = Text("Why do we ask about your parents?"))
             @if(isFastStream) {
                 <p>Gathering anonymous data about the education and employment background of family members of applicants at age 14 can help us to understand the socio-economic background of our applicant group.</p>
             } else {

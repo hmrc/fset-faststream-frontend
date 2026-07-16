@@ -17,11 +17,12 @@
 @import config.TrackingConsentConfig
 @import helpers.{ServiceNavigationItems, Title}
 @import models.view.questionnaire.{Ethnicities, SexOrientations, Sexes}
-@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukErrorSummary, GovukRadios, GovukSelect, Hint, Label, Legend, Radios, RadioItem, Select, SelectItem, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichSelect
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
-@import views.html.components.{Heading1, Layout, PageTitle}
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+@import views.html.components.{Heading1, InputText, Layout, PageTitle}
 @import views.html.widgets.radioBoxHorizontal
 
 @this(
@@ -32,13 +33,20 @@
         h1: Heading1,
         govukRadios : GovukRadios,
         govukSelect : GovukSelect,
+        inputText: InputText,
         pageTitle: PageTitle
 )
 
 @(form: Form[forms.DiversityQuestionnaireForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@import helpers.CSRFieldConstructor.*
-@import views.html.widgets.{checkbox, pageProgress, radioBoxVertical, select_guard_multi}
+@sexOrientationOtherHtml = {
+    @inputText(
+        form("otherDegreeType"),
+        label = "Provide more information (optional)",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds"
+    )
+}
 
 @mainLayout(pageTitle(form, Title("About you")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "About you", pageForms = Seq(form)) {*@
@@ -103,6 +111,7 @@
             </fieldset>
         </section>
 *@
+@*
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -112,6 +121,40 @@
             )),
             name = "sexOrientation",
             items = SexOrientations.asRadioItems,
+        ).withFormField(form("sexOrientation")))
+*@
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("sexOrientation.question")),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "sexOrientation",
+            items = Seq(
+                RadioItem(
+                    content = Text("Heterosexual/straight"),
+                    value = Some("Heterosexual/straight")
+                ),
+                RadioItem(
+                    content = Text("Gay/lesbian"),
+                    value = Some("Gay/lesbian")
+                ),
+                RadioItem(
+                    content = Text("Bisexual"),
+                    value = Some("Bisexual")
+                ),
+                RadioItem(
+                    content = Text("Other"),
+                    value = Some("Other"),
+                    conditionalHtml = Some(sexOrientationOtherHtml)
+                ),
+                RadioItem(
+                    content = Text("I don't know/prefer not to say"),
+                    value = Some("I don't know/prefer not to say")
+                )
+            )
         ).withFormField(form("sexOrientation")))
 
         @*

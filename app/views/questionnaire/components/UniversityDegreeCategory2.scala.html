@@ -14,23 +14,30 @@
  * limitations under the License.
  *@
 
-@import views.html.questionnaire.components.postgradUniversityName
-@import views.html.widgets.radioBoxHorizontal
 @import helpers.TemplateHelper.maybeDisplayError
-@import views.html.questionnaire.components.postgradUniversity
-@import views.html.widgets.selectValueDifferentFromDisplayedText
-@import views.html.widgets.radioBoxVertical
 @import models.view.questionnaire.DegreeTypes
-
-@import views.html.components.InputSelect
-@import views.html.components.InputRadios
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import views.html.components.{InputRadios, InputSelect, InputText}
+@import views.html.questionnaire.components.{postgradUniversity, postgradUniversityName}
+@import views.html.widgets.{radioBoxHorizontal, radioBoxVertical, selectValueDifferentFromDisplayedText}
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 
 @this(
         inputSelect: InputSelect,
-        inputRadios: InputRadios
+        inputText: InputText,
+        govukRadios : GovukRadios
 )
 
 @(form: Form[forms.EducationQuestionnaireForm.Data])(implicit user: Option[CachedData], messages: Messages)
+
+@degreeTypesOtherHtml = {
+    @inputText(
+        form("otherDegreeType"),
+        label = "Please describe your degree",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds"
+    )
+}
 
 @inputSelect(
     field = form("universityDegreeCategory"),
@@ -40,12 +47,47 @@
     label = messages("universityDegreeCategory.question")
 )
 
+@*
 @inputRadios(
     field = form("degreeType"),
     name = "degreeType",
     items = models.view.questionnaire.DegreeTypes.asRadioItems,
     label = messages("degreeType.question")
 )
+*@
+
+@govukRadios(Radios(
+    fieldset = Some(Fieldset(
+        legend = Some(Legend(
+            content = Text(messages("degreeType.question")),
+            classes = "govuk-fieldset__legend--s"
+        ))
+    )),
+    name = "degreeType",
+    items = Seq(
+        RadioItem(
+            content = Text("BSc/MSc/Eng"),
+            value = Some("BSc/MSc/Eng")
+        ),
+        RadioItem(
+            content = Text("BA/MA/LLB/MBA"),
+            value = Some("BA/MA/LLB/MBA")
+        ),
+        RadioItem(
+            content = Text("PhD/DPhil/MRes - STEM"),
+            value = Some("PhD/DPhil/MRes - STEM")
+        ),
+        RadioItem(
+            content = Text("PhD/DPhil/MRes - non-STEM"),
+            value = Some("PhD/DPhil/MRes - non-STEM")
+        ),
+        RadioItem(
+            content = Text("Other"),
+            value = Some("Other"),
+            conditionalHtml = Some(degreeTypesOtherHtml)
+        )
+    )
+).withFormField(form("degreeType")))
 
 @*
 <section>

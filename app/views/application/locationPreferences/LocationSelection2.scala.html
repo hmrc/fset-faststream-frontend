@@ -16,6 +16,7 @@
 
 @import config.TrackingConsentConfig
 @import forms.SelectedLocationsForm.maxLocations
+@import helpers.{ServiceNavigationItems, Title}
 @import views.html.application.locationPreferences.locationsCheckboxGroup
 @import views.html.application.locationPreferences.interestsCheckboxGroup
 @import views.html.widgets.pageProgress
@@ -57,7 +58,7 @@
     <link href='@routes.Assets.versioned("css/font-awesome/css/font-awesome.min.css")' rel="stylesheet" type="text/css">
 }
 
-@mainLayout(pageTitle(form, "Choose your preferred locations").toString, javaScripts = Some(javaScripts), css = Some(css)) {
+@mainLayout(pageTitle(form, Title("Choose your preferred locations")).toString, navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
 @*main_template(title = "Choose your preferred locations", pageForms = Seq(form)) {*@
     @*pageProgress(2, 7)*@
 
