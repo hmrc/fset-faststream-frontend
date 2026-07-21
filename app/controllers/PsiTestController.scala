@@ -16,28 +16,32 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
+import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.ApplicationClient
 import connectors.exchange.PsiTest
 import helpers.NotificationTypeHelper
 
-import javax.inject.{ Inject, Singleton }
-import models.UniqueIdentifier
+import javax.inject.{Inject, Singleton}
+import models.{CachedData, UniqueIdentifier}
 import play.api.i18n.Messages
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
-import security.Roles.{ OnlineTestInvitedRole, Phase2TestInvitedRole, SiftNumericTestRole }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
+import security.Roles.{OnlineTestInvitedRole, Phase2TestInvitedRole, SiftNumericTestRole}
 import security.SilhouetteComponent
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.application.onlineTests.{ContinueTests2, Phase1TestsComplete2}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PsiTestController @Inject() (config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  applicationClient: ApplicationClient)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
+class PsiTestController @Inject()(config: FrontendAppConfig,
+                                  mcc: MessagesControllerComponents,
+                                  continueTestsTemplate: ContinueTests2,
+                                  phase1TestsCompleteTemplate: Phase1TestsComplete2,
+                                  val secEnv: SecurityEnvironment,
+                                  val silhouetteComponent: SilhouetteComponent,
+                                  val notificationTypeHelper: NotificationTypeHelper,
+                                  applicationClient: ApplicationClient)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
   def startPhase1Tests: Action[AnyContent] = CSRSecureAppAction(OnlineTestInvitedRole) { implicit request =>
     implicit cachedUserData =>
@@ -82,10 +86,12 @@ class PsiTestController @Inject() (config: FrontendAppConfig,
           val testCompletedName = Messages(s"tests.inventoryid.name.${testCompleted.inventoryId}")
 
           if (incompleteTestsExists(testGroup.activeTests)) {
-            Ok(views.html.application.onlineTests.continueTests(testCompletedName))
+//            Ok(views.html.application.onlineTests.continueTests(testCompletedName))
+            Ok(continueTestsView(testCompletedName))
           } else {
             // The applicationId is needed for the survey url
-            Ok(views.html.application.onlineTests.phase1TestsComplete(testGroup.applicationId, config.qualtricsSurveyEnabled))
+//            Ok(views.html.application.onlineTests.phase1TestsComplete(testGroup.applicationId, config.qualtricsSurveyEnabled))
+            Ok(phase1TestsCompleteView(testGroup.applicationId))
           }
         }
       }.recover {
@@ -94,6 +100,20 @@ class PsiTestController @Inject() (config: FrontendAppConfig,
           InternalServerError(s"Unable to complete phase 1 test for orderId=$orderId because ${ex.getMessage}")
       }
   }
+
+  private def continueTestsView(testCompletedName: String)(implicit request: Request[_], user: Option[CachedData]): Html =
+    if (config.enablePlayHmrcContinueTestsView) {
+      continueTestsTemplate(testCompletedName)
+    } else {
+      views.html.application.onlineTests.continueTests(testCompletedName)
+    }
+
+  private def phase1TestsCompleteView(applicationId: String)(implicit request: Request[_], user: Option[CachedData]): Html =
+    if (config.enablePlayHmrcPhase1TestsCompleteView) {
+      phase1TestsCompleteTemplate(applicationId, config.qualtricsSurveyEnabled)
+    } else {
+      views.html.application.onlineTests.phase1TestsComplete(applicationId, config.qualtricsSurveyEnabled)
+    }
 
   // Note that we do not work with the applicationId in the cached user data because if we are dealing with an
   // invigilated phase 2 candidate, the candidate may not already be logged in so the cached data is missing
@@ -117,7 +137,7 @@ class PsiTestController @Inject() (config: FrontendAppConfig,
           logger.warn("Exception when completing phase 2 tests", ex)
           InternalServerError(s"Unable to complete phase 2 test for orderId=$orderId because ${ex.getMessage}")
       }
-}
+  }
 
   def completeSiftTest(orderId: UniqueIdentifier): Action[AnyContent] = CSRUserAwareAction { implicit request =>
     implicit user =>

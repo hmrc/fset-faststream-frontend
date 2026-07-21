@@ -16,8 +16,10 @@
 
 package models.view
 
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+
 object WithdrawReasons {
-  val list = List(
+  val list: List[(String, Boolean)] = List(
     ("I accepted another job offer", false),
     ("I realised it was the wrong kind of job for me", false),
     ("I decided to take my studies further/pursue an academic career", false),
@@ -26,4 +28,7 @@ object WithdrawReasons {
     ("Other personal reasons", false),
     ("Other (provide details)", true)
   )
+
+  def asSelectItems: List[SelectItem] = List(SelectItem(value = None, text = "-- Select one --")) ++ list.map( (k, _) =>
+    SelectItem(value = Some(k), text = k))
 }

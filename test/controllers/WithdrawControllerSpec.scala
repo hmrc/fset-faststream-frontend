@@ -187,7 +187,10 @@ class WithdrawControllerSpec extends BaseControllerSpec {
         when(mockApplicationClient.hasAnalysisExercise(any[UniqueIdentifier]())(any[HeaderCarrier])).thenReturnAsync(hasAnalysisExerciseAlready)
       }
 
-      new WithdrawController(mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent,
+      val withdrawApplicationTemplate = mock[views.html.application.Withdraw2]
+      val withdrawSchemeTemplate = mock[views.html.home.SchemeWithdraw2]
+
+      new WithdrawController(mockConfig, stubMcc, withdrawApplicationTemplate, withdrawSchemeTemplate, mockSecurityEnv, mockSilhouetteComponent,
         mockNotificationTypeHelper, mockApplicationClient, mockReferenceDataClient, withdrawFormWrapper, schemeWithdrawFormWrapper)
         with TestableSecureActions {
         override val candidate: CachedData = CandidateExample

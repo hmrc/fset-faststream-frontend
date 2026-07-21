@@ -104,7 +104,11 @@ class PsiTestControllerSpec extends BaseControllerSpec {
   trait TestFixture extends BaseControllerTestFixture {
     when(mockApplicationClient.completeTestByOrderId(any[UniqueIdentifier])(any[HeaderCarrier]))
       .thenReturn(Future.successful(()))
-    val controller = new PsiTestController(mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent,
-    mockNotificationTypeHelper, mockApplicationClient) with TestableSecureActions
+
+    val continueTestsTemplate = mock[views.html.application.onlineTests.ContinueTests2]
+    val phase1TestsCompleteTemplate = mock[views.html.application.onlineTests.Phase1TestsComplete2]
+
+    val controller = new PsiTestController(mockConfig, stubMcc, continueTestsTemplate, phase1TestsCompleteTemplate, mockSecurityEnv,
+      mockSilhouetteComponent, mockNotificationTypeHelper, mockApplicationClient) with TestableSecureActions
   }
 }

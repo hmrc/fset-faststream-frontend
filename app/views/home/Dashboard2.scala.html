@@ -1,0 +1,233 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import connectors.exchange.SchemeEvaluationResultWithFailureDetails
+@import helpers.{ServiceNavigationItems, Title}
+@import models.ConsiderMeForSdipHelper.*
+@import models.page.*
+@import models.page.DashboardPage.Flags.*
+@import models.page.DashboardPage.activateByStep
+@import security.ProgressStatusRoleUtils.*
+@import security.QuestionnaireRoles.*
+@import security.RoleUtils.*
+@import security.Roles.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.{Heading1, Heading3, Layout}
+@import views.html.widgets.{OnlineTestProgress2, sdipFaststreamBanner}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
+
+@this(
+        h1: Heading1,
+        h3: Heading3,
+        mainLayout: Layout,
+        withdrawSection2: WithdrawSection2,
+        onlineTestProgress2: OnlineTestProgress2,
+        renderSchemePreferences2: RenderSchemePreferences2,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
+)
+
+@(usr: CachedData, dashboardPage: DashboardPage,
+        assistanceDetails: Option[connectors.exchange.AssistanceDetails] = None,
+        adjustments: Option[Adjustments] = None,
+        submitApplicationsEnabled: Boolean,
+        displaySdipEligibilityInfo: Boolean, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails])(implicit request: Request[_], flash: Flash,
+        user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@renderProgressElement(showLink: Boolean, checked: Boolean, id: String)(link: Call)(body: Html) = {
+    <li id="@id"><i id="@id-icon" class='fa @if(checked) { fa-check } else {fa-minus} the-icon' aria-hidden="true"></i> @if(showLink) {
+        <a id="@id-link" href="@link">@body</a>
+    } else {
+        @body
+    }
+    </li>
+}
+
+@cannotBeConsideredForSdip = @{
+    displaySdipEligibilityInfo && isFaststreamOnly(usr) &&
+        faststreamerNotEligibleForSdip(usr).isDefinedAt(usr.application)
+}
+
+@disableDashboardMayBe = @{
+    if(!submitApplicationsEnabled || cannotBeConsideredForSdip) "disabled" else ""
+}
+
+@displayLeadInformation = @{(cannotBeConsideredForSdip, submitApplicationsEnabled) match {
+    case (true, _) => sdipEligibilityInfo(usr)
+    case (_, false) => submit_disabled(usr)
+    case _ if WithdrawnApplicationRole.isAuthorized(usr) => withdrawInformation(usr)
+    case _ => fastPassRejectedInfo(usr)
+}}
+
+@renderProgressElements = {
+    <li><i class="fa fa-check the-icon" aria-hidden="true"></i>Create your account</li>
+    @renderProgressElement(showLink = EditPersonalDetailsAndContinueRole.isAuthorized(usr), checked = SchemesRole.isAuthorized(usr), "personalDetailsStep")(routes.PersonalDetailsController.presentAndContinue) {Add personal details }
+    @if(isFaststream(usr)) {
+        @renderProgressElement(showLink = SchemesRole.isAuthorized(usr), checked = hasSchemes(usr), "schemesStep")(routes.SchemePreferencesController.present) { Choose your schemes }
+    }
+    @if(isSdip(usr)) {
+        @renderProgressElement(showLink = LocationsRole.isAuthorized(usr), checked = hasLocations(usr), "locationsStep")(routes.LocationPreferencesController.present) { Choose your locations }
+    }
+    @renderProgressElement(showLink = AssistanceDetailsRole.isAuthorized(usr) || hasAssistanceDetails(usr), checked = hasAssistanceDetails(usr), "assistanceDetailsStep")(routes.AssistanceDetailsController.present) { Disability and health conditions }
+    @renderProgressElement(showLink = QuestionnaireInProgressRole.isAuthorized(usr), checked = PreviewApplicationRole.isAuthorized(usr), "questionnaireStep")(routes.QuestionnaireController.presentStartOrContinue) { Fill in the diversity questions }
+    @renderProgressElement(showLink = PreviewApplicationRole.isAuthorized(usr), checked = SubmitApplicationRole.isAuthorized(usr), "previewStep")(routes.PreviewApplicationController.present) { Check your application }
+    @renderProgressElement(showLink = SubmitApplicationRole.isAuthorized(usr), checked = AbleToWithdrawApplicationRole.isAuthorized(usr), "submitStep")(routes.SubmitApplicationController.presentSubmit) { Submit }
+}
+
+@css = {
+    <link href='@routes.Assets.versioned("css/legacy.css")' media="all" rel="stylesheet" type="text/css">
+    <link href='@routes.Assets.versioned("css/font-awesome/css/font-awesome.min.css")' rel="stylesheet" type="text/css">
+}
+
+@mainLayout(Title("Home"), navigation = ServiceNavigationItems(user), css = Some(css)) {
+@*main_template(title = "Home") {*@
+
+    @sdipFaststreamBanner(usr)
+
+    <div>
+        <span class="govuk-caption-l">@dashboardPage.fullName</span>
+        @h1(content = Text("Home"))
+    </div>
+
+    @displayLeadInformation
+
+    <section class="section-border govuk-body">
+        <ol class="step-by-step-coloured @disableDashboardMayBe" id="sixSteps">
+            <li class="step text first-step @activateByStep(dashboardPage.firstStepVisibility)">
+                @*
+                <h2 class='@if(dashboardPage.isApplicationInProgress) {heading-large} else {heading-medium} '>
+                    1. Apply</h2>*@
+                @h3(content = Text("1. Apply"))
+                @if(!dashboardPage.isApplicationWithdrawn) {
+                    <ul class="list-text list-withicons">
+                        @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn) {
+                            <li><i class='fa fa-check the-icon' aria-hidden="true"></i>Your application has been submitted</li>
+                        }
+                        @if(dashboardPage.isApplicationInProgress) {
+                            @renderProgressElements
+                        }
+                    </ul>
+                }
+
+                @if(dashboardPage.isApplicationSubmittedAndNotWithdrawn || (dashboardPage.isPhase3TestPassedNotified && !dashboardPage.isApplicationWithdrawn)) {
+                    <p><a class="govuk-link" id="view-application" href="@routes.PreviewApplicationController.present">View your submitted application</a></p>
+                    <p><a class="govuk-link" id="edit-personal-details" href="@routes.PersonalDetailsController.present">Edit your personal details</a></p>
+                    @if(isFaststream(usr) && !dashboardPage.isTestGroupExpired && !dashboardPage.isPhase1TestFailed) {
+                        <p><a class="govuk-link" id="withdraw-schemes" a href="@routes.WithdrawController.presentWithdrawScheme">
+                            Withdraw from individual schemes</a></p>
+                    }
+                    @renderSchemePreferences2(cssDescriptions)
+                }
+
+                @if(dashboardPage.isApplicationSubmittedCheckFailed) {
+                    <div id="submittedCheckFailed">
+                        <p>We've assessed your SEB (socio-economic background) score and unfortunately, you've been unsuccessful this time.</p>
+                        <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil
+                            Service jobs</a>
+                            site for more opportunities with us.</p>
+                    </div>
+                }
+
+                @if(dashboardPage.isApplicationWithdrawn) {
+                    <a class="govuk-link" id="view-withdrawn-application" href="@routes.PreviewApplicationController.present">
+                        View your withdrawn application</a>
+                    @if(dashboardPage.phase1TestsPage.exists(_.hasAtLeastOneFeedbackReport)) {
+                        <p><a class="govuk-link" id="view-test-results" href="@routes.TestResultsController.present">
+                            View your test results</a><p>
+                    }
+                }
+
+                @if(dashboardPage.isApplicationInProgress) {
+                    <a class="govuk-link" id="continue-application" href="@routes.HomeController.resume">
+                        Continue with your application</a>
+                    <p>(Should take 5 to 10 minutes to fill in)</p>
+                }
+
+                @if(dashboardPage.isUserWithNoApplication) {
+                    <ul class="list-text list-withicons">
+                        @renderProgressElements
+                    </ul>
+                    <a class="button" id="start-application" href="@routes.HomeController.create">
+                        Start your application</a>
+                    <p>(Should take 5 to 10 minutes to fill in)</p>
+                }
+            </li>
+            <li class="step text second-step @activateByStep(dashboardPage.secondStepVisibility)">
+                @*<h2 class="heading-medium">2. Take the online tests</h2>*@
+                @h3(content = Text("2. Take the online tests"))
+                @dashboardPage.assessmentStageStatus match {
+                    case ASSESSMENT_FAST_PASS_CERTIFICATE => {
+                        <div data-sdip>
+                            <p id="fast-pass-msg">We need to check and verify your certificate number before
+                                you can progress as a Fast Pass candidate.</p>
+                        </div>
+                    }
+                    case ASSESSMENT_FAST_PASS_APPROVED => {
+                        <div data-sdip>
+                            <p id="fast-pass-msg"><i class='fa fa-check the-icon' aria-hidden="true"></i>We have approved your Fast Pass.</p>
+                        </div>
+                    }
+                    case _ => {
+                        @onlineTestProgress2(usr, dashboardPage, assistanceDetails, adjustments)
+                    }
+                }
+            </li>
+            <li class="step text third-step @activateByStep(dashboardPage.thirdStepVisibility)">
+                @if(isFaststream(usr)) {
+                    @*<h2 class="heading-medium ">3. Provide additional information</h2>*@
+                    @h3(content = Text("3. Provide additional information"))
+                    @if(dashboardPage.assessmentStageStatus == ASSESSMENT_FAST_PASS_CERTIFICATE) {
+                        <p id="fast-pass-msg">Depending on your chosen schemes, you may need to answer some additional questions.</p>
+                    } else {
+                        <p>Depending on your chosen schemes, you may need to answer some additional questions.</p>
+                    }
+                    <p>
+                        @*<a href="https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-additional-information/" target="_blank">Find out more about the scheme specific questions</a>*@
+                        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                            text = "Find out more about the scheme specific questions",
+                            href = Some("https://www.civil-service-careers.gov.uk/fast-stream/fs-how-to-apply/fs-additional-information/")
+                        ))
+                    </p>
+                } else { @if(isEdip(usr) || isSdip(usr)) {
+                    @home.diversityInternExtraInfo(usr)
+                }}
+                <br>
+            </li>
+            <li class="step text fourth-step @activateByStep(dashboardPage.fourthStepVisibility)">
+                @if(isFaststream(usr)) {
+                    @*<h2 class="heading-medium ">4. Attend an assessment centre and final stages</h2>*@
+                    @h3(content = Text("4. Attend an assessment centre and final stages"))
+                    <p>If you pass the online tests and the scheme specific questions you'll be invited to attend an assessment centre.</p>
+                    <p>There may also be an additional assessment event for your chosen schemes.</p>
+                    <p>We aim to make your results available as soon as possible.</p>
+                    <p>
+                        @*<a href="@dashboardPage.fsacGuideUrl" target="_blank">Find out more about the assessment centre</a>*@
+                        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                            text = "Find out more about the assessment centre",
+                            href = Some(dashboardPage.fsacGuideUrl)
+                        ))
+                    </p>
+                } else { @if(isEdip(usr) || isSdip(usr)) {
+                    @home.diversityInternFinalStages(usr)
+                }}
+            </li>
+        </ol>
+    </section>
+    @if(!dashboardPage.isEligibleForJobOffer) {
+        @withdrawSection2(usr)
+    }
+}
