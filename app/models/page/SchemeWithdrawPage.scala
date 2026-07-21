@@ -18,8 +18,12 @@ package models.page
 
 import forms.SchemeWithdrawForm
 import play.api.data.Form
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 case class SchemeWithdrawPage(
   schemes: Seq[(String, String)],
   form: Form[SchemeWithdrawForm.Data]
-)
+) {
+    def schemesAsSelectItems: List[SelectItem] = List(SelectItem(value = None, text = "-- Select one --")) ++ schemes.map((k, _) =>
+      SelectItem(value = Some(k), text = k))
+}

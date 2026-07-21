@@ -1,0 +1,53 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import helpers.{ServiceNavigationItems, Title}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukPanel, Panel, Text}
+@import views.html.components.{Heading2, Layout}
+
+@this(
+        mainLayout: Layout,
+        govukPanel : GovukPanel,
+        h2: Heading2
+)
+
+@(testCompletedName: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl:
+        String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@mainLayout(Title(s"$testCompletedName complete"), navigation = ServiceNavigationItems(user)) {
+
+    @govukPanel(Panel(
+        title = Text("Exercise complete")
+    ))
+
+    <section>
+        <div class="govuk-body">
+            <p>You've completed the @{testCompletedName}. </p>
+            @h2(content = Text("What you need to do next"))
+            <div class="govuk-inset-text">
+                <p>To complete the next exercise you need to return to your homepage.</p>
+            </div>
+
+        </div>
+        @if(user.isDefined){
+            <a href="@routes.HomeController.present()" class="govuk-link">Continue to the home page</a>
+        } else {
+            <a href="@routes.SignInController.signIn" class="govuk-link">Continue to the sign in page</a>
+        }
+    </section>
+}

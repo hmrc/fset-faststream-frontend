@@ -14,25 +14,24 @@
  * limitations under the License.
  *@
 
-@import config.TrackingConsentConfig
-@import views.html.components.{Heading1, Layout}
+@import security.Roles._
+@import security.RoleUtils._
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.Heading3
 
 @this(
-        mainLayout: Layout,
-        h1: Heading1
+        h3: Heading3
 )
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(usr: CachedData)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String)
 
-@mainContent = {
-    @h1(content = Text(heading))
-    <div class="govuk-body">
-        <p>@message</p>
-        <a href="@routes.HomeController.present()" class="govuk-link">Return to home</a>
-    </div>
-}
-
-@mainLayout(pageTitle) {
-    @mainContent
+@if(WithdrawComponent.isAuthorized(usr)) {
+    <section id="withdrawSection">
+        @h3(content = Text("Withdraw application"))
+        <div class="govuk-body">
+            <p>If you no longer wish to proceed with your application you can withdraw
+                at any time.</p>
+            <a id="withdraw-app" href="@routes.WithdrawController.presentWithdrawApplication" class="govuk-link">Withdraw application</a>
+        </div>
+    </section>
 }

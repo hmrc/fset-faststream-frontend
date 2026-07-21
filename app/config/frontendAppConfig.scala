@@ -213,6 +213,21 @@ class FrontendAppConfig @Inject() (val config: Configuration, val environment: E
   lazy val enablePlayHmrcErrorHandlerView: Boolean =
     playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcErrorHandlerView").getOrElse(false)
 
+  lazy val enablePlayHmrcDashboardView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcDashboardView").getOrElse(false)
+
+  lazy val enablePlayHmrcContinueTestsView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcContinueTestsView").getOrElse(false)
+
+  lazy val enablePlayHmrcPhase1TestsCompleteView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcPhase1TestsCompleteView").getOrElse(false)
+
+  lazy val enablePlayHmrcWithdrawApplicationView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcWithdrawApplicationView").getOrElse(false)
+
+  lazy val enablePlayHmrcWithdrawSchemeView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcWithdrawSchemeView").getOrElse(false)
+
   lazy val qualtricsSurveyEnabled: Boolean = config.getOptional[Boolean]("qualtrics.survey.enabled").getOrElse(false)
   logger.warn(s"Qualtrics survey enabled=$qualtricsSurveyEnabled")
 

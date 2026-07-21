@@ -1,0 +1,146 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+@import views.html.widgets.{ radioBoxHorizontal, select_guard }
+@import helpers.CSRFieldConstructor._
+@import helpers.{ServiceNavigationItems, Title}
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukPanel, GovukTextarea, Panel, Text}
+@import views.html.components.{Heading1, Heading2, Layout}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichTextarea
+
+@this(
+        h1: Heading1,
+        h2: Heading2,
+        mainLayout: Layout,
+        formWithCSRF: FormWithCSRF,
+        govukButton: GovukButton,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukTextarea : GovukTextarea
+)
+
+@(withdrawForm: Form[forms.WithdrawApplicationForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@withdrawReasonOtherHtml = {
+    @govukTextarea(Textarea(
+        id = "otherReason",
+        name = "otherReason",
+        rows = 6,
+        label = Label(
+            classes = "govuk-label--s",
+            content = Text("More information about your withdrawal")
+        )
+    ).withFormField(withdrawForm("otherReason")))
+}
+
+@withdrawHtml = {
+    <div>
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Tell us why you're withdrawing"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "reason",
+            items = Seq(
+                RadioItem(
+                    content = Text("I accepted another job offer"),
+                    value = Some("I accepted another job offer")
+                ),
+                RadioItem(
+                    content = Text("I realised it was the wrong kind of job for me"),
+                    value = Some("I realised it was the wrong kind of job for me")
+                ),
+                RadioItem(
+                    content = Text("I decided to take my studies further/pursue an academic career"),
+                    value = Some("I decided to take my studies further/pursue an academic career")
+                ),
+                RadioItem(
+                    content = Text("I changed my mind about wanting a career in the Civil Service"),
+                    value = Some("I changed my mind about wanting a career in the Civil Service")
+                ),
+                RadioItem(
+                    content = Text("Online tests looked too demanding/difficult"),
+                    value = Some("Online tests looked too demanding/difficult")
+                ),
+                RadioItem(
+                    content = Text("Other personal reasons"),
+                    value = Some("Other personal reasons")
+                ),
+                RadioItem(
+                    content = Text("Other (provide details)"),
+                    value = Some("Other (provide details)"),
+                    conditionalHtml = Some(withdrawReasonOtherHtml)
+                )
+            )
+        ).withFormField(withdrawForm("reason")))
+    </div>
+
+    @govukButton(Button(
+        content = Text("Withdraw my application"),
+        inputType = Some("submit"),
+        preventDoubleClick = Some(true)
+    ))
+}
+
+@mainLayout(Title("Withdraw your application"), navigation = ServiceNavigationItems(user)) {
+
+    @if(withdrawForm.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(withdrawForm))
+    }
+
+    @h1(content = Text("Withdraw your application"))
+    <div class="govuk-inset-text">
+        <p>If you withdraw your application you will no longer be able to apply.
+            You will be unable to re-apply.</p>
+    </div>
+
+    @formWithCSRF(action = routes.WithdrawController.withdrawApplication) {
+
+        @h2(content = Text("Do you still want to withdraw?"))
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Do you still want to withdraw?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "wantToWithdraw",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("Yes"),
+                    conditionalHtml = Some(withdrawHtml)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("No")
+                )
+            )
+        ).withFormField(withdrawForm("wantToWithdraw")))
+    }
+    <div class="govuk-body">
+        <a class="govuk-link" id="dashboardLink" href="@routes.HomeController.present()">Return to home page</a>
+    </div>
+}

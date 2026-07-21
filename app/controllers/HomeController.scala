@@ -26,29 +26,32 @@ import models.ApplicationData.ApplicationStatus
 import models.*
 import models.page.*
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.twirl.api.Html
 import security.ProgressStatusRoleUtils.*
 import security.RoleUtils.*
 import security.Roles.*
 import security.{Roles, SilhouetteComponent}
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.home.Dashboard2
 
 import java.nio.file.{Files, Path}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  applicationClient: ApplicationClient,
-  refDataClient: ReferenceDataClient,
-  siftClient: SiftClient,
-  schemeClient: SchemeClient,
-  onboardQuestionsClient: OnboardQuestionsClient
-)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) with CampaignAwareController {
+class HomeController @Inject()(
+                                config: FrontendAppConfig,
+                                mcc: MessagesControllerComponents,
+                                dashboardTemplate: Dashboard2,
+                                val secEnv: SecurityEnvironment,
+                                val silhouetteComponent: SilhouetteComponent,
+                                val notificationTypeHelper: NotificationTypeHelper,
+                                applicationClient: ApplicationClient,
+                                refDataClient: ReferenceDataClient,
+                                siftClient: SiftClient,
+                                schemeClient: SchemeClient,
+                                onboardQuestionsClient: OnboardQuestionsClient
+                              )(implicit val ec: ExecutionContext) extends BaseController(config, mcc) with CampaignAwareController {
 
   val appRouteConfigMap: Map[ApplicationRoute.Value, ApplicationRouteState] = config.applicationRoutesFrontend
   val Withdrawer = "Candidate"
@@ -111,14 +114,14 @@ class HomeController @Inject() (
 
   def confirmAssessmentCentreAllocation(allocationVersion: String, eventId: UniqueIdentifier, sessionId: UniqueIdentifier): Action[AnyContent] =
     CSRSecureAction(ActiveUserRole) { implicit request =>
-    implicit cachedData =>
-      val alloc = CandidateAllocations.createConfirmed(Some(allocationVersion), cachedData.application.get.applicationId.toString)
-      applicationClient.confirmCandidateAllocation(eventId, sessionId, alloc).map { _ =>
-        Redirect(routes.HomeController.present()).flashing(success("assessmentCentre.event.confirm.success"))
-      }.recover {
-        case _: OptimisticLockException =>
-          Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.event.confirm.optimistic.lock"))
-      }
+      implicit cachedData =>
+        val alloc = CandidateAllocations.createConfirmed(Some(allocationVersion), cachedData.application.get.applicationId.toString)
+        applicationClient.confirmCandidateAllocation(eventId, sessionId, alloc).map { _ =>
+          Redirect(routes.HomeController.present()).flashing(success("assessmentCentre.event.confirm.success"))
+        }.recover {
+          case _: OptimisticLockException =>
+            Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.event.confirm.optimistic.lock"))
+        }
     }
 
   // If the candidate is fast pass then there will be no P1 data
@@ -171,63 +174,63 @@ class HomeController @Inject() (
 
   protected def getAllBytesInFile(path: Path): Array[Byte] = Files.readAllBytes(path)
 
-//  private lazy val validMSWordContentTypes = List(
-//    "application/msword",
-//    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-//  )
+  //  private lazy val validMSWordContentTypes = List(
+  //    "application/msword",
+  //    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  //  )
 
-//  private lazy val maxAnalysisExerciseFileSizeInBytes = 4096 * 1024
-//  private lazy val minAnalysisExerciseFileSizeInBytes = 1024
+  //  private lazy val maxAnalysisExerciseFileSizeInBytes = 4096 * 1024
+  //  private lazy val minAnalysisExerciseFileSizeInBytes = 1024
 
-/*
-  def submitAnalysisExercise(): Action[AnyContent] = CSRSecureAppAction(AssessmentCentreRole) { implicit request =>
-    implicit cachedData =>
-      val applicationId = cachedData.application.applicationId
+  /*
+    def submitAnalysisExercise(): Action[AnyContent] = CSRSecureAppAction(AssessmentCentreRole) { implicit request =>
+      implicit cachedData =>
+        val applicationId = cachedData.application.applicationId
 
-      request.asInstanceOf[Request[AnyContent]].body.asMultipartFormData.flatMap { multiPartRequest =>
-        multiPartRequest.file("analysisExerciseFile").map {
-          case document if document.ref.path.toFile.length() > maxAnalysisExerciseFileSizeInBytes =>
-            logger.warn(s"File upload rejected as too large for applicationId $applicationId (Size: ${document.ref.path.toFile.length()})")
-            Future.successful(Redirect(routes.HomeController.present()).flashing(
-              danger("assessmentCentre.analysisExercise.upload.tooBig")))
-          case document if document.ref.path.toFile.length() < minAnalysisExerciseFileSizeInBytes =>
-            logger.warn(s"File upload rejected as too small for applicationId $applicationId (Size: ${document.ref.path.toFile.length()})")
-            Future.successful(Redirect(routes.HomeController.present()).flashing(
-              danger("assessmentCentre.analysisExercise.upload.tooSmall")))
-          case document =>
-            document.contentType match {
-              case Some(contentType) if validMSWordContentTypes.contains(contentType) =>
-                logger.warn(s"File upload accepted for applicationId $applicationId (Size: ${document.ref.path.toFile.length()})")
-                applicationClient.uploadAnalysisExercise(applicationId, contentType,
-                  getAllBytesInFile(document.ref.path)).map { _ =>
-                  Redirect(routes.HomeController.present()).flashing(
-                    success("assessmentCentre.analysisExercise.upload.success"))
-                }.recover {
-                  case _: CandidateAlreadyHasAnAnalysisExerciseException =>
-                    logger.warn(s"A duplicate written advice exercise submission was attempted " +
-                      s"(applicationId = $applicationId)")
+        request.asInstanceOf[Request[AnyContent]].body.asMultipartFormData.flatMap { multiPartRequest =>
+          multiPartRequest.file("analysisExerciseFile").map {
+            case document if document.ref.path.toFile.length() > maxAnalysisExerciseFileSizeInBytes =>
+              logger.warn(s"File upload rejected as too large for applicationId $applicationId (Size: ${document.ref.path.toFile.length()})")
+              Future.successful(Redirect(routes.HomeController.present()).flashing(
+                danger("assessmentCentre.analysisExercise.upload.tooBig")))
+            case document if document.ref.path.toFile.length() < minAnalysisExerciseFileSizeInBytes =>
+              logger.warn(s"File upload rejected as too small for applicationId $applicationId (Size: ${document.ref.path.toFile.length()})")
+              Future.successful(Redirect(routes.HomeController.present()).flashing(
+                danger("assessmentCentre.analysisExercise.upload.tooSmall")))
+            case document =>
+              document.contentType match {
+                case Some(contentType) if validMSWordContentTypes.contains(contentType) =>
+                  logger.warn(s"File upload accepted for applicationId $applicationId (Size: ${document.ref.path.toFile.length()})")
+                  applicationClient.uploadAnalysisExercise(applicationId, contentType,
+                    getAllBytesInFile(document.ref.path)).map { _ =>
                     Redirect(routes.HomeController.present()).flashing(
-                      danger("assessmentCentre.analysisExercise.upload.error"))
-                }
-              case Some(_) =>
-                logger.warn(s"File upload rejected as wrong content type for applicationId $applicationId" +
-                  s" (Size: ${document.ref.path.toFile.length()})")
-                Future.successful(
-                  Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.analysisExercise.upload.wrongContentType"))
-                )
-            }
+                      success("assessmentCentre.analysisExercise.upload.success"))
+                  }.recover {
+                    case _: CandidateAlreadyHasAnAnalysisExerciseException =>
+                      logger.warn(s"A duplicate written advice exercise submission was attempted " +
+                        s"(applicationId = $applicationId)")
+                      Redirect(routes.HomeController.present()).flashing(
+                        danger("assessmentCentre.analysisExercise.upload.error"))
+                  }
+                case Some(_) =>
+                  logger.warn(s"File upload rejected as wrong content type for applicationId $applicationId" +
+                    s" (Size: ${document.ref.path.toFile.length()})")
+                  Future.successful(
+                    Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.analysisExercise.upload.wrongContentType"))
+                  )
+              }
+          }
+        }.getOrElse {
+          logger.info(s"A malformed file request was submitted as a written advice exercise " +
+            s"(applicationId = $applicationId)")
+          Future.successful(Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.analysisExercise.upload.error")))
         }
-      }.getOrElse {
-        logger.info(s"A malformed file request was submitted as a written advice exercise " +
-          s"(applicationId = $applicationId)")
-        Future.successful(Redirect(routes.HomeController.present()).flashing(danger("assessmentCentre.analysisExercise.upload.error")))
-      }
-  }
- */
+    }
+   */
 
   private def dashboardWithOnlineTests(implicit application: ApplicationData,
-    displaySdipEligibilityInfo: Boolean,
-    cachedData: CachedData, request: Request[_]) = {
+                                       displaySdipEligibilityInfo: Boolean,
+                                       cachedData: CachedData, request: Request[_]): Future[Result] = {
     for {
       adjustmentsOpt <- getAdjustments
       assistanceDetailsOpt <- getAssistanceDetails
@@ -244,20 +247,49 @@ class HomeController @Inject() (
         phase3Tests.map(Phase3TestsPage(_, adjustmentsOpt)),
         config.fsacGuideUrl
       )
+      //      Ok(
+      //        views.html.home.dashboard(
+      //          updatedData, dashboardPage, assistanceDetailsOpt,
+      //          adjustmentsOpt, submitApplicationsEnabled = true,
+      //          displaySdipEligibilityInfo, cssDescriptions
+      //        )
+      //      )
       Ok(
-        views.html.home.dashboard(
+        dashboardView(
           updatedData, dashboardPage, assistanceDetailsOpt,
-          adjustmentsOpt, submitApplicationsEnabled = true,
-          displaySdipEligibilityInfo, cssDescriptions
+          adjustmentsOpt, submitApplicationsEnabled = true, cssDescriptions
         )
       )
     }
   }
 
+  //scalastyle:off
+  private def dashboardView(updatedData: CachedData,
+                            dashboardPage: DashboardPage,
+                            assistanceDetailsOpt: Option[AssistanceDetails] = None,
+                            adjustmentsOpt: Option[Adjustments] = None,
+                            submitApplicationsEnabled: Boolean,
+                            cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails]
+                           )(implicit displaySdipEligibilityInfo: Boolean,
+                             cachedData: CachedData, request: Request[_]): Html =
+    if (config.enablePlayHmrcDashboardView) {
+      dashboardTemplate(
+        updatedData, dashboardPage, assistanceDetailsOpt,
+        adjustmentsOpt, submitApplicationsEnabled,
+        displaySdipEligibilityInfo, cssDescriptions
+      )
+    } else {
+      views.html.home.dashboard(
+        updatedData, dashboardPage, assistanceDetailsOpt,
+        adjustmentsOpt, submitApplicationsEnabled,
+        displaySdipEligibilityInfo, cssDescriptions
+      )
+    } //scalastyle:on
+
   private def dashboardWithoutOnlineTests(implicit application: ApplicationData,
-    displaySdipEligibilityInfo: Boolean,
-    cachedData: CachedData,
-    request: Request[_]): PartialFunction[Throwable, Future[Result]] = {
+                                          displaySdipEligibilityInfo: Boolean,
+                                          cachedData: CachedData,
+                                          request: Request[_]): PartialFunction[Throwable, Future[Result]] = {
     case _: OnlineTestNotFound =>
       val applicationSubmitted = !cachedData.application.forall { app =>
         app.applicationStatus == ApplicationStatus.CREATED || app.applicationStatus == ApplicationStatus.IN_PROGRESS
@@ -268,19 +300,25 @@ class HomeController @Inject() (
       for {
         cssDescriptions <- fetchCurrentSchemeStatusDescriptions(application.applicationId)
       } yield {
-        Ok(views.html.home.dashboard(
+//        Ok(views.html.home.dashboard(
+//          cachedData,
+//          dashboardPage,
+//          submitApplicationsEnabled = isDashboardEnabled,
+//          displaySdipEligibilityInfo = displaySdipEligibilityInfo,
+//          cssDescriptions
+//        ))
+        Ok(dashboardView(
           cachedData,
           dashboardPage,
           submitApplicationsEnabled = isDashboardEnabled,
-          displaySdipEligibilityInfo = displaySdipEligibilityInfo,
           cssDescriptions
-        ))
+        )(displaySdipEligibilityInfo = displaySdipEligibilityInfo))
       }
   }
 
   private def dashboardWithoutApplication(implicit cachedData: CachedData,
-    displaySdipEligibilityInfo: Boolean,
-    request: Request[_]) = {
+                                          displaySdipEligibilityInfo: Boolean,
+                                          request: Request[_]) = {
     val dashboardPage = DashboardPage(cachedData, phase1TestGroup = None, phase2TestGroup = None, phase3TestGroup = None, config.fsacGuideUrl)
     Future.successful(
       Ok(views.html.home.dashboard(cachedData, dashboardPage,
@@ -311,7 +349,7 @@ class HomeController @Inject() (
     }
 
   private def getAssistanceDetails(implicit application: ApplicationData,
-    hc: HeaderCarrier, cachedData: CachedData) =
+                                   hc: HeaderCarrier, cachedData: CachedData) =
     if (application.progress.assistanceDetails) {
       applicationClient.getAssistanceDetails(cachedData.user.userID, application.applicationId).map(a => Some(a))
     } else {
