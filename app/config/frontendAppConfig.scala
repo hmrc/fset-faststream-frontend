@@ -216,6 +216,9 @@ class FrontendAppConfig @Inject() (val config: Configuration, val environment: E
   lazy val enablePlayHmrcDashboardView: Boolean =
     playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcDashboardView").getOrElse(false)
 
+  lazy val enablePlayHmrcPostOnlineDashboardView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcPostOnlineDashboardView").getOrElse(false)
+
   lazy val enablePlayHmrcContinueTestsView: Boolean =
     playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcContinueTestsView").getOrElse(false)
 
