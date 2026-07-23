@@ -136,9 +136,18 @@
                 @if(dashboardPage.isApplicationSubmittedCheckFailed) {
                     <div id="submittedCheckFailed">
                         <p>We've assessed your SEB (socio-economic background) score and unfortunately, you've been unsuccessful this time.</p>
+                        @*
                         <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil
                             Service jobs</a>
                             site for more opportunities with us.</p>
+                        <p>*@
+                            Visit the
+                            @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                                text = "Civil Service jobs",
+                                href = Some("https://www.civilservicejobs.service.gov.uk")
+                            ))
+                            site for more opportunities with us.
+                        </p>
                     </div>
                 }
 

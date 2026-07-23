@@ -32,7 +32,7 @@ import security.RoleUtils.*
 import security.Roles.*
 import security.{Roles, SilhouetteComponent}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.home.Dashboard2
+import views.html.home.{Dashboard2, PostOnlineTestsDashboard2}
 
 import java.nio.file.{Files, Path}
 import javax.inject.{Inject, Singleton}
@@ -43,6 +43,7 @@ class HomeController @Inject()(
                                 config: FrontendAppConfig,
                                 mcc: MessagesControllerComponents,
                                 dashboardTemplate: Dashboard2,
+                                postOnlineTestsDashboardTemplate: PostOnlineTestsDashboard2,
                                 val secEnv: SecurityEnvironment,
                                 val silhouetteComponent: SilhouetteComponent,
                                 val notificationTypeHelper: NotificationTypeHelper,
@@ -168,9 +169,19 @@ class HomeController @Inject()(
         config.fsacGuideUrl,
         onboardQuestionsCompleted = onboardQuestionsOpt.isDefined
       )
-      Ok(views.html.home.postOnlineTestsDashboard(page, css))
+//      Ok(views.html.home.postOnlineTestsDashboard(page, css))
+      Ok(postOnlineTestsDashboardView(page, css))
     }
   }
+
+  private def postOnlineTestsDashboardView(page: PostOnlineTestsPage,
+                                            css: Seq[SchemeEvaluationResultWithFailureDetails]
+                           )(implicit cachedData: CachedData, request: Request[_]): Html =
+    if (config.enablePlayHmrcPostOnlineDashboardView) {
+      postOnlineTestsDashboardTemplate(page, css)
+    } else {
+      views.html.home.postOnlineTestsDashboard(page, css)
+    }
 
   protected def getAllBytesInFile(path: Path): Array[Byte] = Files.readAllBytes(path)
 

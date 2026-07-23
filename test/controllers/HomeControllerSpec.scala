@@ -798,9 +798,10 @@ class HomeControllerSpec extends BaseControllerSpec {
                    appRouteState: ApplicationRouteState = defaultApplicationRouteState) = {
       
       val dashboardTemplate = mock[views.html.home.Dashboard2]
+      val postOnlineTestsDashboardTemplate = mock[views.html.home.PostOnlineTestsDashboard2]
 
       new HomeController(
-        mockConfig, stubMcc, dashboardTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+        mockConfig, stubMcc, dashboardTemplate, postOnlineTestsDashboardTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
         mockApplicationClient, mockReferenceDataClient, mockSiftClient, mockSchemeClient, mockOnboardQuestionsClient) with TestableSecureActions {
         override val candidate: CachedData = CachedData(candWithApp.user, Some(candWithApp.application))
         override val candidateWithApp: CachedDataWithApp = candWithApp

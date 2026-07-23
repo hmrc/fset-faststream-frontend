@@ -1,0 +1,369 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import connectors.exchange.SchemeEvaluationResultWithFailureDetails
+@import models.page.PostOnlineTestsPage
+@import models.page.PostOnlineTestsStage
+@import models.page.PsiTestPage
+@import security.Roles._
+@import security.RoleUtils._
+@import views.html.widgets.sdipFaststreamBanner
+
+@import config.TrackingConsentConfig
+@import views.html.helper.CSPNonce
+
+@import helpers.{ServiceNavigationItems, Title}
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.{Heading2, Heading3, Layout}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
+
+@this(
+        h2: Heading2,
+        h3: Heading3,
+        mainLayout: Layout,
+        siftProgress2: SiftProgress2,
+        withdrawSection2: WithdrawSection2,
+        commonSectionPostOnlineTests2: CommonSectionPostOnlineTests2,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
+)
+
+@(page: PostOnlineTestsPage, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@getOrder(pos: Int) = @{
+  pos match {
+    case 1 => "1st"
+    case 2 => "2nd"
+    case 3 => "3rd"
+    case _ => s"${pos}th"
+  }
+}
+
+@unsuccessfulSchemes = {
+    @if(page.userDataWithSchemes.failedSchemesForDisplay.nonEmpty) {
+    <details id="unsuccessfulSchemes">
+        <summary>Unsuccessful schemes</summary>
+        <div class="detail-content">
+            @for((schemeResult, index) <- page.userDataWithSchemes.failedSchemesForDisplay.zipWithIndex) {
+            <div class="panel-indent">
+                <p>@{Html(Messages("scheme." + schemeResult.scheme.id.value + ".description"))}
+                    <br>(unsuccessful at @schemeResult.failedAtStage)
+                </p>
+            </div>
+            }
+        </div>
+    </details>
+    }
+}
+
+@withdrawnSchemes = {
+    @if(page.userDataWithSchemes.withdrawnSchemes.nonEmpty) {
+    <details id="withdrawnSchemes">
+        <summary>Withdrawn schemes</summary>
+        <div class="detail-content">
+            @for(schemeResult <- page.userDataWithSchemes.withdrawnSchemes) {
+            <div class="panel-indent">
+                <p>@{Html(Messages("scheme." + schemeResult.id.value + ".description"))}</p>
+            </div>
+            }
+        </div>
+    </details>
+    }
+}
+
+@renderViewAssessmentFeedback = {
+<p>
+    <i class="fa fa-check" aria-hidden="true"></i>
+    <a href="@routes.AssessmentFeedbackController.present(page.userDataWithSchemes.application.applicationId)" class="govuk-link">
+        View your assessment centre feedback</a>
+</p>
+}
+
+@finalSuccess = {
+<section class="section-border">
+    <section class="govuk-body" data-successtop>
+        <div id="unsuccessfulNormal">
+            @*<h2 class="heading-large">Congratulations!</h2>*@
+            @h2(content = Text("Congratulations!"))
+            <p>You've passed all the required stages. We are delighted to be able
+                to offer you a role on the Civil Service Fast Stream, for your
+                chosen scheme:</p>
+            @page.userDataWithSchemes.greenSchemesForDisplay.headOption.map { schemeResult =>
+                <h2 class="heading-medium">@{Html(Messages("scheme." + schemeResult.scheme.id.value + ".description"))}</h2>
+                @*h2(content = Text("Congratulations!"))TODO*@
+            }
+
+            @*<h3 class="heading-small">Next steps</h3>*@
+            @h3(content = Text("Next steps"))
+            <p>To enable us to complete your pre-appointment checks, follow the
+                <a href="https://www.civil-service-careers.gov.uk/fast-stream/starting-fast-stream/" class="govuk-link">instructions on the Fast Stream website</a>.</p>
+
+            @if(page.isFaststream) {
+                @if(page.onboardQuestionsCompleted) {
+                    <p>
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        You have entered your additional information
+                    </p>
+                } else {
+                    <p>
+                        <a href="@routes.OnboardCandidateQuestionsController.present(page.userDataWithSchemes.application.applicationId)" class="govuk-link">
+                            Enter your additional information</a>
+                    </p>
+                }
+                @if(page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_FAILED || page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_PASSED) {
+                    @renderViewAssessmentFeedback
+                }
+            }
+        </div>
+        @unsuccessfulSchemes
+        @withdrawnSchemes
+    </section>
+</section>
+}
+
+@finalFailure = {
+<section class="section-border">
+    <section class="text" data-successtop>
+        <div id="unsuccessfulNormal">
+            <p>Unfortunately, you've been unsuccessful this year. Thank you for
+                all the effort you've put in so far.</p>
+            <p>We appreciate this will be disappointing. You should be proud of
+                how far you've got through this competitive process.</p>
+            <p>Please try again next year, alternatively you can see what other
+                <a href="https://civilservicejobs.service.gov.uk/">jobs are available in the Civil Service</a>.</p>
+            @if(page.fsacStage != PostOnlineTestsStage.OTHER) {
+                @renderViewAssessmentFeedback
+            }
+        </div>
+        @unsuccessfulSchemes
+        @withdrawnSchemes
+    </section>
+</section>
+}
+
+@finalFaststreamFailureGreenSdip = {
+    <section class="section-border">
+        <section class="text" data-successtop>
+            <div id="unsuccessfulNormal">
+                <p>Unfortunately, you've been unsuccessful for the Fast Stream this year. Thank you for
+                    all the effort you've put in so far.</p>
+                <p>We appreciate this will be disappointing. You should be proud of
+                    how far you've got through this competitive process.</p>
+                <p>
+                    You are still in the running for the Summer Internship Programme, more information will appear below.
+                </p>
+
+                @if(page.fsacStage != PostOnlineTestsStage.OTHER) {
+                    @renderViewAssessmentFeedback
+                }
+            </div>
+            @unsuccessfulSchemes
+            @withdrawnSchemes
+            <h2 class="heading-large">Next steps</h2>
+            @siftProgress2(page)
+        </section>
+    </section>
+}
+
+@failedToAttend = {
+<section class="section-border">
+    <section class="text" data-successtop>
+        <div id="unsuccessfulNoAttend">
+            <p class="med-btm-margin" id="warningOnlineExercises"><i class="fa the-icon fa-exclamation-triangle" aria-hidden="true"></i>
+                Important</p>
+            <div id="assessmentFailedToAttend">
+                @if(page.fsacStage == PostOnlineTestsStage.FAILED_TO_ATTEND) {
+                    <p>Unfortunately, you've been unsuccessful as you didn't attend the assessment centre.</p>
+                } else {
+                    @if(page.fsbStage == PostOnlineTestsStage.FAILED_TO_ATTEND) {
+                        <p>Unfortunately, you've been unsuccessful as you didn't attend the final selection board.</p>
+                    } else {
+                        <p>Unfortunately, you've been unsuccessful.</p>
+                    }
+                }
+                <p>If you believe there's been a mistake, please <a href="@routes.ApplicationController.helpdesk">contact
+                    us</a>.</p>
+                <p>Visit the <a href="https://www.civilservicejobs.service.gov.uk" target="_blank" rel="external">Civil
+                    Service jobs</a>
+                    site for more opportunities with us.</p>
+            </div>
+            <ul class="list-text">
+                <li>
+                    @if(page.userDataWithSchemes.greenAndAmberSchemesForDisplay.nonEmpty) {
+                        <h3 class="bold-small">1st preference</h3>
+                        @page.userDataWithSchemes.greenAndAmberSchemesForDisplay.headOption.map { schemeResult =>
+                            <p>@{schemeResult.scheme.name}
+                                <br>(unsuccessful at the assessment centre)</p>
+                        }
+                    }
+                </li>
+            </ul>
+        </div>
+        @unsuccessfulSchemes
+        @withdrawnSchemes
+    </section>
+</section>
+}
+
+@firstScheme = {
+    @for((schemeResult, index) <- page.userDataWithSchemes.greenAndAmberSchemesForDisplay.zipWithIndex) {
+        <section>
+            <h3 class="bold-small">@getOrder(index + 1) preference</h3>
+            <p>@Html(Messages("scheme." + schemeResult.scheme.id.value + ".description")) - In Progress</p>
+        </section>
+    }
+}
+
+@generatePsiTestId(psiTestPage: PsiTestPage) = {@Messages(psiTestPage.testNameKey).replace(" ", "").concat("LinkResultsReport")}
+
+@displayTestPageLink(testPage: PsiTestPage, testName: String) = {
+    @testPage.testReportUrl.map { reportUrl =>
+        @*<a href="@reportUrl" target="_blank" id="@generatePsiTestId(testPage)">Feedback report <span class="visuallyhidden">for @testName (opens pdf document in a new window)</span></a>*@
+        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = s"$testName feedback",
+            href = Some(reportUrl)
+        ))
+    }
+}
+
+@displayPhase1TestResultLinks = {
+    @page.phase1DataOpt.map { phase1Tests =>
+        @*<h3 class="bold-small">Phase 1 results</h3>*@
+        @h3(content = Text("Phase 1 results"))
+        @phase1Tests.tests.map { psiTestPage =>
+            <div class="govuk-body">
+                <p>@Messages(psiTestPage.testNameKey)</p>
+                @displayTestPageLink(psiTestPage, Messages(psiTestPage.testNameKey))
+            </div>
+        }
+    }
+}
+
+@displayPhase2TestResultLinks = {
+    @page.phase2DataOpt.map { phase2Tests =>
+        <h3 class="bold-small">Phase 2 results</h3>
+        @phase2Tests.tests.map { psiTestPage =>
+            <div>@Messages(psiTestPage.testNameKey)</div>
+            <div>@displayTestPageLink(psiTestPage, Messages(psiTestPage.testNameKey))</div>
+        }
+    }
+}
+
+@displayPhase3TestResultLink = {
+    @page.phase3DataOpt.map { phase3Tests =>
+        <h3 class="bold-small">Phase 3 results</h3>
+            <div>
+                <a href="@routes.Phase3FeedbackController.present" target="_blank" id="phase3ResultsReportLink" alt="Phase 3 feedback report">
+                    Feedback report <span class="visuallyhidden">for video interview (opens in a new window)</span>
+                </a>
+            </div>
+    }
+}
+
+@displayTestResultLinks = {
+    <p>@displayPhase1TestResultLinks</p>
+    <p>@displayPhase2TestResultLinks</p>
+    <p>@displayPhase3TestResultLink</p>
+}
+
+@css = {
+    <link href='@routes.Assets.versioned("css/legacy.css")' media="all" rel="stylesheet" type="text/css">
+    <link href='@routes.Assets.versioned("css/font-awesome/css/font-awesome.min.css")' rel="stylesheet" type="text/css">
+}
+
+@javaScripts = {
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/siftProgress.js")' type="text/javascript"></script>
+}
+
+@mainLayout(Title("Home"), navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
+@*main_template(title = "Home", additionalJavascriptFilenames = List("siftProgress.js")) {*@
+
+    @commonSectionPostOnlineTests2(page.userDataWithSchemes.toCachedData)
+
+    @sdipFaststreamBanner(page.userDataWithSchemes.toCachedData, Some(page.sdipFaststreamBannerPage))
+
+    <div>@displayTestResultLinks</div>
+
+@page match {
+    case _ if page.isFinalSuccess => { @finalSuccess }
+    case _ if page.isFinalFailure => { @finalFailure }
+    case _ if page.isFailedFaststreamGreenSdip => { @finalFaststreamFailureGreenSdip }
+    case _ if page.fsacStage == PostOnlineTestsStage.FAILED_TO_ATTEND || page.fsbStage == PostOnlineTestsStage.FAILED_TO_ATTEND => { @failedToAttend }
+    case _ if page.fsbStage ==  PostOnlineTestsStage.FSB_FAILED => {
+        <section class="section-border @if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}" id="mainProgressPage">
+            <div class="govuk-body">
+
+                <section>
+                    <p>Unfortunately, you were not successful at your most recent assessment. We'll contact you when your next assessment is scheduled.</p>
+                    <p>Check your scheme preferences, as the order may have changed.</p>
+                    <div>
+                        <p>
+                            <a class="govuk-link" href="@routes.WithdrawController.presentWithdrawScheme">Withdraw from individual schemes</a>
+                        </p>
+                    </div>
+                    @firstScheme
+                </section>
+                @unsuccessfulSchemes
+                @withdrawnSchemes
+            </div>
+            @*<h2 class="heading-large">Next steps</h2>*@
+            @h2(content = Text("Next steps"))
+            @siftProgress2(page)
+        </section>
+        @withdrawSection2(page.userDataWithSchemes.toCachedData)
+        }
+    case _ => {
+        <section class="section-border" id="mainProgressPage">
+            <div class="govuk-body">
+                @if(isSdip(page.userDataWithSchemes.toCachedData) || isEdip(page.userDataWithSchemes.toCachedData)) {
+                <section>
+                    <p>Congratulations, you're through to the next stage.</p>
+                </section>
+
+                } else {
+                <section class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
+                    <p>Your current schemes are detailed below:</p>
+                    <p>Check your scheme preferences, as the order may have changed.</p>
+                    @if(SchemeWithdrawSiftOrFsacAwaitingAllocationRole.isAuthorized(page.userDataWithSchemes.toCachedData) && !page.userDataWithSchemes.application.isSiftExpired) {
+                        <div class="panel-indent" id="importantToProgress">
+                            <p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Important</p>
+                            <p><span>To progress to the next stage you must first complete any scheme questions or tests, even if your first preference doesn't ask for them. </span>
+                             If you've changed your mind, you can <a href="@routes.WithdrawController.presentWithdrawScheme" class="govuk-link">
+                                 withdraw from individual schemes</a>.
+                            </p>
+                        </div>
+                    } else if (SchemeWithdrawOutsideSiftOrFsacAwaitingAllocationRole.isAuthorized(page.userDataWithSchemes.toCachedData) && !page.userDataWithSchemes.application.isSiftExpired) {
+                        <div>
+                            <p>
+                                <a href="@routes.WithdrawController.presentWithdrawScheme" class="govuk-link">Withdraw from individual schemes</a>
+                            </p>
+                        </div>
+                    }
+                    @firstScheme
+                </section>
+                @unsuccessfulSchemes
+                @withdrawnSchemes
+                }
+            </div>
+            @*<h2 class="heading-large">Next steps</h2>*@
+            @h2(content = Text("Next steps"))
+
+            @siftProgress2(page, cssDescriptions)
+        </section>
+        @withdrawSection2(page.userDataWithSchemes.toCachedData)
+        }
+    }
+}

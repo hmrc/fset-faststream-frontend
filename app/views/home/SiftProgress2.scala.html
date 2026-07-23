@@ -1,0 +1,363 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper._
+@import models.page.DashboardPage.activateByStep
+@import models.page.PostOnlineTestsStage
+@import models.ApplicationData.ApplicationStatus
+@import security.Roles._
+@import security.RoleUtils._
+@import security.ProgressStatusRoleUtils._
+@import connectors.exchange.candidateevents.CandidateAllocationWithEvent
+@import connectors.exchange.SchemeEvaluationResultWithFailureDetails
+
+@import security.RoleUtils
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.{Heading2, Heading3, Layout}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, GovukButton, FormWithCSRF}
+
+@this(
+        h2: Heading2,
+        h3: Heading3,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper,
+        renderSchemePreferences2: RenderSchemePreferences2,
+        formWithCSRF: FormWithCSRF,
+        govukButton: GovukButton
+)
+
+@(page: models.page.PostOnlineTestsPage, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails] = Nil)(implicit request: Request[_], messages: Messages)
+
+@generateId(siftableScheme: String) = {siftSchemeQuestions@siftableScheme}
+
+@renderSchemeForm = {
+    <section class="inner-block-padr" id="schemeForms">
+        @*<h2 class='heading-medium'>Additional information</h2>*@
+        @h3(content = Text("Provide additional information"))
+        <div class="govuk-body @if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
+            @if(!page.haveAdditionalQuestionsBeenSubmitted) {
+                <p>At least one of your scheme preferences require you to answer some additional questions.</p>
+                <p>You should complete this within 7 days from the date of your email. Failure to do this will cause your application to expire.</p>
+                <ul class="list-text list-withicons" data-extrainfolist>
+                    <li><i class="fa fa-minus the-icon" aria-hidden="true"></i><a class="govuk-link" href="@routes.SiftQuestionsController.presentGeneralQuestions" id="siftGeneralQuestions">Nationality and higher education</a></li>
+                    @for(curSiftableScheme <- page.userDataWithSchemes.schemesForSiftForms) {
+                    <li><i class="fa fa-minus the-icon govuk-link" aria-hidden="true"></i>
+                        <a class="govuk-link" href="@routes.SiftQuestionsController.presentSchemeForm(curSiftableScheme.id)" id="@generateId(curSiftableScheme.id.value)">@{
+                            curSiftableScheme.name
+                            } <span class="visuallyhidden"> additional questions </span></a>
+                        <span class="font-xsmall">(in this section, you'll be assessed with one or more questions)</span></li>
+                    }
+                    <li><i class="fa fa-minus the-icon" aria-hidden="true"></i><a class="govuk-link" href="@routes.SiftQuestionsController.presentPreview" id="previewSiftQuestions">Preview<span class="visuallyhidden"> additional questions</span> before you submit</a></li>
+                </ul>
+            } else {
+                <div id="additionalQuestionsSubmittedPanel"><p>You've submitted all the required information.</p></div>
+                <ul class="list-text list-withicons" data-extrainfolist=""><li><i class="fa fa-check the-icon" aria-hidden="true"></i><a class="govuk-link" href="@routes.SiftQuestionsController.presentPreview">View your submitted answers</a></li></ul>
+            }
+        </div>
+    </section>
+}
+
+@renderSiftTimeRemaining = {
+    @page.siftState.map { siftState =>
+        <section class="govuk-body inner-block-padr" id="timeRemaining">
+            @*<h3 class="heading-medium">Your remaining time</h3>*@
+            @h3(content = Text("Your remaining time"))
+            @if(siftState.expiryDateDurationRemaining.contains("-")) {
+                <p>Your time has expired to finish the stage</p>
+            } else {
+                <p>You have <strong>@siftState.expiryDateDurationRemaining</strong> to finish the stage</p>
+            }
+        </section>
+    }
+}
+
+@renderCompletedSectionOne = {
+    <div class="govuk-body inner-block-padr" id="schemeForms">
+        @*<h2 class='heading-medium'>Provide additional information</h2>*@
+        @h3(content = Text("Provide additional information"))
+        <p id="siftCompletedMessage" class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">You've completed this section</p>
+        <ul class="list-text list-withicons" data-extrainfolist=""><li><i class="fa fa-check the-icon" aria-hidden="true"></i><a class="govuk-link" href="@routes.SiftQuestionsController.presentPreview">View your submitted answers</a></li></ul>
+    </div><br />
+}
+
+@renderEventType(a: Option[CandidateAllocationWithEvent]) = {
+    <p>
+        <b>@page.eventTypeText(a):</b>
+        <br />
+        @page.eventScheme(a)
+    </p>
+}
+@renderEventDetails(a: Option[CandidateAllocationWithEvent]) = {
+    <p>
+        @page.eventStartDateAndTime(a)
+        <br />
+        @page.eventLocation(a)
+    </p>
+}
+
+@renderFindMoreAboutAssessmentDay = {
+    <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
+        @*<a href="@page.fsacGuideUrl" rel="external" target="_blank">Find out more about the assessment centre</a>*@
+        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = "Find out more about the assessment centre",
+            href = Some(page.fsacGuideUrl)
+        ))
+    </p>
+}
+
+@renderFindMoreAboutFsbDay(a: Option[CandidateAllocationWithEvent]) = {
+    @page.fsbEventScheme(a).map { schemeConfig =>
+        @schemeConfig.schemeGuide.map { schemeGuideLink =>
+            <p>
+                @*
+                @hmrcNewTabLinkHelper(NewTabLinkHelper(
+                    text = "Find out more about the final selection board",
+                    href = Some(schemeGuideLink)
+                ))*@
+
+                <a class="govuk-link" href="@schemeGuideLink" rel="external" target="_blank">
+                Find out more about the final selection board</a>
+                @* TODO: Add this link to configuration *@
+                @*if(schemeConfig.id.value.toString == SchemeType.Sdip.toString) {
+                    <br />
+                    You will also need: <a href="https://www.faststream.gov.uk/media/1292/sdip-posting.docx"
+                    rel="external" target="_blank">
+                    The posting preference form</a>
+                }*@
+            </p>
+        }
+    }
+}
+
+@renderViewAssessmentFeedback = {
+    <p>
+        <i class="fa fa-check" aria-hidden="true"></i>
+        @*<a href="@routes.AssessmentFeedbackController.present(page.userDataWithSchemes.application.applicationId)">
+        View your assessment feedback</a>*@
+        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = "View your assessment feedback",
+            href = Some(routes.AssessmentFeedbackController.present(page.userDataWithSchemes.application.applicationId).url)
+        ))
+    </p>
+}
+
+@renderCannotAttend = {
+    <p>If you cannot attend, <a class="govuk-link" href="@routes.ApplicationController.helpdesk">contact us</a>.</p>
+}
+
+@renderAssessmentCentre = {
+@*     <div class="inner-block-padr">*@
+     <div class="govuk-body">
+         @*<h2 class="heading-medium ">Attend an assessment centre</h2>*@
+         @h3(content = Text("Attend an assessment centre"))
+
+        <div id="assessmentBlurb">
+        @page.fsacStage match {
+            case PostOnlineTestsStage.UPLOAD_EXERCISES => {
+                @renderEventDetails(page.fsacAllocation)
+                @* Removed for 2020/21 campaign
+                <section>
+                    <p>You need to upload your written exercise.</p>
+                    <div id="attachWordDocument">
+                    @form(action = routes.HomeController.submitAnalysisExercise(), 'novalidate -> "novalidate", 'enctype -> "multipart/form-data") {
+                        @CSRF.formField
+                        <input type="file" class="input-file" id="analysisExerciseFile" name="analysisExerciseFile" accept=".doc, .docx">
+                        <label for="analysisExerciseFile" class="button">Upload document</label>
+                        <span class="font-xsmall">Maximum file size: 4MB</span>
+                        <div id="fileSelected"></div>
+                            <button type="submit" name="analysisExerciseSubmit" class="button" id="analysisExerciseBtn"
+                        style="display: none">Submit written exercise</button>
+                    }
+                    </div>
+                </section>*@
+                @renderFindMoreAboutAssessmentDay
+            }
+            case PostOnlineTestsStage.CONFIRMED_FOR_EVENT => {
+                <div class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
+                    <p>Your assessment centre is booked.</p>
+                    @renderEventDetails(page.fsacAllocation)
+                    @renderCannotAttend
+                    @renderFindMoreAboutAssessmentDay
+                </div>
+            }
+            case PostOnlineTestsStage.ALLOCATED_TO_EVENT => {
+                <div class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">
+                    <p>Confirm you can attend this assessment centre</p>
+                    @renderEventDetails(page.fsacAllocation)
+
+                    @page.fsacAllocation.map { alloc =>
+                        @alloc.event.sessions.headOption.map { session =>
+                            @formWithCSRF(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id)) {
+                                @govukButton(Button(
+                                    content = Text("I can attend"),
+                                    inputType = Some("submit"),
+                                    preventDoubleClick = Some(true)
+                                ))
+                            }
+                        @*helper.form(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id),
+                        Symbol("novalidate") -> "novalidate") {
+                            @helper.CSRF.formField
+                            <button type="submit" class="button" id="assCanAttendBtn">I can attend</button>
+                        }*@
+                    }}
+
+                    @renderCannotAttend
+                    @renderFindMoreAboutAssessmentDay
+                </div>
+            }
+            case PostOnlineTestsStage.EVENT_ATTENDED | PostOnlineTestsStage.ASSESSMENT_CENTRE_FAILED | PostOnlineTestsStage.ASSESSMENT_CENTRE_PASSED => {
+                @* If the candidate has moved into fsb then just display the fsac feed back link *@
+                @if(page.wasInFsb) {
+                    @renderViewAssessmentFeedback
+                } else {
+                    <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">Thanks for attending the assessment centre.</p>
+                    <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">We'll contact you as soon as we've got your result. Keep an eye on your email inbox, including your junk mail.</p>
+                    @if(page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_FAILED || page.fsacStage == PostOnlineTestsStage.ASSESSMENT_CENTRE_PASSED) {
+                        @renderViewAssessmentFeedback
+                    }
+                }
+            }
+            case _ => {
+                <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">If you've successfully passed the previous stages, you'll be invited to an assessment centre.</p>
+                @renderFindMoreAboutAssessmentDay
+            }
+            case _ => {
+                <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">Congratulations, you're through to the final stage.</p>
+            }
+        }
+        </div>
+    </div>
+<br />
+}
+
+@renderExtraInfo = {
+    @if(isSiftEntered(page.userDataWithSchemes.toCachedData) && !isSiftComplete(page.userDataWithSchemes.toCachedData)) {
+        @if(page.userDataWithSchemes.hasFormRequirement) {
+            @renderSchemeForm
+        }
+    } else {
+        @renderCompletedSectionOne
+    }
+    @if(isInSiftPhase(page.userDataWithSchemes.toCachedData) && isSiftEntered(page.userDataWithSchemes.toCachedData) &&
+            !isSiftReady(page.userDataWithSchemes.toCachedData)) {
+        @renderSiftTimeRemaining
+    }
+ }
+
+ <section class="govuk-body">
+    <ol class="step-by-step-coloured" id="nextStepsList">
+        @if(!page.isSdip) {
+            <li class="first-step">
+                @if(isInPhase3PassedOrPassedNotified(page.userDataWithSchemes.toCachedData)) {
+                    <p>Depending on your chosen schemes, you may need to answer some additional questions.</p>
+                } else {
+                    @if(page.userDataWithSchemes.application.isSiftExpired) {
+                        <section class="inner-block-padr" id="schemeForms">
+                            <h2 class='heading-medium'>Additional information</h2>
+
+                            <p>At least one of your scheme preferences required you to answer some additional questions or take a numerical test.</p>
+                            <p>Unfortunately, the time you had to provide this information has expired.</p>
+
+                            <p>If you believe there's been a mistake, please <a href="@routes.ApplicationController.helpdesk">contact us</a>.</p>
+                        </section>
+                    } else {
+                        @if(page.userDataWithSchemes.hasFormRequirement || page.userDataWithSchemes.hasNumericRequirement) {
+                            @renderExtraInfo
+                        }
+                    }
+                }
+            </li>
+        }
+
+        @if(page.userDataWithSchemes.requiresAssessmentCentre && !page.isOnlySdipGreen) {
+            <li class="second-step @activateByStep(page.secondStepVisibility)">
+                @renderAssessmentCentre
+            </li>
+        }
+
+        <li class="fourth-step @activateByStep(page.fourthStepVisibility)">
+            @*<div class="inner-block-padr">*@
+            <div>
+                @*<h2 class="heading-medium ">Final stage</h2>*@
+                @h3(content = Text("Final stage"))
+                @page.fsbStage match {
+                    case PostOnlineTestsStage.FSB_FAILED => {
+                        <p>You'll be contacted as soon as your assessment date is scheduled.<br />
+                            Keep an eye on your email inbox, including your junk mail.</p>
+                    }
+                    case PostOnlineTestsStage.CONFIRMED_FOR_EVENT => {
+                        @if(page.isWithdrawn) {
+                            <p class="disabled">Your final selection board is removed</p>
+                        } else {
+                            <p>Your final selection board is booked</p>
+                            @renderEventType(page.fsbAllocation)
+                            @renderEventDetails(page.fsbAllocation)
+                            @renderCannotAttend
+                            @renderFindMoreAboutFsbDay(page.fsbAllocation)
+                            @(renderSchemePreferences2(cssDescriptions))
+                        }
+                    }
+                    case PostOnlineTestsStage.ALLOCATED_TO_EVENT => {
+                        @if(page.isWithdrawn) {
+                            <p class="disabled">Your final selection board is removed</p>
+                        } else {
+                            <p>Confirm you can attend this final selection board</p>
+                            @renderEventType(page.fsbAllocation)
+                            @renderEventDetails(page.fsbAllocation)
+
+                            @page.fsbAllocation.map { alloc =>
+                                @alloc.event.sessions.headOption.map { session =>
+                                    @*helper.form(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id),
+                                        Symbol("novalidate") -> "novalidate") {
+                                        @helper.CSRF.formField
+                                        <button type="submit" class="button" id="fsbCanAttendBtn">I can attend</button>
+                                    }*@
+                                    @formWithCSRF(action = routes.HomeController.confirmAssessmentCentreAllocation(alloc.version, alloc.event.id, session.id)) {
+                                        @govukButton(Button(
+                                            content = Text("I can attend"),
+                                            inputType = Some("submit"),
+                                            preventDoubleClick = Some(true)
+                                        ))
+                                    }
+                                }
+                            }
+
+                            @renderCannotAttend
+                            @renderFindMoreAboutFsbDay(page.fsbAllocation)
+                            @renderSchemePreferences2(cssDescriptions)
+                        }
+                    }
+
+                    case _ => {
+                        @if(page.isSdip) {
+                            <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">You've successfully passed the previous stage. You'll need to
+                                attend a final event for your chosen scheme. We'll contact you
+                                to arrange this.</p>
+                        } else {
+                            <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">If you've successfully passed the previous stage, you may need to
+                                attend a final event for your chosen scheme. We'll contact you
+                                to arrange this.</p>
+                        }
+                        <p class="@if(WithdrawnApplicationRole.isAuthorized(page.userDataWithSchemes.toCachedData)){disabled}">We aim to make your results available as soon as possible.</p>
+
+                        @renderSchemePreferences2(cssDescriptions)
+                    }
+                }
+            </div>
+        </li>
+    </ol>
+ </section>
