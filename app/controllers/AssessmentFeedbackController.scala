@@ -16,27 +16,34 @@
 
 package controllers
 
-import config.{ FrontendAppConfig, SecurityEnvironment }
-import connectors.{ ApplicationClient, AssessmentScoresClient }
-import javax.inject.{ Inject, Singleton }
+import config.{FrontendAppConfig, SecurityEnvironment}
+import connectors.{ApplicationClient, AssessmentScoresClient}
+import forms.SignInForm
+
+import javax.inject.{Inject, Singleton}
 import models.UniqueIdentifier
 import models.page.AssessmentFeedbackPage
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import security.Roles.ActiveUserRole
 import security.SilhouetteComponent
 import helpers.NotificationTypeHelper
+import play.api.data.Form
+import play.twirl.api.Html
+import views.html.home.AssessmentFeedback2
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AssessmentFeedbackController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  assessmentScoresClient: AssessmentScoresClient,
-  applicationClient: ApplicationClient)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
+class AssessmentFeedbackController @Inject()(
+                                              config: FrontendAppConfig,
+                                              mcc: MessagesControllerComponents,
+                                              assessmentFeedbackTemplate: AssessmentFeedback2,
+                                              val secEnv: SecurityEnvironment,
+                                              val silhouetteComponent: SilhouetteComponent,
+                                              val notificationTypeHelper: NotificationTypeHelper,
+                                              assessmentScoresClient: AssessmentScoresClient,
+                                              applicationClient: ApplicationClient)(
+  implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
   def present(applicationId: UniqueIdentifier): Action[AnyContent] = CSRSecureAction(ActiveUserRole) {
     implicit request =>
@@ -49,7 +56,14 @@ class AssessmentFeedbackController @Inject() (
         } yield {
           val name = s"${personalDetails.firstName} ${personalDetails.lastName}"
           val page = AssessmentFeedbackPage(reviewerScoresAndFeedback, evaluatedExerciseResults, name)
-          Ok(views.html.home.assessmentFeedback(page))
+          Ok(assessmentFeedbackView(page))
         }
   }
+
+  private def assessmentFeedbackView(page: AssessmentFeedbackPage)(implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcAssessmentFeedbackView) {
+      assessmentFeedbackTemplate(page)
+    } else {
+      views.html.home.assessmentFeedback(page)
+    }
 }

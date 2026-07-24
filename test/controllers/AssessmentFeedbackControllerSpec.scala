@@ -42,8 +42,10 @@ class AssessmentFeedbackControllerSpec extends BaseControllerSpec {
   trait TestFixture extends BaseControllerTestFixture {
     val applicationId = UniqueIdentifier(UUID.randomUUID().toString)
 
+    val assessmentFeedbackTemplate = mock[views.html.home.AssessmentFeedback2]
+
     class TestableHomeController extends AssessmentFeedbackController(
-      mockConfig, stubMcc, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
+      mockConfig, stubMcc, assessmentFeedbackTemplate, mockSecurityEnv, mockSilhouetteComponent, mockNotificationTypeHelper,
       mockAssessmentScoresClient, mockApplicationClient)
       with TestableSecureActions
 
