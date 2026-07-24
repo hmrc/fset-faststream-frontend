@@ -23,48 +23,61 @@ import connectors.exchange.OnboardQuestions
 import forms.OnboardQuestionsForm
 import helpers.NotificationTypeHelper
 import models.UniqueIdentifier
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
 import security.Roles.ActiveUserRole
 import security.SilhouetteComponent
+import views.html.application.onboardCandidateQuestions.OnboardQuestions2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class OnboardCandidateQuestionsController @Inject()(
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  onboardQuestionsClient: OnboardQuestionsClient,
-  formWrapper: OnboardQuestionsForm)(implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
+                                                     config: FrontendAppConfig,
+                                                     mcc: MessagesControllerComponents,
+                                                     onboardQuestionsTemplate: OnboardQuestions2,
+                                                     val secEnv: SecurityEnvironment,
+                                                     val silhouetteComponent: SilhouetteComponent,
+                                                     val notificationTypeHelper: NotificationTypeHelper,
+                                                     onboardQuestionsClient: OnboardQuestionsClient,
+                                                     formWrapper: OnboardQuestionsForm)(
+  implicit val ec: ExecutionContext) extends BaseController(config, mcc) {
 
   import notificationTypeHelper.*
 
-  def present(applicationId: UniqueIdentifier): Action[AnyContent] = CSRSecureAction(ActiveUserRole) {
+  def present(applicationId: UniqueIdentifier): Action[AnyContent] = CSRSecureAppAction(ActiveUserRole) {
     implicit request =>
       implicit cachedData =>
         for {
           onboardQuestionsOpt <- onboardQuestionsClient.findQuestions(applicationId)
         } yield {
-          Ok(views.html.application.onboardCandidateQuestions.onboardQuestions(formWrapper.form, onboardQuestionsOpt.isDefined))
+          Ok(onboardQuestionsView(formWrapper.form, onboardQuestionsOpt.isDefined))
         }
   }
 
-  def submit: Action[AnyContent] = CSRUserAwareAction { implicit request =>
+  private def onboardQuestionsView(form: Form[OnboardQuestionsForm.Data], dataSaved: Boolean)(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcOnboardQuestionsView) {
+      onboardQuestionsTemplate(form, dataSaved)
+    } else {
+      views.html.application.onboardCandidateQuestions.onboardQuestions(form, dataSaved)
+    }
+
+  def submit: Action[AnyContent] = CSRSecureAppAction(ActiveUserRole) { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
-        invalidForm => Future.successful(Ok(views.html.application.onboardCandidateQuestions.onboardQuestions(invalidForm, dataSaved = false))),
+        invalidForm =>
+          Future.successful(Ok(onboardQuestionsView(invalidForm, dataSaved = false))),
         data => {
-          val applicationData = user.head.application.getOrElse(throw new RuntimeException("No cached user data found"))
           (for {
-            _ <- onboardQuestionsClient.saveQuestions(applicationData.applicationId, OnboardQuestions(data.niNumber))
+            _ <- onboardQuestionsClient.saveQuestions(user.application.applicationId, OnboardQuestions(data.niNumber))
           } yield {
             Redirect(routes.HomeController.present()).flashing(success("Successfully saved"))
           }).recover {
             case ex: CannotUpdateRecord2 =>
-              logger.error(s"Error occurred saving onboard questions for candidate ${applicationData.applicationId}: ${ex.getMessage}")
+              logger.error(s"Error occurred saving onboard questions for candidate ${user.application.applicationId}: ${ex.getMessage}")
               Redirect(routes.HomeController.present()).flashing(danger("An error occurred whilst saving the onboarding questions"))
           }
         }

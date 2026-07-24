@@ -44,7 +44,7 @@ class SignInControllerSpec extends BaseControllerSpec {
       val result = signInControllerAfterSignIn().present(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustEqual Some(routes.HomeController.present().toString())
+      redirectLocation(result) mustBe Some(routes.HomeController.present().url)
     }
   }
 
