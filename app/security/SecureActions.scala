@@ -39,7 +39,7 @@ import scala.language.postfixOps
  * The following Action wrappers exists in their respective traits:
  *
  * CSRUserAwareAction:    used when you have an action that we might have a logged in user (e.g. login page, registration page)
- * CSRSecureAction(role): used when you have an action where the user must be logged in and has and maybe has a ongoing application
+ * CSRSecureAction(role): used when you have an action where the user must be logged in and maybe has an ongoing application
  * CSRSecureAppAction(role): used when you have an action where the user must be logged in and must have an application
  *
  */

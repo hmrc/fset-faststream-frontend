@@ -1,0 +1,81 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.CSRFieldConstructor._
+
+@import config.TrackingConsentConfig
+
+@import helpers.{ServiceNavigationItems, Title}
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import views.html.components.{Heading1, InputText, Layout, PageTitle}
+@import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
+
+@this(
+        h1: Heading1,
+        mainLayout: Layout,
+        formWithCSRF: FormWithCSRF,
+        pageTitle: PageTitle,
+        inputText: InputText,
+        govukButton: GovukButton,
+        govukErrorSummary: GovukErrorSummary
+)
+
+@(form: Form[forms.OnboardQuestionsForm.Data], dataSaved: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@returnToHomePage = {
+    <a href="@routes.HomeController.present()" class="govuk-link">Return to homepage</a>
+}
+
+@mainLayout(pageTitle(form, Title("Onboarding questions")).toString, navigation = ServiceNavigationItems(user)) {
+@*main_template(title = "Onboarding questions") {*@
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+    }
+
+    @h1(content = Text("Onboarding questions"))
+
+    <div class="govuk-body">
+    @if(dataSaved) {
+        <p>You have already saved your onboarding questions.</p>
+        @returnToHomePage
+    } else {
+        @returnToHomePage
+
+        <div class="govuk-inset-text">
+            <p>As part of the onboarding process, we need to ask you for some additional information. Please fill in the following question carefully. Once you have saved it you will not be able to make any changes.</p>
+        </div>
+
+        @formWithCSRF(action = routes.OnboardCandidateQuestionsController.submit) {
+
+            <p>
+                @inputText(
+                    form("niNumber"),
+                    label = "National Insurance number",
+                    labelClasses = "govuk-label--s",
+                    classes = "govuk-!-width-two-thirds",
+                    hint = Some("It’s on your National Insurance card, benefit letter, payslip or P60 – for example, ‘QQ123456C’")
+                )
+            </p>
+            @govukButton(Button(
+                content = Text("Save"),
+                inputType = Some("submit"),
+                preventDoubleClick = Some(true)
+            ))
+        }
+    }
+    </div>
+}

@@ -231,6 +231,9 @@ class FrontendAppConfig @Inject() (val config: Configuration, val environment: E
   lazy val enablePlayHmrcWithdrawSchemeView: Boolean =
     playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcWithdrawSchemeView").getOrElse(false)
 
+  lazy val enablePlayHmrcOnboardQuestionsView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcOnboardQuestionsView").getOrElse(false)
+
   lazy val qualtricsSurveyEnabled: Boolean = config.getOptional[Boolean]("qualtrics.survey.enabled").getOrElse(false)
   logger.warn(s"Qualtrics survey enabled=$qualtricsSurveyEnabled")
 
