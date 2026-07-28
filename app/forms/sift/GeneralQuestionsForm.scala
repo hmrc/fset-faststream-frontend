@@ -16,14 +16,15 @@
 
 package forms.sift
 
-import forms.sift.GeneralQuestionsForm.{ postGradDegreeInfoFormFormatter, undergradDegreeInfoFormFormatter }
-import mappings.Mappings._
-import mappings.SeqMapping._
+import forms.sift.GeneralQuestionsForm.{postGradDegreeInfoFormFormatter, undergradDegreeInfoFormFormatter}
+import mappings.Mappings.*
+import mappings.SeqMapping.*
 import mappings.Year
-import play.api.data.Forms._
+import play.api.data.Forms.*
 import play.api.data.format.Formatter
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 class UndergradDegreeInfoForm(classifications: Seq[String]) {
 
@@ -40,7 +41,7 @@ object UndergradDegreeInfoForm {
   def apply() =
     new UndergradDegreeInfoForm(Classifications)
 
-  val Classifications = Seq(
+  val Classifications: Seq[String] = Seq(
     "First-class honours",
     "Upper second-class honours",
     "Lower second-class honours",
@@ -48,12 +49,15 @@ object UndergradDegreeInfoForm {
     "Ordinary degree"
   )
 
+  val classificationsAsSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "")) ++
+    Classifications.map(classification => SelectItem(value = Some(classification), text = classification))
+
   case class Data(
-    name: String,
-    classification: Option[String],
-    graduationYear: Option[String],
-    moduleDetails: Option[String]
-  )
+                   name: String,
+                   classification: Option[String],
+                   graduationYear: Option[String],
+                   moduleDetails: Option[String]
+                 )
 }
 
 object PostGradDegreeInfoForm {
@@ -68,20 +72,20 @@ object PostGradDegreeInfoForm {
   }
 
   case class Data(
-    name:           String,
-    graduationYear: Option[String],
-    otherDetails:   Option[String],
-    projectDetails: Option[String]
-  )
+                   name: String,
+                   graduationYear: Option[String],
+                   otherDetails: Option[String],
+                   projectDetails: Option[String]
+                 )
 }
 
 class GeneralQuestionsForm(validNationalities: Seq[String]) {
   def form(implicit messages: Messages) = Form(
     mapping(
+      "nationality" -> of(requiredSetFormatter(validNationalities)),
       "multipleNationalities" -> of(BooleanMapping.booleanFormatter("generalquestions.error.multiplenationalities")),
       "secondNationality" -> of(conditionalRequiredSetFormatter(
         data => data.getOrElse("multipleNationalities", "") == "true", validNationalities)),
-      "nationality" -> of(requiredSetFormatter(validNationalities)),
       "hasUndergradDegree" -> of(BooleanMapping.booleanFormatter("generalquestions.error.undergraduatedegree")),
       "undergradDegree" -> of(undergradDegreeInfoFormFormatter("hasUndergradDegree")),
       "hasPostgradDegree" -> of(BooleanMapping.booleanFormatter("generalquestions.error.postgraduatedegree")),
@@ -93,14 +97,14 @@ object GeneralQuestionsForm {
   def apply() = new GeneralQuestionsForm(Nationalities)
 
   case class Data(
-    multipleNationalities: Option[Boolean],
-    secondNationality: Option[String],
-    nationality: Option[String],
-    hasUndergradDegree: Option[Boolean],
-    undergradDegree: Option[UndergradDegreeInfoForm.Data],
-    hasPostgradDegree: Option[Boolean],
-    postgradDegree: Option[PostGradDegreeInfoForm.Data]
-  )
+                   nationality: Option[String],
+                   multipleNationalities: Option[Boolean],
+                   secondNationality: Option[String],
+                   hasUndergradDegree: Option[Boolean],
+                   undergradDegree: Option[UndergradDegreeInfoForm.Data],
+                   hasPostgradDegree: Option[Boolean],
+                   postgradDegree: Option[PostGradDegreeInfoForm.Data]
+                 )
 
   def undergradDegreeInfoFormFormatter(yesNo: String)(implicit messages: Messages) = new Formatter[Option[UndergradDegreeInfoForm.Data]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[UndergradDegreeInfoForm.Data]] = {
@@ -138,7 +142,7 @@ object GeneralQuestionsForm {
       fastPassData.map(fpd => PostGradDegreeInfoForm.form.fill(fpd).data).getOrElse(Map(key -> ""))
   }
 
-  val Nationalities = Seq(
+  val Nationalities: Seq[String] = Seq(
     "Afghan",
     "Albanian",
     "Algerian",
@@ -334,4 +338,7 @@ object GeneralQuestionsForm {
     "Zambian",
     "Zimbabwean"
   )
+
+  val nationalitiesAsSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "")) ++
+    Nationalities.map(nationality => SelectItem(value = Some(nationality), text = nationality))
 }

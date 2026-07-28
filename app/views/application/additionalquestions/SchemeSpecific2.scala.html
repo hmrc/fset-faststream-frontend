@@ -1,0 +1,94 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.TrackingConsentConfig
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichTextarea
+@import views.html.components.*
+@import helpers.{ServiceNavigationItems, Title}
+
+@this(
+        inputText: InputText,
+        govukTextarea: GovukTextarea,
+        govukButton: GovukButton,
+        govukRadios: GovukRadios,
+        inputSelect: InputSelect,
+        inputSelectAutoComplete: InputSelectAutoComplete,
+        govukErrorSummary: GovukErrorSummary,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout,
+        h1: Heading1,
+        pageTitle: PageTitle
+)
+
+@(schemeSpecificQuestionsForm: Form[connectors.exchange.sift.SchemeSpecificAnswer], scheme: _root_.connectors.exchange.referencedata.Scheme,
+    saveAndContinueAction: String, saveAndReturnAction: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@mainLayout(pageTitle(schemeSpecificQuestionsForm, Title(scheme.name)).toString, navigation = ServiceNavigationItems(user)) {
+
+    @if(schemeSpecificQuestionsForm.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(schemeSpecificQuestionsForm))
+    }
+
+    @h1(content = Text(scheme.name))
+
+    <div class="govuk-inset-text">
+        <p>This scheme requires you to answer some additional questions before you can be successful for the next stage.</p>
+        <p>Take your time with this section, when you're ready:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                read the <a target="_blank" href="@scheme.schemeQuestion.getOrElse('#')" class="govuk-link">
+                scheme questions (this will download a document)
+            </a>
+            </li>
+            <li>use the template in the document to answer the questions</li>
+            <li>copy and paste the headings and responses into the box</li>
+        </ul>
+    </div>
+
+    @formWithCSRF(action = routes.SiftQuestionsController.saveSchemeForm(scheme.id)) {
+
+        @govukTextarea(Textarea(
+            id = "rawText",
+            name = "rawText",
+            rows = 20,
+            label = Label(
+                classes = "govuk-label--s",
+                content = Text("Stick to the maximum words in the questions document")
+            )
+        ).withFormField(schemeSpecificQuestionsForm("rawText")))
+
+        <div>
+            @govukButton(Button(
+                name = Some("action"),
+                content = Text("Save and continue"),
+                inputType = Some("submit"),
+                value = Some(saveAndContinueAction),
+                preventDoubleClick = Some(true)
+            ))
+            @govukButton(Button(
+                name = Some("action"),
+                content = Text("Save and return home"),
+                inputType = Some("submit"),
+                value = Some(saveAndReturnAction),
+                preventDoubleClick = Some(true)
+            ))
+        </div>
+    }
+}
