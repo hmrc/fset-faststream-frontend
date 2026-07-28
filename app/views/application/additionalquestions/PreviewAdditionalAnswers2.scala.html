@@ -1,0 +1,189 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.page.SiftPreviewPage
+
+@import config.TrackingConsentConfig
+
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import views.html.components.*
+@import helpers.{ServiceNavigationItems, Title}
+
+@this(
+        mainLayout: Layout,
+        h1: Heading1,
+        h2: Heading2,
+        h4: Heading4,
+        govukRadios: GovukRadios,
+        govukNotificationBanner: GovukNotificationBanner
+)
+
+@(page: SiftPreviewPage)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@html = {
+    <p class="govuk-notification-banner__heading">
+        You won't be able to change your answers after you submit.
+    </p>
+}
+
+@submitAnswersHtml = {
+    <div class="govuk-body">
+        @govukNotificationBanner(NotificationBanner(
+            content = HtmlContent(html)
+        ))
+        <a href="@routes.SiftQuestionsController.submitAdditionalQuestions" class="govuk-link">Submit additional questions</a>
+    </div>
+}
+
+@title = {
+    @if(page.areAnswersSubmitted) {
+        View your submitted answers
+    } else {
+        Preview before you submit
+    }
+}
+
+@mainLayout(Title(title.toString), navigation = ServiceNavigationItems(user)) {
+    @h1(content = Text(title.toString))
+
+    <div class="govuk-body">
+        @h2(content = Text("Nationality"))
+        @if(!page.areAnswersSubmitted) {
+            <a class="govuk-link" href="@routes.SiftQuestionsController.presentGeneralQuestions">Edit section</a>
+        }
+        <div>
+            @page.generalAnswers.map { ga =>
+                @h4(content = Text("What is your current nationality?"))
+                <p>@ga.nationality</p>
+                @h4(content = Text("Do you currently hold a dual nationality?"))
+                <p>@SiftPreviewPage.booleanToYesNo(ga.multipleNationalities)</p>
+
+                @ga.secondNationality.map { sn =>
+                    @h4(content = Text("What is your second nationality?"))
+                    <p>@{sn}</p>
+                }
+            }
+        </div>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <div class="govuk-body">
+        @h2(content = Text("Undergraduate degree"))
+        @if(!page.areAnswersSubmitted) {
+            <a class="govuk-link" href="@routes.SiftQuestionsController.presentGeneralQuestions#UndergraduateDegree">Edit section</a>
+        }
+        @page.generalAnswers.map { ga =>
+            @ga.undergradDegree.map { ug =>
+                <div>
+                    @h4(content = Text("Enter the name of your degree (include title and subject)"))
+                    <p>@ug.name</p>
+                </div>
+                <div>
+                    @h4(content = Text("Degree class achieved or predicted"))
+                    <p>@ug.classification</p>
+                </div>
+                <div>
+                    @h4(content = Text("Year of graduation"))
+                    <p>@ug.graduationYear</p>
+                </div>
+                <div>
+                    @h4(content = Text("List the details of the subjects studied in each year"))
+                    <p>@ug.moduleDetails</p>
+                </div>
+            }.getOrElse {
+                <div>
+                    @h4(content = Text("Do you have an undergraduate degree?"))
+                    <p>No</p>
+                </div>
+            }
+        }
+    </div>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <div class="govuk-body">
+        @h2(content = Text("Postgraduate degree"))
+        @if(!page.areAnswersSubmitted) {
+            <a class="govuk-link" href="@routes.SiftQuestionsController.presentGeneralQuestions#PostgraduateDegree">Edit section</a>
+        }
+        @page.generalAnswers.map { ga =>
+            @ga.postgradDegree.map { pg =>
+                <div>
+                    @h4(content = Text("Enter the name of your degree (include title and subject)"))
+                    <p>@pg.name</p>
+                </div>
+                <div>
+                    @h4(content = Text("Year of graduation"))
+                    <p>@pg.graduationYear</p>
+                </div>
+                <div>
+                    @h4(content = Text("List any other details about your postgraduate degree"))
+                    <p>@pg.otherDetails</p>
+                </div>
+                <div>
+                    @h4(content = Text("If you did a postgraduate project, enter the details here"))
+                    <p>@pg.projectDetails</p>
+                </div>
+            }.getOrElse {
+                <div>
+                    @h4(content = Text("Do you have a postgraduate degree?"))
+                    <p>No</p>
+                </div>
+            }
+        }
+    </div>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    @page.schemeAnswers.map { case (scheme, answer) =>
+        <div class="govuk-body">
+            @h2(content = Text(scheme.name))
+            @if(!page.areAnswersSubmitted) {
+                <a class="govuk-link" href="@routes.SiftQuestionsController.presentSchemeForm(scheme.id)">Edit section</a>
+            }
+            @if(answer.rawText.nonEmpty) {
+                <div>
+                    @h4(content = Text("Your response"))
+                    @answer.rawText
+                </div>
+            }
+        </div>
+    }
+
+    @if(!page.areAnswersSubmitted) {
+        <div class="govuk-body">
+            @govukRadios(Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text("Do you want to submit your answers?"),
+                        classes = "govuk-fieldset__legend--s"
+                    ))
+                )),
+                items = Seq(
+                    RadioItem(
+                        content = Text("Yes"),
+                        conditionalHtml = Some(submitAnswersHtml)
+                    ),
+                    RadioItem(
+                        content = Text("No")
+                    )
+                )
+            ))
+        </div>
+    }
+    <div class="govuk-body">
+        <a href="@routes.HomeController.present()" class="govuk-link">Return to home</a>
+    </div>
+}

@@ -17,38 +17,46 @@
 package controllers
 
 import play.silhouette.api.actions.SecuredRequest
-import config.{ FrontendAppConfig, SecurityEnvironment }
-import connectors.ApplicationClient.{ SiftAnswersIncomplete, SiftAnswersNotFound, SiftExpired }
-import connectors.exchange.referencedata.{ Scheme, SchemeId, SiftRequirement }
-import connectors.exchange.sift.{ GeneralQuestionsAnswers, SchemeSpecificAnswer, SiftAnswers, SiftAnswersStatus }
-import connectors.{ ApplicationClient, ReferenceDataClient, SchemeClient, SiftClient }
+import config.{FrontendAppConfig, SecurityEnvironment}
+import connectors.ApplicationClient.{SiftAnswersIncomplete, SiftAnswersNotFound, SiftExpired}
+import connectors.exchange.referencedata.{Scheme, SchemeId, SiftRequirement}
+import connectors.exchange.sift.{GeneralQuestionsAnswers, SchemeSpecificAnswer, SiftAnswers, SiftAnswersStatus}
+import connectors.{ApplicationClient, ReferenceDataClient, SchemeClient, SiftClient}
 import forms.SchemeSpecificQuestionsForm
 import forms.sift.GeneralQuestionsForm
-import helpers.{ CachedUserWithSchemeData, NotificationTypeHelper }
-import javax.inject.{ Inject, Singleton }
-import models.page.{ GeneralQuestionsPage, SiftPreviewPage }
-import models.{ SchemeStatus, UniqueIdentifier }
-import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, Result }
-import security.Roles.{ PreviewSchemeSpecificQuestionsRole, SchemeSpecificQuestionsRole }
+import helpers.{CachedUserWithSchemeData, NotificationTypeHelper}
+
+import javax.inject.{Inject, Singleton}
+import models.page.{GeneralQuestionsPage, SiftPreviewPage}
+import models.{SchemeStatus, UniqueIdentifier}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.twirl.api.Html
+import security.Roles.{PreviewSchemeSpecificQuestionsRole, SchemeSpecificQuestionsRole}
 import security.SilhouetteComponent
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.application.additionalquestions.{GeneralQuestions2, PreviewAdditionalAnswers2, SchemeSpecific2}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SiftQuestionsController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  applicationClient: ApplicationClient,
-  siftClient: SiftClient,
-  referenceDataClient: ReferenceDataClient,
-  schemeClient: SchemeClient,
-  formWrapper: SchemeSpecificQuestionsForm
-    )(implicit val ec: ExecutionContext)
+class SiftQuestionsController @Inject()(
+                                         config: FrontendAppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         generalQuestionsTemplate: GeneralQuestions2,
+                                         schemeSpecificTemplate: SchemeSpecific2,
+                                         previewAnswersTemplate: PreviewAdditionalAnswers2,
+                                         val secEnv: SecurityEnvironment,
+                                         val silhouetteComponent: SilhouetteComponent,
+                                         val notificationTypeHelper: NotificationTypeHelper,
+                                         applicationClient: ApplicationClient,
+                                         siftClient: SiftClient,
+                                         referenceDataClient: ReferenceDataClient,
+                                         schemeClient: SchemeClient,
+                                         formWrapper: SchemeSpecificQuestionsForm
+                                       )(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) with CampaignAwareController {
+
   import notificationTypeHelper._
 
   val appRouteConfigMap: Map[models.ApplicationRoute.Value, ApplicationRouteState] = config.applicationRoutesFrontend
@@ -59,7 +67,7 @@ class SiftQuestionsController @Inject() (
 
   def schemeMetadata(schemeId: SchemeId, applicationId: UniqueIdentifier)(implicit hc: HeaderCarrier): Future[Scheme] = {
     referenceDataClient.allSchemes.map {
-      _.find(_.id == schemeId).getOrElse{
+      _.find(_.id == schemeId).getOrElse {
         throw new java.util.NoSuchElementException(s"No scheme $schemeId found for appId $applicationId")
       }
     }
@@ -71,52 +79,65 @@ class SiftQuestionsController @Inject() (
         answers <- siftClient.getGeneralQuestionsAnswers(user.application.applicationId)
       } yield {
         val page = GeneralQuestionsPage.apply(GeneralQuestionsForm().form, answers)
-        Ok(views.html.application.additionalquestions.generalQuestions(page, SaveAndContinueAction, SaveAndReturnAction))
+//        Ok(views.html.application.additionalquestions.generalQuestions(page, SaveAndContinueAction, SaveAndReturnAction))
+        Ok(generalQuestionsView(page))
       }
   }
+
+  private def generalQuestionsView(page: GeneralQuestionsPage)(implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcSiftGeneralQuestionsView) {
+      generalQuestionsTemplate(page, SaveAndContinueAction, SaveAndReturnAction)
+    } else {
+      views.html.application.additionalquestions.generalQuestions(page, SaveAndContinueAction, SaveAndReturnAction)
+    }
 
   def saveGeneralQuestions: Action[AnyContent] =
     CSRSecureAppAction(SchemeSpecificQuestionsRole) { implicit request =>
-    implicit user =>
-      GeneralQuestionsForm().form.bindFromRequest().fold(
-        invalid => {
-          Future(Ok(views.html.application.additionalquestions.generalQuestions(
-            GeneralQuestionsPage(invalid),
-            SaveAndContinueAction,
-            SaveAndReturnAction)))
-        },
-        form => {
-          for {
-            schemes <- candidateCurrentSiftableSchemes(user.application.applicationId)
-            _ <- siftClient.updateGeneralAnswers(user.application.applicationId, GeneralQuestionsAnswers(form))
-          } yield {
-            continueOrReturn(
-              getNextStep(schemes),
-              Redirect(routes.HomeController.present())
-            )
+      implicit user =>
+        GeneralQuestionsForm().form.bindFromRequest().fold(
+          invalid => {
+            Future(Ok(generalQuestionsView(GeneralQuestionsPage(invalid))))
+          },
+          form => {
+            for {
+              schemes <- candidateCurrentSiftableSchemes(user.application.applicationId)
+              _ <- siftClient.updateGeneralAnswers(user.application.applicationId, GeneralQuestionsAnswers(form))
+            } yield {
+              continueOrReturn(
+                getNextStep(schemes),
+                Redirect(routes.HomeController.present())
+              )
+            }
           }
-        }
-      )
-  }
+        )
+    }
 
   def presentSchemeForm(schemeId: SchemeId): Action[AnyContent] =
     CSRSecureAppAction(SchemeSpecificQuestionsRole) { implicit request =>
-    implicit user =>
-      for {
-        scheme <- schemeMetadata(schemeId, user.application.applicationId)
-        schemeAnswer <- siftClient.getSchemeSpecificAnswer(user.application.applicationId, schemeId)
-      } yield {
-        val form = schemeAnswer.map(formWrapper.form.fill).getOrElse(formWrapper.form)
-        Ok(views.html.application.additionalquestions.schemespecific(form, scheme, SaveAndContinueAction, SaveAndReturnAction))
-      }
-  }
+      implicit user =>
+        for {
+          scheme <- schemeMetadata(schemeId, user.application.applicationId)
+          schemeAnswer <- siftClient.getSchemeSpecificAnswer(user.application.applicationId, schemeId)
+        } yield {
+          val form = schemeAnswer.map(formWrapper.form.fill).getOrElse(formWrapper.form)
+          Ok(schemeSpecificView(form, scheme))
+        }
+    }
+
+  private def schemeSpecificView(form: Form[SchemeSpecificAnswer], scheme: Scheme)(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcSiftSchemeSpecificView) {
+      schemeSpecificTemplate(form, scheme, SaveAndContinueAction, SaveAndReturnAction)
+    } else {
+      views.html.application.additionalquestions.schemespecific(form, scheme, SaveAndContinueAction, SaveAndReturnAction)
+    }
 
   def saveSchemeForm(schemeId: SchemeId): Action[AnyContent] = CSRSecureAppAction(SchemeSpecificQuestionsRole) { implicit request =>
     implicit user =>
       formWrapper.form.bindFromRequest().fold(
         invalid => {
           schemeMetadata(schemeId, user.application.applicationId).map { scheme =>
-            Ok(views.html.application.additionalquestions.schemespecific(invalid, scheme, SaveAndContinueAction, SaveAndReturnAction))
+            Ok(schemeSpecificView(invalid, scheme))
           }
         },
         form => {
@@ -145,7 +166,7 @@ class SiftQuestionsController @Inject() (
 
         enrichedExisting map { ee =>
           val toAdd = userMetadata.schemesForSiftForms.toSet diff ee.keySet
-          ee ++ toAdd.map {scheme => scheme -> SchemeSpecificAnswer("")}
+          ee ++ toAdd.map { scheme => scheme -> SchemeSpecificAnswer("") }
         }
       }
 
@@ -172,15 +193,23 @@ class SiftQuestionsController @Inject() (
         filteredAnswers = removeWithdrawnAnswers(answers, userMetadata)
         enrichedAnswers <- enrichSchemeAnswersAddingMissingSiftSchemes(filteredAnswers, userMetadata)
       } yield {
-         val page = SiftPreviewPage(
-           answers.applicationId,
-           answers.status,
-           answers.generalAnswers,
-           enrichedAnswers
-         )
-         Ok(views.html.application.additionalquestions.previewAdditionalAnswers(page))
+        val page = SiftPreviewPage(
+          answers.applicationId,
+          answers.status,
+          answers.generalAnswers,
+          enrichedAnswers
+        )
+//        Ok(views.html.application.additionalquestions.previewAdditionalAnswers(page))
+        Ok(previewAdditionalAnswersView(page))
       }
   }
+
+  private def previewAdditionalAnswersView(page: SiftPreviewPage)(implicit request: Request[_], user: Option[models.CachedData]): Html =
+    if (config.enablePlayHmrcSiftPreviewAnswersView) {
+      previewAnswersTemplate(page)
+    } else {
+      views.html.application.additionalquestions.previewAdditionalAnswers(page)
+    }
 
   def submitAdditionalQuestions: Action[AnyContent] = CSRSecureAppAction(SchemeSpecificQuestionsRole) { implicit request =>
     implicit user =>

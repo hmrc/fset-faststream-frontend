@@ -1,0 +1,232 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.page.GeneralQuestionsPage
+@import views.html.widgets.{ select_search, select, yesNoRadioWithTogglePanel }
+
+@import forms.sift.UndergradDegreeInfoForm
+@import forms.sift.GeneralQuestionsForm
+@import helpers.CSRFieldConstructor._
+
+@import config.TrackingConsentConfig
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichTextarea
+@import views.html.components.*
+@import helpers.{ServiceNavigationItems, Title}
+
+@this(
+        inputText: InputText,
+        govukTextarea: GovukTextarea,
+        govukButton: GovukButton,
+        govukRadios: GovukRadios,
+        inputSelect: InputSelect,
+        inputSelectAutoComplete: InputSelectAutoComplete,
+        govukErrorSummary: GovukErrorSummary,
+        formWithCSRF: FormWithCSRF,
+        mainLayout: Layout,
+        h1: Heading1,
+        pageTitle: PageTitle
+)
+
+@(page: GeneralQuestionsPage, saveAndContinueAction: String, saveAndReturnAction: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+
+@multipleNationalitiesHtml = {
+    @inputSelectAutoComplete(
+        field = page.form("secondNationality"),
+        id = "secondNationality",
+        name = "secondNationality",
+        items = GeneralQuestionsForm.nationalitiesAsSelectItems,
+        label = "What is your second nationality?"
+    )
+}
+
+@hasUndergradDegreeHtml = {
+    @inputText(
+        field = page.form("undergradDegree.name"),
+        label = "Enter the name of your degree (include title and subject)",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        hint = Some("For example, Psychology BA Hons")
+    )
+
+    @inputSelect(
+        field = page.form("undergradDegree.classification"),
+        id = "undergradDegree.classification",
+        name = "undergradDegree.classification",
+        items = UndergradDegreeInfoForm.classificationsAsSelectItems,
+        label = "Degree class achieved or predicted"
+    )
+
+    @inputText(
+        field = page.form("undergradDegree.graduationYear"),
+        label = "Year of graduation",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds"
+    )
+
+    @govukTextarea(Textarea(
+        id = "undergradDegree.moduleDetails",
+        name = "undergradDegree.moduleDetails",
+        rows = 10,
+        label = Label(
+            classes = "govuk-label--s",
+            content = Text("List the details of the subjects and modules studied in each year, along with their respective credits")
+        )
+    ).withFormField(page.form("undergradDegree.moduleDetails")))
+}
+
+@hasPostgradDegreeHtml = {
+    @inputText(
+        field = page.form("postgradDegree.name"),
+        label = "Enter the name of your degree (include title and subject)",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        hint = Some("For example, Psychology BA Hons")
+    )
+
+    @inputText(
+        field = page.form("postgradDegree.graduationYear"),
+        label = "Year of graduation",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds"
+    )
+
+    @govukTextarea(Textarea(
+        id = "postgradDegree.otherDetails",
+        name = "postgradDegree.otherDetails",
+        rows = 5,
+        label = Label(
+            classes = "govuk-label--s",
+            content = Text("List any other details about your postgraduate degree")
+        ),
+        hint = Some(Hint(
+            content = Text("For example, modules studied or outline of research")
+        ))
+    ).withFormField(page.form("postgradDegree.otherDetails")))
+
+    @govukTextarea(Textarea(
+        id = "postgradDegree.projectDetails",
+        name = "postgradDegree.projectDetails",
+        rows = 5,
+        label = Label(
+            classes = "govuk-label--s",
+            content = Text("If you did a postgraduate project, enter the details here")
+        )
+    ).withFormField(page.form("postgradDegree.projectDetails")))
+}
+
+@mainLayout(pageTitle(page.form, Title("Nationality and higher education")).toString, navigation = ServiceNavigationItems(user)) {
+
+    @if(page.form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(page.form))
+    }
+
+    @h1(content = Text("Nationality and higher education"))
+
+    @formWithCSRF(action = routes.SiftQuestionsController.saveGeneralQuestions) {
+        @inputSelectAutoComplete(
+            field = page.form("nationality"),
+            id = "nationality",
+            name = "nationality",
+            items = GeneralQuestionsForm.nationalitiesAsSelectItems,
+            label = "What is your current nationality?"
+        )
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Do you currently hold a dual nationality?"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "multipleNationalities",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true"),
+                    conditionalHtml = Some(multipleNationalitiesHtml)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                )
+            )
+        ).withFormField(page.form("multipleNationalities")))
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Do you have an undergraduate degree? (or expect to have)"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "hasUndergradDegree",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true"),
+                    conditionalHtml = Some(hasUndergradDegreeHtml)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                )
+            )
+        ).withFormField(page.form("hasUndergradDegree")))
+
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Do you have an postgraduate degree? (or expect to have)"),
+                    classes = "govuk-fieldset__legend--s"
+                ))
+            )),
+            name = "hasPostgradDegree",
+            items = Seq(
+                RadioItem(
+                    content = Text("Yes"),
+                    value = Some("true"),
+                    conditionalHtml = Some(hasPostgradDegreeHtml)
+                ),
+                RadioItem(
+                    content = Text("No"),
+                    value = Some("false"),
+                )
+            )
+        ).withFormField(page.form("hasPostgradDegree")))
+
+        <div>
+            @govukButton(Button(
+                name = Some("action"),
+                content = Text("Save and continue"),
+                inputType = Some("submit"),
+                value = Some(saveAndContinueAction),
+                preventDoubleClick = Some(true)
+            ))
+            @govukButton(Button(
+                name = Some("action"),
+                content = Text("Save and return home"),
+                inputType = Some("submit"),
+                value = Some(saveAndReturnAction),
+                preventDoubleClick = Some(true)
+            ))
+        </div>
+    }
+}

@@ -38,7 +38,7 @@
 @scoresDefinitions = {
     <div class="grid grid-1-2 govuk-body">
         @*<h2 class="heading-small">What the scores mean</h2>*@
-        @h2(content = Text("What the scores mean"))
+        @h3(content = Text("What the scores mean"))
         <table class="scores-explanation-table">
             <tr class="strong-candidate">
                 <td><span class="bold-small">4</span></td>
@@ -64,6 +64,7 @@
     </div>
 }
 
+@* Only used when the page is printed *@
 @printOnlyCandidateName = {
     <div class="toggle-content show-print govuk-body">
         <p><b>Candidate name:</b> @page.candidateName</p>
@@ -101,7 +102,7 @@
     <div class="grid-wrapper">
         <div class="grid grid-1-2">
             <div class="inner-block-padr govuk-body">
-                @h2(content = Text("How you scored"))
+                @h3(content = Text("How you scored"))
                 @*<h2 class="heading-small">How you scored</h2>*@
                 <table>
                     <tr>
@@ -127,8 +128,10 @@
     </div>
 
     @for(exercise <- page.exerciseFeedbackData) {
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
         <section class="section-border break-before">
-            @printOnlyCandidateName
+            @*printOnlyCandidateName*@
             @h2(content = Text(exercise.exerciseName))
             @*<h2 class="heading-large">@exercise.exerciseName</h2>*@
 

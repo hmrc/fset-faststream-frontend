@@ -225,6 +225,15 @@ class FrontendAppConfig @Inject() (val config: Configuration, val environment: E
   lazy val enablePlayHmrcPhase1TestsCompleteView: Boolean =
     playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcPhase1TestsCompleteView").getOrElse(false)
 
+  lazy val enablePlayHmrcSiftGeneralQuestionsView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSiftGeneralQuestionsView").getOrElse(false)
+
+  lazy val enablePlayHmrcSiftSchemeSpecificView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSiftSchemeSpecificView").getOrElse(false)
+
+  lazy val enablePlayHmrcSiftPreviewAnswersView: Boolean =
+    playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcSiftPreviewAnswersView").getOrElse(false)
+
   lazy val enablePlayHmrcWithdrawApplicationView: Boolean =
     playHmrcViews && config.getOptional[Boolean]("enablePlayHmrcWithdrawApplicationView").getOrElse(false)
 
