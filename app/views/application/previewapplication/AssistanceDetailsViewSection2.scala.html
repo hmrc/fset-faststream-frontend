@@ -1,0 +1,88 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import security.RoleUtils._
+@import models.FieldNameHelpers._
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.{Heading2, Heading3}
+
+@this(
+        h2: Heading2,
+        h3: Heading3
+)
+
+@(assistanceDetails: connectors.exchange.AssistanceDetails)(edit: Html)(implicit user: Option[CachedData])
+
+@displayDisabilityCategories = @{
+    assistanceDetails.disabilityCategories.map { disabilityCategoryList =>
+        disabilityCategoryList.map { dc =>
+            <p id={createId("disabilityCategories", dc)}>{dc}</p>
+        }
+    }
+}
+
+@maybeDisplayOtherDisabilityDescription = {
+    @if(assistanceDetails.hasSelectedOtherDisabilityCategory) {
+        @h3(content = Text("Other Disability Description"))
+        <p id="otherDisabilityDescription">@assistanceDetails.otherDisabilityDescription.getOrElse("NOT SPECIFIED")</p>
+    }
+}
+
+<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+<div class="govuk-body">
+    @h2(content = Text("Disability and health conditions"))
+    @edit
+    <div>
+        @h3(content = Text("Do you have a physical or mental health condition, illness, impairment or disability?"))
+        <p id="hasDisability">@assistanceDetails.hasDisability</p>
+        @if(assistanceDetails.isDisabledCandidate) {
+            @h3(content = Text("Does this condition, illness, impairment, or disability have a substantial and long-term negative effect on your ability to carry out normal daily activities or the work you can do?"))
+            <p id="disabilityImpact">@assistanceDetails.disabilityImpact</p>
+            @h3(content = Text("Selected disability categories"))
+            @displayDisabilityCategories
+            @maybeDisplayOtherDisabilityDescription
+        }
+    </div>
+    @assistanceDetails.needsSupportAtVenue.map { needsSupportAtVenue =>
+        <section>
+            @h3(content = Text("Will you need any support at the assessment centre?"))
+            @needsSupportAtVenue match {
+                case true => {
+                    <p id="needsSupportAtVenue">Yes</p>
+                    <p id="needsSupportAtVenueDescription">@assistanceDetails.needsSupportAtVenueDescription</p>
+                }
+                case false => {
+                    <p>No</p>
+                }
+            }
+        </section>
+    }
+    @assistanceDetails.needsSupportForPhoneInterview.map { needsSupportForPhoneInterview =>
+        <div>
+            @h3(content = Text("Will you need any support for your video interview?"))
+            @needsSupportForPhoneInterview match {
+                case true => {
+                    <p id="needsSupportForPhoneInterview">Yes</p>
+                    <p id="needsSupportForPhoneInterviewDescription">@assistanceDetails.needsSupportForPhoneInterviewDescription</p>
+                }
+                case false => {
+                    <p>No</p>
+                }
+            }
+        </div>
+    }
+</div>
