@@ -1,0 +1,127 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import java.time.format.DateTimeFormatter
+@import forms.FastPassForm
+@import security.RoleUtils._
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import views.html.components.{Heading2, Heading3}
+
+@this(
+        h2: Heading2,
+        h3: Heading3
+)
+
+@(personalDetails: connectors.exchange.GeneralDetails)(edit: Html)(implicit user: Option[CachedData], messages: Messages)
+
+@displayFastPassSection(id: String, display: Boolean, heading: String, text: => String) = {
+    @if(display){
+        @h3(content = Text(heading))
+        <p id=@id>@text</p>
+    }
+}
+
+@getYesOrNo(value:Boolean) = @{
+    if(value) "Yes" else "No"
+}
+
+@getInternshipTypeDescription(internshipType: String)(implicit messages: Messages) = @{
+    FastPassForm.civilServantAndInternshipTypes.toMap.getOrElse(internshipType, "")
+}
+
+<div class="govuk-body">
+    @h2(content = Text("Personal details"))
+    @edit
+    <section>
+        @h3(content = Text("Full name"))
+        <p id="fullName">@personalDetails.firstName @personalDetails.lastName </p>
+    </section>
+    <section>
+        @h3(content = Text("Preferred name"))
+        <p id="preferredName">@personalDetails.preferredName</p>
+    </section>
+    <section>
+        @h3(content = Text("Date of birth"))
+        <p id="dateOfBirth">@personalDetails.dateOfBirth.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))</p>
+    </section>
+    <section>
+        @h3(content = Text("Address"))
+        <ul class="govuk-list govuk-list--bullet">
+            <li id="address.line1">@personalDetails.address.line1</li>
+            <li id="address.line2">@personalDetails.address.line2.getOrElse("")</li>
+            <li id="address.line3">@personalDetails.address.line3.getOrElse("")</li>
+            <li id="address.line4">@personalDetails.address.line4.getOrElse("")</li>
+
+            @if(personalDetails.postCode.isDefined) {
+                <li id="postCode">@personalDetails.postCode</li>
+            } else {
+                @if(personalDetails.country.isDefined) {
+                    <li id="country">@personalDetails.country</li>
+                } else {
+                    <li>Not provided</li>
+                }
+            }
+        </ul>
+    </section>
+    <section>
+        @h3(content = Text("Telephone number"))
+        @if(personalDetails.phone.isDefined || personalDetails.phone.map(_.nonEmpty)) {
+            <p id="phone-input">@personalDetails.phone.getOrElse("No phone number provided")</p>
+        }
+        @if(personalDetails.phone.isEmpty) {
+            <p id="phone-input3">No number provided</p>
+        }
+    </section>
+    @if(isEdip(user)) {
+        @personalDetails.otherInternshipCompleted.map { otherInternshipCompleted =>
+            <section>
+                @h3(content = Text("Have you completed an internship programme?"))
+                <p id="otherInternshipCompleted">@{if(otherInternshipCompleted) {"Yes"} else {"No"}}</p>
+            </section>
+        }
+    }
+    @if(isSdipFaststream(user) || isSdip(user)) {
+        @personalDetails.edipCompleted.map { edipCompleted =>
+            <section>
+                @h3(content = Text("Have you completed the Early Diversity Internship Programme (EDIP)?"))
+                <p id="edipCompleted">@{if(edipCompleted) {"Yes"} else {"No"}}</p>
+            </section>
+        }
+        @personalDetails.otherInternshipCompleted.map { otherInternshipCompleted =>
+            <section>
+                @h3(content = Text("Have you completed another internship programme?"))
+                <p id="otherInternshipCompleted">@{if(otherInternshipCompleted) {"Yes"} else {"No"}}</p>
+            </section>
+        }
+    }
+    @personalDetails.civilServiceExperienceDetails.map { civilServiceExperienceDetails =>
+        @displayFastPassSection("fastPassApplicable", display = true, "Are you a civil servant or been on a diversity internship?",
+            getYesOrNo(civilServiceExperienceDetails.applicable))
+        @if(civilServiceExperienceDetails.civilServantAndInternshipTypes.isDefined){
+            <section id="internshipTypes">
+                @h3(content = Text("Which internship programmes did you do?"))
+                @for(internshipType <- civilServiceExperienceDetails.civilServantAndInternshipTypes.get){
+                    <p>@getInternshipTypeDescription(internshipType)</p>
+                }
+            </section>
+        }
+        @displayFastPassSection("fastPassReceived", civilServiceExperienceDetails.fastPassReceived.isDefined, "Did you receive a Fast Pass?",
+            getYesOrNo(civilServiceExperienceDetails.fastPassReceived.get))
+        @displayFastPassSection("certificateNumber", civilServiceExperienceDetails.certificateNumber.isDefined, "Fast Pass certificate number",
+            civilServiceExperienceDetails.certificateNumber.get)
+    }
+</div>
