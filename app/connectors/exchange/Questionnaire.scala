@@ -22,7 +22,9 @@ case class Answer(answer: Option[String], otherDetails: Option[String], unknown:
   override def toString = s"answer=$answer,otherDetails=$otherDetails,unknown=$unknown"
 }
 
-case class Question(question: String, answer: Answer)
+case class Question(question: String, answer: Answer) {
+  override def toString = s"question=$question,answer=$answer"
+}
 
 case class Questionnaire(questions: List[Question])
 

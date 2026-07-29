@@ -50,15 +50,12 @@
     @universitySection2(questionnaireForm)
 }
 
-@javaScripts = {
-    <script @CSPNonce.attr src='@routes.Assets.versioned("js/schools.js")' type="text/javascript"></script>
-}
-
-@css = {
+@*css = {
     <link href='@routes.Assets.versioned("css/legacy.css")' media="all" rel="stylesheet" type="text/css">
-}
+}*@
 
-@mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
+@*mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user), css = Some(css)) {*@
+@mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Your education", pageForms = Seq(questionnaireForm)) {*@
     @*pageProgress(6, 7)*@
 
@@ -70,11 +67,6 @@
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))
     }
 
-    @*
-    <div class="hgroup">
-        <h1 class="heading-xlarge">Your education</h1>
-        <p class="subtitle">Diversity questions</p>
-    </div>*@
     @h1(content = Text("Your education"))
     <p class="govuk-body-l">Diversity questions</p>
 
@@ -106,31 +98,10 @@
                 )
             )
         ).withFormField(questionnaireForm("liveInUKBetween14and18")))
-@*
-        <fieldset class="form-group">
-            <legend><h2 class="form-label text">@Messages("liveInUKBetween14and18.question")</h2></legend>
-            @radioBoxHorizontal(questionnaireForm("liveInUKBetween14and18"), options = List(("yes", "Yes", true), ("no", "No", false)),
-                optionTrigger = "liveInUKBetween14and18-panel")
-            <div id="liveInUKBetween14and18-panel" class="toggle-content" aria-hidden="true">
-                @postcode(questionnaireForm)
-                @school(questionnaireForm)
-            </div>
-        </fieldset>
-*@
+
         <input type="hidden" id="isCandidateCivilServant" name="isCandidateCivilServant" value="@isCandidateCivilServant">
 
         @if(isCandidateCivilServant=="Yes") {
-@*
-            <fieldset>
-                <legend><h2 class="form-label text">@Messages("hasDegree.question")</h2></legend>
-                @radioBoxHorizontal(questionnaireForm("hasDegree"), options = List(("yes", "Yes", true), ("no", "No", false)),
-                    optionTrigger = "hasDegree-panel")
-                <div id="hasDegree-panel" class="toggle-content" aria-hidden="true">
-                    @universitySection(questionnaireForm)
-                </div>
-            </fieldset>
-*@
-
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(

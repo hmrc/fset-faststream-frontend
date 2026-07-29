@@ -56,14 +56,6 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       assertFieldRequired(FullValidFormMap, "postcodeQ", "postcodeQ")
     }
 
-    "fail when all values are correct but no schoolName14to16" in new Fixture {
-      assertFieldRequired(FullValidFormMap, "schoolName14to16", "schoolName14to16")
-    }
-
-    "fail when all values are correct but no schoolName16to18" in new Fixture {
-      assertFieldRequired(FullValidFormMap, "schoolName16to18", "schoolName16to18")
-    }
-
     "fail when all values are correct but no freeSchoolMeals" in new Fixture {
       assertFieldRequired(FullValidFormMap, "freeSchoolMeals", "freeSchoolMeals")
     }
@@ -231,52 +223,44 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       ))
     }
 
-    "fail when all values are correct and live in UK and no degree but no school" in new Fixture {
-      assertFieldRequired(LivedInUKAndNoDegreeValidFormMap, "schoolName14to16", "schoolName14to16")
-    }
-
     "transform form when form is full valid (has degree and lived in uk) to a question list" in new Fixture {
       val questionList = FullValidForm.toExchange(true)(mockMessages).questions
-      questionList.size mustBe 14
+      questionList.size mustBe 12
       questionList.head.answer.answer mustBe Some("Yes")
       questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("AAA 111")
       questionList(1).answer.unknown mustBe None
-      questionList(2).answer.answer mustBe Some("my school at 15")
+      questionList(2).answer.answer mustBe Some("state funded")
       questionList(2).answer.unknown mustBe None
-      questionList(3).answer.answer mustBe Some("state funded")
+      questionList(3).answer.answer mustBe Some("No")
       questionList(3).answer.unknown mustBe None
-      questionList(4).answer.answer mustBe Some("my school at 17")
+      questionList(4).answer.answer mustBe Some("Yes")
       questionList(4).answer.unknown mustBe None
-      questionList(5).answer.answer mustBe Some("No")
+      questionList(5).answer.answer mustBe Some("A14-AWC")
       questionList(5).answer.unknown mustBe None
-      questionList(6).answer.answer mustBe Some("Yes")
+      questionList(6).answer.answer mustBe Some("Chemistry")
       questionList(6).answer.unknown mustBe None
-      questionList(7).answer.answer mustBe Some("A14-AWC")
+      questionList(7).answer.answer mustBe Some("BSc/MSc/Eng")
       questionList(7).answer.unknown mustBe None
-      questionList(8).answer.answer mustBe Some("Chemistry")
+      questionList(8).answer.answer mustBe Some("Yes")
       questionList(8).answer.unknown mustBe None
-      questionList(9).answer.answer mustBe Some("BSc/MSc/Eng")
+      questionList(9).answer.answer mustBe Some("K12-KEELE")
       questionList(9).answer.unknown mustBe None
-      questionList(10).answer.answer mustBe Some("Yes")
+      questionList(10).answer.answer mustBe Some("Computing")
       questionList(10).answer.unknown mustBe None
-      questionList(11).answer.answer mustBe Some("K12-KEELE")
+      questionList(11).answer.answer mustBe Some("BSc/MSc/Eng")
       questionList(11).answer.unknown mustBe None
-      questionList(12).answer.answer mustBe Some("Computing")
-      questionList(12).answer.unknown mustBe None
-      questionList(13).answer.answer mustBe Some("BSc/MSc/Eng")
-      questionList(13).answer.unknown mustBe None
     }
-
+/*
     "transform form when has degree with all possible fields with prefer not to say" in new Fixture {
       val questionList = AllPreferNotToSayValidForm.toExchange(true)(mockMessages).questions
-      questionList.size mustBe 11
+      questionList.size mustBe 9
       questionList.head.answer.answer mustBe Some("Yes")
       questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe None
       questionList(1).answer.unknown mustBe Some(true)
-      questionList(2).answer.answer mustBe None
-      questionList(2).answer.unknown mustBe Some(true)
+//      questionList(2).answer.answer mustBe None
+//      questionList(2).answer.unknown mustBe Some(true)
       questionList(3).answer.answer mustBe Some("I don't know/prefer not to say")
       questionList(4).answer.answer mustBe None
       questionList(4).answer.unknown mustBe Some(true)
@@ -292,6 +276,48 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       questionList(9).answer.unknown mustBe None
       questionList(10).answer.answer mustBe Some("No")
       questionList(10).answer.unknown mustBe None
+    }
+*/
+
+    "transform form when has degree with all possible fields with prefer not to say" in new Fixture {
+      val questionList = AllPreferNotToSayValidForm.toExchange(true)(mockMessages).questions
+      questionList.size mustBe 9
+
+      // liveInUKBetween14and18.question
+      questionList.head.answer.answer mustBe Some("Yes")
+      questionList.head.answer.unknown mustBe None
+
+      // postcode.question
+      questionList(1).answer.answer mustBe None
+      questionList(1).answer.unknown mustBe Some(true)
+
+      // schoolType14to16.question
+      questionList(2).answer.answer mustBe Some("I don't know/prefer not to say")
+      questionList(2).answer.unknown mustBe None
+
+      // freeSchoolMeals
+      questionList(3).answer.answer mustBe None
+      questionList(3).answer.unknown mustBe Some(true)
+
+      // hasDegree.question
+      questionList(4).answer.answer mustBe Some("Yes")
+      questionList(4).answer.unknown mustBe None
+
+      // university.question
+      questionList(5).answer.answer mustBe None
+      questionList(5).answer.unknown mustBe None
+
+      // universityDegreeCategory.question
+      questionList(6).answer.answer mustBe None
+      questionList(6).answer.unknown mustBe None
+
+      // degreeType.question
+      questionList(7).answer.answer mustBe Some("BSc/MSc/Eng")
+      questionList(7).answer.unknown mustBe None
+
+      // hasPostgradDegree.question
+      questionList(8).answer.answer mustBe Some("No")
+      questionList(8).answer.unknown mustBe None
     }
 
     "transform form with no lived in uk and has not degree with valid fields to a question list" in new Fixture {
@@ -337,21 +363,17 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
 
     "transform form when no degree but lived in UK with all valid fields to a question list" in new Fixture {
       val questionList = LivedInUKAndNoDegreeValidForm.toExchange(true)(mockMessages).questions
-      questionList.size mustBe 7
+      questionList.size mustBe 5
       questionList.head.answer.answer mustBe Some("Yes")
       questionList.head.answer.unknown mustBe None
       questionList(1).answer.answer mustBe Some("AAA 111")
       questionList(1).answer.unknown mustBe None
-      questionList(2).answer.answer mustBe Some("my school at 15")
+      questionList(2).answer.answer mustBe Some("state funded")
       questionList(2).answer.unknown mustBe None
-      questionList(3).answer.answer mustBe Some("state funded")
+      questionList(3).answer.answer mustBe Some("No")
       questionList(3).answer.unknown mustBe None
-      questionList(4).answer.answer mustBe Some("my school at 17")
+      questionList(4).answer.answer mustBe Some("No")
       questionList(4).answer.unknown mustBe None
-      questionList(5).answer.answer mustBe Some("No")
-      questionList(5).answer.unknown mustBe None
-      questionList(6).answer.answer mustBe Some("No")
-      questionList(6).answer.unknown mustBe None
     }
 
     "sanitize data should respect values when liveInUKBetween14and18 is Yes and hasDegree is Yes" in new Fixture {
