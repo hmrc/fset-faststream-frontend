@@ -38,15 +38,7 @@ class EducationQuestionnaireForm {
         "postcodeQ", "preferNotSay_postcodeQ", Some(TextMaxSize))
       (messages, postCode => !postcodePattern.pattern.matcher(postCode).matches(), "error.postcodeQ.invalid")),
       "preferNotSay_postcodeQ" -> optional(checked(Messages("error.required.postcodeQ"))),
-      "schoolName14to16" -> of(requiredFormatterWithValidationCheckAndSeparatePreferNotToSay("liveInUKBetween14and18",
-        "schoolName14to16", "preferNotSay_schoolName14to16", Some(TextMaxSize))),
-      "schoolId14to16" -> of(schoolIdFormatter("schoolName14to16")),
-      "preferNotSay_schoolName14to16" -> optional(checked(Messages("error.required.schoolName14to16"))),
       "schoolType14to16" -> of(requiredFormatterWithMaxLengthCheck("liveInUKBetween14and18", Some(TextMaxSize))),
-      "schoolName16to18" -> of(requiredFormatterWithValidationCheckAndSeparatePreferNotToSay("liveInUKBetween14and18",
-        "schoolName16to18", "preferNotSay_schoolName16to18", Some(TextMaxSize))),
-      "schoolId16to18" -> of(schoolIdFormatter("schoolName16to18")),
-      "preferNotSay_schoolName16to18" -> optional(checked(Messages("error.required.schoolName16to18"))),
       "freeSchoolMeals" -> of(requiredFormatterWithMaxLengthCheck("liveInUKBetween14and18", Some(TextMaxSize))),
       "isCandidateCivilServant" -> nonEmptyTrimmedText("error.isCandidateCivilServant.required", 31),
       "hasDegree" -> of(requiredFormatterWithMaxLengthCheck("isCandidateCivilServant", Some(3))),
@@ -66,19 +58,6 @@ class EducationQuestionnaireForm {
       )(PostgradUniversity.apply)(f => Some(Tuple.fromProductTyped(f)))
     )(EducationQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
-
-  def schoolIdFormatter(schoolNameKey: String) = new Formatter[Option[String]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-      val schoolId = request.getOrElse(key, "")
-      val schoolName = request.getOrElse(schoolNameKey, "")
-      (schoolName.trim.nonEmpty, schoolId.trim.nonEmpty) match {
-        case (true, true) => Right(Some(schoolId))
-        case _ => Right(None)
-      }
-    }
-
-    def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
-  }
 
   private def optionalParamToMap[T](key: String, optValue: Option[T]) = {
     optValue match {
@@ -201,13 +180,7 @@ object EducationQuestionnaireForm {
                    liveInUKBetween14and18: String,
                    postcode: Option[String],
                    preferNotSayPostcode: Option[Boolean],
-                   schoolName14to16: Option[String],
-                   schoolId14to16: Option[String],
-                   preferNotSaySchoolName14to16: Option[Boolean],
                    schoolType14to16: Option[String],
-                   schoolName16to18: Option[String],
-                   schoolId16to18: Option[String],
-                   preferNotSaySchoolName16to18: Option[Boolean],
                    freeSchoolMeals: Option[String],
                    isCandidateCivilServant: String,
                    hasDegree: Option[String],
@@ -237,9 +210,7 @@ object EducationQuestionnaireForm {
         if (liveInUKBetween14and18 == "Yes") {
           List(
             Question(Messages("postcode.question"), getAnswer(postcode, preferNotSayPostcode)),
-            Question(Messages("schoolName14to16.question"), getAnswer(schoolName14to16, preferNotSaySchoolName14to16, schoolId14to16)),
             Question(Messages("schoolType14to16.question"), Answer(schoolType14to16, otherDetails = None, unknown = None)),
-            Question(Messages("schoolName16to18.question"), getAnswer(schoolName16to18, preferNotSaySchoolName16to18, schoolId16to18)),
             Question(Messages("freeSchoolMeals.question"), freeSchoolMealAnswer))
         } else {
           List.empty
@@ -290,12 +261,12 @@ object EducationQuestionnaireForm {
       }
 
       Questionnaire(
-        List(Question(Messages("liveInUKBetween14and18.question"), Answer(Some(liveInUKBetween14and18), None, None))) ++
+        List(Question(Messages("liveInUKBetween14and18.question"), Answer(Some(liveInUKBetween14and18), otherDetails = None, unknown = None))) ++
           getOptionalSchoolList ++
-          List(Question(Messages("hasDegree.question"), getAnswer(hasDegree, None))) ++
+          List(Question(Messages("hasDegree.question"), getAnswer(hasDegree, preferNotToSayField = None))) ++
           getOptionalUniversityList
       )
-    } //scalastyle:on
+    }
 
     /**
      * It makes sure that when you select "No" as an answer to "live in the UK between 14 and 18" question, the dependent
@@ -311,18 +282,13 @@ object EducationQuestionnaireForm {
       if (liveInUKBetween14and18 == "Yes") {
         this.copy(
           postcode = sanitizeValueWithPreferNotToSay(postcode, preferNotSayPostcode),
-          schoolName14to16 = sanitizeValueWithPreferNotToSay(schoolName14to16, preferNotSaySchoolName14to16),
-          schoolType14to16 = schoolType14to16,
-          schoolName16to18 = sanitizeValueWithPreferNotToSay(schoolName16to18, preferNotSaySchoolName16to18)
+          schoolType14to16 = schoolType14to16
         )
       } else {
         this.copy(
           postcode = None,
           preferNotSayPostcode = None,
-          schoolName14to16 = None,
           schoolType14to16 = None,
-          schoolName16to18 = None,
-          preferNotSaySchoolName16to18 = None,
           freeSchoolMeals = None)
       }
     }

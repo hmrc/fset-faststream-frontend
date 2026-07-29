@@ -25,132 +25,24 @@
 @this(
         h2: Heading2,
         govukRadios: GovukRadios,
-        inputRadios: InputRadios,
-        inputText: InputText
+        inputRadios: InputRadios
 )
 
 @(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data])(implicit messages: Messages)
 
     @h2(content = Text("School"))
-    @*<h2 class="heading-medium">School</h2>*@
     <div class="govuk-inset-text">
         <p>This data helps us understand the socio-economic background of applicants because the schools attended by applicants between ages 14 to 18 is widely recognised as a key indicator.</p>
     </div>
 
-    <section>
-        @*
-        <div class="form-group form-group-compound">
-            @if(questionnaireForm("preferNotSay_schoolName14to16").value.getOrElse("false") == "true") {
-                @helper.inputText(questionnaireForm("schoolName14to16"),
-                    Symbol("_label") -> Messages("schoolName14to16.question"),
-                    Symbol("class") -> "form-control",
-                    Symbol("_showConstraints") -> false,
-                    Symbol("disabled") -> "disabled")
-            } else {
-                @helper.inputText(questionnaireForm("schoolName14to16"),
-                    Symbol("_label") -> Messages("schoolName14to16.question"),
-                    Symbol("class") -> "form-control",
-                    Symbol("_showConstraints") -> false)
-            }
-            <input type="hidden" id="schoolId14to16" name="schoolId14to16" value='@questionnaireForm.data.getOrElse("schoolId14to16", "")'>
-        </div>
-        <div class="form-group">
-        @checkbox(questionnaireForm("preferNotSay_schoolName14to16"), Some("schoolName14to16")) {
-            I don't know/prefer not to say
-        }
-        </div>
-        *@
-
-        @*inputSelectAutoComplete(
-            questionnaireForm("schoolName14to16"),
-            id = "schoolName14to16",
-            name = "schoolName14to16",
-            items = schools.asSelectItems,
-            label = Messages("schoolName14to16.question")
-        )*@
-
-        @inputText(
-            questionnaireForm("schoolName14to16"),
-            label = Messages("schoolName14to16.question")
-        )
-
-        @*
-        <div class="text">
-            <fieldset >
-                <legend><h2 class="form-label">Which type of school was this?</h2></legend>
-                @radioBoxVertical(questionnaireForm("schoolType14to16"), options = models.view.questionnaire.SchoolType.list)
-            </fieldset>
-        </div>
-        *@
-
+    <div>
         @inputRadios(
             field = questionnaireForm("schoolType14to16"),
             name = "schoolType14to16",
             items = models.view.questionnaire.SchoolType.asRadioItems,
-            label = "Which type of school was this?"
+            label = "Aged 14 to 16, what type of school did you attend?"
         )
-@*
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text("Which type of school was this?"),
-                    classes = "govuk-fieldset__legend--s"
-                ))
-            )),
-            name = "schoolType14to16",
-            items = models.view.questionnaire.SchoolType.asRadioItems,
-        ).withFormField(questionnaireForm("schoolType14to16")))
-*@
-    </section>
-    @*
-    <section>
-        <div class="form-group form-group-compound">
-            @if(questionnaireForm("preferNotSay_schoolName16to18").value.getOrElse("false") == "true") {
-                @helper.inputText(questionnaireForm("schoolName16to18"),
-                    Symbol("_label") -> Messages("schoolName16to18.question"),
-                    Symbol("class") -> "form-control",
-                    Symbol("_showConstraints") -> false,
-                    Symbol("disabled") -> "disabled")
-            } else {
-                @helper.inputText(questionnaireForm("schoolName16to18"),
-                    Symbol("_label") -> Messages("schoolName16to18.question"),
-                    Symbol("class") -> "form-control",
-                    Symbol("_showConstraints") -> false)
-            }
-            <input type="hidden" id="schoolId16to18" name="schoolId16to18" value='@questionnaireForm.data.getOrElse("schoolId16to18", "")'>
-        </div>
-        <div class="form-group">
-        @checkbox(questionnaireForm("preferNotSay_schoolName16to18"), Some("schoolName16to18")) {
-            I don't know/prefer not to say
-        }
-        </div>
-    </section>
-    *@
-
-    @*inputSelectAutoComplete(
-        questionnaireForm("schoolName16to18"),
-        id = "schoolName16to18",
-        name = "schoolName16to18",
-        items = schools.asSelectItems,
-        label = Messages("schoolName16to18.question")
-    )*@
-
-    @inputText(
-        questionnaireForm("schoolName16to18"),
-        label = Messages("schoolName16to18.question")
-    )
-
-    @*
-    <section>
-        <div class="text">
-            <fieldset>
-                <legend><h2 class="form-label text">@Messages("freeSchoolMeals.question")</h2></legend>
-                @radioBox(questionnaireForm("freeSchoolMeals"), options = Seq("Yes" -> "Yes", "No" -> "No",
-                    "Unknown/prefer not to say" -> "I don't know/prefer not to say"))
-            </fieldset>
-        </div>
-    </section>
-    *@
+    </div>
 
     @govukRadios(Radios(
         fieldset = Some(Fieldset(
