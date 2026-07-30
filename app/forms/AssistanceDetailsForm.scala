@@ -48,7 +48,6 @@ class AssistanceDetailsForm {
   def form(implicit messages: Messages) = Form(
     mapping(
       "hasDisability" -> of(hasDisabilityFormatter),
-      "disabilityImpact" -> of(disabilityImpactFormatter),
       "disabilityCategories" -> of(disabilityCategoriesFormatter),
       "otherDisabilityDescription" -> of(otherDisabilityDescriptionFormatter(otherDisabilityCategoryMaxSize)),
       "needsSupportAtVenue" -> of(mayBeOptionalString("error.needsSupportAtVenue.required", 31, isFastStreamOrSdipFastStream)),
@@ -81,15 +80,6 @@ class AssistanceDetailsForm {
     }
 
     def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
-  }
-
-  private def disabilityImpactFormatter = new Formatter[Option[String]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-      bindOptionalParam(request.isHasDisabilitySelected, request.isDisabilityImpactValid,
-        "You must provide a valid disability impact")(key, request.disabilityImpactParam)
-    }
-
-    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
   def disabilityCategoriesFormatter = new Formatter[Option[List[String]]] {
@@ -203,7 +193,6 @@ object AssistanceDetailsForm {
 
   case class Data(
     hasDisability: String,
-    disabilityImpact: Option[String],
     disabilityCategories: Option[List[String]],
     otherDisabilityDescription: Option[String],
     needsSupportAtVenue: Option[String],
@@ -213,7 +202,6 @@ object AssistanceDetailsForm {
 
     override def toString =
       s"hasDisability=$hasDisability," +
-        s"disabilityImpact=$disabilityImpact," +
         s"disabilityCategories=$disabilityCategories," +
         s"otherDisabilityDescription=$otherDisabilityDescription," +
         s"needsSupportAtVenue=$needsSupportAtVenue," +
@@ -224,7 +212,6 @@ object AssistanceDetailsForm {
     def exchange: AssistanceDetails = {
       AssistanceDetails(
         hasDisability,
-        disabilityImpact,
         disabilityCategories,
         otherDisabilityDescription,
         AssistanceDetailsForm.Data.toOptBoolean(needsSupportAtVenue),
@@ -238,7 +225,6 @@ object AssistanceDetailsForm {
       def hasDisabilityCheck = hasDisability == "Yes"
       AssistanceDetailsForm.Data(
         hasDisability,
-        if (hasDisabilityCheck) disabilityImpact else None,
         if (hasDisabilityCheck) disabilityCategories else None,
         if (hasDisabilityCheck) otherDisabilityDescription else None,
         needsSupportAtVenue,
@@ -253,7 +239,6 @@ object AssistanceDetailsForm {
     def apply(ad: AssistanceDetails): AssistanceDetailsForm.Data = {
       Data(
         ad.hasDisability,
-        ad.disabilityImpact,
         ad.disabilityCategories,
         ad.otherDisabilityDescription,
         toOptString(ad.needsSupportAtVenue),

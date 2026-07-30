@@ -472,7 +472,6 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
 
     val assistanceDetails = AssistanceDetails(
       hasDisability = "No",
-      disabilityImpact = None,
       disabilityCategories = None,
       otherDisabilityDescription = None,
       needsSupportAtVenue = None,
@@ -509,7 +508,6 @@ class ApplicationClientWithWireMockSpec extends BaseConnectorWithWireMockSpec {
 
     val assistanceDetails = AssistanceDetails(
       hasDisability = "No",
-      disabilityImpact = None,
       disabilityCategories = None,
       otherDisabilityDescription = None,
       needsSupportAtVenue = None,

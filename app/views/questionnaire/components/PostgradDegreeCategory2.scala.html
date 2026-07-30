@@ -46,19 +46,11 @@
     items = models.view.questionnaire.UniversityDegreeCategories.asSelectItems,
     label = messages("postgradDegree.degreeCategory.question")
 )
-@*
-@inputRadios(
-    field = form("postgradUniversity.degreeType"),
-    name = "postgradUniversity.degreeType",
-    items = models.view.questionnaire.DegreeTypes.asRadioItems,
-    label = messages("postgradDegree.degreeType.question")
-)
-*@
 
 @govukRadios(Radios(
     fieldset = Some(Fieldset(
         legend = Some(Legend(
-            content = Text(messages("postgradUniversity.question")),
+            content = Text(messages("postgradDegree.degreeType.question")),
             classes = "govuk-fieldset__legend--s"
         ))
     )),

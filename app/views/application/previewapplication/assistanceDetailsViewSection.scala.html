@@ -53,10 +53,6 @@
         <h3 class="heading-small">Do you have a physical or mental health condition, illness, impairment or disability?</h3>
         <p id="hasDisability">@assistanceDetails.hasDisability</p>
         @if(assistanceDetails.isDisabledCandidate) {
-            <h3 class="heading-small">Does this condition, illness, impairment, or disability have a substantial and long-term negative
-                effect on your ability to carry out normal daily activities or the work you can do?
-            </h3>
-            <p id="disabilityImpact">@assistanceDetails.disabilityImpact</p>
             <h3 class="heading-small">Selected disability categories</h3>
             @displayDisabilityCategories
             @maybeDisplayOtherDisabilityDescription
