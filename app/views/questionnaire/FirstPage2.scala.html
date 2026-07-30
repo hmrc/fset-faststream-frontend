@@ -39,15 +39,6 @@
 
 @(form: Form[forms.DiversityQuestionnaireForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@sexOrientationOtherHtml = {
-    @inputText(
-        form("otherDegreeType"),
-        label = "Provide more information (optional)",
-        labelClasses = "govuk-label--s",
-        classes = "govuk-!-width-two-thirds"
-    )
-}
-
 @mainLayout(pageTitle(form, Title("About you")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "About you", pageForms = Seq(form)) {*@
     @*pageProgress(5,7)*@
@@ -104,8 +95,7 @@
                 ),
                 RadioItem(
                     content = Text("Other"),
-                    value = Some("Other"),
-                    conditionalHtml = Some(sexOrientationOtherHtml)
+                    value = Some("Other")
                 ),
                 RadioItem(
                     content = Text("I don't know/prefer not to say"),

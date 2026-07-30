@@ -33,7 +33,6 @@ class DiversityQuestionnaireForm {
       "sex" -> of(sexFormatter),
 
       "sexOrientation" -> of(sexOrientationFormatter),
-      "other_sexOrientation" -> optional(nonEmptyTrimmedText("error.required.sexOrientation", DiversityQuestionnaireForm.OtherMaxSize)),
 
       "ethnicity" -> of(ethnicityFormatter),
       "other_ethnicity" -> optional(nonEmptyTrimmedText("error.required.ethnicity", DiversityQuestionnaireForm.OtherMaxSize)),
@@ -117,14 +116,13 @@ object DiversityQuestionnaireForm {
   case class Data(
                    sex: String,
                    sexOrientation: String,
-                   otherSexOrientation: Option[String],
                    ethnicity: Option[String],
                    otherEthnicity: Option[String],
                    preferNotSayEthnicity: Option[Boolean]
   ) {
     def exchange(implicit messages: Messages): Questionnaire = Questionnaire(List(
       Question(Messages("sex.question"), Answer(Some(sex), otherDetails = None, unknown = None)),
-      Question(Messages("sexOrientation.question"), Answer(Some(sexOrientation), otherSexOrientation, unknown = None)),
+      Question(Messages("sexOrientation.question"), Answer(Some(sexOrientation), otherDetails = None, unknown = None)),
       Question(Messages("ethnicity.question"), Answer(ethnicity, otherEthnicity, preferNotSayEthnicity))
     ))
   }
