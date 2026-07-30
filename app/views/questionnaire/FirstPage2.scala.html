@@ -59,12 +59,6 @@
     @h1(content = Text("About you"))
     <p class="govuk-body-l">Diversity questions</p>
 
-@*
-    <div class="hgroup">
-        <h1 class="heading-xlarge">About you</h1>
-        <p class="subtitle">Diversity questions</p>
-    </div>
-*@
     <div class="govuk-body">
         <h2 class="heading-medium">Why do we ask these questions?</h2>
         <p>These questions help us to gather data on people's sex at birth, sexual orientation and ethnicity.</p>
@@ -72,15 +66,6 @@
     </div>
 
     @formWithCSRF(action = routes.QuestionnaireController.submitFirstPage) {
-@*
-        <section>
-            <fieldset class="form-group">
-                <legend><h2 class="form-label text" id="sex-ques">@Messages("sex.question")</h2></legend>
-                <span class="form-hint">This question is about your sex at birth</span>
-                @radioBoxHorizontal(form("sex"), options = Sexes.list)
-            </fieldset>
-        </section>
-*@
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -95,34 +80,6 @@
             items = Sexes.asRadioItems,
             classes = "govuk-radios--inline"
         ).withFormField(form("sex")))
-@*
-        <section>
-            <fieldset class="form-group">
-                <legend><h2 class="form-label" id="orientation-ques">@Messages("sexOrientation.question")</h2></legend>
-                @radioBoxVertical(form("sexOrientation"), options = SexOrientations.list, optionTrigger = "orientation-describe")
-                <div class="toggle-content form-group form-group-compound" id="orientation-describe">
-                @helper.inputText(form("other_sexOrientation"),
-                    Symbol("_label") -> "Provide more information (optional)",
-                    Symbol("_labelClass") -> "form-hint",
-                    Symbol("class") -> "form-control",
-                    Symbol("_showConstraints") -> false,
-                    Symbol("optional") -> "")
-                </div>
-            </fieldset>
-        </section>
-*@
-@*
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("sexOrientation.question")),
-                    classes = "govuk-fieldset__legend--s"
-                ))
-            )),
-            name = "sexOrientation",
-            items = SexOrientations.asRadioItems,
-        ).withFormField(form("sexOrientation")))
-*@
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
@@ -157,67 +114,11 @@
             )
         ).withFormField(form("sexOrientation")))
 
-        @*
-        <section>
-            <fieldset class="form-group">
-                <legend><h2 class="form-label" id="ethnicity-ques">@Messages("ethnicity.question")</h2></legend>
-                @select_guard_multi(form("ethnicity"), Ethnicities.map, "ethnicity-describe", "Select one", "ethnicity-ques")
-
-                <div class="toggle-content form-group form-group-compound" id="ethnicity-describe">
-                    @helper.inputText(form("other_ethnicity"),
-                        Symbol("_label") -> "Provide more information (optional)",
-                        Symbol("_labelClass") -> "form-hint",
-                        Symbol("class") -> "form-control",
-                        Symbol("_showConstraints") -> false,
-                        Symbol("optional") -> "")
-                </div>
-                <div data-optional>
-                    @checkbox(form("preferNotSay_ethnicity"), Some("ethnicity")) {
-                        I don't know/prefer not to say
-                    }
-                </div>
-            </fieldset>
-        </section>
-            *@
-
         @govukSelect(Select(
             name = "ethnicity",
             items = models.view.questionnaire.Ethnicities.asSelectItems,
             label = Label(content = Text(messages("ethnicity.question")))
         ).withFormField(form("ethnicity")))
-
-        @*
-        <section>
-            <fieldset class="form-group">
-                <legend><h2 class="form-label">Is English your first language?</h2></legend>
-                @radioBoxHorizontal(form("isEnglishFirstLanguage"), options = List(("yes", "Yes", true), ("no", "No", false),
-                    ("preferNotToSay", "I don't know/prefer not to say", false)))
-            </fieldset>
-        </section>
-        *@
-
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text("Is English your first language?"),
-                    classes = "govuk-fieldset__legend--s"
-                ))
-            )),
-            name = "isEnglishFirstLanguage",
-            items = Seq(
-                RadioItem(
-                    content = Text("Yes"),
-                    value = Some("Yes")
-                ),
-                RadioItem(
-                    content = Text("No"),
-                    value = Some("No")
-                ),
-                RadioItem(
-                    content = Text("I don't know/prefer not to say"),
-                    value = Some("I don't know/prefer not to say")
-                )
-            )).withFormField(form("isEnglishFirstLanguage")))
 
         @govukButton(Button(
             content = Text("Save and continue"),

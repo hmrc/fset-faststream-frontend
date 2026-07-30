@@ -77,8 +77,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
       val expectedData = Data(
         sex = "Male",
         sexOrientation = "Other", otherSexOrientation = Some("details"),
-        ethnicity = Some("Irish"), otherEthnicity = None, preferNotSayEthnicity = None,
-        isEnglishFirstLanguage = "Yes"
+        ethnicity = Some("Irish"), otherEthnicity = None, preferNotSayEthnicity = None
       )
       val actualData = validForm.get
       actualData mustBe expectedData
@@ -97,8 +96,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
       val expectedData = Data(
         sex = "Male",
         sexOrientation = "Other", otherSexOrientation = Some("details"),
-        ethnicity = None, otherEthnicity = None, preferNotSayEthnicity = Some(true),
-        isEnglishFirstLanguage = "Yes"
+        ethnicity = None, otherEthnicity = None, preferNotSayEthnicity = Some(true)
       )
       val actualData = validForm.get
       actualData mustBe expectedData
@@ -112,21 +110,12 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
       assertFormError("preferNotSay_ethnicity", validFormValues ++ Seq("preferNotSay_ethnicity" -> "BOOM"))
     }
 
-    "fail when no language is specified" in new Fixture {
-      assertFieldRequired(expectedError = "isEnglishFirstLanguage", "isEnglishFirstLanguage")
-    }
-
-    "fail when English language is not a correct value" in new Fixture {
-      assertFormError("isEnglishFirstLanguage", validFormValues ++ Seq("isEnglishFirstLanguage" -> "BOOM"))
-    }
-
     "transform properly to a question list" in new Fixture {
       val questionList = validFormData.exchange.questions
-      questionList.size mustBe 4
-      questionList(0).answer.answer mustBe Some("Male")
+      questionList.size mustBe 3
+      questionList.head.answer.answer mustBe Some("Male")
       questionList(1).answer.otherDetails mustBe Some("details")
       questionList(2).answer.unknown mustBe Some(true)
-      questionList(3).answer.answer mustBe Some("Yes")
     }
   }
 
@@ -165,8 +154,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
     val validFormData = Data(
       sex = "Male",
       sexOrientation = "Other", otherSexOrientation = Some("details"),
-      ethnicity = None, otherEthnicity = None, preferNotSayEthnicity = Some(true),
-      isEnglishFirstLanguage = "Yes"
+      ethnicity = None, otherEthnicity = None, preferNotSayEthnicity = Some(true)
     )
 
     val validFormValues = Map(
@@ -177,9 +165,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
 
       "ethnicity" -> "",
       "other_ethnicity" -> "",
-      "preferNotSay_ethnicity" -> "true",
-
-      "isEnglishFirstLanguage" -> "Yes"
+      "preferNotSay_ethnicity" -> "true"
     )
 
     val formWrapper = new DiversityQuestionnaireForm().form
