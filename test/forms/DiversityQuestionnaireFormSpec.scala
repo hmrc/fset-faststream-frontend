@@ -76,7 +76,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
       val validForm = formWrapper.bind(validFormValues ++ Seq("ethnicity" -> "Irish", "preferNotSay_ethnicity" -> ""))
       val expectedData = Data(
         sex = "Male",
-        sexOrientation = "Other", otherSexOrientation = Some("details"),
+        sexOrientation = "Other",
         ethnicity = Some("Irish"), otherEthnicity = None, preferNotSayEthnicity = None
       )
       val actualData = validForm.get
@@ -95,7 +95,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
       val validForm = formWrapper.bind(validFormValues ++ Seq("ethnicity" -> "BOOM"))
       val expectedData = Data(
         sex = "Male",
-        sexOrientation = "Other", otherSexOrientation = Some("details"),
+        sexOrientation = "Other",
         ethnicity = None, otherEthnicity = None, preferNotSayEthnicity = Some(true)
       )
       val actualData = validForm.get
@@ -114,7 +114,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
       val questionList = validFormData.exchange.questions
       questionList.size mustBe 3
       questionList.head.answer.answer mustBe Some("Male")
-      questionList(1).answer.otherDetails mustBe Some("details")
+      questionList(1).answer.otherDetails mustBe None
       questionList(2).answer.unknown mustBe Some(true)
     }
   }
@@ -153,7 +153,7 @@ class DiversityQuestionnaireFormSpec extends BaseFormSpec {
 
     val validFormData = Data(
       sex = "Male",
-      sexOrientation = "Other", otherSexOrientation = Some("details"),
+      sexOrientation = "Other",
       ethnicity = None, otherEthnicity = None, preferNotSayEthnicity = Some(true)
     )
 
