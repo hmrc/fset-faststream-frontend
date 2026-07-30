@@ -28,7 +28,7 @@ import play.api.i18n.Messages
 
 @Singleton
 class DiversityQuestionnaireForm {
-  def form(implicit messages: Messages) = Form(
+  def form(implicit messages: Messages): Form[DiversityQuestionnaireForm.Data] = Form(
     mapping(
       "sex" -> of(sexFormatter),
 
@@ -37,9 +37,7 @@ class DiversityQuestionnaireForm {
 
       "ethnicity" -> of(ethnicityFormatter),
       "other_ethnicity" -> optional(nonEmptyTrimmedText("error.required.ethnicity", DiversityQuestionnaireForm.OtherMaxSize)),
-      "preferNotSay_ethnicity" -> optional(checked(Messages("error.required.ethnicity"))),
-
-      "isEnglishFirstLanguage" -> of(englishLanguageFormatter)
+      "preferNotSay_ethnicity" -> optional(checked(Messages("error.required.ethnicity")))
     )(DiversityQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
@@ -89,38 +87,27 @@ class DiversityQuestionnaireForm {
     def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
   }
 
-  private def englishLanguageFormatter = new Formatter[String] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], String] =
-      bindParam(request.isEnglishLanguageValid, "error.required.englishLanguage", key, request.englishLanguageParam)
-
-    def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
-  }
-
   implicit class RequestValidation(request: Map[String, String]) {
-    def param(name: String) = request.collectFirst { case (key, value) if key == name => value }
+    def param(name: String): Option[String] = request.collectFirst { case (key, value) if key == name => value }
 
-    def sexParam = param("sex").getOrElse("")
-    val validSexOptions = Sexes.list.map { case (_, value, _) => value }
-    def isSexValid = validSexOptions.contains(sexParam)
+    def sexParam: String = param("sex").getOrElse("")
+    private val validSexOptions = Sexes.list.map { case (_, value, _) => value }
+    def isSexValid: Boolean = validSexOptions.contains(sexParam)
 
-    def sexOrientationParam = param("sexOrientation").getOrElse("")
-    val validSexOrientationOptions = SexOrientations.list.map { case (_, value, _) => value }
-    def isSexOrientationValid = validSexOrientationOptions.contains(sexOrientationParam)
+    def sexOrientationParam: String = param("sexOrientation").getOrElse("")
+    private val validSexOrientationOptions = SexOrientations.list.map { case (_, value, _) => value }
+    def isSexOrientationValid: Boolean = validSexOrientationOptions.contains(sexOrientationParam)
 
-    def ethnicityParam = param("ethnicity").getOrElse("")
+    def ethnicityParam: String = param("ethnicity").getOrElse("")
 
-    val validEthnicityOptions =
+    private val validEthnicityOptions =
       Ethnicities.map.values.flatMap { (list: List[(String, Boolean)]) =>
         list.map { case (ethnicity, _) => ethnicity }
       }.toList
 
-    def isEthnicityValid = validEthnicityOptions.contains(ethnicityParam)
+    def isEthnicityValid: Boolean = validEthnicityOptions.contains(ethnicityParam)
 
-    def preferNotSayEthnicityParam = param("preferNotSay_ethnicity")
-
-    def englishLanguageParam = param("isEnglishFirstLanguage").getOrElse("")
-    val validEnglishLanguageOptions = Seq("Yes", "No", "I don't know/prefer not to say")
-    def isEnglishLanguageValid = validEnglishLanguageOptions.contains(englishLanguageParam)
+    def preferNotSayEthnicityParam: Option[String] = param("preferNotSay_ethnicity")
   }
 }
 
@@ -133,14 +120,12 @@ object DiversityQuestionnaireForm {
                    otherSexOrientation: Option[String],
                    ethnicity: Option[String],
                    otherEthnicity: Option[String],
-                   preferNotSayEthnicity: Option[Boolean],
-                   isEnglishFirstLanguage: String
+                   preferNotSayEthnicity: Option[Boolean]
   ) {
     def exchange(implicit messages: Messages): Questionnaire = Questionnaire(List(
       Question(Messages("sex.question"), Answer(Some(sex), otherDetails = None, unknown = None)),
       Question(Messages("sexOrientation.question"), Answer(Some(sexOrientation), otherSexOrientation, unknown = None)),
-      Question(Messages("ethnicity.question"), Answer(ethnicity, otherEthnicity, preferNotSayEthnicity)),
-      Question(Messages("language.question"), Answer(Some(isEnglishFirstLanguage), otherDetails = None, unknown = None))
+      Question(Messages("ethnicity.question"), Answer(ethnicity, otherEthnicity, preferNotSayEthnicity))
     ))
   }
 
