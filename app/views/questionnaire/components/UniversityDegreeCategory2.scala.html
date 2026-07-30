@@ -47,15 +47,6 @@
     label = messages("universityDegreeCategory.question")
 )
 
-@*
-@inputRadios(
-    field = form("degreeType"),
-    name = "degreeType",
-    items = models.view.questionnaire.DegreeTypes.asRadioItems,
-    label = messages("degreeType.question")
-)
-*@
-
 @govukRadios(Radios(
     fieldset = Some(Fieldset(
         legend = Some(Legend(
@@ -88,32 +79,3 @@
         )
     )
 ).withFormField(form("degreeType")))
-
-@*
-<section>
-    @selectValueDifferentFromDisplayedText(
-        form("universityDegreeCategory"),
-        models.view.questionnaire.UniversityDegreeCategories.list.toList,
-        Symbol("_disabled") -> (form("preferNotSay_universityDegreeCategory").value.getOrElse("false"))
-    )(
-        "Select one") {
-        @Messages("universityDegreeCategory.question")
-    }
-</section>
-
-<section>
-    <fieldset class="form-group">
-        <legend><h2 class="form-label" id="degreeType">@Messages("degreeType.question")</h2></legend>
-        @radioBoxVertical(form("degreeType"), options = DegreeTypes.list, optionTrigger = "degree-describe")
-        <div class="toggle-content form-group form-group-compound @if(form("otherDegreeType").hasErrors) {has-an-error input-validation-error}" id="degree-describe">
-            <span class="has-error">@maybeDisplayError(form("otherDegreeType"))</span>
-            @helper.inputText(form("otherDegreeType"),
-                Symbol("_label") -> "Please describe your degree",
-                Symbol("_labelClass") -> "form-hint",
-                Symbol("class") -> "form-control",
-                Symbol("_showConstraints") -> false,
-                Symbol("optional") -> "")
-        </div>
-    </fieldset>
-</section>
-*@

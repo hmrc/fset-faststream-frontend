@@ -21,7 +21,7 @@ import forms.AssistanceDetailsForm
 object AssistanceDetailsExamples {
 
   val OnlyDisabilityNoGisNoAdjustments = AssistanceDetails(
-    hasDisability = "Yes", disabilityImpact = Some("No"),
+    hasDisability = "Yes",
     disabilityCategories = Some(List(AssistanceDetailsForm.disabilityCategoriesList.head)),
     otherDisabilityDescription = None,
     needsSupportAtVenue = Some(false), needsSupportAtVenueDescription = None,
@@ -29,7 +29,7 @@ object AssistanceDetailsExamples {
   )
 
   val DisabilityGisAndAdjustments = AssistanceDetails(
-    hasDisability = "Yes", disabilityImpact = Some("No"),
+    hasDisability = "Yes",
     disabilityCategories = Some(List(AssistanceDetailsForm.disabilityCategoriesList.head)),
     otherDisabilityDescription = None,
     needsSupportAtVenue = Some(true), needsSupportAtVenueDescription = Some("Some fsac adjustments"),
@@ -40,7 +40,7 @@ object AssistanceDetailsExamples {
   // needs to distinguish between a GIS candidate and a regular candidate
   // Even though GIS is currently disabled, we keep the functionality in case we want to use it again in a future campaign
   val DisabilityGisAndAdjustments2 = AssistanceDetails(
-    hasDisability = "Yes", disabilityImpact = Some("No"),
+    hasDisability = "Yes",
     disabilityCategories = Some(List(AssistanceDetailsForm.disabilityCategoriesList.head)),
     otherDisabilityDescription = None,
     needsSupportAtVenue = Some(true), needsSupportAtVenueDescription = Some("Some fsac adjustments"),
@@ -48,13 +48,13 @@ object AssistanceDetailsExamples {
   )
 
   val EdipAdjustments = AssistanceDetails(
-    hasDisability = "Yes", disabilityImpact = Some("No"),
+    hasDisability = "Yes",
     disabilityCategories = Some(List(AssistanceDetailsForm.disabilityCategoriesList.head)), otherDisabilityDescription = None,
     needsSupportAtVenue = None, needsSupportAtVenueDescription = None, needsSupportForPhoneInterview = Some(true),
     needsSupportForPhoneInterviewDescription = Some("Some phone adjustments"))
 
   val SdipAdjustments = AssistanceDetails(
-    hasDisability = "Yes", disabilityImpact = Some("No"),
+    hasDisability = "Yes",
     disabilityCategories = Some(List(AssistanceDetailsForm.disabilityCategoriesList.head)), otherDisabilityDescription = None,
     needsSupportAtVenue = None, needsSupportAtVenueDescription = None,
     needsSupportForPhoneInterview = Some(true), needsSupportForPhoneInterviewDescription = Some("Some phone adjustments")

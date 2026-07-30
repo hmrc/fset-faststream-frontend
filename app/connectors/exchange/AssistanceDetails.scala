@@ -20,7 +20,6 @@ import play.api.libs.json.{Json, OFormat}
 
 final case class AssistanceDetails(
                                     hasDisability: String,
-                                    disabilityImpact: Option[String],
                                     disabilityCategories: Option[List[String]],
                                     otherDisabilityDescription: Option[String],
                                     needsSupportAtVenue: Option[Boolean],
@@ -31,7 +30,6 @@ final case class AssistanceDetails(
 ) {
   override def toString =
     s"hasDisability=$hasDisability," +
-      s"disabilityImpact=$disabilityImpact," +
       s"disabilityCategories=$disabilityCategories," +
       s"otherDisabilityDescription=$otherDisabilityDescription," +
       s"needsSupportAtVenue=$needsSupportAtVenue," +

@@ -35,7 +35,6 @@ class AssistanceDetailsFormSpec extends BaseFormSpec {
     "be valid when the fast stream candidate fills the full form" in new Fixture {
       val form = formWrapper.bind(Map(
         "hasDisability" -> "No",
-        "disabilityImpact" -> "No",
         "disabilityCategories[0]" -> AssistanceDetailsForm.disabilityCategoriesList.head,
         "disabilityCategories[1]" -> AssistanceDetailsForm.other,
         "otherDisabilityDescription" -> "Some other description",
@@ -69,33 +68,6 @@ class AssistanceDetailsFormSpec extends BaseFormSpec {
       form.hasGlobalErrors mustBe false
     }
 
-    "be invalid when the fast stream candidate does not submit a value for disabilityImpact question" in new Fixture {
-      val form = formWrapper.bind(Map(
-        "hasDisability" -> "Yes",
-        "disabilityCategories[0]" -> AssistanceDetailsForm.disabilityCategoriesList.head,
-        "needsSupportAtVenue" -> "Yes",
-        "needsSupportAtVenueDescription" -> "Some fsac adjustments"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "disabilityImpact", message = disabilityImpactErrorMsg))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when the fast stream candidate submits an invalid value for disabilityImpact question" in new Fixture {
-      val form = formWrapper.bind(Map(
-        "hasDisability" -> "Yes",
-        "disabilityImpact" -> "BOOM",
-        "disabilityCategories[0]" -> AssistanceDetailsForm.disabilityCategoriesList.head,
-        "needsSupportAtVenue" -> "Yes",
-        "needsSupportAtVenueDescription" -> "Some fsac adjustments"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "disabilityImpact", message = disabilityImpactErrorMsg))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
     "be invalid when the fast stream candidate submits an invalid disability category" in new Fixture {
       val form = formWrapper.bind(Map(
         "hasDisability" -> "Yes",
@@ -119,8 +91,7 @@ class AssistanceDetailsFormSpec extends BaseFormSpec {
       form.hasErrors mustBe true
 
       val expectedFormErrors = Seq(
-        FormError(key = "disabilityImpact", message = disabilityImpactErrorMsg),
-        FormError(key = "disabilityCategories", message = disabilityCategoriesErrorMsg),
+        FormError(key = "disabilityCategories", message = disabilityCategoriesErrorMsg)
       )
       form.errors mustBe expectedFormErrors
       form.hasGlobalErrors mustBe false
@@ -216,7 +187,6 @@ class AssistanceDetailsFormSpec extends BaseFormSpec {
 
   trait Fixture {
     val hasDisabilityErrorMsg = "error.hasDisability.required"
-    val disabilityImpactErrorMsg = "You must provide a valid disability impact"
     val disabilityCategoriesErrorMsg = "Choose a valid disability category"
 
     val assistanceDetailsForm = new AssistanceDetailsForm

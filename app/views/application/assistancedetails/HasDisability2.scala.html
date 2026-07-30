@@ -30,30 +30,6 @@
 @import views.html.widgets.{radioBox, radioBoxHorizontal}
 
 @hasDisabilityHtml = {
-    @govukRadios(Radios(
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text("Does this condition, illness, impairment, or disability have a substantial and long-term negative effect on your ability to carry out normal daily activities or the work you can do?"),
-                classes = "govuk-fieldset__legend--s"
-            ))
-        )),
-        name = "disabilityImpact",
-        items = Seq(
-            RadioItem(
-                content = Text("Yes, a lot"),
-                value = Some("Yes, a lot")
-            ),
-            RadioItem(
-                content = Text("Yes, a little"),
-                value = Some("Yes, a little")
-            ),
-            RadioItem(
-                content = Text("No"),
-                value = Some("No")
-            )
-        )
-    ).withFormField(form("disabilityImpact")))
-
     @multiSelectCheckboxes(
         form("disabilityCategories"),
         name = "disabilityCategories[]",
