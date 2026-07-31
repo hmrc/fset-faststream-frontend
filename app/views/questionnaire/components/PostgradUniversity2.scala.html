@@ -58,40 +58,4 @@
             )
         )
     ).withFormField(form("hasPostgradDegree")))
-
-@*
-<section class="clearfix" id="postgradQuestion">
-    <fieldset>
-        <legend><h2 class="form-label text">@Messages("hasPostgradDegree.question")</h2></legend>
-        @radioBoxHorizontal(form("hasPostgradDegree"), options = List(("yes", "Yes", true), ("no", "No", false)),
-            optionTrigger = "hasPostgradDegree-panel")
-        <div id="hasPostgradDegree-panel" class="toggle-content" aria-hidden="true">
-            @postgradUniversityName(form)
-
-            @selectValueDifferentFromDisplayedText(
-                form("postgradUniversity.degreeCategory"),
-                models.view.questionnaire.UniversityDegreeCategories.list.toList
-            )("Select one") {
-                @Messages("postgradDegree.degreeCategory.question")
-            }
-
-            <section>
-                <fieldset class="form-group">
-                    <legend><h2 class="form-label" id="postGraduateDegreeType">@Messages("postgradDegree.degreeType.question")</h2></legend>
-                    @radioBoxVertical(form("postgradUniversity.degreeType"), options = DegreeTypes.list, optionTrigger = "postgrad-degree-describe")
-                    <div class="toggle-content form-group form-group-compound @if(form("postgradUniversity.otherDegreeType").hasErrors) {has-an-error input-validation-error}" id="postgrad-degree-describe">
-                        <span class="has-error">@maybeDisplayError(form("postgradUniversity.otherDegreeType"))</span>
-                        @helper.inputText(form("postgradUniversity.otherDegreeType"),
-                            Symbol("_label") -> "Please describe your degree",
-                            Symbol("_labelClass") -> "form-hint",
-                            Symbol("class") -> "form-control",
-                            Symbol("_showConstraints") -> false,
-                            Symbol("optional") -> "")
-                    </div>
-                </fieldset>
-            </section>
-        </div>
-    </fieldset>
-</section>
-*@
 }

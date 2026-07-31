@@ -174,47 +174,6 @@ class EducationQuestionnaireFormSpec extends BaseFormSpec {
       ))
     }
 
-    "fail when the degree type is Other but no other details are submitted" in new Fixture {
-      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap + ("degreeType" -> "Other"))
-      invalidForm.hasErrors mustBe true
-      invalidForm.errors.size mustBe 1
-      invalidForm.error("otherDegreeType") mustBe Some(
-        FormError("otherDegreeType", List(Messages("error.otherDegreeType.required"))
-      ))
-    }
-
-    "fail when the postgrad degree type is Other but no other details are submitted" in new Fixture {
-      val invalidForm = fastStreamForm.bind(FullValidFormMap + ("postgradUniversity.degreeType" -> "Other"))
-      invalidForm.hasErrors mustBe true
-      invalidForm.errors.size mustBe 1
-      invalidForm.error("postgradUniversity.otherDegreeType") mustBe Some(
-        FormError("postgradUniversity.otherDegreeType", List(Messages("error.postgradUniversity.otherDegreeType.required"))
-      ))
-    }
-
-    "fail when the degree type is Other and the other details provided exceed the max size" in new Fixture {
-      val invalidForm = fastStreamForm.bind(NotUkLivedAndHasDegreeValidFormMap
-        ++ Map("degreeType" -> "Other", "otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1)))
-      invalidForm.hasErrors mustBe true
-      invalidForm.errors.size mustBe 1
-      invalidForm.error("otherDegreeType") mustBe Some(
-        FormError("otherDegreeType", List(Messages("error.otherDegreeType.maxLength"))
-      ))
-    }
-
-    "fail when the postgrad degree type is Other and the other details provided exceed the max size" in new Fixture {
-      val invalidForm = fastStreamForm.bind(
-        FullValidFormMap
-        ++ Map("postgradUniversity.degreeType" -> "Other",
-               "postgradUniversity.otherDegreeType" -> "A" * (EducationQuestionnaireForm.TextMaxSize + 1))
-      )
-      invalidForm.hasErrors mustBe true
-      invalidForm.errors.size mustBe 1
-      invalidForm.error("postgradUniversity.otherDegreeType") mustBe Some(
-        FormError("postgradUniversity.otherDegreeType", List(Messages("error.postgradUniversity.otherDegreeType.maxLength"))
-      ))
-    }
-
     "fail when all values are correct and not lived in UK and have degree but no university, with EDIP message" in new Fixture {
       val invalidForm = edipForm.bind(NotUkLivedAndHasDegreeValidFormMap - "university")
       invalidForm.hasErrors mustBe true

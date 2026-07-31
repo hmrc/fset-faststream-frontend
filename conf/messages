@@ -157,7 +157,7 @@ civilServantAndInternshipType.another = I completed another internship
 #assistance
 error.hasDisability.required=Tell us if you consider yourself to have a disability
 error.hasDisabilityDescription.required=
-error.needsSupportAtVenue.required = Tell us if you need any support when you visit any of our venues
+error.needsSupportAtVenue.required = Tell us if you need any support when you attend a virtual assessment centre
 error.needsSupportAtVenueDescription.required = Tell us what adjustments you need at any of our venues
 error.needsSupportAtVenueDescription.maxLength = You have exceeded the maximum number of characters allowed (2048) for extra support at venue description
 error.needsSupportForPhoneInterview.required = Tell us if you need any support for your video interview
@@ -290,15 +290,11 @@ error.university.invalid = You''ve entered an invalid university
 error.universityDegreeCategory.required = You must tell us which category best describes your degree
 error.degreeType.required = You must tell us what best describes your first degree
 error.degreeType.invalid = You''ve entered an invalid degree type
-error.otherDegreeType.required = You must describe your degree
-error.otherDegreeType.maxLength = The other degree description must not exceed {0} characters
 error.hasPostgradDegree.required = You must tell us if you have a postgraduate degree
 error.postgradUniversity.university.required = You must tell us what the name of your postgraduate university was/is
 error.postgradUniversity.university.invalid = You''ve entered an invalid postgraduate university
 error.postgradUniversity.degreeType.required = You must tell us what best describes your postgraduate degree
 error.postgradUniversity.degreeType.invalid = You''ve entered an invalid degree type
-error.postgradUniversity.otherDegreeType.required = You must describe your postgraduate degree
-error.postgradUniversity.otherDegreeType.maxLength = The other postgraduate degree description must not exceed {0} characters
 error.postgradUniversity.degreeCategory.required = You must tell us which category best describes your postgraduate degree
 error.postgradUniversity.degreeCategory.invalid = The postgraduate degree category is invalid
 
