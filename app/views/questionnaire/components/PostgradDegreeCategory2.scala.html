@@ -17,27 +17,17 @@
 @import helpers.TemplateHelper.maybeDisplayError
 @import models.view.questionnaire.DegreeTypes
 @import uk.gov.hmrc.govukfrontend.views.html.components.*
-@import views.html.components.{InputRadios, InputSelect, InputText}
+@import views.html.components.{InputRadios, InputSelect}
 @import views.html.questionnaire.components.{postgradUniversity, postgradUniversityName}
 @import views.html.widgets.{radioBoxHorizontal, radioBoxVertical, selectValueDifferentFromDisplayedText}
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 
 @this(
         inputSelect: InputSelect,
-        inputText: InputText,
         govukRadios : GovukRadios
 )
 
 @(form: Form[forms.EducationQuestionnaireForm.Data])(implicit user: Option[CachedData], messages: Messages)
-
-@postgradDegreeTypesOtherHtml = {
-    @inputText(
-        form("postgradUniversity.otherDegreeType"),
-        label = "Please describe your postgraduate degree",
-        labelClasses = "govuk-label--s",
-        classes = "govuk-!-width-two-thirds"
-    )
-}
 
 @inputSelect(
     field = form("postgradUniversity.degreeCategory"),
@@ -74,8 +64,7 @@
         ),
         RadioItem(
             content = Text("Other"),
-            value = Some("Other"),
-            conditionalHtml = Some(postgradDegreeTypesOtherHtml)
+            value = Some("Other")
         )
     )
 ).withFormField(form("postgradUniversity.degreeType")))

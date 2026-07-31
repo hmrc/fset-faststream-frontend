@@ -29,13 +29,11 @@ object EducationQuestionnaireFormExamples {
     university = Some("A14-AWC"),
     universityDegreeCategory = Some("Chemistry"),
     degreeType = Some("BSc/MSc/Eng"),
-    otherDegreeType = None,
     hasPostgradDegree = Some("Yes"),
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity(
       university = Some("K12-KEELE"),
       degreeCategory = Some("Computing"),
       degreeType = Some("BSc/MSc/Eng"),
-      otherDegreeType = None
     )
   )
 
@@ -43,20 +41,13 @@ object EducationQuestionnaireFormExamples {
     liveInUKBetween14and18 = "Yes",
     postcode = None,
     preferNotSayPostcode = Some(true),
-//    schoolName14to16 = None,
-//    schoolId14to16 = None,
-//    preferNotSaySchoolName14to16 = Some(true),
     schoolType14to16 = Some("I don't know/prefer not to say"),
-//    schoolName16to18 = None,
-//    schoolId16to18 = None,
-//    preferNotSaySchoolName16to18 = Some(true),
     freeSchoolMeals = Some("I don't know/prefer not to say"),
     isCandidateCivilServant = "Yes",
     hasDegree = Some("Yes"),
     university = None,
     universityDegreeCategory = None,
     degreeType = Some("BSc/MSc/Eng"),
-    otherDegreeType = None,
     hasPostgradDegree = Some("No"),
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
   )
@@ -72,7 +63,6 @@ object EducationQuestionnaireFormExamples {
     university = None,
     universityDegreeCategory = None,
     degreeType = None,
-    otherDegreeType = None,
     hasPostgradDegree = Some("No"),
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
   )
@@ -88,7 +78,6 @@ object EducationQuestionnaireFormExamples {
     university = Some("A14-AWC"),
     universityDegreeCategory = Some("Chemistry"),
     degreeType = Some("BSc/MSc/Eng"),
-    otherDegreeType = None,
     hasPostgradDegree = Some("No"),
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
   )
@@ -104,7 +93,6 @@ object EducationQuestionnaireFormExamples {
     university = Some("A14-AWC"),
     universityDegreeCategory = Some("Chemistry"),
     degreeType = Some("BSc/MSc/Eng"),
-    otherDegreeType = None,
     hasPostgradDegree = None, // This question is not displayed for edip/sdip so set to None
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
   )
@@ -120,7 +108,6 @@ object EducationQuestionnaireFormExamples {
     university = None,
     universityDegreeCategory = None,
     degreeType = None,
-    otherDegreeType = None,
     hasPostgradDegree = Some("No"), // Not persisted because the answer to hasDegree is No
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
   )
@@ -136,7 +123,6 @@ object EducationQuestionnaireFormExamples {
     university = Some("A14-AWC"),
     universityDegreeCategory = Some("Chemistry"),
     degreeType = Some("BSc/MSc/Eng"),
-    otherDegreeType = None,
     hasPostgradDegree = Some("No"),
     postgradUniversity = EducationQuestionnaireForm.PostgradUniversity.empty
   )

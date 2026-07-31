@@ -45,16 +45,13 @@ class EducationQuestionnaireForm {
       "university" -> of(universityFormatter("hasDegree")),
       "universityDegreeCategory" -> of(universityDegreeCategoryFormatter("hasDegree")),
       "degreeType" -> of(degreeTypeFormatter("hasDegree", "degreeType")),
-      "otherDegreeType" -> of(otherDegreeTypeFormatter("hasDegree", "degreeType", "otherDegreeType", TextMaxSize)),
 
       // If the candidate hasDegree then this must also be answered if the candidate is Faststream or SdipFaststream
       "hasPostgradDegree" -> of(requiredFormatterWithMaxLengthCheck(isFsOrSdipFs, "hasDegree", Some(3))),
       "postgradUniversity" -> mapping(
         "university" -> of(universityFormatter("hasPostgradDegree")),
         "degreeCategory" -> of(universityDegreeCategoryFormatter("hasPostgradDegree")),
-        "degreeType" -> of(degreeTypeFormatter("hasPostgradDegree", "postgradUniversity.degreeType")),
-        "otherDegreeType" -> of(otherDegreeTypeFormatter(
-          "hasPostgradDegree", "postgradUniversity.degreeType", "postgradUniversity.otherDegreeType", TextMaxSize))
+        "degreeType" -> of(degreeTypeFormatter("hasPostgradDegree", "postgradUniversity.degreeType"))
       )(PostgradUniversity.apply)(f => Some(Tuple.fromProductTyped(f)))
     )(EducationQuestionnaireForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
@@ -83,7 +80,7 @@ class EducationQuestionnaireForm {
     def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
-  def universityDegreeCategoryFormatter(requiredKey: String)(implicit messages: Messages) = new Formatter[Option[String]] {
+  private def universityDegreeCategoryFormatter(requiredKey: String)(implicit messages: Messages) = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)
       val keyField: Option[String] = if (data.isEmpty) None else data.get(key).map(_.trim)
@@ -117,51 +114,19 @@ class EducationQuestionnaireForm {
     def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
-  // requiredKey: "hasDegree" or "hasPostgradDegree"
-  // degreeTypeKey: "degreeType" or "postgradUniversity.degreeType"
-  // otherDegreeTypeKey: "otherDegreeType" or "postgradUniversity.otherDegreeType"
-  private def otherDegreeTypeFormatter(requiredKey: String, degreeTypeKey: String, otherDegreeTypeKey: String, maxSize: Int)(
-    implicit messages: Messages) = new Formatter[Option[String]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-      val isDegreeSelected = request.isDegreeOrPostgradDegreeSelected(requiredKey)
-      val dependencyCheck = request.isOtherSelected(degreeTypeKey: String)
-
-      val isFilled = request.isOtherFilled(otherDegreeTypeKey)
-      val isCorrectSize = request.isOtherSizeValid(otherDegreeTypeKey, maxSize)
-
-      (isDegreeSelected && dependencyCheck, isFilled, isCorrectSize) match {
-        case (true, false, _) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.required"))))
-        case (true, true, false) => Left(List(FormError(key, messages(s"error.$otherDegreeTypeKey.maxLength", maxSize))))
-        case (true, true, true) => Right(Some(request.otherDegreeTypeParam(otherDegreeTypeKey)))
-        case (false, _, _) => Right(None)
-      }
-    }
-
-    def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
-  }
-
   implicit class RequestValidation(request: Map[String, String]) {
-    def param(name: String) = request.collectFirst { case (key, value) if key == name => value }
+    def param(name: String): Option[PostCode] = request.collectFirst { case (key, value) if key == name => value }
 
-    def isDegreeTypeValid(key: String) = DegreeTypes.validDegreeTypes.contains(param(key).getOrElse(""))
+    def isDegreeTypeValid(key: String): Boolean = DegreeTypes.validDegreeTypes.contains(param(key).getOrElse(""))
 
-    def isUniversityValid(key: String) = Universities.validUniversities.contains(param(key).getOrElse(""))
+    def isUniversityValid(key: String): Boolean = Universities.validUniversities.contains(param(key).getOrElse(""))
 
-    // degreeKey: "hasDegree" or "hasPostgradDegree"
-    def isDegreeOrPostgradDegreeSelected(degreeKey: String) = param(degreeKey).getOrElse("").contains("Yes")
+    def isDegreeOrPostgradDegreeSelected(degreeKey: String): Boolean = param(degreeKey).getOrElse("").contains("Yes")
 
-    // Checks if "Other" is selected for either degree or postgradDegree
-    // degreeTypeKey is either "degreeType" or "postgradUniversity.degreeType"
-    def isOtherSelected(degreeTypeKey: String) = param(degreeTypeKey).getOrElse("").contains("Other")
-
-    def isOtherFilled(otherKey: String) = param(otherKey).getOrElse("").nonEmpty
-
-    def isOtherSizeValid(otherKey: String, max: Int) = isOtherFilled(otherKey) && param(otherKey).getOrElse("").length < max
-
-    def otherDegreeTypeParam(key: String) = param(key).getOrElse("")
+    def otherDegreeTypeParam(key: String): PostCode = param(key).getOrElse("")
 
     // key is either universityDegreeCategory or postgradUniversity.degreeCategory
-    def isDegreeCategoryValid(key: String) = UniversityDegreeCategories.validDegreeCategories.contains(param(key).getOrElse(""))
+    def isDegreeCategoryValid(key: String): Boolean = UniversityDegreeCategories.validDegreeCategories.contains(param(key).getOrElse(""))
   }
 }
 
@@ -170,11 +135,10 @@ object EducationQuestionnaireForm {
   case class PostgradUniversity(
                                  university: Option[String],
                                  degreeCategory: Option[String],
-                                 degreeType: Option[String],
-                                 otherDegreeType: Option[String]
+                                 degreeType: Option[String]
                                )
   object  PostgradUniversity {
-    val empty = PostgradUniversity(university = None, degreeCategory = None, degreeType = None, otherDegreeType = None)
+    val empty: PostgradUniversity = PostgradUniversity(university = None, degreeCategory = None, degreeType = None)
   }
   case class Data(
                    liveInUKBetween14and18: String,
@@ -187,7 +151,6 @@ object EducationQuestionnaireForm {
                    university: Option[String],
                    universityDegreeCategory: Option[String],
                    degreeType: Option[String],
-                   otherDegreeType: Option[String],
                    hasPostgradDegree: Option[String],
                    postgradUniversity: PostgradUniversity
   ) {
@@ -229,7 +192,7 @@ object EducationQuestionnaireForm {
                 universityDegreeCategory,
                 preferNotToSayField = None)
               ),
-              Question(Messages("degreeType.question"), getAnswer(degreeType, preferNotToSayField = None, otherDetails = otherDegreeType))
+              Question(Messages("degreeType.question"), getAnswer(degreeType, preferNotToSayField = None))
             )
             if (isFsOrSdipFs) {
               // The postgrad degree question is only relevant for faststream or sdipFaststream candidates
@@ -252,7 +215,7 @@ object EducationQuestionnaireForm {
             ),
             Question(
               Messages("postgradDegree.degreeType.question"),
-              getAnswer(postgradUniversity.degreeType, preferNotToSayField = None, otherDetails = postgradUniversity.otherDegreeType)
+              getAnswer(postgradUniversity.degreeType, preferNotToSayField = None)
             )
           )
           case _ => List.empty
@@ -274,7 +237,7 @@ object EducationQuestionnaireForm {
      *
      * This is a kind of backend partial clearing form functionality.
      */
-    def sanitizeData = {
+    def sanitizeData: Data = {
       sanitizeLiveInUK.sanitizeUniversity
     }
 
@@ -298,8 +261,7 @@ object EducationQuestionnaireForm {
         this.copy(
           university = None,
           universityDegreeCategory = None,
-          degreeType = None,
-          otherDegreeType = None
+          degreeType = None
         )
       } else {
         this
