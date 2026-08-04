@@ -72,13 +72,13 @@ class WithdrawController @Inject()(
 
   def presentWithdrawScheme: Action[AnyContent] = CSRSecureAppAction(SchemeWithdrawRole) { implicit request =>
     implicit user =>
-      getWithdrawableSchemes(user.application.applicationId).map {
+      getCandidatesSchemes(user.application.applicationId).map {
         case Nil => Redirect(routes.HomeController.present()).flashing(danger("access.denied"))
         case _ :: Nil => Redirect(routes.WithdrawController.presentWithdrawApplication).flashing(
           warning("withdraw.scheme.last"))
         case schemes =>
           val page = SchemeWithdrawPage(schemes.map(s => (s.name, s.id.value)),
-            schemeWithdrawFormWrapper.form)
+            schemeWithdrawFormWrapper.form(schemes.map(_.id)))
 //          Ok(views.html.home.schemeWithdraw(page))
           Ok(withdrawSchemeView(page))
       }
@@ -91,7 +91,7 @@ class WithdrawController @Inject()(
       views.html.home.schemeWithdraw(page)
     }
 
-  private def getWithdrawableSchemes(appId: UniqueIdentifier)(implicit hc: HeaderCarrier) =
+  private def getCandidatesSchemes(appId: UniqueIdentifier)(implicit hc: HeaderCarrier) =
     applicationClient.getCurrentSchemeStatus(appId).flatMap { schemesStatus =>
       schemesStatus.filter(ss => List(SchemeStatus.Green.toString, SchemeStatus.Amber.toString).contains(ss.result)).map(_.schemeId) match {
         case Nil => Future(Nil)
@@ -103,27 +103,29 @@ class WithdrawController @Inject()(
 
   def withdrawScheme: Action[AnyContent] = CSRSecureAppAction(SchemeWithdrawRole) { implicit request =>
     implicit user =>
-      schemeWithdrawFormWrapper.form.bindFromRequest().fold(
-        invalid =>
-          getWithdrawableSchemes(user.application.applicationId).map { schemes =>
-          Ok(withdrawSchemeView(SchemeWithdrawPage(
-            schemes.map(s => (s.name, s.id.value)),
-            invalid
-          )))
-        },
-        data => refDataClient.allSchemes.flatMap(_.find(_.id.value == data.scheme).map { schemeToWithdraw =>
-          applicationClient.withdrawScheme(user.application.applicationId, WithdrawScheme(schemeToWithdraw.id, data.reason)).map { _ =>
-            Redirect(routes.HomeController.present()).flashing(success("withdraw.scheme.success"))
+      getCandidatesSchemes(user.application.applicationId).map { schemes =>
+        schemeWithdrawFormWrapper.form(schemes.map(_.id)).bindFromRequest().fold(
+          invalid =>
+            Future.successful(Ok(withdrawSchemeView(SchemeWithdrawPage(
+              schemes.map(s => (s.name, s.id.value)),
+              invalid
+            )))),
+          data => {
+            refDataClient.allSchemes.flatMap(_.find(_.id.value == data.scheme).map { schemeToWithdraw =>
+              applicationClient.withdrawScheme(user.application.applicationId, WithdrawScheme(schemeToWithdraw.id, data.reason)).map { _ =>
+                Redirect(routes.HomeController.present()).flashing(success("withdraw.scheme.success"))
+              }
+            }.getOrElse(Future(Redirect(routes.WithdrawController.presentWithdrawScheme)
+              .flashing(danger("withdraw.scheme.invalid", data.scheme)))
+            ).recover {
+              case _: SiftExpired =>
+                Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.error", data.scheme))
+              case _: CannotWithdraw =>
+                Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.failed"))
+            })
           }
-        }.getOrElse(Future(Redirect(routes.WithdrawController.presentWithdrawScheme)
-          .flashing(danger("withdraw.scheme.invalid", data.scheme)))
-        ).recover {
-          case _: SiftExpired =>
-            Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.error", data.scheme))
-          case _: CannotWithdraw =>
-            Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.failed"))
-        })
-      )
+        )
+      }.flatten
   }
 
   def withdrawApplication: Action[AnyContent] = CSRSecureAppAction(AbleToWithdrawApplicationRole) { implicit request =>

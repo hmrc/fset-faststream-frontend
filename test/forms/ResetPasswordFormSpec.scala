@@ -16,18 +16,18 @@
 
 package forms
 
-class resetPasswordFormSpec extends BaseFormSpec {
+class ResetPasswordFormSpec extends BaseFormSpec {
 
   def signUpFormWrapper = new SignUpForm
   def formWrapper = new ResetPasswordForm(signUpFormWrapper)
 
   "the validate method" should {
     "validate an email" in {
-      formWrapper.validateEmail("test@test.com") must be(true)
+      formWrapper.validateEmail("test@test.com") mustBe true
     }
 
     "return false on invalid email" in {
-      formWrapper.validateEmail("not_an_email") must be(false)
+      formWrapper.validateEmail("not_an_email") mustBe false
     }
   }
 }

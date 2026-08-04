@@ -100,24 +100,24 @@ class PersonalDetailsForm {
     val isSdip = request.getOrElse("applicationRoute", Faststream.toString) == Sdip.toString
     val isCreatedOrInProgressSubmitted = List("CREATED", "IN_PROGRESS").contains(request.getOrElse("applicationStatus", ""))
 
-    def param(name: String) = request.collectFirst { case (key, value) if key.contains(name) => value }
+    def param(name: String): Option[PostCode] = request.collectFirst { case (key, value) if key.contains(name) => value }
 
-    def edipCompletedParam = param(edipCompleted).getOrElse("")
-    def hasCompletedEdip = edipCompletedParam == "true"
+    private def edipCompletedParam = param(edipCompleted).getOrElse("")
+    def hasCompletedEdip: Boolean = edipCompletedParam == "true"
 
-    def edipYearParam = param(edipYear).getOrElse("")
-    def isEdipInternshipYearValid = hasCompletedEdip && edipYearParam.matches("[0-9]{4}")
+    def edipYearParam: PostCode = param(edipYear).getOrElse("")
+    def isEdipInternshipYearValid: Boolean = hasCompletedEdip && edipYearParam.matches("[0-9]{4}")
 
-    def otherInternshipCompletedParam = param(otherInternshipCompleted).getOrElse("")
-    def hasCompletedOtherInternship = otherInternshipCompletedParam == "true"
+    private def otherInternshipCompletedParam = param(otherInternshipCompleted).getOrElse("")
+    def hasCompletedOtherInternship: Boolean = otherInternshipCompletedParam == "true"
 
     def otherInternshipNameParam = param(otherInternshipName).getOrElse("")
-    def isOtherInternshipNameFilled = hasCompletedOtherInternship && otherInternshipNameParam.nonEmpty
-    def isOtherInternshipNameSizeValid(max: Int) = hasCompletedOtherInternship &&
+    def isOtherInternshipNameFilled: Boolean = hasCompletedOtherInternship && otherInternshipNameParam.nonEmpty
+    def isOtherInternshipNameSizeValid(max: Int): Boolean = hasCompletedOtherInternship &&
       isOtherInternshipNameFilled && otherInternshipNameParam.length <= max
 
-    def otherInternshipYearParam = param(otherInternshipYear).getOrElse("")
-    def isOtherInternshipYearValid = hasCompletedOtherInternship && otherInternshipYearParam.matches("[0-9]{4}")
+    def otherInternshipYearParam: PostCode = param(otherInternshipYear).getOrElse("")
+    def isOtherInternshipYearValid: Boolean = hasCompletedOtherInternship && otherInternshipYearParam.matches("[0-9]{4}")
   }
 
   private def edipYearFormatter = new Formatter[Option[String]] {

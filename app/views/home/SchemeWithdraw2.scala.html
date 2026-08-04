@@ -32,7 +32,6 @@
 
 @this(
         h1: Heading1,
-        h2: Heading2,
         mainLayout: Layout,
         formWithCSRF: FormWithCSRF,
         govukButton: GovukButton,
@@ -46,47 +45,6 @@
 
 @withdrawHtml = {
     <div>
-    @*govukRadios(Radios(
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text("Tell us why you're withdrawing"),
-                classes = "govuk-fieldset__legend--s"
-            ))
-        )),
-        name = "reason",
-        items = Seq(
-            RadioItem(
-                content = Text("I accepted another job offer"),
-                value = Some("I accepted another job offer")
-            ),
-            RadioItem(
-                content = Text("I realised it was the wrong kind of job for me"),
-                value = Some("I realised it was the wrong kind of job for me")
-            ),
-            RadioItem(
-                content = Text("I decided to take my studies further/pursue an academic career"),
-                value = Some("I decided to take my studies further/pursue an academic career")
-            ),
-            RadioItem(
-                content = Text("I changed my mind about wanting a career in the Civil Service"),
-                value = Some("I changed my mind about wanting a career in the Civil Service")
-            ),
-            RadioItem(
-                content = Text("Online tests looked too demanding/difficult"),
-                value = Some("Online tests looked too demanding/difficult")
-            ),
-            RadioItem(
-                content = Text("Other personal reasons"),
-                value = Some("Other personal reasons")
-            ),
-            RadioItem(
-                content = Text("Other (provide details)"),
-                value = Some("Other (provide details)"),
-                conditionalHtml = Some(withdrawReasonOtherHtml)
-            )
-        )
-    ).withFormField(withdrawForm("reason")))*@
-
         @inputSelect(
             field = page.form("scheme"),
             id = "scheme",
@@ -94,6 +52,15 @@
             items = page.schemesAsSelectItems,
             label = "Which scheme do you want to withdraw from?"
         )
+
+        @govukTextarea(Textarea(
+            id = "reason",
+            name = "reason",
+            label = Label(
+                classes = "govuk-label--ls",
+                content = Text("Reason for withdrawal (optional)")
+            )
+        ).withFormField(page.form("reason")))
     </div>
 
     @govukButton(Button(
@@ -124,7 +91,7 @@
                     classes = "govuk-fieldset__legend--s"
                 ))
             )),
-            name = "withdraw",
+            name = "wantToWithdraw",
             items = Seq(
                 RadioItem(
                     content = Text("Yes"),
@@ -136,28 +103,7 @@
                     value = Some("No")
                 )
             )
-        ).withFormField(page.form("not-used")))
-
-@*
-        @yesNoRadioWithTogglePanel(page.form("not-used"),
-            Symbol("id") -> "withdraw",
-            Symbol("_label") -> "Do you still want to withdraw?"
-        ) {
-            <div id="withdraw-panel-yes" class="toggle-content" >
-                <div>
-                    @selectValueDifferentFromDisplayedText(page.form("scheme"), page.schemes.toList)("Select scheme")(Html("Which scheme do you want to withdraw from?"))
-                    @helper.textarea(page.form("reason"),
-                        Symbol("id") -> "reason",
-                        Symbol("_label") -> "Reason for withdrawal (optional)",
-                        Symbol("class") -> "form-control",
-                        Symbol("rows") -> 5
-                    )
-                </div>
-                <button id="submit" type="submit" name="action" value="@routes.WithdrawController.withdrawScheme" class="button">Withdraw from scheme</button>
-            </div>
-        }
-*@
-
+        ).withFormField(page.form("wantToWithdraw")))
     }
     <div class="govuk-body">
         <a class="govuk-link" id="dashboardLink" href="@routes.HomeController.present()">Return to home page</a>

@@ -18,19 +18,16 @@ package controllers
 
 import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.{ApplicationClient, AssessmentScoresClient}
-import forms.SignInForm
-
-import javax.inject.{Inject, Singleton}
+import helpers.NotificationTypeHelper
 import models.UniqueIdentifier
 import models.page.AssessmentFeedbackPage
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
 import security.Roles.ActiveUserRole
 import security.SilhouetteComponent
-import helpers.NotificationTypeHelper
-import play.api.data.Form
-import play.twirl.api.Html
 import views.html.home.AssessmentFeedback2
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
