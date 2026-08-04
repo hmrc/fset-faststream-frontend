@@ -25,12 +25,12 @@ import play.api.i18n.Messages
 
 @Singleton
 class ResetPasswordForm @Inject() (signUpForm: SignUpForm) {
-  def validateEmail(e: String) = Constraints.emailAddress.apply(e) match {
+  def validateEmail(e: String): Boolean = Constraints.emailAddress.apply(e) match {
     case Valid => true
     case _ => false
   }
 
-  def form(implicit messages: Messages) = Form(
+  def form(implicit messages: Messages): Form[ResetPasswordForm.Data] = Form(
     mapping(
       "email" -> email,
       "code" -> (nonEmptyTrimmedText("passwordreset.required", 7, "passwordreset.wrong-format") verifying
@@ -40,7 +40,7 @@ class ResetPasswordForm @Inject() (signUpForm: SignUpForm) {
     )(ResetPasswordForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
 
-  val resendCodeForm = Form(
+  val resendCodeForm: Form[ResetPasswordForm.ResendCodeData] = Form(
     mapping(
       "email" -> email,
       "resend" -> optionalTrimmedText(4) // Some("true") or None

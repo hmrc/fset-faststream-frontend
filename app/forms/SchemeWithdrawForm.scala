@@ -16,22 +16,57 @@
 
 package forms
 
+import connectors.exchange.referencedata.SchemeId
+
 import javax.inject.Singleton
-import mappings.Mappings._
-import play.api.data.Form
-import play.api.data.Forms._
+import mappings.Mappings.*
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.*
+import play.api.data.format.Formatter
+import play.api.i18n.Messages
 
 @Singleton
 class SchemeWithdrawForm {
-  val form = Form(mapping(
-    "scheme" -> nonEmptyTrimmedText("withdraw.scheme.required"),
-    "reason" -> text
-  )(SchemeWithdrawForm.Data.apply)(f => Some(Tuple.fromProductTyped(f))))
+
+  def form(candidatesSchemes: Seq[SchemeId])(implicit messages: Messages): Form[SchemeWithdrawForm.Data] = {
+    Form(mapping(
+      "wantToWithdraw" -> nonEmptyTrimmedText("error.wantToWithdraw.required", 5),
+      "scheme" -> of(schemeFormatter(candidatesSchemes)),
+      "reason" -> text
+    )(SchemeWithdrawForm.Data.apply)(f => Some(Tuple.fromProductTyped(f))))
+  }
+
+  def schemeFormatter(candidatesSchemes: Seq[SchemeId])(implicit messages: Messages): Formatter[String] = new Formatter[String] {
+    override def bind(key: String, request: Map[String, String]): Either[Seq[FormError], String] = {
+
+      request.param("scheme") match {
+        case Some(value) =>
+          if (request.isPostedSchemeValid(candidatesSchemes)) {
+            Right(value)
+          } else {
+            Left(List(FormError(key, "Choose a scheme to withdraw")))
+          }
+        case _ =>
+          Left(List(FormError(key, "Choose a scheme to withdraw")))
+      }
+    }
+
+    override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
+  }
+}
+
+implicit class RequestValidation(request: Map[String, String]) {
+  def param(name: String): Option[String] = request.collectFirst { case (key, value) if key == name => value }
+
+  private def schemeParam: String = param("scheme").getOrElse("")
+
+  def isPostedSchemeValid(candidatesSchemes: Seq[SchemeId]): Boolean = candidatesSchemes.contains(SchemeId(schemeParam))
 }
 
 object SchemeWithdrawForm {
   case class Data(
-    scheme: String,
-    reason: String
-  )
+                   wantToWithdraw: String,
+                   scheme: String,
+                   reason: String
+                 )
 }

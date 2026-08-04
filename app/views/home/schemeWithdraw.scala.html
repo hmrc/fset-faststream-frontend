@@ -15,7 +15,7 @@
  *@
 
 @import models.page.SchemeWithdrawPage
-@import views.html.widgets.{ yesNoRadioWithTogglePanel, selectValueDifferentFromDisplayedText }
+@import views.html.widgets.{ yesNoRadioWithTogglePanel, selectValueDifferentFromDisplayedText, select }
 @import helpers.CSRFieldConstructor._
 
 @import config.TrackingConsentConfig
@@ -31,7 +31,7 @@
     </div>
     @helper.form(routes.WithdrawController.withdrawScheme) {
         @helper.CSRF.formField
-        @yesNoRadioWithTogglePanel(page.form("not-used"),
+        @yesNoRadioWithTogglePanel(page.form("wantToWithdraw"),
             Symbol("id") -> "withdraw",
             Symbol("_label") -> "Do you still want to withdraw?"
         ) {

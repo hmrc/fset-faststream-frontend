@@ -16,41 +16,43 @@
 
 package forms
 
+import play.api.data.Form
+
 class SignInFormSpec extends BaseFormSpec {
 
-  def signInForm = new SignInForm().form
+  def signInForm: Form[SignInForm.Data] = new SignInForm().form
 
   "Sign In form" should {
     "be valid for non empty email and non empty password" in {
       val form = signInForm.bind(Map("signIn" -> "ABCDEFG", "signInPassword" -> "123456"))
-      form.hasErrors must be(false)
-      form.hasGlobalErrors must be(false)
+      form.hasErrors mustBe false
+      form.hasGlobalErrors mustBe false
     }
 
     "be invalid for empty email" in {
       val form = signInForm.bind(Map("signIn" -> "", "signInPassword" -> "123456"))
-      form.hasErrors must be(true)
-      form.hasGlobalErrors must be(false)
+      form.hasErrors mustBe true
+      form.hasGlobalErrors mustBe false
     }
 
     "be invalid for empty password" in {
       val form = signInForm.bind(Map("signIn" -> "ABCDEFG", "signInPassword" -> ""))
-      form.hasErrors must be(true)
-      form.hasGlobalErrors must be(false)
+      form.hasErrors mustBe true
+      form.hasGlobalErrors mustBe false
     }
 
     "be invalid for too long email" in {
       val form = signInForm.bind(Map("signIn" -> "ABCDEFG", "signInPassword" -> ("012345678901234567890123456789012345678901234567890123456789" +
         "01234567890123456789012345678901234567890123456789012345678901234567890123456789")))
-      form.hasErrors must be(true)
-      form.hasGlobalErrors must be(false)
+      form.hasErrors mustBe true
+      form.hasGlobalErrors mustBe false
     }
 
     "be invalid for too long password" in {
       val form = signInForm.bind(Map("signIn" -> ("012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789" +
         "0123456789012345678901234567890123456789"), "signInPassword" -> "123456"))
-      form.hasErrors must be(true)
-      form.hasGlobalErrors must be(false)
+      form.hasErrors mustBe true
+      form.hasGlobalErrors mustBe false
     }
   }
 }

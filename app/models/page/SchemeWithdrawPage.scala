@@ -24,6 +24,6 @@ case class SchemeWithdrawPage(
   schemes: Seq[(String, String)],
   form: Form[SchemeWithdrawForm.Data]
 ) {
-    def schemesAsSelectItems: List[SelectItem] = List(SelectItem(value = None, text = "-- Select one --")) ++ schemes.map((k, _) =>
-      SelectItem(value = Some(k), text = k))
+    def schemesAsSelectItems: List[SelectItem] = List(SelectItem(value = None, text = "-- Select one --")) ++ schemes.map((k, v) =>
+      SelectItem(value = Some(v), text = k))
 }
