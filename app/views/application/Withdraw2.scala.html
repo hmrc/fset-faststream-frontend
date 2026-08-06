@@ -26,6 +26,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichTextarea
+@import views.html.template.FlashMessage2
 
 @this(
         h1: Heading1,
@@ -35,10 +36,11 @@
         govukButton: GovukButton,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukTextarea : GovukTextarea
+        govukTextarea : GovukTextarea,
+        flashMessage2: FlashMessage2
 )
 
-@(withdrawForm: Form[forms.WithdrawApplicationForm.Data])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(withdrawForm: Form[forms.WithdrawApplicationForm.Data], notification: Option[(helpers.NotificationType, String)] = None)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @withdrawReasonOtherHtml = {
     @govukTextarea(Textarea(
@@ -104,6 +106,8 @@
 }
 
 @mainLayout(Title("Withdraw your application"), navigation = ServiceNavigationItems(user)) {
+
+    @flashMessage2(notification)
 
     @if(withdrawForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(withdrawForm))

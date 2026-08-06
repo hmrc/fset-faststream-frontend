@@ -29,7 +29,8 @@
         govukButton: GovukButton,
         inputText: InputText,
         h1: Heading1,
-        pageTitle: PageTitle
+        pageTitle: PageTitle,
+        flashMessage2: FlashMessage2
 )
 
 @(email: String, activationForm: Form[forms.ActivateAccountForm.Data],
@@ -47,7 +48,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(activationForm))
         }
 
-        @FlashMessage2(notification)
+        @flashMessage2(notification)
 
         @h1(content = Text("Activate your account"))
         <p class="govuk-body">

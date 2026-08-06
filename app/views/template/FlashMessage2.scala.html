@@ -14,12 +14,16 @@
  * limitations under the License.
  *@
 
-@(notification: Option[(helpers.NotificationType, String)] = None)(implicit flash: Flash, feedbackUrl: String)
-
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import helpers.NotificationType
+
+@this(govukNotificationBanner : GovukNotificationBanner)
+
+@(notification: Option[(helpers.NotificationType, String)] = None)(implicit flash: Flash, feedbackUrl: String, messages: Messages, request: RequestHeader)
+
 @*
-This template will render a panel on the top of the screen to show some notifications. The type of the panel depends
-on the key of the notification. To create a notification you need to pass a tuple ok key -> value e.g.
+This template will render a panel to show flash notifications. The type of the panel depends
+on the type of notification. To create a notification you need to pass a tuple ok key -> value
 *@
 
 @displayMessage(message: String) = {
@@ -30,9 +34,18 @@ on the key of the notification. To create a notification you need to pass a tupl
     }
 }
 
+@html(message: String) = {
+    <p class="govuk-notification-banner__heading">@message</p>
+}
+
+@feedback = {
+    You've successfully signed out.<a class="govuk-link" href="@feedbackUrl" target="_blank">Give feedback? (30 second survey) (opens in a new tab)</a>
+}
+
 @renderMsg(notificationType: NotificationType, message: String) = {
     @if(message == "feedback") {
         @*<div class="panel-@notificationType.key">*@
+        @*
         <div class="govuk-inset-text">
             <p id="panel-@notificationType.key" class="text">
                 You've successfully signed out.
@@ -40,15 +53,41 @@ on the key of the notification. To create a notification you need to pass a tupl
         rel="external">Give feedback?</a> (30 second survey)</p>
             </p>
         </div>
-    } else {
-        @*
-        <div class="panel-@notificationType.key">
-            <p id="panel-@notificationType.key" class="text">@displayMessage(message)</p>
-        </div>
         *@
+
+        @govukNotificationBanner(NotificationBanner(
+            content = HtmlContent(feedback)
+        ))
+    } else {
+
+        @notificationType match {
+            case NotificationType.Success => {
+                <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                        @displayMessage(message)
+                        </h3>
+                    </div>
+                </div>
+            }
+            case NotificationType.Danger | NotificationType.Info | NotificationType.Warning => {
+                @govukNotificationBanner(NotificationBanner(
+                    content = HtmlContent(html(message))
+                ))
+            }
+            case _ => { ??? }
+        }
+
+@*
         <div class="govuk-error-message govuk-inset-text">
             <p id="govuk-error-message" class="text">@displayMessage(message)</p>
         </div>
+*@
     }
 }
 

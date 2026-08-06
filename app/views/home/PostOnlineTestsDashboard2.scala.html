@@ -21,6 +21,7 @@
 @import security.Roles._
 @import security.RoleUtils._
 @import views.html.widgets.sdipFaststreamBanner
+@import views.html.template.FlashMessage2
 
 @import config.TrackingConsentConfig
 @import views.html.helper.CSPNonce
@@ -38,10 +39,11 @@
         siftProgress2: SiftProgress2,
         withdrawSection2: WithdrawSection2,
         commonSectionPostOnlineTests2: CommonSectionPostOnlineTests2,
-        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper,
+        flashMessage2: FlashMessage2
 )
 
-@(page: PostOnlineTestsPage, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails])(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(page: PostOnlineTestsPage, cssDescriptions: Seq[SchemeEvaluationResultWithFailureDetails], notification: Option[(helpers.NotificationType, String)] = None)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @getOrder(pos: Int) = @{
   pos match {
@@ -290,6 +292,8 @@
 
 @mainLayout(Title("Home"), navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
 @*main_template(title = "Home", additionalJavascriptFilenames = List("siftProgress.js")) {*@
+
+    @flashMessage2(notification)
 
     @commonSectionPostOnlineTests2(page.userDataWithSchemes.toCachedData)
 

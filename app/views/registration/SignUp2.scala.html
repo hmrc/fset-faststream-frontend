@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import helpers.CSRFieldConstructor.*
+@import views.html.widgets.{checkbox, select_guard, yesNoQuestion}
+
 @import config.TrackingConsentConfig
 @import controllers.ApplicationRouteState
 @import helpers.{ServiceNavigationItems, Title}
@@ -38,14 +41,12 @@
         govukCheckboxes: GovukCheckboxes,
         chooseYourRoute: ChooseYourRoute2,
         inputSelect: InputSelect,
-        pageTitle: PageTitle
+        pageTitle: PageTitle,
+        flashMessage2: FlashMessage2
 )
 
 @(signUpForm: Form[forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], notification: Option[(helpers.NotificationType, String)] = None, afterDeadlineSignupCode: Option[String] = None, validAfterDeadlineSignupCode: Boolean = false, preGoLiveTestingEnabled: Boolean = false)(
         implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
-
-@import helpers.CSRFieldConstructor.*
-@import views.html.widgets.{checkbox, select_guard, yesNoQuestion}
 
 @allAppRouteWindowsClosed = @{
     if (validAfterDeadlineSignupCode) {
@@ -83,12 +84,11 @@
 @mainLayout(pageTitle(signUpForm, Title("Create your account")).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {*@
 
-    @* TODO: this need to be in the main template *@
     @if(signUpForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(signUpForm))
     }
 
-    @FlashMessage2(notification)
+    @flashMessage2(notification)
 
     @h1(content = Text("Create your account"))
 
