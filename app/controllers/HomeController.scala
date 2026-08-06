@@ -175,10 +175,11 @@ class HomeController @Inject()(
   }
 
   private def postOnlineTestsDashboardView(page: PostOnlineTestsPage,
-                                            css: Seq[SchemeEvaluationResultWithFailureDetails]
+                                           css: Seq[SchemeEvaluationResultWithFailureDetails],
+                                           notification: Option[(helpers.NotificationType, String)] = None
                            )(implicit cachedData: CachedData, request: Request[_]): Html =
     if (config.enablePlayHmrcPostOnlineDashboardView) {
-      postOnlineTestsDashboardTemplate(page, css)
+      postOnlineTestsDashboardTemplate(page, css, notification)
     } else {
       views.html.home.postOnlineTestsDashboard(page, css)
     }
@@ -332,11 +333,19 @@ class HomeController @Inject()(
                                           request: Request[_]) = {
     val dashboardPage = DashboardPage(cachedData, phase1TestGroup = None, phase2TestGroup = None, phase3TestGroup = None, config.fsacGuideUrl)
     Future.successful(
+/*
       Ok(views.html.home.dashboard(cachedData, dashboardPage,
         submitApplicationsEnabled = canApplicationBeSubmitted(None),
         displaySdipEligibilityInfo = displaySdipEligibilityInfo,
         cssDescriptions = Nil
       ))
+*/
+      Ok(dashboardView(
+        cachedData,
+        dashboardPage,
+        submitApplicationsEnabled = canApplicationBeSubmitted(None),
+        cssDescriptions = Nil
+      )(displaySdipEligibilityInfo = displaySdipEligibilityInfo))
     )
   }
 
