@@ -20,7 +20,7 @@ application.cannotbe.withdrawn = You can''nt withdraw an application before you 
 error.cannot.withdraw = We can''t find an application to withdraw
 error.reason.required = Select a reason for withdrawing your application
 error.required.reason.more_info = Tell us why you''re withdrawing your application
-application.withdrawn = You''ve successfully withdrawn your application. <a class="govuk-link" href="{0}" target="_blank">Give feedback? (30 second survey) (opens in a new tab)</a>
+application.withdrawn = You''ve successfully withdrawn your application. <a class="govuk-link" href="{0}" target="_blank">Give feedback? (30 second survey) (opens in new tab)</a>
 error.otherReason.maxLength = Information must not exceed 300 characters
 withdraw.scheme.required = You must select a scheme to withdraw from.
 withdraw.scheme.invalid = {0} is not a valid scheme for withdrawal.
