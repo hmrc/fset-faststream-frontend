@@ -15,7 +15,7 @@
  *@
 
 @import config.TrackingConsentConfig
-@import helpers.Title
+@import helpers.{ServiceNavigationItems, Title}
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
@@ -27,14 +27,14 @@
         hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
-@()(implicit request: Request[_], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@()(implicit request: Request[_], user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout(Title("Contact us")) {
+@mainLayout(Title("Contact us"), navigation = ServiceNavigationItems(user)) {
     @h1(content = Text("Contact us"))
     <div class="govuk-inset-text">
         <p>If you have made an application, then please include the email address that you used to register to help us deal with your query effectively.</p>
     </div>
-    <p>
+    <p class="govuk-body">
         @*<a class="govuk-link" href="https://fsetatso.freshdesk.com/support/home" target="_blank" rel="external">Submit a ticket</a>*@
         @hmrcNewTabLinkHelper(NewTabLinkHelper(
             text = "Submit a ticket",
