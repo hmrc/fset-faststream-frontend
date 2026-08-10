@@ -35,13 +35,6 @@
     }
 }
 
-@maybeDisplayOtherDisabilityDescription = {
-    @if(assistanceDetails.hasSelectedOtherDisabilityCategory) {
-        @h3(content = Text("Other Disability Description"))
-        <p id="otherDisabilityDescription">@assistanceDetails.otherDisabilityDescription.getOrElse("NOT SPECIFIED")</p>
-    }
-}
-
 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 <div class="govuk-body">
     @h2(content = Text("Disability and health conditions"))
@@ -52,7 +45,6 @@
         @if(assistanceDetails.isDisabledCandidate) {
             @h3(content = Text("Selected disability categories"))
             @displayDisabilityCategories
-            @maybeDisplayOtherDisabilityDescription
         }
     </div>
     @assistanceDetails.needsSupportAtVenue.map { needsSupportAtVenue =>
