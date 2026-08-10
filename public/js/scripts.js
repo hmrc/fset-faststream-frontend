@@ -50,6 +50,16 @@ $(function () {
   })();
  */
 
+  _this.$addressLine1.val('');
+
+  if ($('#outsideUk').is(":checked")) {
+    $('#postCode').closest('.govuk-form-group').hide();
+    $('#country').closest('.govuk-form-group').show();
+  } else {
+    $('#postCode').closest('.govuk-form-group').show();
+    $('#country').closest('.govuk-form-group').hide();
+  }
+
   function sanitisePostcode(postcode) {
     return postcode.toUpperCase().replace(/ /g, '');
   }
@@ -190,6 +200,7 @@ $(function () {
 
   if (_this.$postCodeSearch != null) {
     $('#outsideUk').on('change', function() {
+
       _this.$addressLine1.val('');
       _this.$addressLine2.val('');
       _this.$addressLine3.val('');
@@ -734,9 +745,13 @@ $(function() {
   $('#outsideUk').on('change', function() {
 
     $('#address_line1').val("");
+    $('#address\\.line1').val("");
     $('#address_line2').val("");
+    $('#address\\.line2').val("");
     $('#address_line3').val("");
+    $('#address\\.line3').val("");
     $('#address_line4').val("");
+    $('#address\\.line4').val("");
     $('#postCode').val("");
     $('#country').val("");
 
@@ -744,10 +759,17 @@ $(function() {
       $('#addressManualInput').removeClass('disabled');
       $('#postCode').closest('.form-group').addClass('toggle-content');
       $('#country').closest('.form-group').removeClass('toggle-content');
+
+      $('#postCode').closest('.govuk-form-group').hide();
+      $('#country').closest('.govuk-form-group').show();
+
       // $('#address\\.line1').focus();
       } else {
       $('#postCode').closest('.form-group').removeClass('toggle-content');
       $('#country').closest('.form-group').addClass('toggle-content');
+
+      $('#postCode').closest('.govuk-form-group').show();
+      $('#country').closest('.govuk-form-group').hide();
       }
     });
 

@@ -58,6 +58,10 @@
     user.flatMap(_.application).map(_.applicationRoute).getOrElse(Faststream)
 }
 
+@javaScripts = {
+    <script @CSPNonce.attr src='@routes.Assets.versioned("js/disabilityCategorySelection2.js")' type="text/javascript"></script>
+}
+
 @mainLayout(pageTitle(form, Title("Disability and health conditions")).toString, navigation = ServiceNavigationItems(user)) {
 
     @if(form.errors.nonEmpty) {

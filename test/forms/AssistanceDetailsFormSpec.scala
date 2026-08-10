@@ -187,7 +187,7 @@ class AssistanceDetailsFormSpec extends BaseFormSpec {
 
   trait Fixture {
     val hasDisabilityErrorMsg = "error.hasDisability.required"
-    val disabilityCategoriesErrorMsg = "Choose a valid disability category"
+    val disabilityCategoriesErrorMsg = "Choose a disability category"
 
     val assistanceDetailsForm = new AssistanceDetailsForm
     val formWrapper = assistanceDetailsForm.form
