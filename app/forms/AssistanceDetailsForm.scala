@@ -85,7 +85,7 @@ class AssistanceDetailsForm {
   def disabilityCategoriesFormatter = new Formatter[Option[List[String]]] {
     def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[List[String]]] = {
       bindOptionalParam(request.isHasDisabilitySelected, request.isDisabilityCategoriesValid,
-        "Choose a valid disability category")(key, request.disabilityCategoriesParam)
+        "Choose a disability category")(key, request.disabilityCategoriesParam)
     }
 
     def unbind(key: String, value: Option[List[String]]): Map[String, String] = {

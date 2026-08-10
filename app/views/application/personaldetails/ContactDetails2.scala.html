@@ -14,158 +14,82 @@
  * limitations under the License.
  *@
 
-@import views.html.components.InputText
-@import views.html.components.Heading2
-
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichCheckboxes
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Text, *}
+@import views.html.components.{Heading2, InputText}
 
 @this(
-    inputText: InputText,
-    h2: Heading2
+        govukCheckboxes: GovukCheckboxes,
+        inputText: InputText,
+        h2: Heading2
 )
 
 @(form: Form[forms.PersonalDetailsForm.Data])(implicit messages: Messages)
 
-@*
-@isOutsideUk = @{
-    form("outsideUk").value match {
-        case Some("true") => true
-        case _ => false
-    }
-}
-*@
+<div class="govuk-body">
+    @h2(content = Text("What is your address?"))
 
-<section class="">
-@*
-    <h2 class="heading-medium">Contact details</h2>
-    <div id="postCodeEntry" class="form-group form-group-compound">
-        <label for="post-code-search" class="form-label">Enter your full postcode</label>
-        <span class="form-hint text">Or you can enter your address manually</span>
-        <input type="text" id="post-code-search" class="form-control form-control-large" required="required">
-        <div id="postCodeErrorWrapper" style="display: none" aria-live="assertive">
-            <p id="postCodeError" class="no-btm-margin"></p>
-        </div>
-    </div>
-    <div class="form-group">
-        <button href="#" class="button" id="findAddressBtn">Find address</button>
-        <a href="#addressSelectorContainer" id="addressesFound" class="link-unimp hidden">
-            <i class="fa fa-long-arrow-down icon-onright"></i>
-        </a>
-    </div>
-    <div class="form-group">
-        @checkbox(form("outsideUk")) {
-            My address is outside the UK
-        }
-    </div>
-    <div class="form-group toggle-content" id="addressSelectorContainer" style="display: none">
-        <div class="scrolling-panel max-height-6ish">
-            <div id="addressSelectContainer" class="form-group toggle-content hide-nojs" style="display: block;">
-                <label for="addressSelect" class="form-label">Select your address</label>
-                    <!-- Fill up with results using JS -->
-                <select name="addressSelect" id="addressSelect" class="select select--half-width form-control-select"></select>
-            </div>
-        </div>
-    </div>
-*@
-@*    <fieldset id="addressManualInput"> *@
-        @h2(content = Text("What is your address?"))
-        @*<legend><h2 class="form-label">What is your address?</h2></legend>*@
+    @govukCheckboxes(Checkboxes(
+        name = "outsideUk",
+        items = Seq(
+            CheckboxItem(
+                content = Text("My address is outside the UK"),
+                value = "true",
+                checked = "true".equals(form("outsideUk").value.getOrElse(""))
+            )
+        )
+    ).withFormField(form("outsideUk")))
 
-        @inputText(
-            form("address.line1"),
-            label = "Address line 1",
-            labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds",
-            autocomplete = Some("address.line1")
-        )
-        @inputText(
-            form("address.line2"),
-            label = "Address line 2 (optional)",
-            labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds",
-            autocomplete = Some("address.line2")
-        )
-        @inputText(
-            form("address.line3"),
-            label = "Address line 3 (optional)",
-            labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds",
-            autocomplete = Some("address.line3")
-        )
-        @inputText(
-            form("address.line4"),
-            label = "Address line 4 (optional)",
-            labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds",
-            autocomplete = Some("address.line4")
-        )
-        @inputText(
-            form("postCode"),
-            label = "Postcode",
-            labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds",
-            autocomplete = Some("postCode")
-        )
+    @inputText(
+        form("address.line1"),
+        label = "Address line 1",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        autocomplete = Some("address.line1")
+    )
+    @inputText(
+        form("address.line2"),
+        label = "Address line 2 (optional)",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        autocomplete = Some("address.line2")
+    )
+    @inputText(
+        form("address.line3"),
+        label = "Address line 3 (optional)",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        autocomplete = Some("address.line3")
+    )
+    @inputText(
+        form("address.line4"),
+        label = "Address line 4 (optional)",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        autocomplete = Some("address.line4")
+    )
+    @inputText(
+        form("postCode"),
+        label = "Postcode",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        autocomplete = Some("postCode")
+    )
+    @inputText(
+        form("country"),
+        label = "Country",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        autocomplete = Some("country")
+    )
 
-        @inputText(
-            form("phone"),
-            label = "Telephone number",
-            labelClasses = "govuk-label--s",
-            classes = "govuk-!-width-two-thirds",
-            spellcheck = Some(false),
-            autocomplete = Some("name"),
-            hint = Some("Enter your mobile number if you have one; otherwise, provide a landline number")
-        )
-
-@*
-        @helper.inputText(form("address.line1"), Symbol("id") -> "address_line1",
-            Symbol("_label") -> "Address line 1 of 4",
-            Symbol("_labelClass") -> "form-label visuallyhidden",
-            Symbol("class") -> "form-control",
-            Symbol("_class") -> "form-group-compound",
-            Symbol("_showConstraints") -> false)(helpers.CSRFieldConstructor.myFields, messages)
-        @helper.inputText(form("address.line2"),
-            Symbol("_label") -> "Address line 2 of 4",
-            Symbol("_labelClass") -> "form-label visuallyhidden",
-            Symbol("class") -> "form-control",
-            Symbol("_class") -> "form-group-compound",
-            Symbol("_showConstraints") -> false,
-            Symbol("optional") -> "")(helpers.CSRFieldConstructor.myFields, messages)
-        @helper.inputText(form("address.line3"),
-            Symbol("_label") -> "Address line 3 of 4",
-            Symbol("class") -> "form-control",
-            Symbol("_labelClass") -> "form-label visuallyhidden",
-            Symbol("_class") -> "form-group-compound",
-            Symbol("_showConstraints") -> false,
-            Symbol("optional") -> "")(helpers.CSRFieldConstructor.myFields, messages)
-        @helper.inputText(form("address.line4"),
-            Symbol("_label") -> "Address line 4 of 4",
-            Symbol("_labelClass") -> "form-label visuallyhidden",
-            Symbol("class") -> "form-control",
-            Symbol("_class") -> "form-group-compound",
-            Symbol("_showConstraints") -> false,
-            Symbol("optional") -> "")(helpers.CSRFieldConstructor.myFields, messages)
-        @helper.inputText(form("postCode"),
-            Symbol("_label") -> "Postcode",
-            Symbol("autocapitalize") -> "characters",
-            Symbol("autocorrect") -> "off",
-            Symbol("class") -> "form-control form-control-large",
-            Symbol("_class") -> (if(isOutsideUk) "toggle-content" else ""),
-            Symbol("_showConstraints") -> false)(helpers.CSRFieldConstructor.myFields, messages)
-        @helper.inputText(form("country"),
-            Symbol("_label") -> "Country",
-            Symbol("autocorrect") -> "off",
-            Symbol("class") -> "form-control",
-            Symbol("_class") -> (if(!isOutsideUk) "toggle-content" else ""),
-            Symbol("_showConstraints") -> false)(helpers.CSRFieldConstructor.myFields, messages)
-*@
-@*    </fieldset> *@
-@*
-    @helper.inputText(form("phone"),
-        Symbol("_label") -> "Telephone number",
-        Symbol("_help") -> "Enter your mobile number if you have one, otherwise,\nprovide a landline number",
-        Symbol("class") -> "form-control form-control-1-3 med-btm-margin",
-        Symbol("type") -> "tel",
-        Symbol("_showConstraints") -> false)
-*@
-</section>
+    @inputText(
+        form("phone"),
+        label = "Telephone number",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        spellcheck = Some(false),
+        autocomplete = Some("name"),
+        hint = Some("Enter your mobile number if you have one; otherwise, provide a landline number")
+    )
+</div>

@@ -53,12 +53,12 @@
     if(updateStatus) routes.PersonalDetailsController.submitPersonalDetailsAndContinue
     else routes.PersonalDetailsController.submitPersonalDetails
 }
-
+@*
 @javaScripts = {
     <script @CSPNonce.attr src='@routes.Assets.versioned("js/civilServantDepartments.js")' type="text/javascript"></script>
-}
+}*@
 
-@mainLayout(pageTitle(form, Title("Personal details")).toString, navigation = ServiceNavigationItems(optCachedData), javaScripts = Some(javaScripts)) {
+@mainLayout(pageTitle(form, Title("Personal details")).toString, navigation = ServiceNavigationItems(optCachedData)) {
 
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
