@@ -36,7 +36,9 @@
     assistanceDetails.exists(_.isGis)
 }
 
+@*
 @generatePsiTestId(psiTestPage: PsiTestPage) = {@Messages(psiTestPage.testNameKey).replace(" ", "").concat("LinkResultsReport")}
+*@
 
 @displayTestPageLink(psiTestPage: PsiTestPage, testName: String) = {
     @psiTestPage.testReportUrl.map { reportUrl =>

@@ -77,8 +77,8 @@ reset.code.wrong-format = The password reset code must be 7 characters
 error.email.not.registered = The email you entered does not have an account on this service
 error.resetpwd.code.expired = You''ve entered an expired code
 error.resetpwd.code.invalid = You''ve entered an incorrect code
-resetpwd.code-sent = We''ve sent a password reset code to your email.<p>If you can''t see it in your inbox within a few minutes, check your spam folder.</p>
-resetpwd.code-resent = We''ve sent a password reset code to your email.<p>If you can''t see it in your inbox within a few minutes, check your spam folder.</p>
+resetpwd.code-sent = We''ve sent a password reset code to your email.<p class="govuk-body">If you can''t see it in your inbox within a few minutes, check your spam folder.</p>
+resetpwd.code-resent = We''ve sent a password reset code to your email.<p class="govuk-body">If you can''t see it in your inbox within a few minutes, check your spam folder.</p>
 
 # Personal details form
 error.preferredName = Enter your preferred name
