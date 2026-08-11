@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukPanel, GovukTextarea, Panel, Text}
-@import views.html.components.{Heading1, Layout}
+@import views.html.components.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichTextarea
@@ -36,6 +36,7 @@
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukTextarea : GovukTextarea,
+        pageTitle: PageTitle,
         flashMessage2: FlashMessage2
 )
 
@@ -104,7 +105,7 @@
     ))
 }
 
-@mainLayout(Title("Withdraw your application"), navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(withdrawForm, Title("Withdraw your application")).toString, navigation = ServiceNavigationItems(user)) {
 
     @flashMessage2(notification)
 
