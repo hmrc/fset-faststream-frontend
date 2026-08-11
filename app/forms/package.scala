@@ -27,9 +27,8 @@ package object forms {
     }
   }
 
-  //TODO: the key argument is unused and should be removed
   def requiredFormatterWithMaxLengthCheck(requiredKey: String, key: String, maxLength: Option[Int])(
-    implicit messages: Messages) = new Formatter[Option[String]] {
+    implicit messages: Messages): Formatter[Option[String]] = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)
       val keyField: Option[String] = if (data.isEmpty) None else data.get(key).map(_.trim)
@@ -50,7 +49,7 @@ package object forms {
 
   // TODO: This version is the same as the one above but does not have the unnecessary key argument
   def requiredFormatterWithMaxLengthCheck(requiredKey: String, maxLength: Option[Int])(
-    implicit messages: Messages) = new Formatter[Option[String]] {
+    implicit messages: Messages): Formatter[Option[String]] = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val requiredField: Option[String] = if (data.isEmpty) None else data.get(requiredKey)
       val keyField: Option[String] = if (data.isEmpty) None else data.get(key).map(_.trim)

@@ -17,28 +17,36 @@
 package forms
 
 import forms.WithdrawApplicationForm.Data
+import org.scalatest.Assertion
 import play.api.data.Form
 
 class WithdrawApplicationFormSpec extends BaseFormSpec {
 
   "the withdraw application form" should {
-    "be valid when the user selects I want to withdraw and provide a reason (no other reason)" in new Fixture {
+
+    "be valid when the user selects I want to withdraw and provides a reason (no other reason)" in new Fixture {
       val (data, form) = Valid
-      form.get must be(data)
+      form.get mustBe data
     }
 
-    "be valid when the user selects I want to withdraw and provide a another reason and more info" in new Fixture {
+    "be valid when the user selects I do not want to withdraw after previously choosing " +
+      "'Other (provide details)' and not providing details" in new Fixture {
+      val form: Form[Data] = formWrapper.form.bind(WithdrawApplicationFormExamples.NoOtherReasonProvidedButShouldPassValidationMap)
+      form.hasErrors mustBe false
+    }
+
+    "be valid when the user selects I want to withdraw and provides another reason and more info" in new Fixture {
       val (data, form) = OtherReasonValid
-      form.get must be(data)
+      form.get mustBe data
     }
 
-    "be invalid when the user selects I want to withdraw and provide no reason" in new Fixture {
+    "be invalid when the user selects I want to withdraw but provides no reason" in new Fixture {
       assertFormError(Seq(
         "error.reason.required"
       ), WithdrawApplicationFormExamples.OtherReasonInvalidNoReasonMap)
     }
 
-    "be invalid when the user selects I want to withdraw and select other reason and provide no more info" in new Fixture {
+    "be invalid when the user selects I want to withdraw and selects other reason but provides no more info" in new Fixture {
       assertFormError(Seq(
         "error.required.reason.more_info"
       ), WithdrawApplicationFormExamples.OtherReasonInvalidNoOtherReasonMoreInfoMap)
@@ -49,19 +57,20 @@ class WithdrawApplicationFormSpec extends BaseFormSpec {
 
     def formWrapper = new WithdrawApplicationForm
 
-    val Valid = (WithdrawApplicationFormExamples.ValidForm, formWrapper.form.fill(
+    val Valid: (Data, Form[Data]) = (WithdrawApplicationFormExamples.ValidForm, formWrapper.form.fill(
       WithdrawApplicationFormExamples.ValidForm))
 
-    val OtherReasonValid = (WithdrawApplicationFormExamples.OtherReasonValidForm, formWrapper.form.fill(
+    val OtherReasonValid: (Data, Form[Data]) = (WithdrawApplicationFormExamples.OtherReasonValidForm, formWrapper.form.fill(
       WithdrawApplicationFormExamples.OtherReasonValidForm))
 
-    val OtherReasonInvalidNoReason = (WithdrawApplicationFormExamples.OtherReasonInvalidNoReasonForm, formWrapper.form.fill(
+    val OtherReasonInvalidNoReason: (Data, Form[Data]) = (WithdrawApplicationFormExamples.OtherReasonInvalidNoReasonForm, formWrapper.form.fill(
       WithdrawApplicationFormExamples.OtherReasonInvalidNoReasonForm))
 
-    val OtherReasonInvalidNoOtherReasonMoreInfo = (WithdrawApplicationFormExamples.OtherReasonInvalidNoOtherReasonMoreInfoForm,
+    val OtherReasonInvalidNoOtherReasonMoreInfo: (Data, Form[Data]) =
+      (WithdrawApplicationFormExamples.OtherReasonInvalidNoOtherReasonMoreInfoForm,
       formWrapper.form.fill(WithdrawApplicationFormExamples.OtherReasonInvalidNoOtherReasonMoreInfoForm))
 
-    def assertFormError(expectedError: Seq[String], invalidFormValues: Map[String, String]) = {
+    def assertFormError(expectedError: Seq[String], invalidFormValues: Map[String, String]): Assertion = {
       val invalidForm: Form[Data] = formWrapper.form.bind(invalidFormValues)
       invalidForm.hasErrors mustBe true
       invalidForm.errors.map(_.message) mustBe expectedError

@@ -26,30 +26,54 @@ import play.api.i18n.Messages
 
 @Singleton
 class WithdrawApplicationForm {
-  val mandatoryReason = WithdrawReasons.list.find(_._2).map(_._1).get
+  private val mandatoryReason = WithdrawReasons.list.find(_._2).map(_._1).get
 
-  def otherReasonFormatter(maxLength: Option[Int])(implicit messages: Messages) = new Formatter[Option[String]] {
-    override def bind(key: String, data: Map[String, String]) = (data.get("reason"), data.get(key)) match {
-      case (Some(`mandatoryReason`), None | Some("")) => Left(Seq(FormError(key, Messages("error.required.reason.more_info"))))
-      case _ =>
-        val fieldValue = data.get(key)
-        if (maxLength.isDefined && fieldValue.isDefined && fieldValue.get.length > maxLength.get) {
-          Left(List(FormError(key, Messages(s"error.$key.maxLength"))))
-        } else {
-          Right(fieldValue)
-        }
+  private def otherReasonFormatter(maxLength: Int)(implicit messages: Messages) = new Formatter[Option[String]] {
+    override def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+
+      val dependencyCheck = request.isWantToWithdrawSelected && request.isOtherReasonSelected
+      val isFilled = request.isOtherReasonFilled
+      val isCorrectSize = request.isOtherReasonSizeValid(maxLength)
+
+      (dependencyCheck, isFilled, isCorrectSize) match {
+        case (true, true, true) => Right(Some(request.otherReasonParam))
+        case (true, true, false) => Left(List(FormError(key, Messages(s"error.$key.maxLength"))))
+        case (true, false, false) => Left(List(FormError(key, Messages("error.required.reason.more_info"))))
+        case (true, false, _) => Right(None)
+        case (false, _, _) => Right(None)
+      }
     }
 
     override def unbind(key: String, value: Option[String]): Map[String, String] = Map(key -> value.getOrElse(""))
   }
 
-  def form(implicit messages: Messages) = Form(
+  def form(implicit messages: Messages): Form[WithdrawApplicationForm.Data] = Form(
     mapping(
       "wantToWithdraw" -> nonEmptyTrimmedText("error.wantToWithdraw.required", 5),
       "reason" -> of(requiredFormatterWithMaxLengthCheck("wantToWithdraw", "reason", Some(64))),
-      "otherReason" -> of(otherReasonFormatter(Some(300)))
+      "otherReason" -> of(otherReasonFormatter(300))
     )(WithdrawApplicationForm.Data.apply)(f => Some(Tuple.fromProductTyped(f)))
   )
+
+  implicit class RequestValidation(request: Map[String, String]) {
+    def param(name: String): Option[String] = request.collectFirst { case (key, value) if key == name => value }
+
+    private def wantToWithdrawParam: String = param("wantToWithdraw").getOrElse("")
+
+    def isWantToWithdrawSelected: Boolean = wantToWithdrawParam == "Yes"
+
+    private def reasonParam = param("reason")
+
+    def otherReasonParam: String = param("otherReason").getOrElse("")
+
+    def isOtherReasonSelected: Boolean = isWantToWithdrawSelected && reasonParam.contains("Other (provide details)")
+
+    def isOtherReasonFilled: Boolean = otherReasonParam.nonEmpty
+
+    // If otherReason is selected then the description must not be empty and not exceed the max size
+    def isOtherReasonSizeValid(max: Int): Boolean = isOtherReasonSelected &&
+      otherReasonParam.nonEmpty && otherReasonParam.length <= max
+  }
 }
 
 object WithdrawApplicationForm {

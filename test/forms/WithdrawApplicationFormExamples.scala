@@ -17,45 +17,59 @@
 package forms
 
 object WithdrawApplicationFormExamples {
-  val ValidForm = WithdrawApplicationForm.Data("Yes", Some("found another job"), None)
+  val ValidForm: WithdrawApplicationForm.Data = WithdrawApplicationForm.Data(
+    wantToWithdraw = "Yes", reason = Some("found another job"), otherReason = None
+  )
 
-  val OtherReasonValidForm = WithdrawApplicationForm.Data("Yes", Some("Other (provide details)"), Some("more info"))
+  val OtherReasonValidForm: WithdrawApplicationForm.Data =
+    WithdrawApplicationForm.Data(
+      wantToWithdraw = "Yes", reason = Some("Other (provide details)"), otherReason = Some("more info")
+    )
 
-  val OtherReasonInvalidNoReasonForm = WithdrawApplicationForm.Data("Yes", None, None)
+  val OtherReasonInvalidNoReasonForm: WithdrawApplicationForm.Data =
+    WithdrawApplicationForm.Data(wantToWithdraw = "Yes", reason = None, otherReason = None)
 
-  val OtherReasonInvalidNoOtherReasonMoreInfoForm = WithdrawApplicationForm.Data("Yes", Some("Other (provide details)"), None)
+  val OtherReasonInvalidNoOtherReasonMoreInfoForm: WithdrawApplicationForm.Data =
+    WithdrawApplicationForm.Data(wantToWithdraw = "Yes", reason = Some("Other (provide details)"), otherReason = None)
 
-  val ValidMap = Map[String, String](
+  val ValidMap: Map[String, String] = Map[String, String](
     "wantToWithdraw" -> "Yes",
     "reason" -> "found another job")
 
-  val OtherReasonValidMap = Map[String, String](
+  val OtherReasonValidMap: Map[String, String] = Map[String, String](
     "wantToWithdraw" -> "Yes",
     "reason" -> "Other (provide details)",
     "otherReason" -> "more info"
   )
 
-  val OtherReasonInvalidNoReasonMap = Map[String, String](
+  // Even though the other reason hasn't been provided, it will pass validation because "wantToWithdraw" is "No"
+  val NoOtherReasonProvidedButShouldPassValidationMap: Map[String, String] = Map[String, String](
+    "wantToWithdraw" -> "No",
+    "reason" -> "Other (provide details)",
+    "otherReason" -> ""
+  )
+
+  val OtherReasonInvalidNoReasonMap: Map[String, String] = Map[String, String](
     "wantToWithdraw" -> "Yes")
 
-  val OtherReasonInvalidNoOtherReasonMoreInfoMap = Map[String, String](
+  val OtherReasonInvalidNoOtherReasonMoreInfoMap: Map[String, String] = Map[String, String](
     "wantToWithdraw" -> "Yes",
     "reason" -> "Other (provide details)")
 
-  val ValidFormUrlEncodedBody = Seq(
+  val ValidFormUrlEncodedBody: Seq[(String, String)] = Seq(
     "wantToWithdraw" -> "Yes",
     "reason" -> "found another job")
 
-  val OtherReasonValidFormUrlEncodedBody = Seq(
+  val OtherReasonValidFormUrlEncodedBody: Seq[(String, String)] = Seq(
     "wantToWithdraw" -> "Yes",
     "reason" -> "Other (provide details)",
     "otherReason" -> "more info"
   )
 
-  val OtherReasonInvalidNoReasonFormUrlEncodedBody = Seq(
+  val OtherReasonInvalidNoReasonFormUrlEncodedBody: Seq[(String, String)] = Seq(
     "wantToWithdraw" -> "Yes")
 
-  val OtherReasonInvalidNoOtherReasonMoreInfoFormUrlEncodedBody = Seq(
+  val OtherReasonInvalidNoOtherReasonMoreInfoFormUrlEncodedBody: Seq[(String, String)] = Seq(
     "wantToWithdraw" -> "Yes",
     "reason" -> "Other (provide details)")
 }
