@@ -35,7 +35,7 @@ on the type of notification. To create a notification you need to pass a tuple o
 }
 
 @html(message: String) = {
-    <p class="govuk-notification-banner__heading">@message</p>
+    <p class="govuk-notification-banner__heading">@Html(message)</p>
 }
 
 @feedback = {

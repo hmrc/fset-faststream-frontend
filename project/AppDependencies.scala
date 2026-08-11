@@ -25,7 +25,7 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"                   %% s"bootstrap-frontend-$playVersion"         % bootstrapVersion,
-    "uk.gov.hmrc"                   %% s"play-frontend-hmrc-$playVersion"         % "13.9.0",
+    "uk.gov.hmrc"                   %% s"play-frontend-hmrc-$playVersion"         % "13.11.0",
     "uk.gov.hmrc"                   %% s"http-caching-client-$playVersion"        % "12.2.0",
     "org.playframework.silhouette"  %% "play-silhouette"                          % silhouetteVersion,
     "org.playframework.silhouette"  %% "play-silhouette-password-bcrypt"          % silhouetteVersion,

@@ -26,7 +26,6 @@ import play.api.i18n.Messages
 
 @Singleton
 class WithdrawApplicationForm {
-  private val mandatoryReason = WithdrawReasons.list.find(_._2).map(_._1).get
 
   private def otherReasonFormatter(maxLength: Int)(implicit messages: Messages) = new Formatter[Option[String]] {
     override def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[String]] = {
