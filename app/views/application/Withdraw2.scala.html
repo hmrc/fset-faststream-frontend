@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukPanel, GovukTextarea, Panel, Text}
-@import views.html.components.{Heading1, Heading2, Layout}
+@import views.html.components.{Heading1, Layout}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.Implicits.RichTextarea
@@ -30,7 +30,6 @@
 
 @this(
         h1: Heading1,
-        h2: Heading2,
         mainLayout: Layout,
         formWithCSRF: FormWithCSRF,
         govukButton: GovukButton,
@@ -121,13 +120,11 @@
 
     @formWithCSRF(action = routes.WithdrawController.withdrawApplication) {
 
-        @h2(content = Text("Do you still want to withdraw?"))
-
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text("Do you still want to withdraw?"),
-                    classes = "govuk-fieldset__legend--s"
+                    classes = "govuk-fieldset__legend--l"
                 ))
             )),
             name = "wantToWithdraw",

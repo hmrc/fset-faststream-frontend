@@ -134,14 +134,18 @@ class WithdrawController @Inject()(
         invalidForm =>
           Future.successful(Ok(withdrawApplicationView(invalidForm))),
         data => {
-          applicationClient.withdrawApplication(user.application.applicationId, WithdrawApplication(data.reason.get, data.otherReason))
-            .map { _ =>
-              Redirect(routes.HomeController.present()).flashing(success("application.withdrawn", feedbackUrl))
-            }.recover {
-              case _: CannotWithdraw => Redirect(routes.HomeController.present()).flashing(danger("error.cannot.withdraw"))
-              case _: SiftExpired =>
-                Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.error", feedbackUrl))
-            }
+          if (data.wantToWithdraw.toLowerCase == "yes") {
+            applicationClient.withdrawApplication(user.application.applicationId, WithdrawApplication(data.reason.get, data.otherReason))
+              .map { _ =>
+                Redirect(routes.HomeController.present()).flashing(success("application.withdrawn", feedbackUrl))
+              }.recover {
+                case _: CannotWithdraw => Redirect(routes.HomeController.present()).flashing(danger("error.cannot.withdraw"))
+                case _: SiftExpired =>
+                  Redirect(routes.HomeController.present()).flashing(danger("withdraw.scheme.error", feedbackUrl))
+              }
+          } else {
+            Future.successful(Redirect(routes.HomeController.present()))
+          }
         }
       )
   }
