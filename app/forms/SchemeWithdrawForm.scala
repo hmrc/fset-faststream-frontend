@@ -39,15 +39,13 @@ class SchemeWithdrawForm {
   def schemeFormatter(candidatesSchemes: Seq[SchemeId])(implicit messages: Messages): Formatter[String] = new Formatter[String] {
     override def bind(key: String, request: Map[String, String]): Either[Seq[FormError], String] = {
 
-      request.param("scheme") match {
-        case Some(value) =>
-          if (request.isPostedSchemeValid(candidatesSchemes)) {
-            Right(value)
-          } else {
-            Left(List(FormError(key, "Choose a scheme to withdraw")))
-          }
-        case _ =>
-          Left(List(FormError(key, "Choose a scheme to withdraw")))
+      val dependencyCheck = request.isWantToWithdrawSelected
+      val isValid = request.isPostedSchemeValid(candidatesSchemes)
+
+      (dependencyCheck, isValid) match {
+        case (true, true) => Right(request.schemeParam)
+        case (true, false) => Left(List(FormError(key, "Choose a scheme to withdraw")))
+        case (false, _) => Right("")
       }
     }
 
@@ -58,7 +56,11 @@ class SchemeWithdrawForm {
 implicit class RequestValidation(request: Map[String, String]) {
   def param(name: String): Option[String] = request.collectFirst { case (key, value) if key == name => value }
 
-  private def schemeParam: String = param("scheme").getOrElse("")
+  private def wantToWithdrawParam: String = param("wantToWithdraw").getOrElse("")
+
+  def isWantToWithdrawSelected: Boolean = wantToWithdrawParam == "Yes"
+
+  def schemeParam: String = param("scheme").getOrElse("")
 
   def isPostedSchemeValid(candidatesSchemes: Seq[SchemeId]): Boolean = candidatesSchemes.contains(SchemeId(schemeParam))
 }

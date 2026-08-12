@@ -30,6 +30,12 @@ class SchemeWithdrawFormSpec extends BaseFormSpec {
       form.hasErrors mustBe false
     }
 
+    "be invalid when not submitting any data" in {
+      val form = withdrawForm.bind(Map.empty[String, String])
+      form.hasErrors mustBe true
+      form.errors.flatMap(_.messages) mustBe List("error.wantToWithdraw.required", "error.required")
+    }
+
     "be invalid when withdrawing a scheme the candidate is not in the running for" in {
       val form = withdrawForm.bind(Map("wantToWithdraw" -> "Yes", "scheme" -> "BOOM", "reason" -> "my reason"))
       form.hasErrors mustBe true

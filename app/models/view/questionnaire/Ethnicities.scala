@@ -23,55 +23,57 @@ import scala.collection.immutable.ListMap
 object Ethnicities {
   val map: Map[String, List[(String, Boolean)]] = ListMap(
     "White" -> List(
-      ("English/Welsh/Scottish/Northern Irish/British", false),
+      ("English, Welsh, Scottish, Northern Irish or British", false),
       ("Irish", false),
       ("Gypsy or Irish Traveller", false),
-      ("Other White background", true)
+      ("Roma", false),
+      ("Any other White background", true)
     ),
-    "Mixed/Multiple ethnic groups" -> List(
+    "Mixed or Multiple ethnic groups" -> List(
       ("White and Black Caribbean", false),
       ("White and Black African", false),
       ("White and Asian", false),
-      ("Other mixed/multiple ethnic background", true)
+      ("Any other Mixed or Multiple ethnic background", true)
     ),
-    "Asian/Asian British" -> List(
+    "Asian or Asian British" -> List(
       ("Indian", false),
       ("Pakistani", false),
       ("Bangladeshi", false),
       ("Chinese", false),
-      ("Other Asian background", true)
+      ("Any other Asian background", true)
     ),
-    "Black/African/Caribbean/Black British" -> List(
+    "Black, Black British, Caribbean or African" -> List(
       ("African", false),
       ("Caribbean", false),
-      ("Other Black/African/Caribbean background", true)
+      ("Any other Black, Black British, or Caribbean background", true)
     ),
     "Other ethnic group" -> List(
       ("Arab", false),
-      ("Other ethnic group", true)
+      ("Any other ethnic group", true)
     )
   )
 
   val asSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "-- Select one --")) ++
     Seq(
-      "English/Welsh/Scottish/Northern Irish/British",
+      "English, Welsh, Scottish, Northern Irish or British",
       "Irish",
       "Gypsy or Irish Traveller",
-      "Other White background",
+      "Roma",
+      "Any other White background",
       "White and Black Caribbean",
       "White and Black African",
       "White and Asian",
-      "Other mixed/multiple ethnic background",
+      "Any other Mixed or Multiple ethnic background",
       "Indian",
       "Pakistani",
       "Bangladeshi",
       "Chinese",
-      "Other Asian background",
+      "Any other Asian background",
       "African",
       "Caribbean",
-      "Other Black/African/Caribbean background",
+      "Any other Black, Black British, or Caribbean background",
       "Arab",
-      "Other ethnic group",
+      "Any other ethnic group",
       "I don't know/prefer not to say" // This is an additional item to the list
   ).map(ethnicity => SelectItem(value = Some(ethnicity), text = ethnicity))
 }

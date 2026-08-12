@@ -316,6 +316,8 @@ error.supervise.invalid = The parent/guardian supervised employees is invalid
 error.required.acceptance.faststream = Confirm you understand that the information you give here won''t affect your application
 error.required.acceptance.sdip = Confirm you understand why you are being asked these diversity related questions
 
+error.wantToWithdraw.required = Select whether or not you want to withdraw
+
 #Questions section for questionnaire
 sex.question = What is your sex?
 sexOrientation.question = What is your sexual orientation?
