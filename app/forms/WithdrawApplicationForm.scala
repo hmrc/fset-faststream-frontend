@@ -16,13 +16,13 @@
 
 package forms
 
-import javax.inject.Singleton
-import mappings.Mappings._
-import models.view.WithdrawReasons
-import play.api.data.Forms._
+import mappings.Mappings.*
+import play.api.data.Forms.*
 import play.api.data.format.Formatter
-import play.api.data.{ Form, FormError }
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
+
+import javax.inject.Singleton
 
 @Singleton
 class WithdrawApplicationForm {
