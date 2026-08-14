@@ -16,16 +16,15 @@
 
 @import helpers.TemplateHelper.maybeDisplayError
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
-@import uk.gov.hmrc.govukfrontend.views.html.components.{CheckboxItem, Checkboxes, Fieldset, GovukCheckboxes, GovukInput, GovukRadios, Hint, Input, Label, Legend, RadioItem, Radios, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
-@import views.html.components.Heading2
-@import views.html.components.InputSelectAutoComplete
+@import views.html.components.*
 
 @this(
+        inputText: InputText,
         govukCheckboxes : GovukCheckboxes,
         govukRadios: GovukRadios,
-        govukInput : GovukInput,
         h2: Heading2,
         inputSelectAutoComplete: InputSelectAutoComplete,
         hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
@@ -159,45 +158,42 @@
 }
 
 @completedEdipHtml = {
-    @govukInput(Input(
-        id = "civilServiceExperienceDetails.edipYear",
-        name = "civilServiceExperienceDetails.edipYear",
-        inputType = "text",
-        label = Label(content = Text("What year did you complete the EDIP?")),
-        classes = "govuk-!-width-one-third",
-    ).withFormField(form("civilServiceExperienceDetails.edipYear")))
+    @inputText(
+        field = form("civilServiceExperienceDetails.edipYear"),
+        label = "What year did you complete the EDIP?",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-one-third"
+    )
 }
 
 @completedSdipHtml = {
-    @govukInput(Input(
-        id = "civilServiceExperienceDetails.sdipYear",
-        name = "civilServiceExperienceDetails.sdipYear",
-        inputType = "text",
-        label = Label(content = Text("What year did you complete the SIP/SDIP?")),
+    @inputText(
+        field = form("civilServiceExperienceDetails.sdipYear"),
+        label = "What year did you complete the SIP/SDIP?",
+        labelClasses = "govuk-label--s",
         classes = "govuk-!-width-one-third"
-    ).withFormField(form("civilServiceExperienceDetails.sdipYear")))
+    )
 }
 
 @completedAnotherInternshipHtml = {
-    @govukInput(Input(
-        id = "civilServiceExperienceDetails.otherInternshipName",
-        name = "civilServiceExperienceDetails.otherInternshipName",
-        inputType = "text",
-        label = Label(content = Text("What was the name of the internship you completed?")),
+
+    @inputText(
+        field = form("civilServiceExperienceDetails.otherInternshipName"),
+        label = "What was the name of the internship you completed?",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-three-thirds"
+    )
+    @inputText(
+        field = form("civilServiceExperienceDetails.otherInternshipYear"),
+        label = "What year did you complete the internship?",
+        labelClasses = "govuk-label--s",
         classes = "govuk-!-width-one-third"
-    ).withFormField(form("civilServiceExperienceDetails.otherInternshipName")))
-    @govukInput(Input(
-        id = "civilServiceExperienceDetails.otherInternshipYear",
-        name = "civilServiceExperienceDetails.otherInternshipYear",
-        inputType = "text",
-        label = Label(content = Text("What year did you complete the internship?")),
-        classes = "govuk-!-width-one-third"
-    ).withFormField(form("civilServiceExperienceDetails.otherInternshipYear")))
+    )
 }
 
 @fastPassCertificateHtml = {
     @*<div class="govuk-inset-text">*@
-    <div class="">
+    <div class="govuk-body">
         <p>
             Fast Pass allows you to be fast tracked to the final stages of the Fast Stream selection process. You won't
             need to do the online tests. You can apply using your Fast Pass if you have not used it before.
@@ -205,16 +201,13 @@
         <p>Some schemes require you to pass the additional information stage before attending the assessment centre.</p>
     </div>
 
-    @govukInput(Input(
-        id = "civilServiceExperienceDetails.certificateNumber",
-        name = "civilServiceExperienceDetails.certificateNumber",
-        inputType = "text",
-        label = Label(content = Text("Enter your certificate number")),
-        hint = Some(Hint(
-            content = Text("You can find this at the top of the certificate")
-        )),
-        classes = "govuk-!-width-one-third"
-    ).withFormField(form("civilServiceExperienceDetails.certificateNumber")))
+    @inputText(
+        field = form("civilServiceExperienceDetails.certificateNumber"),
+        label = "Enter your certificate number",
+        labelClasses = "govuk-label--s",
+        classes = "govuk-!-width-two-thirds",
+        hint = Some("You can find this at the top of the certificate")
+    )
 }
 
 @civilServantHtml = {
@@ -274,7 +267,7 @@
 }
 
 @civilServantCannotContinueHtml = {
-    <div class="">
+    <div class="govuk-body">
         <p>Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.</p>
     </div>
 }
