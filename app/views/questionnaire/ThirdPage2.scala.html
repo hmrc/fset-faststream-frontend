@@ -77,7 +77,7 @@
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))
     }
     @h1(content = Text("About your parents"))
-    <div id="panel-why-collect-data" class="panel-info standard-panel">
+    <div id="panel-why-collect-data" class="govuk-inset-text">
         <div class="govuk-body">
             @h2(content = Text("Why do we ask about your parents?"))
             @if(isFastStream) {

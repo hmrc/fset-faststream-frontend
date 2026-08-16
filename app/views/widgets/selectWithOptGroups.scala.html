@@ -1,0 +1,37 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(      field : play.api.data.Field,
+        options: Map[String, List[(String, Boolean)]],
+        defaultChoice: String = "-- Choose One --"
+)(implicit messages: Messages)
+
+@import helpers.CSRNoErrorFieldConstructor._
+@import helpers.TemplateHelper._
+
+@helper.input(field) { (id, name, value, args) =>
+    @maybeDisplayError2(field)
+    <select name="@name" id="@id" class="govuk-select">
+        <option value="">@defaultChoice</option>
+        @for( key <- options) {
+            <optgroup label="@key._1">
+            @for(option <- key._2) {
+                <option value="@{option._1}" @if(value.contains(option._1)) { selected="selected"}>@{option._1}</option>
+            }
+            </optgroup>
+        }
+    </select>
+}
