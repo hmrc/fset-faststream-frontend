@@ -6773,6 +6773,7 @@ aside h2:first-child {
 }
 
 /*! Copyright (c) 2011 by Margaret Calvert & Henrik Kubel. All rights reserved. The font has been customised for exclusive use on gov.uk. This cut is not commercially available. */
+/*
 @font-face {
     font-family: "nta";
     src: url("../fonts/light-2c037cf7e1-v1.eot");
@@ -6780,8 +6781,8 @@ aside h2:first-child {
     font-weight: normal;
     font-style: normal;
     font-display: fallback
-}
-
+}*/
+/*
 @font-face {
     font-family: "nta";
     src: url("../fonts/bold-fb2676462a-v1.eot");
@@ -6789,8 +6790,8 @@ aside h2:first-child {
     font-weight: bold;
     font-style: normal;
     font-display: fallback
-}
-
+}*/
+/*
 @font-face {
     font-family: "ntatabularnumbers";
     src: url("../fonts/light-tabular-498ea8ffe2-v1.eot");
@@ -6798,8 +6799,8 @@ aside h2:first-child {
     font-weight: normal;
     font-style: normal;
     font-display: fallback
-}
-
+}*/
+/*
 @font-face {
     font-family: "ntatabularnumbers";
     src: url("../fonts/bold-tabular-357fdfbcc3-v1.eot");
@@ -6807,7 +6808,7 @@ aside h2:first-child {
     font-weight: bold;
     font-style: normal;
     font-display: fallback
-}
+}*/
 
 .heading-medium, .modal__header {
     color: #0b0c0c
