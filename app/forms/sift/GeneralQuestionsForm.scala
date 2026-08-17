@@ -49,7 +49,7 @@ object UndergradDegreeInfoForm {
     "Ordinary degree"
   )
 
-  val classificationsAsSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "")) ++
+  val classificationsAsSelectItems: Seq[SelectItem] = Seq(SelectItem(value = None, text = "Select one")) ++
     Classifications.map(classification => SelectItem(value = Some(classification), text = classification))
 
   case class Data(
