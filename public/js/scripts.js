@@ -264,22 +264,19 @@ $(function () {
       }
     });
   }
-});;/*
- * Copyright 2016 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+});;
 
+$(function() {
+  // Find the preferNotSay_ethnicity checkbox
+  $preferNotToSayCheckbox = $("#preferNotSay_ethnicity")
+  var isPreferNotToSayChecked = $preferNotToSayCheckbox.is(":checked");
+  if(isPreferNotToSayChecked) {
+    // The disable-target is defined on the label for the checkbox
+    $disableTarget = $.trim($preferNotToSayCheckbox.siblings().attr('disable-target'))
+    $theTargetControl = $('#' + $disableTarget);
+    $theTargetControl.attr('disabled', true);
+  }
+});
 
 $(function() {
 
@@ -387,6 +384,21 @@ $(function() {
     }
   });
 
+  $('.block-label').click(function() {
+
+    var $this   = $(this),
+        $disableTarget = $.trim($this.siblings().attr('disable-target')),
+        $theTargetControl = '';
+
+    if($disableTarget.length > 0 && $this.is(':checked')) {
+      $theTargetControl = $('#' + $disableTarget);
+      $theTargetControl.attr('disabled', true);
+    } else if($disableTarget.length > 0 && !$this.is(':checked')) {
+      $theTargetControl = $('#' + $disableTarget);
+      $theTargetControl.attr('disabled', false);
+    }
+  });
+
   // Add/remove selected class
   $('.block-label').on('click', 'input[type=radio], input[type=checkbox]', function() {
     var $this   = $(this),
@@ -491,7 +503,6 @@ $(function() {
 
     $('#' + $targetFor).focus();
   });
-
 
   //--------Max character length on textareas
 

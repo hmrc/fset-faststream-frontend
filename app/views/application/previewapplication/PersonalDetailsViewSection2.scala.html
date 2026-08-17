@@ -43,6 +43,12 @@
     FastPassForm.civilServantAndInternshipTypes.toMap.getOrElse(internshipType, "")
 }
 
+@maybeDisplayAddressLine(addressLine: Option[String], id: String) = {
+    @addressLine.map { address =>
+        <li id="@id">@address</li>
+    }
+}
+
 <div class="govuk-body">
     @h2(content = Text("Personal details"))
     @edit
@@ -62,15 +68,9 @@
         @h3(content = Text("Address"))
         <ul class="govuk-list govuk-list--bullet">
             <li id="address.line1">@personalDetails.address.line1</li>
-            @personalDetails.address.line2.map { address =>
-                <li id="address.line2">@address</li>
-            }
-            @personalDetails.address.line3.map { address =>
-                <li id="address.line3">@address</li>
-            }
-            @personalDetails.address.line4.map { address =>
-                <li id="address.line4">@address</li>
-            }
+            @maybeDisplayAddressLine(personalDetails.address.line2, "address.line2")
+            @maybeDisplayAddressLine(personalDetails.address.line3, "address.line3")
+            @maybeDisplayAddressLine(personalDetails.address.line4, "address.line4")
 
             @if(personalDetails.postCode.isDefined) {
                 <li id="postCode">@personalDetails.postCode</li>

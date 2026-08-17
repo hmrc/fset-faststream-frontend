@@ -17,6 +17,7 @@
 @import config.TrackingConsentConfig
 @import helpers.{ServiceNavigationItems, Title}
 @import models.view.questionnaire.{Ethnicities, SexOrientations, Sexes}
+@import views.html.widgets.ethnicity
 @import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichSelect
@@ -32,7 +33,6 @@
         mainLayout: Layout,
         h1: Heading1,
         govukRadios : GovukRadios,
-        govukSelect : GovukSelect,
         pageTitle: PageTitle
 )
 
@@ -49,7 +49,7 @@
     @h1(content = Text("About you"))
     <p class="govuk-body-l">Diversity questions</p>
 
-    <div class="govuk-body">
+    <div class="govuk-inset-text">
         <h2 class="heading-medium">Why do we ask these questions?</h2>
         <p>These questions help us to gather data on people's sex at birth, sexual orientation and ethnicity.</p>
         <p>We anonymise the data and use it to monitor and improve the effectiveness of our processes in enabling all candidates to do their best irrespective of their diversity characteristics.</p>
@@ -103,11 +103,7 @@
             )
         ).withFormField(form("sexOrientation")))
 
-        @govukSelect(Select(
-            name = "ethnicity",
-            items = models.view.questionnaire.Ethnicities.asSelectItems,
-            label = Label(content = Text(messages("ethnicity.question")))
-        ).withFormField(form("ethnicity")))
+        @ethnicity(form, form("ethnicity"), Ethnicities.map, "Select one")
 
         @govukButton(Button(
             content = Text("Save and continue"),

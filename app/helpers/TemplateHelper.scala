@@ -26,4 +26,16 @@ object TemplateHelper {
       Html("")
     }
   }
+
+  def maybeDisplayError2(field: play.api.data.Field): Html = {
+    if (field.hasErrors) {
+      Html(
+        s"<p id='${field.id}-error' class='govuk-error-message'>" +
+        field.errors.map(_.messages.map("<span class='govuk-visually-hidden'>Error: </span>" + _).mkString(", ")).mkString(", ") +
+        "</p>"
+      )
+    } else {
+      Html("")
+    }
+  }
 }
