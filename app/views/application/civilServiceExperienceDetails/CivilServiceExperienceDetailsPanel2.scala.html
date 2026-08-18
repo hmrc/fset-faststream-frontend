@@ -40,10 +40,6 @@
         <ul class="govuk-list govuk-list--bullet">
             @schemesRequiringQualifications.map{ schemeName => <li>@schemeName</li> }
         </ul>
-        @*
-        <p>Check the <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/" rel="external" target="_blank">eligibility
-            requirements<span class="visuallyhidden"> for Faststream</span> (link opens new window)</a>for more information.</p>
-            *@
         <p>
             @hmrcNewTabLinkHelper(NewTabLinkHelper(
                 text = "eligibility requirements for Faststream",
@@ -53,33 +49,6 @@
     </div>
 
     <div>
-@*
-        <div class="form-group">
-        @helper.input(form("civilServiceExperienceDetails.civilServantDepartment"),
-            Symbol("_label") -> "",
-            Symbol("class") -> "form-control",
-            Symbol("_showConstraints") -> false
-        ) { (id, name, value, args) =>
-            <input id="@id" name="@name" type="hidden" class="form-control" value="@value">
-        }
-        </div>
-*@
-        @* Populated via javascript *@
-@*
-        <input type="hidden" id="civilServiceExperienceDetails.civilServantDepartment" name="civilServiceExperienceDetails.civilServantDepartment" />
-
-        @helper.input(form("civilServiceExperienceDetails_civilServantDepartmentSelected"),
-            Symbol("id") -> "civilServiceExperienceDetails_civilServantDepartmentSelected",
-            Symbol("_label") -> "",
-            Symbol("_showConstraints") -> false
-        ) { (id, name, value, args) =>
-            <label for="@id" class="form-label">What Department do you currently work for?</label>
-            <div id="department_field_wrapper" class="form-group @if(form("civilServiceExperienceDetails.civilServantDepartment").hasErrors) {has-an-error input-validation-error}">
-                <span class="has-error">@maybeDisplayError(form("civilServiceExperienceDetails.civilServantDepartment"))</span>
-                <input id="@{id}" name="@{name}" type="text" class="govuk-!-width-full" value="@value">
-            </div>
-        }
-*@
         @inputSelectAutoComplete(
             form("civilServiceExperienceDetails.civilServantDepartment"),
             id = "civilServiceExperienceDetails.civilServantDepartment",
@@ -192,7 +161,6 @@
 }
 
 @fastPassCertificateHtml = {
-    @*<div class="govuk-inset-text">*@
     <div class="govuk-body">
         <p>
             Fast Pass allows you to be fast tracked to the final stages of the Fast Stream selection process. You won't
@@ -206,7 +174,8 @@
         label = "Enter your certificate number",
         labelClasses = "govuk-label--s",
         classes = "govuk-!-width-two-thirds",
-        hint = Some("You can find this at the top of the certificate")
+        hint = Some("You can find this at the top of the certificate"),
+        attributes = Map("maxlength" -> "7")
     )
 }
 

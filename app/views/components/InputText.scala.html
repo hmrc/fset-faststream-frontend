@@ -29,7 +29,8 @@
         hint: Option[String] = None,
         classes: String = "",
         spellcheck: Option[Boolean] = None,
-        autocomplete: Option[String] = None
+        autocomplete: Option[String] = None,
+        attributes: Map[String, String] = Map.empty
 )(implicit messages: Messages)
 @govukInput(Input(
     inputType = inputType,
@@ -37,5 +38,6 @@
     hint = htmlHint.map( hh => Hint(content = hh)).orElse( hint.map(h => Hint(content = Text(h))) ),
     classes = classes,
     spellcheck = spellcheck,
+    attributes = attributes,
     autocomplete = autocomplete).withFormField(field)
 )
