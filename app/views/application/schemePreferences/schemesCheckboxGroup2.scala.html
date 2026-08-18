@@ -22,7 +22,7 @@
 @(isCandidateCivilServant: Boolean, field: play.api.data.Field, schemes: Seq[Scheme], args: (Symbol, Any)*)(implicit messages: Messages)
 
 @helper.input(field, args.map { x => if(x._1 == Symbol("_label")) Symbol("_name") -> x._2 else x }: _*) { (id, name, value, htmlArgs) =>
-        <div class="inner-block-padr" id="@id">
+        <div class="govuk-body" id="@id">
             <ul class="schemes-list">
             @defining(field.indexes.flatMap(i => field("[%s]".format(i)).value).toSet) { values =>
                 @schemes.map { case scheme =>
@@ -35,6 +35,24 @@
                         } @toHtmlArgs(htmlArgs) data-schemename/>
                         @Html(Messages("scheme."+scheme.id.value+".description"))
                     </label>
+
+
+                        @scheme.degree.map { degree =>
+                            <p class="govuk-body">
+                                Requires at least a @Messages("qualification."+degree.required+".description")
+                                @if(degree.specificRequirement){
+                                    <a class="govuk-link"
+                                    href='https://www.civil-service-careers.gov.uk/fast-stream/fs-all-schemes/@Messages(s"scheme.${scheme.id.value}.link")'
+                                    rel="noopener noreferrer" target="_blank">
+                                        (Specific requirements open in new tab)
+                                    </a>
+                                }
+                                @if(isCandidateCivilServant && scheme.civilServantEligible) {
+                                    You're eligible as a current civil servant.
+                                }
+                            </p>
+                        }
+
                     @if(scheme.id.value == "HousesOfParliament"){
                         <span class="alwayshidden" data-hop>The Houses of Parliament Graduate Programme is no longer a Fast Stream scheme, although it
                             will be treated as one of your @maxSchemes preferences if you choose to select this option.</span>
