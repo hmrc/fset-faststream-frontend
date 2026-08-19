@@ -43,23 +43,26 @@ import views.html.application.PersonalDetails2
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PersonalDetailsController @Inject() (
-  config: FrontendAppConfig,
-  mcc: MessagesControllerComponents,
-  personalDetailsTemplate: PersonalDetails2,
-  val secEnv: SecurityEnvironment,
-  val silhouetteComponent: SilhouetteComponent,
-  val notificationTypeHelper: NotificationTypeHelper,
-  applicationClient: ApplicationClient,
-  schemeClient: SchemeClient,
-  userManagementClient: UserManagementClient,
-  refDataClient: ReferenceDataClient,
-  formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
+class PersonalDetailsController @Inject()(
+                                           config: FrontendAppConfig,
+                                           mcc: MessagesControllerComponents,
+                                           personalDetailsTemplate: PersonalDetails2,
+                                           val secEnv: SecurityEnvironment,
+                                           val silhouetteComponent: SilhouetteComponent,
+                                           val notificationTypeHelper: NotificationTypeHelper,
+                                           applicationClient: ApplicationClient,
+                                           schemeClient: SchemeClient,
+                                           userManagementClient: UserManagementClient,
+                                           refDataClient: ReferenceDataClient,
+                                           formWrapper: PersonalDetailsForm)(implicit val ec: ExecutionContext)
   extends BaseController(config, mcc) with PersonalDetailsToExchangeConverter {
+
   import notificationTypeHelper._
 
   private sealed trait OnSuccess
+
   private case object ContinueToNextStepInJourney extends OnSuccess
+
   private case object RedirectToTheDashboard extends OnSuccess
 
   def presentAndContinue: Action[AnyContent] = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
@@ -115,7 +118,7 @@ class PersonalDetailsController @Inject() (
   private def personalDetailsView(form: Form[PersonalDetailsForm.Data],
                                   continueToTheNextStep: Boolean,
                                   schemesRequiringQualifications: List[String])(
-    implicit request: Request[_], user: Option[models.CachedData]): Html =
+                                   implicit request: Request[_], user: Option[models.CachedData]): Html =
     if (config.enablePlayHmrcPersonalDetailsView) {
       personalDetailsTemplate(form, continueToTheNextStep, schemesRequiringQualifications)
     } else {
@@ -124,30 +127,30 @@ class PersonalDetailsController @Inject() (
 
   def submitPersonalDetailsAndContinue2: Action[AnyContent] =
     CSRSecureAppAction(EditPersonalDetailsAndContinueRole) { implicit request =>
-    implicit user =>
-      implicit val messages: Messages = request.messages
-      val redirect = if (user.application.applicationRoute == ApplicationRoute.Faststream ||
-        user.application.applicationRoute == ApplicationRoute.SdipFaststream) {
-        Redirect(routes.SchemePreferencesController.present)
-      } else {
-        Redirect(routes.AssistanceDetailsController.present)
-      }
-      submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = false, messages), ContinueToNextStepInJourney, redirect)
+      implicit user =>
+        implicit val messages: Messages = request.messages
+        val redirect = if (user.application.applicationRoute == ApplicationRoute.Faststream ||
+          user.application.applicationRoute == ApplicationRoute.SdipFaststream) {
+          Redirect(routes.SchemePreferencesController.present)
+        } else {
+          Redirect(routes.AssistanceDetailsController.present)
+        }
+        submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = false, messages), ContinueToNextStepInJourney, redirect)
     }
 
   def submitPersonalDetailsAndContinue: Action[AnyContent] =
     CSRSecureAppAction(EditPersonalDetailsAndContinueRole) { implicit request =>
-    implicit user =>
-      implicit val messages: Messages = request.messages
-      val redirect = if (user.application.applicationRoute == ApplicationRoute.Faststream ||
-        user.application.applicationRoute == ApplicationRoute.SdipFaststream) {
-        Redirect(routes.SchemePreferencesController.present)
-      } else if (user.application.applicationRoute == ApplicationRoute.Edip) {
-        Redirect(routes.AssistanceDetailsController.present)
-      } else {
-        Redirect(routes.LocationPreferencesController.present)
-      }
-      submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = false, messages), ContinueToNextStepInJourney, redirect)
+      implicit user =>
+        implicit val messages: Messages = request.messages
+        val redirect = if (user.application.applicationRoute == ApplicationRoute.Faststream ||
+          user.application.applicationRoute == ApplicationRoute.SdipFaststream) {
+          Redirect(routes.SchemePreferencesController.present)
+        } else if (user.application.applicationRoute == ApplicationRoute.Edip) {
+          Redirect(routes.AssistanceDetailsController.present)
+        } else {
+          Redirect(routes.LocationPreferencesController.present)
+        }
+        submit(formWrapper.form(LocalDate.now, ignoreFastPassValidations = false, messages), ContinueToNextStepInJourney, redirect)
     }
 
   def submitPersonalDetails: Action[AnyContent] = CSRSecureAppAction(EditPersonalDetailsRole) { implicit request =>
@@ -163,7 +166,7 @@ class PersonalDetailsController @Inject() (
 
   private def submit(personalDetailsForm: Form[PersonalDetailsForm.Data], onSuccess: OnSuccess, redirectOnSuccess: Result)
                     (implicit cachedData: CachedDataWithApp, hc: HeaderCarrier, request: Request[_]) = {
-    val handleFormWithErrors = (errorForm:Form[PersonalDetailsForm.Data]) => {
+    val handleFormWithErrors = (errorForm: Form[PersonalDetailsForm.Data]) => {
       getCivilServantSchemeNamesRequiringQualifications.map { schemesRequiringQualifications =>
         val isFaststream = cachedData.application.isFaststream
         val data = if (isFaststream) {
@@ -171,9 +174,9 @@ class PersonalDetailsController @Inject() (
         } else {
           errorForm.data
         }
-          Ok(personalDetailsView(
-            personalDetailsForm.bind(data), continueToTheNextStep(onSuccess), schemesRequiringQualifications)
-          )
+        Ok(personalDetailsView(
+          personalDetailsForm.bind(data), continueToTheNextStep(onSuccess), schemesRequiringQualifications)
+        )
       }
     }
 
@@ -196,7 +199,7 @@ class PersonalDetailsController @Inject() (
 
   private def createDefaultSchemes(implicit cacheData: CachedDataWithApp, hc: HeaderCarrier, request: Request[_]): Future[Unit] =
     cacheData.application.applicationRoute match {
-      case appRoute @ (ApplicationRoute.Edip | ApplicationRoute.Sdip) =>
+      case appRoute@(ApplicationRoute.Edip | ApplicationRoute.Sdip) =>
         for {
           _ <- schemeClient.updateSchemePreferences(SelectedSchemes(List(appRoute), orderAgreed = true,
             eligible = true))(cacheData.application.applicationId)

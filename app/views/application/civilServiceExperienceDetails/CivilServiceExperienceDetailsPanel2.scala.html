@@ -69,16 +69,15 @@
                 RadioItem(
                     content = Text("Yes"),
                     value = Some("true"),
-                    checked = "true".equals(form("civilServiceExperienceDetails.liveDisciplinaryWarning").value.getOrElse("")),
                     conditionalHtml = Some(civilServantCannotContinueHtml)
                 ),
                 RadioItem(
                     content = Text("No"),
-                    value = Some("false"),
-                    checked = "false".equals(form("civilServiceExperienceDetails.liveDisciplinaryWarning").value.getOrElse(""))
+                    value = Some("false")
                 )
             )
-        ))
+        ).withFormField(form("civilServiceExperienceDetails.liveDisciplinaryWarning")))
+
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -91,16 +90,15 @@
                 RadioItem(
                     content = Text("Yes"),
                     value = Some("true"),
-                    checked = "true".equals(form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning").value.getOrElse("")),
                     conditionalHtml = Some(civilServantCannotContinueHtml)
                 ),
                 RadioItem(
                     content = Text("No"),
                     value = Some("false"),
-                    checked = "false".equals(form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning").value.getOrElse(""))
                 )
             )
-        ))
+        ).withFormField(form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning")))
+
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -113,16 +111,14 @@
                 RadioItem(
                     content = Text("Yes"),
                     value = Some("true"),
-                    checked = "true".equals(form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning").value.getOrElse("")),
                     conditionalHtml = Some(civilServantCannotContinueHtml)
                 ),
                 RadioItem(
                     content = Text("No"),
                     value = Some("false"),
-                    checked = "false".equals(form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning").value.getOrElse(""))
                 )
             )
-        ))
+        ).withFormField(form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning")))
     </div>
 }
 
@@ -221,18 +217,14 @@
             RadioItem(
                 content = Text("Yes"),
                 value = Some("true"),
-                checked = "true".equals(form("civilServiceExperienceDetails.fastPassReceived").value.getOrElse("")),
                 conditionalHtml = Some(fastPassCertificateHtml)
             ),
             RadioItem(
                 content = Text("No"),
                 value = Some("false"),
-                checked = "false".equals(form("civilServiceExperienceDetails.fastPassReceived").value.getOrElse(""))
             )
-        )//,
-        //    classes = "govuk-radios--inline"
-    ))
-
+        )
+    ).withFormField(form("civilServiceExperienceDetails.fastPassReceived")))
 }
 
 @civilServantCannotContinueHtml = {
