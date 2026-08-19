@@ -36,9 +36,11 @@
                         @Html(Messages("scheme."+scheme.id.value+".description"))
                     </label>
 
-
-                        @scheme.degree.map { degree =>
-                            <p class="govuk-body">
+                    @scheme.degree.map { degree =>
+                        <p class="govuk-body">
+                            @if(isCandidateCivilServant && scheme.civilServantEligible) {
+                                You're eligible as a current civil servant.
+                            } else {
                                 Requires at least a @Messages("qualification."+degree.required+".description")
                                 @if(degree.specificRequirement){
                                     <a class="govuk-link"
@@ -47,11 +49,9 @@
                                         (Specific requirements open in new tab)
                                     </a>
                                 }
-                                @if(isCandidateCivilServant && scheme.civilServantEligible) {
-                                    You're eligible as a current civil servant.
-                                }
-                            </p>
-                        }
+                            }
+                        </p>
+                    }
 
                     @if(scheme.id.value == "HousesOfParliament"){
                         <span class="alwayshidden" data-hop>The Houses of Parliament Graduate Programme is no longer a Fast Stream scheme, although it
