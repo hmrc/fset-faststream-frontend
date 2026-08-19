@@ -68,14 +68,14 @@
             items = Seq(
                 RadioItem(
                     content = Text("Yes"),
-                    value = Some("true"),
-                    conditionalHtml = Some(civilServantCannotContinueHtml)
+                    value = Some("true")
                 ),
                 RadioItem(
                     content = Text("No"),
                     value = Some("false")
                 )
-            )
+            ),
+            classes = "govuk-radios--inline"
         ).withFormField(form("civilServiceExperienceDetails.liveDisciplinaryWarning")))
 
         @govukRadios(Radios(
@@ -89,14 +89,14 @@
             items = Seq(
                 RadioItem(
                     content = Text("Yes"),
-                    value = Some("true"),
-                    conditionalHtml = Some(civilServantCannotContinueHtml)
+                    value = Some("true")
                 ),
                 RadioItem(
                     content = Text("No"),
                     value = Some("false"),
                 )
-            )
+            ),
+            classes = "govuk-radios--inline"
         ).withFormField(form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning")))
 
         @govukRadios(Radios(
@@ -110,14 +110,14 @@
             items = Seq(
                 RadioItem(
                     content = Text("Yes"),
-                    value = Some("true"),
-                    conditionalHtml = Some(civilServantCannotContinueHtml)
+                    value = Some("true")
                 ),
                 RadioItem(
                     content = Text("No"),
                     value = Some("false"),
                 )
-            )
+            ),
+            classes = "govuk-radios--inline"
         ).withFormField(form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning")))
     </div>
 }
@@ -227,12 +227,6 @@
     ).withFormField(form("civilServiceExperienceDetails.fastPassReceived")))
 }
 
-@civilServantCannotContinueHtml = {
-    <div class="govuk-body">
-        <p>Based on the information you have provided, you are not eligible to continue with this application at this time. If your circumstances change, you may reapply in the future.</p>
-    </div>
-}
-
 @govukRadios(Radios(
     fieldset = Some(Fieldset(
         legend = Some(Legend(
@@ -254,6 +248,5 @@
             content = Text("No"),
             value = Some("false")
         )
-    )//,
-//    classes = "govuk-radios--inline"
+    )
 ).withFormField(form("civilServiceExperienceDetails.applicable")))
