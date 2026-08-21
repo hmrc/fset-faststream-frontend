@@ -46,8 +46,7 @@
             text = s"$testName feedback",
             href = Some(reportUrl)
         ))
-        @*<a href="@reportUrl" target="_blank" id="@generatePsiTestId(psiTestPage)">Feedback report <span class="visuallyhidden">for @testName (opens pdf document in a new window)</span></a>*@
-    }.getOrElse("No feedback report found")
+    }.getOrElse("")
 }
 
 @displayPhase1TestResultsLinks(testsPage: Phase1TestsPage2) = {
