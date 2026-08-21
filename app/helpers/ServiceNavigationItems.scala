@@ -25,7 +25,7 @@ object ServiceNavigationItems {
   def apply(user: Option[CachedData]): Seq[ServiceNavigationItem] = {
     user.map { data =>
       Seq(
-        ServiceNavigationItem(Text("Home"), routes.HomeController.present().url),
+        ServiceNavigationItem(Text("Your tasks"), routes.HomeController.present().url),
         ServiceNavigationItem(Text("Sign out"), routes.SignInController.signOut.url)
       )
     }.getOrElse {

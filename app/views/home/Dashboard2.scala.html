@@ -97,7 +97,7 @@
     <link href='@routes.Assets.versioned("css/font-awesome/css/font-awesome.min.css")' rel="stylesheet" type="text/css">
 }
 
-@mainLayout(Title("Home"), navigation = ServiceNavigationItems(user), css = Some(css)) {
+@mainLayout(Title("Your tasks"), navigation = ServiceNavigationItems(user), css = Some(css)) {
 @*main_template(title = "Home") {*@
 
     @flashMessage2(notification)
@@ -106,7 +106,7 @@
 
     <div>
         <span class="govuk-caption-l">@dashboardPage.fullName</span>
-        @h1(content = Text("Home"))
+        @h1(content = Text("Your tasks"))
     </div>
 
     @displayLeadInformation

@@ -292,7 +292,7 @@
     <script @CSPNonce.attr src='@routes.Assets.versioned("js/siftProgress.js")' type="text/javascript"></script>
 }
 
-@mainLayout(Title("Home"), navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
+@mainLayout(Title("Your tasks"), navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
 @*main_template(title = "Home", additionalJavascriptFilenames = List("siftProgress.js")) {*@
 
     @flashMessage2(notification)
