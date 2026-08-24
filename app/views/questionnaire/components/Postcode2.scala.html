@@ -17,16 +17,30 @@
 @import views.html.components.InputText
 @import helpers.CSRFieldConstructor._
 @import views.html.widgets.checkbox
+@import views.html.widgets.checkboxPreferNotToSay
 
 @this(
     inputText: InputText
 )
 
-@(questionnaireForm: Form[forms.EducationQuestionnaireForm.Data])(implicit messages: Messages)
+@(form: Form[forms.EducationQuestionnaireForm.Data])(implicit messages: Messages)
+<div class="govuk-form-group @if(form("postcodeQ").hasErrors) {govuk-form-group--error}">
+    <fieldset class="govuk-fieldset" @if(form("postcodeQ").hasErrors) {aria-describedby='postcodeQ-error'}>
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            @Messages("postcode.question")
+        </legend>
 
-    @inputText(
-        questionnaireForm("postcodeQ"),
-        label = Messages("postcode.question"),
-        labelClasses = "govuk-label--s",
-        classes = "govuk-!-width-two-thirds"
-    )
+        @inputText(
+            form("postcodeQ"),
+            label = "",
+//            label = Messages("postcode.question"),
+            labelClasses = "govuk-label--s",
+            classes = "govuk-!-width-two-thirds"
+        )
+
+        @checkboxPreferNotToSay(form("preferNotSay_postcodeQ"), Some("postcodeQ")) {
+            I don't know/prefer not to say
+        }
+    </fieldset>
+</div>
+

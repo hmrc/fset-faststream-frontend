@@ -266,9 +266,22 @@ $(function () {
   }
 });;
 
+// TODO: make this generic
 $(function() {
   // Find the preferNotSay_ethnicity checkbox
   $preferNotToSayCheckbox = $("#preferNotSay_ethnicity")
+  var isPreferNotToSayChecked = $preferNotToSayCheckbox.is(":checked");
+  if(isPreferNotToSayChecked) {
+    // The disable-target is defined on the label for the checkbox
+    $disableTarget = $.trim($preferNotToSayCheckbox.siblings().attr('disable-target'))
+    $theTargetControl = $('#' + $disableTarget);
+    $theTargetControl.attr('disabled', true);
+  }
+});
+
+$(function() {
+  // Find the preferNotSay_postcodeQ checkbox
+  $preferNotToSayCheckbox = $("#preferNotSay_postcodeQ")
   var isPreferNotToSayChecked = $preferNotToSayCheckbox.is(":checked");
   if(isPreferNotToSayChecked) {
     // The disable-target is defined on the label for the checkbox
