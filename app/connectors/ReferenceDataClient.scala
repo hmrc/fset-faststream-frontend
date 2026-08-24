@@ -40,9 +40,7 @@ class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: HttpClient
   private val referenceDataCache = TrieMap[String, Any]()
 
   def allSchemes(implicit hc: HeaderCarrier): Future[List[Scheme]] = {
-    val data = getReferenceDataAsList[Scheme]("schemes", "/reference/schemes")
-    // Filter out GCFS (GovernmentCommunicationService) for 2021 campaign
-    data.map { allSchemes => allSchemes.filterNot(s => s.id == SchemeId("GovernmentCommunicationService")) }
+    getReferenceDataAsList[Scheme]("schemes", "/reference/schemes")
   }
 
   def sdipLocations(implicit hc: HeaderCarrier): Future[List[SdipLocation]] = {
