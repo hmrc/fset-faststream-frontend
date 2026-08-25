@@ -70,6 +70,11 @@
 
     @h1(content = Text("Disability and health conditions"))
 
+    <div class="govuk-body">
+        <p>We ask about health conditions and disabilities to help us support you at each stage, and to check how accessible our recruitment process is.</p>
+        <p>Your answer will not be used to assess your application.</p>
+    </div>
+
     @formWithCSRF(action = routes.AssistanceDetailsController.submit, Symbol("id") -> "assistance-details-form") {
         <input type="hidden" id="applicationRoute" name="applicationRoute" value="@applicationRoute" />
         @hasDisability2(form, disabilityCategories)

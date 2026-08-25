@@ -30,10 +30,6 @@
 @import views.html.widgets.{radioBox, radioBoxHorizontal}
 
 @hasDisabilityHtml = {
-    <div class="govuk-body">
-        <p>We ask about health conditions and disabilities to help us support you at each stage, and to check how accessible our recruitment process is.</p>
-        <p>Your answer will not be used to assess your application. Only our diversity and inclusion team can see it.</p>
-    </div>
     @multiSelectCheckboxes(
         form("disabilityCategories"),
         name = "disabilityCategories[]",
