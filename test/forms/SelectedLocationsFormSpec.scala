@@ -17,56 +17,59 @@
 package forms
 
 import connectors.ReferenceDataExamples
+import play.api.data.Form
 
 class SelectedLocationsFormSpec extends BaseFormSpec {
 
-  def selectedLocationsForm =
+  def selectedLocationsForm: Form[SelectedLocationsForm.LocationPreferences] =
     new SelectedLocationsForm(ReferenceDataExamples.Locations.AllLocations).form
 
   "Selected locations form" should {
     "be valid when required values are supplied" in {
        val form = selectedLocationsForm.bind(Map(
          "location_0" -> "London",
-         "interests[0]" -> "Cyber"
+         "interests[0]" -> "Cyber, Data & Digital"
        ))
        form.hasErrors mustBe false
-       form.hasGlobalErrors mustBe false
     }
 
-    "be valid when multiple locations and interests are selected" in {
+    "be invalid when multiple locations are selected" in {
       val form = selectedLocationsForm.bind(Map(
         "location_0" -> "London",
         "location_1" -> "Manchester",
-        "location_2" -> "Newcastle",
-        "interests[0]" -> "Commercial",
-        "interests[1]" -> "Cyber"
+        "interests[0]" -> "Commercial & Finance"
+      ))
+      form.hasErrors mustBe true
+    }
+
+    "be valid when a single location and multiple interests are selected" in {
+      val form = selectedLocationsForm.bind(Map(
+        "location_0" -> "London",
+        "interests[0]" -> "Commercial & Finance",
+        "interests[1]" -> "Cyber, Data & Digital"
       ))
       form.hasErrors mustBe false
-      form.hasGlobalErrors mustBe false
     }
 
     "be invalid when locations are not supplied" in {
-      val form = selectedLocationsForm.bind(Map("interests[0]" -> "Cyber"))
+      val form = selectedLocationsForm.bind(Map("interests[0]" -> "Cyber, Data & Digital"))
       form.hasErrors mustBe true
       form.errors.head.message mustBe "locations.required"
-      form.hasGlobalErrors mustBe false
     }
 
     "be invalid when interests are not supplied" in {
       val form = selectedLocationsForm.bind(Map("location_0" -> "London"))
       form.hasErrors mustBe true
       form.errors.head.message mustBe "You must choose an interest"
-      form.hasGlobalErrors mustBe false
     }
 
     "be invalid when invalid locations are supplied" in {
       val form = selectedLocationsForm.bind(Map(
         "location_0" -> "InvalidLocation",
-        "interests[0]" -> "Cyber"
+        "interests[0]" -> "Cyber, Data & Digital"
       ))
       form.hasErrors mustBe true
       form.errors.head.message mustBe "locations.required"
-      form.hasGlobalErrors mustBe false
     }
 
     "be invalid when invalid interests are supplied" in {
@@ -76,7 +79,6 @@ class SelectedLocationsFormSpec extends BaseFormSpec {
       ))
       form.hasErrors mustBe true
       form.errors.head.message mustBe "You must choose an interest"
-      form.hasGlobalErrors mustBe false
     }
 
     "be invalid when locations exceed the maximum" in {
@@ -85,11 +87,10 @@ class SelectedLocationsFormSpec extends BaseFormSpec {
         "location_1" -> "Manchester",
         "location_2" -> "Newcastle",
         "location_3" -> "Reading",
-        "interests[0]" -> "Cyber"
+        "interests[0]" -> "Cyber, Data & Digital"
       ))
       form.hasErrors mustBe true
       form.errors.map(_.message) mustBe List("locations.tooMany")
-      form.hasGlobalErrors mustBe false
     }
   }
 }
