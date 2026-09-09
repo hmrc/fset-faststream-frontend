@@ -60,7 +60,7 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
 
     "populate selected locations and interests for the candidate" in new TestFixture {
       when(mockSdipLocationsClient.getLocationPreferences(any[UniqueIdentifier])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(SelectedLocations(List("London", "Manchester"), List("Cyber"))))
+        .thenReturn(Future.successful(SelectedLocations(List("London", "Manchester"), List("Cyber, Data & Digital"))))
 
       val result = sdipController.present(fakeRequest)
 
@@ -72,17 +72,15 @@ class LocationPreferencesControllerSpec extends BaseControllerSpec {
       content must include (s"""name="location_2" value=''""")
       content must include (s"""name="location_3" value=''""")
       content must include (s"""name="location_4" value=''""")
-      //scalastyle:off line.size.limit
-      content must include ("""value="Cyber"  checked="checked"""")
-      //scalastyle:on
+      content must include ("""value="Cyber, Data &amp; Digital"  checked="checked"""")
     }
   }
 
   "submit location preferences" should {
     "update location preference details" in new TestFixture {
       val request = fakeRequest.withMethod("POST")
-        .withFormUrlEncodedBody("location_0" -> "London", "location_1" -> "Manchester", "interests[0]" -> "Cyber")
-      val selectedLocations = SelectedLocations(List("London", "Manchester"), List("Cyber"))
+        .withFormUrlEncodedBody("location_0" -> "London", "interests[0]" -> "Operational Delivery")
+      val selectedLocations = SelectedLocations(List("London"), List("Operational Delivery"))
       when(mockSdipLocationsClient.updateLocationPreferences(eqTo(selectedLocations))(any[UniqueIdentifier])(any[HeaderCarrier]))
         .thenReturnAsync()
 

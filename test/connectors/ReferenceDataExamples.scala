@@ -16,7 +16,7 @@
 
 package connectors
 
-import connectors.exchange.referencedata.{Degree, LocationId, Scheme, SchemeId, SdipLocation, SiftRequirement}
+import connectors.exchange.referencedata.{Degree, LocationId, Scheme, SdipLocation, SiftRequirement}
 
 object ReferenceDataExamples {
 

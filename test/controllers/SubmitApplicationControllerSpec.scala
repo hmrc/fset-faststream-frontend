@@ -91,8 +91,6 @@ class SubmitApplicationControllerSpec extends BaseControllerSpec {
     def controller(implicit candWithApp: CachedDataWithApp = currentCandidateWithApp,
       appRouteConfig: ApplicationRouteState) = {
 
-      val personalDetailsTemplate = mock[views.html.application.PersonalDetails2]
-
       val submitTemplate = mock[views.html.application.Submit2]
       val submittedTemplate = mock[views.html.application.Submitted2]
 

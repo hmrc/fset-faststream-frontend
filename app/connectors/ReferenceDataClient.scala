@@ -17,20 +17,17 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.exchange.referencedata.{Scheme, SchemeId, SdipLocation}
-
-import javax.inject.{Inject, Singleton}
+import connectors.exchange.referencedata.{Scheme, SdipLocation}
 import play.api.Logging
-import play.api.libs.json.OFormat
-
-import scala.concurrent.ExecutionContext
 import play.api.http.Status.OK
-
-import scala.collection.concurrent.TrieMap
-import scala.concurrent.Future
+import play.api.libs.json.OFormat
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+
+import javax.inject.{Inject, Singleton}
+import scala.collection.concurrent.TrieMap
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReferenceDataClient @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {

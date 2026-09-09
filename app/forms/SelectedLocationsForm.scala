@@ -31,7 +31,7 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
 
   private val page = SelectedLocationsPage(locations)
 
-  def form(implicit messages: Messages) = {
+  def form(implicit messages: Messages): Form[LocationPreferences] = {
     Form(
       mapping(
         "locations" -> of(locationFormatter("locations")),
@@ -43,7 +43,7 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
   import SelectedLocationsForm.maxLocations
 
   //scalastyle:off cyclomatic.complexity
-  def locationFormatter(formKey: String)(implicit messages: Messages) = new Formatter[List[String]] {
+  private def locationFormatter(formKey: String)(implicit messages: Messages) = new Formatter[List[String]] {
     def bind(key: String, data: Map[String, String]): Either[Seq[FormError], List[String]] = {
       page.getLocationsByPriority(data) match {
         case selectedLocations if selectedLocations.isEmpty =>
@@ -62,7 +62,7 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
     }
   } //scalastyle:on
 
-  def interestsFormatter = new Formatter[List[String]] {
+  private def interestsFormatter = new Formatter[List[String]] {
     def bind(key: String, request: Map[String, String]): Either[Seq[FormError], List[String]] = {
       bindParam(request.areInterestsValid,"You must choose an interest")(key, request.interestsParam)
     }
@@ -81,9 +81,9 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
   }
 
   implicit class RequestValidation(request: Map[String, String]) {
-    def interestsParam = request.view.filterKeys(_.contains("interests")).values.toList
+    def interestsParam: List[String] = request.view.filterKeys(_.contains("interests")).values.toList
 
-    def areInterestsValid = {
+    def areInterestsValid: Boolean = {
       // At least one interest must be selected and the chosen interests must be ones from the list.
       interestsParam.nonEmpty && interestsParam.diff(interestsList).isEmpty
     }
@@ -92,22 +92,16 @@ class SelectedLocationsForm(locations: Seq[SdipLocation]) {
 
 object SelectedLocationsForm {
 
-  val maxLocations = 3
+  val maxLocations = 1
 
-  val interestsList = List(
-    "Commercial",
-    "Cyber",
-    "Digital and Data",
-    "Diplomacy and International Relations",
-    "Economics",
-    "Finance",
-    "Governance",
+  val interestsList: List[String] = List(
+    "Commercial & Finance",
+    "Cyber, Data & Digital",
+    "People & Places",
+    "Policy & Governance",
     "Operational Delivery",
-    "People",
-    "Policy Development",
-    "Project Management",
-    "Science and Engineering",
-    "Statistics and Research"
+    "Science & Engineering",
+    "Statistics & Analysis"
   )
 
   case class LocationPreferences(locations: List[String], interests: List[String])

@@ -25,9 +25,9 @@
 @import views.html.helper.CSPNonce
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
-@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukErrorSummary, Hint, HtmlContent, Legend, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
-@import views.html.components.{Heading1, Heading2, Layout, MultiSelectCheckboxes, PageTitle}
+@import views.html.components.{Heading1, Heading2, Heading3, Layout, MultiSelectCheckboxes, PageTitle}
 
 @this(
         mainLayout: Layout,
@@ -36,6 +36,7 @@
         multiSelectCheckboxes: MultiSelectCheckboxes,
         h1: Heading1,
         h2: Heading2,
+        h3: Heading3,
         govukButton: GovukButton,
         pageTitle: PageTitle
 )
@@ -69,12 +70,11 @@
     @formWithCSRF(action = routes.LocationPreferencesController.submit) {
         @h1(content = Text("Choose your preferred locations"))
 
-        <div class="panel-indent">
-            <p>In preference order, select only the locations where you would like to work</p>
-            <p>You can choose a maximum of @maxLocations locations.</p>
+        <div class="govuk-inset-text">
+            <p>Select your preferred work location from the list below.</p>
         </div>
         <fieldset>
-            <legend class="visuallyhidden">In preference order, select only the locations where you'd like to work.</legend>
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select your preferred work location</legend>
             <section class="grid-wrapper scheme-wrapper">
                 <div class="scheme-input-container">
                 @locationsCheckboxGroup(form("locations"), page.refDataLocations,
@@ -86,10 +86,10 @@
         </fieldset>
 
         <section id="selectedPreferences" class="hide-nojs">
-            @h2(content = Text("Your chosen locations"))
+            @h3(content = Text("Your chosen location"))
             <div data-scheme-placeholder="">
-                <div class="scheme-warning text">
-                    <p>Your locations will appear here as you select them from the list</p>
+                <div class="govuk-inset-text">
+                    <p class="govuk-body">Your chosen location will appear here as you select it from the list</p>
                 </div>
             </div>
             @for(i <- page.refDataLocations.indices) {
@@ -99,11 +99,6 @@
                 <li></li>
             </ol>
             <span class="visuallyhidden" id="locationRemovedMessage" aria-live="assertive"></span>
-        </section>
-        <section class="text panel-indent">
-            <p>Locations will be offered to you in order of preference.</p>
-            <p>You will not be able to reorder them after submitting your application.</p>
-            <p>You can choose a maximum of @maxLocations locations.</p>
         </section>
 
         @*
@@ -118,8 +113,8 @@
             </div>
         </section>*@
 
-        @h2(content = Text("Please select which interests you have. (Select all that apply)"))
-        <section class="text panel-indent">
+        @h3(content = Text("Please select which interests you have. (Select all that apply)"))
+        <section class="govuk-inset-text">
             <p>We request your areas of interest to help us match candidates to internships.</p>
             <p>The preferences you choose will play no part in your likelihood of being offered an internship and we cannot guarantee we are able to offer every preference in every location.</p>
         </section>
@@ -128,7 +123,7 @@
             name = "interests[]",
             items = interests,
             classes = "govuk-checkboxes--small",
-            label = "Which of the following describes your condition, illness, impairment or disability?",
+            label = "Which of the following are you interested in?",
         )
 
         <div>
