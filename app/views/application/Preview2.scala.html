@@ -88,7 +88,7 @@
 
     @if(isSdip(user)) {
         @locationPreferences.map { lp =>
-            @locationPreferencesViewSection2(lp)(edit_link("editLocationPreferences", "Location Preferences", routes.LocationPreferencesController.present))
+            @locationPreferencesViewSection2(lp)(edit_link("editLocationPreferences", "Location Preference", routes.LocationPreferencesController.present))
         }
     }
 

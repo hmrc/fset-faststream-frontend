@@ -27,7 +27,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
-@import views.html.components.{Heading1, Heading2, Heading3, Layout, MultiSelectCheckboxes, PageTitle}
+@import views.html.components.{Heading1, Heading3, Layout, MultiSelectCheckboxes, PageTitle}
 
 @this(
         mainLayout: Layout,
@@ -35,7 +35,6 @@
         formWithCSRF: FormWithCSRF,
         multiSelectCheckboxes: MultiSelectCheckboxes,
         h1: Heading1,
-        h2: Heading2,
         h3: Heading3,
         govukButton: GovukButton,
         pageTitle: PageTitle
@@ -59,7 +58,9 @@
     <link href='@routes.Assets.versioned("css/font-awesome/css/font-awesome.min.css")' rel="stylesheet" type="text/css">
 }
 
-@mainLayout(pageTitle(form, Title("Choose your preferred locations")).toString, navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
+@title = @{ "Choose your preferred location" }
+
+@mainLayout(pageTitle(form, Title(title)).toString, navigation = ServiceNavigationItems(user), javaScripts = Some(javaScripts), css = Some(css)) {
 @*main_template(title = "Choose your preferred locations", pageForms = Seq(form)) {*@
     @*pageProgress(2, 7)*@
 
@@ -68,7 +69,7 @@
     }
 
     @formWithCSRF(action = routes.LocationPreferencesController.submit) {
-        @h1(content = Text("Choose your preferred locations"))
+        @h1(content = Text(title))
 
         <div class="govuk-inset-text">
             <p>Select your preferred work location from the list below.</p>
