@@ -79,7 +79,7 @@
 
 @renderProgressElements = {
     <li><i class="fa fa-check the-icon" aria-hidden="true"></i>Create your account</li>
-    @renderProgressElement(showLink = EditPersonalDetailsAndContinueRole.isAuthorized(usr), checked = SchemesRole.isAuthorized(usr), "personalDetailsStep")(routes.PersonalDetailsController.presentAndContinue) {Add personal details }
+    @renderProgressElement(showLink = EditPersonalDetailsAndContinueRole.isAuthorized(usr), checked = hasPersonalDetails(usr), "personalDetailsStep")(routes.PersonalDetailsController.presentAndContinue) {Add personal details }
     @if(isFaststream(usr)) {
         @renderProgressElement(showLink = SchemesRole.isAuthorized(usr), checked = hasSchemes(usr), "schemesStep")(routes.SchemePreferencesController.present) { Choose your schemes }
     }

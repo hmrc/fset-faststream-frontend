@@ -361,11 +361,11 @@ object ProgressStatusRoleUtils {
 
   def hasPersonalDetails(implicit user: CachedData): Boolean = user.application.exists(_.progress.personalDetails)
 
-  def hasSchemes(implicit user: CachedData): Boolean = user.application.isDefined && user.application.exists(_.progress.schemePreferences)
+  def hasSchemes(implicit user: CachedData): Boolean = user.application.exists(_.progress.schemePreferences)
 
-  def hasLocations(implicit user: CachedData): Boolean = user.application.isDefined && user.application.exists(_.progress.locationPreferences)
+  def hasLocations(implicit user: CachedData): Boolean = user.application.exists(_.progress.locationPreferences)
 
-  def hasAssistanceDetails(implicit user: CachedData): Boolean = user.application.isDefined && user.application.exists(_.progress.assistanceDetails)
+  def hasAssistanceDetails(implicit user: CachedData): Boolean = user.application.exists(_.progress.assistanceDetails)
 
   def hasStartedQuest(implicit user: CachedData): Boolean = user.application.exists(_.progress.startedQuestionnaire)
 
