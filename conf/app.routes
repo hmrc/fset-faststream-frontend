@@ -60,8 +60,8 @@ GET         /application/schemes                                    @controllers
 POST        /application/schemes                                    @controllers.SchemePreferencesController.submit
 
 # Only applicable for Sdip candidates
-GET         /application/locations                                  @controllers.LocationPreferencesController.present
-POST        /application/locations                                  @controllers.LocationPreferencesController.submit
+GET         /application/location                                   @controllers.LocationPreferencesController.present
+POST        /application/location                                   @controllers.LocationPreferencesController.submit
 
 GET         /application/assistance-details                         @controllers.AssistanceDetailsController.present
 POST        /application/assistance-details                         @controllers.AssistanceDetailsController.submit

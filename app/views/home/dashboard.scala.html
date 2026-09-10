@@ -64,7 +64,7 @@
         @renderProgressElement(showLink = SchemesRole.isAuthorized(usr), checked = hasSchemes(usr), "schemesStep")(routes.SchemePreferencesController.present) { Choose your schemes }
     }
     @if(isSdip(usr)) {
-        @renderProgressElement(showLink = LocationsRole.isAuthorized(usr), checked = hasLocations(usr), "locationsStep")(routes.LocationPreferencesController.present) { Choose your locations }
+        @renderProgressElement(showLink = LocationsRole.isAuthorized(usr), checked = hasLocations(usr), "locationsStep")(routes.LocationPreferencesController.present) { Choose your location }
     }
     @renderProgressElement(showLink = AssistanceDetailsRole.isAuthorized(usr) || hasAssistanceDetails(usr), checked = hasAssistanceDetails(usr), "assistanceDetailsStep")(routes.AssistanceDetailsController.present) { Disability and health conditions }
     @renderProgressElement(showLink = QuestionnaireInProgressRole.isAuthorized(usr), checked = PreviewApplicationRole.isAuthorized(usr), "questionnaireStep")(routes.QuestionnaireController.presentStartOrContinue) { Fill in the diversity questions }
