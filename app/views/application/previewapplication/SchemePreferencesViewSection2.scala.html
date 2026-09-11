@@ -14,13 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
-@import views.html.components.{Heading2, Heading3}
-
-@this(
-        h2: Heading2,
-        h3: Heading3
-)
+@this()
 
 @(selectedSchemes: connectors.exchange.SelectedSchemes)(edit: Html)(implicit messages: Messages)
 
@@ -33,18 +27,29 @@
     }
 }
 
-<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-<div class="govuk-body">
-    @h2(content = Text("Choose your schemes"))
-    @edit
-    <div>
-        <ul id="schemePreferenceList" class="govuk-list govuk-list--bullet">
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+            Choose your schemes
+        </h2>
+        <div class="govuk-summary-card__actions">
+            @edit
+        </div>
+    </div>
+
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+
             @for(position <- 0 to selectedSchemes.schemes.size - 1) {
-                <li>
-                    @h3(content = Text(s"${getOrder(position + 1)} preference"))
-                    <p id="schemePreferenceChoice@{position+1}"> @Html(Messages("scheme."+selectedSchemes.schemes(position)+".description"))</p>
-                </li>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @getOrder(position + 1) preference
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html(Messages("scheme." + selectedSchemes.schemes(position) + ".description"))
+                    </dd>
+                </div>
             }
-        </ul>
+        </dl>
     </div>
 </div>

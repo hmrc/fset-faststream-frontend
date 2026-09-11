@@ -14,13 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
-@import views.html.components.{Heading2, Heading3}
-
-@this(
-        h2: Heading2,
-        h3: Heading3
-)
+@this()
 
 @(selectedLocations: connectors.exchange.SelectedLocations)(edit: Html)(implicit messages: Messages)
 
@@ -37,27 +31,40 @@
 
 @displayInterests = {
     @selectedLocations.interests.sorted.map { interest =>
-        <li><p id=@createId("interests", interest)>@interest</p></li>
+        @interest<br>
     }
 }
 
-<div class="govuk-body">
-    @h2(content = Text("Choose your location"))
-    @edit
-    <div>
-        <ul id="locationPreferenceList" class="govuk-list govuk-list--bullet">
-            @for(position <- 0 to selectedLocations.locations.size - 1) {
-                <li>
-                    @h3(content = Text(s"${getOrder(position + 1)} preference"))
-                    <p id="locationPreferenceChoice@{position+1}"> @Html(Messages("location."+selectedLocations.locations(position)+".description"))</p>
-                </li>
-            }
-        </ul>
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+            Choose your location
+        </h2>
+        <div class="govuk-summary-card__actions">
+            @edit
+        </div>
     </div>
-    @h2(content = Text("Your interests"))
-    <div>
-        <ul id="interestsList" class="govuk-list govuk-list--bullet">
-            @displayInterests
-        </ul>
+
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            @for(position <- 0 to selectedLocations.locations.size - 1) {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @getOrder(position + 1) preference
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html(Messages("location." + selectedLocations.locations(position) + ".description"))
+                    </dd>
+                </div>
+            }
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Your interests
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @displayInterests
+                </dd>
+            </div>
+        </dl>
     </div>
 </div>

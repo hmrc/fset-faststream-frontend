@@ -56,10 +56,12 @@
 
 @edit_link(id: String, title: String, navigation: play.api.mvc.Call) = {
     @if(!ApplicationData.isReadOnly(user.get.application.get.applicationStatus)) {
+        @*
         <a id="@id" class="icon-with-text govuk-link" href="@navigation">
             <i class="the-icon fa fa-pencil" aria-hidden="true"></i>
             <span>Edit <span class="visuallyhidden editSection"></span>@title section</span>
-        </a>
+        </a>*@
+        <a class="govuk-link" href="@navigation">Change<span class="govuk-visually-hidden"> @title</span></a>
     }
 }
 
@@ -71,13 +73,17 @@
     }
 }
 
-@mainLayout(Title("Check your application"), navigation = ServiceNavigationItems(user)) {
+@mainLayout(Title(headingText), navigation = ServiceNavigationItems(user)) {
 
     <div class="govuk-body">
-        @* TODO : does this need to support an id ???*@
-        @h1(content = Text(headingText))
-
-        <a href="" class="govuk-link" id="printLink">Print this page</a>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @h1(content = Text(headingText))
+            </div>
+            <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+                <a href="" class="govuk-link" id="printLink">Print this page</a>
+            </div>
+        </div>
     </div>
 
     @personalDetailsViewSection2(generalDetails)(edit_link("editPersonalDetails", "Personal Details", routes.PersonalDetailsController.presentAndContinue))
