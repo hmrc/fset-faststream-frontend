@@ -18,24 +18,24 @@
 @import forms.FastPassForm
 @import security.RoleUtils._
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
-@import views.html.components.{Heading2, Heading3}
-
-@this(
-        h2: Heading2,
-        h3: Heading3
-)
+@this()
 
 @(personalDetails: connectors.exchange.GeneralDetails)(edit: Html)(implicit user: Option[CachedData], messages: Messages)
 
-@displayFastPassSection(id: String, display: Boolean, heading: String, text: => String) = {
+@displayFastPassSection(display: Boolean, heading: String, text: => String) = {
     @if(display){
-        @h3(content = Text(heading))
-        <p id=@id>@text</p>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                @heading
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @text
+            </dd>
+        </div>
     }
 }
 
-@getYesOrNo(value:Boolean) = @{
+@getYesOrNo(value: Boolean) = @{
     if(value) "Yes" else "No"
 }
 
@@ -43,91 +43,133 @@
     FastPassForm.civilServantAndInternshipTypes.toMap.getOrElse(internshipType, "")
 }
 
-@maybeDisplayAddressLine(addressLine: Option[String], id: String) = {
+@maybeDisplayAddressLine(addressLine: Option[String]) = {
     @addressLine.map { address =>
-        <li id="@id">@address</li>
+        <br>@address
     }
 }
 
-<div class="govuk-body">
-    @h2(content = Text("Personal details"))
-    @edit
-    <section>
-        @h3(content = Text("Full name"))
-        <p id="fullName">@personalDetails.firstName @personalDetails.lastName </p>
-    </section>
-    <section>
-        @h3(content = Text("Preferred name"))
-        <p id="preferredName">@personalDetails.preferredName</p>
-    </section>
-    <section>
-        @h3(content = Text("Date of birth"))
-        <p id="dateOfBirth">@personalDetails.dateOfBirth.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))</p>
-    </section>
-    <section>
-        @h3(content = Text("Address"))
-        <ul class="govuk-list govuk-list--bullet">
-            <li id="address.line1">@personalDetails.address.line1</li>
-            @maybeDisplayAddressLine(personalDetails.address.line2, "address.line2")
-            @maybeDisplayAddressLine(personalDetails.address.line3, "address.line3")
-            @maybeDisplayAddressLine(personalDetails.address.line4, "address.line4")
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+            Personal details
+        </h2>
+        <div class="govuk-summary-card__actions">
+            @*<a class="govuk-link" href="/not-yet-built">Change<span class="govuk-visually-hidden"> (Personal details)</span></a>*@
+            @edit
+        </div>
+    </div>
 
-            @if(personalDetails.postCode.isDefined) {
-                <li id="postCode">@personalDetails.postCode</li>
-            } else {
-                @if(personalDetails.country.isDefined) {
-                    <li id="country">@personalDetails.country</li>
-                } else {
-                    <li>Not provided</li>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Full name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @personalDetails.firstName @personalDetails.lastName
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Preferred name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @personalDetails.preferredName
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Date of birth
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @personalDetails.dateOfBirth.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Address
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @personalDetails.address.line1
+                    @maybeDisplayAddressLine(personalDetails.address.line2)
+                    @maybeDisplayAddressLine(personalDetails.address.line3)
+                    @maybeDisplayAddressLine(personalDetails.address.line4)
+
+                    @if(personalDetails.postCode.isDefined) {
+                        <br>@personalDetails.postCode
+                    } else {
+                        @if(personalDetails.country.isDefined) {
+                            <br>@personalDetails.country
+                        }
+                    }
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Telephone number
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @personalDetails.phone.getOrElse("No phone number provided")
+                </dd>
+            </div>
+
+            @if(isEdip(user)) {
+                @personalDetails.otherInternshipCompleted.map { otherInternshipCompleted =>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Have you completed an internship programme?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @getYesOrNo(otherInternshipCompleted)
+                        </dd>
+                    </div>
                 }
             }
-        </ul>
-    </section>
-    <section>
-        @h3(content = Text("Telephone number"))
-        @if(personalDetails.phone.isDefined || personalDetails.phone.map(_.nonEmpty)) {
-            <p id="phone-input">@personalDetails.phone.getOrElse("No phone number provided")</p>
-        }
-        @if(personalDetails.phone.isEmpty) {
-            <p id="phone-input3">No number provided</p>
-        }
-    </section>
-    @if(isEdip(user)) {
-        @personalDetails.otherInternshipCompleted.map { otherInternshipCompleted =>
-            <section>
-                @h3(content = Text("Have you completed an internship programme?"))
-                <p id="otherInternshipCompleted">@{if(otherInternshipCompleted) {"Yes"} else {"No"}}</p>
-            </section>
-        }
-    }
-    @if(isSdipFaststream(user) || isSdip(user)) {
-        @personalDetails.edipCompleted.map { edipCompleted =>
-            <section>
-                @h3(content = Text("Have you completed the Early Diversity Internship Programme (EDIP)?"))
-                <p id="edipCompleted">@{if(edipCompleted) {"Yes"} else {"No"}}</p>
-            </section>
-        }
-        @personalDetails.otherInternshipCompleted.map { otherInternshipCompleted =>
-            <section>
-                @h3(content = Text("Have you completed another internship programme?"))
-                <p id="otherInternshipCompleted">@{if(otherInternshipCompleted) {"Yes"} else {"No"}}</p>
-            </section>
-        }
-    }
-    @personalDetails.civilServiceExperienceDetails.map { civilServiceExperienceDetails =>
-        @displayFastPassSection("fastPassApplicable", display = true, "Are you a civil servant or been on a diversity internship?",
-            getYesOrNo(civilServiceExperienceDetails.applicable))
-        @if(civilServiceExperienceDetails.civilServantAndInternshipTypes.isDefined){
-            <section id="internshipTypes">
-                @h3(content = Text("Which internship programmes did you do?"))
-                @for(internshipType <- civilServiceExperienceDetails.civilServantAndInternshipTypes.get){
-                    <p>@getInternshipTypeDescription(internshipType)</p>
+
+            @if(isSdip(user)) {
+                @personalDetails.edipCompleted.map { edipCompleted =>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Have you completed the Early Diversity Internship Programme (EDIP)?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @getYesOrNo(edipCompleted)
+                        </dd>
+                    </div>
                 }
-            </section>
-        }
-        @displayFastPassSection("fastPassReceived", civilServiceExperienceDetails.fastPassReceived.isDefined, "Did you receive a Fast Pass?",
-            getYesOrNo(civilServiceExperienceDetails.fastPassReceived.get))
-        @displayFastPassSection("certificateNumber", civilServiceExperienceDetails.certificateNumber.isDefined, "Fast Pass certificate number",
-            civilServiceExperienceDetails.certificateNumber.get)
-    }
+                @personalDetails.otherInternshipCompleted.map { otherInternshipCompleted =>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Have you completed another internship programme?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @getYesOrNo(otherInternshipCompleted)
+                        </dd>
+                    </div>
+                }
+            }
+
+            @personalDetails.civilServiceExperienceDetails.map { civilServiceExperienceDetails =>
+                @displayFastPassSection(display = true, "Are you a civil servant or been on a diversity internship?",
+                    getYesOrNo(civilServiceExperienceDetails.applicable))
+                @if(civilServiceExperienceDetails.civilServantAndInternshipTypes.isDefined){
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Which internship programmes did you do?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @for(internshipType <- civilServiceExperienceDetails.civilServantAndInternshipTypes.get){
+                                @getInternshipTypeDescription(internshipType)
+                            }
+                        </dd>
+                    </div>
+                }
+                @displayFastPassSection(civilServiceExperienceDetails.fastPassReceived.isDefined, "Did you receive a Fast Pass?",
+                    getYesOrNo(civilServiceExperienceDetails.fastPassReceived.getOrElse(false)))
+                @displayFastPassSection(civilServiceExperienceDetails.certificateNumber.isDefined, "Fast Pass certificate number",
+                    civilServiceExperienceDetails.certificateNumber.get)
+            }
+        </dl>
+    </div>
 </div>
