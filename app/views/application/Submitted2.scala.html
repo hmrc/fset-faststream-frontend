@@ -28,36 +28,39 @@
         hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
-@(marketingTrackingEnabled: Boolean = false)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(email: String, marketingTrackingEnabled: Boolean = false)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout(Title("Application submitted"), navigation = ServiceNavigationItems(user)) {
+@title = @{ "Initial application submitted" }
+
+@mainLayout(Title(title), navigation = ServiceNavigationItems(user)) {
 
     @if(marketingTrackingEnabled) {
         <img src="https://ad.doubleclick.net/ddm/activity/src=8127677;type=atsew0;cat=1909-00;dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua=;npa=;ord=1?" width="1" height="1" alt=""/>
     }
 
     @govukPanel(Panel(
-        title = Text("Application submitted")
+        title = Text(title)
     ))
 
-    <div class="govuk-inset-text">
-        <p><i class="fa fa-envelope-o" aria-hidden="true"></i>We've sent you an email confirming your application</p>
+    <div class="govuk-body">
+        <p>We have sent a confirmation email to <strong>@email</strong></p>
     </div>
-    <section>
-        <div class="govuk-body">
-            @h2(content = Text("What happens next?"))
-            <p>The next step is to complete the online exercises.</p>
-                <a class="button govuk-link" href="@routes.HomeController.present()">See the next steps</a>
-            <p>
-                @*
-                <a class="govuk-link" href="@feedbackUrl" target="_blank" rel="external">Give feedback?
-                    <span class="visuallyhidden">link opens new window</span></a> (30 second survey)
-                *@
-                @hmrcNewTabLinkHelper(NewTabLinkHelper(
-                    text = "Give feedback? (30 second survey)",
-                    href = Some(feedbackUrl)
-                ))
-            </p>
-        </div>
-    </section>
+    <div class="govuk-body">
+        @h2(content = Text("What happens next?"))
+
+        <p>You need to complete two online tests:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>Work-based scenarios</li>
+            <li>Case Study assessment</li>
+        </ul>
+        <p>The tests will become available once we have checked your initial application.</p>
+        <p>We will send you an email once your tests are available and you will have 7 days to complete both tests.</p>
+        <p>During busy times, it can take up to 24 hours to receive the email.</p>
+        <a class="button govuk-link" href="@routes.HomeController.present()">View your tasks</a>
+
+        @*hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = "Give feedback? (30 second survey)",
+            href = Some(feedbackUrl)
+        ))*@
+    </div>
 }
