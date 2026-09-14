@@ -50,9 +50,13 @@ error.password.empty = Enter your password
 error.password.dontmatch = Your passwords don''t match
 error.appRoute = You must select an application route
 agree.accept = Accept the terms and conditions
-agree.faststreamEligible = Confirm that you''re eligible to apply for the Civil Service Fast Stream
+
+# The question has now changed to be a confirmation instead of an eligibility - change it in the stack?
+agree.faststreamEligible = Confirm that you understand and agree with the Civil Service Fast Stream statements
 agree.edipEligible = Confirm that you''re eligible to apply for the Early Diversity Internship Programme
-agree.sdipEligible = Confirm that you''re eligible to apply for the Summer Internship Programme
+
+# The question has now changed to be a confirmation instead of an eligibility - change it in the stack?
+agree.sdipEligible = Confirm that you understand and agree with the Summer Internship Programme statements
 agree.sdipDiversity = Confirm if you want to be considered for the Diversity strand of SIP
 sdipFastStream.consider = Confirm if you would like to be considered for SIP
 sdipFaststream.acceptTerms.required = Confirm that you agree and want to be considered for the Summer Internship Programme
