@@ -22,7 +22,7 @@ import connectors.ApplicationClient.CannotSubmit
 import helpers.NotificationTypeHelper
 import models.ApplicationRoute.ApplicationRoute
 import models.CachedDataWithApp
-import play.api.mvc.{MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
 import security.Roles.{AbleToWithdrawApplicationRole, SubmitApplicationRole}
 import security.SilhouetteComponent
@@ -50,7 +50,7 @@ class SubmitApplicationController @Inject()(
 
   implicit val marketingTrackingEnabled: Boolean = config.marketingTrackingEnabled
 
-  def presentSubmit = CSRSecureAppAction(SubmitApplicationRole) { implicit request =>
+  def presentSubmit: Action[AnyContent] = CSRSecureAppAction(SubmitApplicationRole) { implicit request =>
     implicit user =>
       if (canApplicationBeSubmitted(user.application.overriddenSubmissionDeadline)(user.application.applicationRoute)) {
         Future.successful(Ok(submitView()))
@@ -66,19 +66,20 @@ class SubmitApplicationController @Inject()(
       views.html.application.submit()
     }
 
-  def presentSubmitted = CSRSecureAppAction(AbleToWithdrawApplicationRole) { implicit request =>
+  def presentSubmitted: Action[AnyContent] = CSRSecureAppAction(AbleToWithdrawApplicationRole) { implicit request =>
     implicit user =>
-      Future.successful(Ok(submittedView()))
+      val email = user.user.email
+      Future.successful(Ok(submittedView(email)))
   }
 
-  private def submittedView(implicit request: Request[_], user: CachedDataWithApp): Html =
+  private def submittedView(email: String)(implicit request: Request[_], user: CachedDataWithApp): Html =
     if (config.enablePlayHmrcSubmittedView) {
-      submittedTemplate()
+      submittedTemplate(email)
     } else {
       views.html.application.submitted(marketingTrackingEnabled)
     }
 
-  def submit = CSRSecureAppAction(SubmitApplicationRole) { implicit request =>
+  def submit: Action[AnyContent] = CSRSecureAppAction(SubmitApplicationRole) { implicit request =>
     implicit user =>
       if (canApplicationBeSubmitted(user.application.overriddenSubmissionDeadline)(user.application.applicationRoute)) {
         applicationClient.submitApplication(user.user.userID, user.application.applicationId).map { _ =>
