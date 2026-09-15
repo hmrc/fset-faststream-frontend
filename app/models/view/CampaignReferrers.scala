@@ -20,16 +20,16 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 object CampaignReferrers {
   val list: List[(String, Boolean)] = List(
+    ("Previous internship", false),
+    ("Times Top 100", false),
+    ("Bright Network", false),
+    ("93% Club", false),
+    ("Zero Gravity", false),
+    ("Inservice activity (intranet, networks)", false),
     ("Social Media (Facebook, Twitter, LinkedIn or Instagram)", false),
     ("Online search (Google)", false),
     ("Friend or family in the Civil Service", false),
     ("Fast Stream University activity (careers service, careers fair, guest lecture, skills session)", false),
-    ("Previous internship", false),
-    ("Times Top 100", false),
-    ("Bright Network", false),
-    ("Gradcracker", false),
-    ("Zero Gravity", false),
-    ("Inservice activity (intranet, networks)", false),
     ("Other", true)
   )
 
