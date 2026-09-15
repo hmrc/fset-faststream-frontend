@@ -41,10 +41,6 @@
 
 @rightToWorkBullet = {
     <li>I have the
-        @*
-        <a class="govuk-link" href="https://www.gov.uk/prove-right-to-work" rel="external" target="_blank">
-            right to work<span class="visuallyhidden">(link opens new window)</span>
-        </a>in the UK*@
         @hmrcNewTabLinkHelper(NewTabLinkHelper(
             text = "right to work in the UK",
             href = Some("https://www.gov.uk/prove-right-to-work")
@@ -54,9 +50,6 @@
 
 @eligibleToWorkInCivilServiceBullet = {
     <li>I am eligible to work in the UK Civil Service under the
-        @*<a class="govuk-link" href="https://www.gov.uk/government/publications/nationality-rules" rel="external" target="_blank">
-            nationality rules<span class="visuallyhidden">(link opens new window)</span>
-        </a>*@
         @hmrcNewTabLinkHelper(NewTabLinkHelper(
             text = "Civil Service nationality rules",
             href = Some("https://www.gov.uk/government/publications/nationality-rules")
@@ -95,16 +88,7 @@
         @if(faststreamOpen) {
             <p class="govuk-body">Confirm the following statements are true:</p>
             <ul class="govuk-list govuk-list--bullet">
-                <li>I am eligible to work in the UK Civil Service under the
-                    @*
-                    <a class="govuk-link" href="https://www.civil-service-careers.gov.uk/nationality-requirements/" target="_blank" rel="external">nationality rules
-                        <span class="visuallyhidden">(link opens new window)</span>
-                    </a>*@
-                    @hmrcNewTabLinkHelper(NewTabLinkHelper(
-                        text = "Civil Service nationality rules",
-                        href = Some("https://www.gov.uk/government/publications/nationality-requirements/")
-                    ))
-                </li>
+                @eligibleToWorkInCivilServiceBullet
                 <li>I have a relevant degree or qualify as a current civil servant</li>
                 <li>
                     I meet my schemes
@@ -144,10 +128,6 @@
                 @rightToWorkBullet
                 @eligibleToWorkInCivilServiceBullet
                 <li>I qualify to apply according to the
-                    @*
-                    <a class="govuk-link" href="@sdipUrl" rel="external" target="_blank">
-                        eligibility requirements<span class="visuallyhidden">(link opens new window)</span>
-                    </a>for SIP*@
                     @hmrcNewTabLinkHelper(NewTabLinkHelper(
                         text = "eligibility requirements",
                         href = Some(sdipUrl)
