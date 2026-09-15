@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukRadios, Legend, RadioItem, Radios, Text}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
-@import views.html.components.{Heading1, Layout, PageTitle}
+@import views.html.components.{Heading1, Heading2, Layout, PageTitle}
 @import views.html.questionnaire.components.{Postcode2, School2, UniversitySection2}
 
 @this(
@@ -29,6 +29,7 @@
         formWithCSRF: FormWithCSRF,
         mainLayout: Layout,
         h1: Heading1,
+        h2: Heading2,
         govukRadios: GovukRadios,
         postcode2: Postcode2,
         school2: School2,
@@ -50,12 +51,14 @@
     @universitySection2(questionnaireForm)
 }
 
+@title = @{ "Your education" }
+
 @*css = {
     <link href='@routes.Assets.versioned("css/legacy.css")' media="all" rel="stylesheet" type="text/css">
 }*@
 
 @*mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user), css = Some(css)) {*@
-@mainLayout(pageTitle(questionnaireForm, Title("Your education")).toString, navigation = ServiceNavigationItems(user)) {
+@mainLayout(pageTitle(questionnaireForm, Title(title)).toString, navigation = ServiceNavigationItems(user)) {
 @*main_template(title = "Your education", pageForms = Seq(questionnaireForm)) {*@
     @*pageProgress(6, 7)*@
 
@@ -67,11 +70,11 @@
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(questionnaireForm))
     }
 
-    @h1(content = Text("Your education"))
+    @h1(content = Text(title))
     <p class="govuk-body-l">Diversity questions</p>
 
     <div class="govuk-inset-text">
-        <h2 class="heading-medium">Why do we ask about your education?</h2>
+        @h2(content = Text("Why do we ask about your education?"))
         <p>These questions help us to gather data on the areas applicants grew up in and the schools they went to.</p>
         <p>This is one method we use to help track and improve the effectiveness of our processes in enabling candidates to succeed, irrespective of background.</p>
     </div>
