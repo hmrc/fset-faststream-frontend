@@ -133,15 +133,8 @@
                     labelClasses = "govuk-label--s",
                     classes = "govuk-!-width-two-thirds",
                     inputType = "email",
-                    hint = Some("You'll need this to sign in to your account")
+                    hint = Some("Use a personal email address that you'll have access to for the next year. Do not use your work or university email. A Gmail address works best with our onboarding.")
                 )
-
-                <div class="govuk-inset-text">
-                    <p>
-                        You'll need access to this email address over the next year. </br>
-                        Please use a personal email address, not your work or university email address.
-                    </p>
-                </div>
 
                 @inputText(
                     signUpForm("email_confirm"),

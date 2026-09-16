@@ -16,16 +16,13 @@
 
 @import config.TrackingConsentConfig
 @import helpers.{ServiceNavigationItems, Title}
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukPanel, Panel, Text}
 @import views.html.components.{Heading2, Layout}
 
 @this(
         h2: Heading2,
         mainLayout: Layout,
-        govukPanel : GovukPanel,
-        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
+        govukPanel : GovukPanel
 )
 
 @(email: String, marketingTrackingEnabled: Boolean = false)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
