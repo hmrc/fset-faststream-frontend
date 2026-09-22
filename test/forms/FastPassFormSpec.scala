@@ -41,9 +41,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
         "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
+        "civilServiceExperienceDetails.civilServantEligible" -> "true",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe false
@@ -52,9 +50,7 @@ class FastPassFormSpec extends BaseFormSpec {
       form.value.get mustBe Data(applicable = "true",
         civilServantAndInternshipTypes = Some(Seq(FastPassForm.CivilServantKey)),
         civilServantDepartment = Some("Cabinet Office"),
-        liveDisciplinaryWarning = Some(false),
-        inReviewPeriodFollowingAWarning = Some(false),
-        inImprovementPeriodFollowingAWarning = Some(false),
+        civilServantEligible = Some(true),
         fastPassReceived = Some(false)
       )
     }
@@ -68,9 +64,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[2]" -> FastPassForm.EDIPKey,
         "civilServiceExperienceDetails.civilServantAndInternshipTypes[3]" -> FastPassForm.OtherInternshipKey,
         "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
+        "civilServiceExperienceDetails.civilServantEligible" -> "true",
         "civilServiceExperienceDetails.sdipYear" -> "2020",
         "civilServiceExperienceDetails.edipYear" -> "2020",
         "civilServiceExperienceDetails.otherInternshipName" -> "Internship name",
@@ -89,9 +83,7 @@ class FastPassFormSpec extends BaseFormSpec {
       dataWithoutStream mustBe Data(applicable = "true",
         civilServantAndInternshipTypes = None,
         civilServantDepartment = Some("Cabinet Office"),
-        liveDisciplinaryWarning = Some(false),
-        inReviewPeriodFollowingAWarning = Some(false),
-        inImprovementPeriodFollowingAWarning = Some(false),
+        civilServantEligible = Some(true),
         sdipYear = Some("2020"),
         edipYear = Some("2020"),
         otherInternshipName = Some("Internship name"),
@@ -110,9 +102,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
+        "civilServiceExperienceDetails.civilServantEligible" -> "true",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe true
@@ -128,9 +118,7 @@ class FastPassFormSpec extends BaseFormSpec {
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
         "civilServiceExperienceDetails.civilServantDepartment" -> "BOOM",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
+        "civilServiceExperienceDetails.civilServantEligible" -> "true",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe true
@@ -140,168 +128,34 @@ class FastPassFormSpec extends BaseFormSpec {
       form.hasGlobalErrors mustBe false
     }
 
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and doesn't answer the live disciplinary warning" in {
+    "be invalid when candidate is applicable and is a civil servant with no fast pass and doesn't answer the eligibility question" in {
       val form = fastPassForm.bind(Map(
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
         "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.liveDisciplinaryWarning",
-        message = "error.liveDisciplinaryWarning.required"))
+      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.civilServantEligible",
+        message = "error.civilServantEligible.required"))
       form.errors mustBe expectedFormErrors
       form.hasGlobalErrors mustBe false
     }
 
     "be invalid when candidate is applicable and is a civil servant with no fast pass and posts an invalid answer to the " +
-      "live disciplinary warning" in {
+      "eligiblity question" in {
       val form = fastPassForm.bind(Map(
         "applicationRoute" -> ApplicationRoute.Faststream.toString,
         "civilServiceExperienceDetails.applicable" -> "true",
         "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
         "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "BOOM",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
+        "civilServiceExperienceDetails.civilServantEligible" -> "BOOM",
         "civilServiceExperienceDetails.fastPassReceived" -> "false"
       ))
       form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.liveDisciplinaryWarning",
-        message = "error.liveDisciplinaryWarning.required"))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and answers the live disciplinary warning with a yes" in {
-      val form = fastPassForm.bind(Map(
-        "applicationRoute" -> ApplicationRoute.Faststream.toString,
-        "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "true",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.fastPassReceived" -> "false"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.liveDisciplinaryWarning",
-        message = "error.liveDisciplinaryWarning.cannot.continue"))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and doesn't answer the " +
-      "in review period following a warning" in {
-      val form = fastPassForm.bind(Map(
-        "applicationRoute" -> ApplicationRoute.Faststream.toString,
-        "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.fastPassReceived" -> "false"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning",
-        message = "error.inReviewPeriodFollowingAWarning.required"))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and posts an invalid answer to the " +
-      "in review period following a warning" in {
-      val form = fastPassForm.bind(Map(
-        "applicationRoute" -> ApplicationRoute.Faststream.toString,
-        "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "BOOM",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.fastPassReceived" -> "false"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning",
-        message = "error.inReviewPeriodFollowingAWarning.required"))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and answers the " +
-      "in review period following a warning with a yes" in {
-      val form = fastPassForm.bind(Map(
-        "applicationRoute" -> ApplicationRoute.Faststream.toString,
-        "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "true",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.fastPassReceived" -> "false"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning",
-        message = "error.inReviewPeriodFollowingAWarning.cannot.continue"))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and doesn't answer the " +
-      "in improvement period following a warning" in {
-      val form = fastPassForm.bind(Map(
-        "applicationRoute" -> ApplicationRoute.Faststream.toString,
-        "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.fastPassReceived" -> "false"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning",
-        message = "error.inImprovementPeriodFollowingAWarning.required"))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and posts an invalid answer to the " +
-      "in improvement period following a warning" in {
-      val form = fastPassForm.bind(Map(
-        "applicationRoute" -> ApplicationRoute.Faststream.toString,
-        "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "BOOM",
-        "civilServiceExperienceDetails.fastPassReceived" -> "false"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning",
-        message = "error.inImprovementPeriodFollowingAWarning.required"))
-      form.errors mustBe expectedFormErrors
-      form.hasGlobalErrors mustBe false
-    }
-
-    "be invalid when candidate is applicable and is a civil servant with no fast pass and answers the " +
-      "in improvement period following a warning with a yes" in {
-      val form = fastPassForm.bind(Map(
-        "applicationRoute" -> ApplicationRoute.Faststream.toString,
-        "civilServiceExperienceDetails.applicable" -> "true",
-        "civilServiceExperienceDetails.civilServantAndInternshipTypes" -> FastPassForm.CivilServantKey,
-        "civilServiceExperienceDetails.civilServantDepartment" -> "Cabinet Office",
-        "civilServiceExperienceDetails.liveDisciplinaryWarning" -> "false",
-        "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning" -> "false",
-        "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning" -> "true",
-        "civilServiceExperienceDetails.fastPassReceived" -> "false"
-      ))
-      form.hasErrors mustBe true
-      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning",
-        message = "error.inImprovementPeriodFollowingAWarning.cannot.continue"))
+      val expectedFormErrors = Seq(FormError(key = "civilServiceExperienceDetails.civilServantEligible",
+        message = "error.civilServantEligible.required"))
       form.errors mustBe expectedFormErrors
       form.hasGlobalErrors mustBe false
     }

@@ -32,6 +32,15 @@
 
 @(form: Form[forms.PersonalDetailsForm.Data], schemesRequiringQualifications: Seq[String])(implicit messages: Messages)
 
+@disciplinaryHtml = {
+    <p class="govuk-body">You will not be eligible for the Fast Stream if any of the following apply to you:</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>You currently have a live disciplinary warning for misconduct</li>
+        <li>You are currently in the review period following a warning for poor performance</li>
+        <li>You are currently in the improvement period following a warning for misconduct</li>
+    </ul>
+}
+
 @currentlyCivilServantHtml = {
     @h2(content = Text("Current civil servants"))
     <div class="govuk-body">
@@ -57,68 +66,23 @@
             label = "What department do you currently work for?"
         )
 
-        @govukRadios(Radios(
+        @govukCheckboxes(Checkboxes(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text("Do you currently have a live disciplinary warning for misconduct?"),
+                    content = Text("Disciplinary and performance declaration"),
                     classes = "govuk-fieldset__legend--s"
                 ))
             )),
-            name = "civilServiceExperienceDetails.liveDisciplinaryWarning",
+            hint = Some(Hint(content = HtmlContent(disciplinaryHtml))),
+            name = "civilServiceExperienceDetails.civilServantEligible",
             items = Seq(
-                RadioItem(
-                    content = Text("Yes"),
-                    value = Some("true")
-                ),
-                RadioItem(
-                    content = Text("No"),
-                    value = Some("false")
+                CheckboxItem(
+                    content = Text("I confirm that none of these apply to me"),
+                    value = "true",
+                    checked = "true".equals(form("civilServiceExperienceDetails.civilServantEligible").value.getOrElse(""))
                 )
-            ),
-            classes = "govuk-radios--inline"
-        ).withFormField(form("civilServiceExperienceDetails.liveDisciplinaryWarning")))
-
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text("Are you currently in the review period following a warning for poor performance?"),
-                    classes = "govuk-fieldset__legend--s"
-                ))
-            )),
-            name = "civilServiceExperienceDetails.inReviewPeriodFollowingAWarning",
-            items = Seq(
-                RadioItem(
-                    content = Text("Yes"),
-                    value = Some("true")
-                ),
-                RadioItem(
-                    content = Text("No"),
-                    value = Some("false"),
-                )
-            ),
-            classes = "govuk-radios--inline"
-        ).withFormField(form("civilServiceExperienceDetails.inReviewPeriodFollowingAWarning")))
-
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text("Are you currently in the improvement period following a warning for misconduct?"),
-                    classes = "govuk-fieldset__legend--s"
-                ))
-            )),
-            name = "civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning",
-            items = Seq(
-                RadioItem(
-                    content = Text("Yes"),
-                    value = Some("true")
-                ),
-                RadioItem(
-                    content = Text("No"),
-                    value = Some("false"),
-                )
-            ),
-            classes = "govuk-radios--inline"
-        ).withFormField(form("civilServiceExperienceDetails.inImprovementPeriodFollowingAWarning")))
+            )
+        ).withFormField(form("civilServiceExperienceDetails.civilServantEligible")))
     </div>
 }
 

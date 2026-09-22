@@ -25,9 +25,7 @@ import scala.language.implicitConversions
 case class CivilServiceExperienceDetails(applicable: Boolean,
                                         civilServantAndInternshipTypes: Option[Seq[String]] = None,
                                         civilServantDepartment: Option[String] = None,
-                                        liveDisciplinaryWarning: Option[Boolean] = None,
-                                        inReviewPeriodFollowingAWarning: Option[Boolean] = None,
-                                        inImprovementPeriodFollowingAWarning: Option[Boolean] = None,
+                                        civilServantEligible: Option[Boolean] = None,
                                         edipYear: Option[String] = None,
                                         sdipYear: Option[String] = None,
                                         otherInternshipName: Option[String] = None,
@@ -39,9 +37,7 @@ case class CivilServiceExperienceDetails(applicable: Boolean,
     s"applicable=$applicable," +
       s"civilServantAndInternshipTypes=$civilServantAndInternshipTypes," +
       s"civilServantDepartment=$civilServantDepartment," +
-      s"liveDisciplinaryWarning=$liveDisciplinaryWarning," +
-      s"inReviewPeriodFollowingAWarning=$inReviewPeriodFollowingAWarning," +
-      s"inImprovementPeriodFollowingAWarning=$inImprovementPeriodFollowingAWarning," +
+      s"civilServantEligible=$civilServantEligible," +
       s"edipYear=$edipYear," +
       s"sdipYear=$sdipYear," +
       s"otherInternshipName=$otherInternshipName," +
@@ -63,9 +59,7 @@ object CivilServiceExperienceDetails {
     applicable = exchange.applicable.toString,
     civilServantAndInternshipTypes = exchange.civilServantAndInternshipTypes,
     civilServantDepartment = exchange.civilServantDepartment,
-    liveDisciplinaryWarning = exchange.liveDisciplinaryWarning,
-    inReviewPeriodFollowingAWarning = exchange.inReviewPeriodFollowingAWarning,
-    inImprovementPeriodFollowingAWarning = exchange.inImprovementPeriodFollowingAWarning,
+    civilServantEligible = exchange.civilServantEligible,
     edipYear = exchange.edipYear,
     sdipYear = exchange.sdipYear,
     otherInternshipName = exchange.otherInternshipName,
@@ -80,9 +74,7 @@ object CivilServiceExperienceDetails {
         applicable = data.applicable.toBoolean,
         civilServantAndInternshipTypes = data.civilServantAndInternshipTypes,
         civilServantDepartment = data.civilServantDepartment,
-        liveDisciplinaryWarning = data.liveDisciplinaryWarning,
-        inReviewPeriodFollowingAWarning = data.inReviewPeriodFollowingAWarning,
-        inImprovementPeriodFollowingAWarning = data.inImprovementPeriodFollowingAWarning,
+        civilServantEligible = data.civilServantEligible,
         edipYear = data.edipYear,
         sdipYear = data.sdipYear,
         otherInternshipName = data.otherInternshipName,
