@@ -53,21 +53,8 @@ object FastPassForm {
   private val civilServantDepartment = "civilServantDepartment"
   private def civilServantDepartmentMsg(implicit messages: Messages) = Messages("error.civilServantDepartment.required")
 
-  private val liveDisciplinaryWarning = "liveDisciplinaryWarning"
-  private def liveDisciplinaryWarningRequiredMsg(implicit messages: Messages) = Messages("error.liveDisciplinaryWarning.required")
-  private def liveDisciplinaryWarningCannotContinueMsg(implicit messages: Messages) = Messages("error.liveDisciplinaryWarning.cannot.continue")
-
-  private val inReviewPeriodFollowingAWarning = "inReviewPeriodFollowingAWarning"
-  private def inReviewPeriodFollowingAWarningRequiredMsg(implicit messages: Messages) =
-    Messages("error.inReviewPeriodFollowingAWarning.required")
-  private def inReviewPeriodFollowingAWarningCannotContinueMsg(implicit messages: Messages) =
-    Messages("error.inReviewPeriodFollowingAWarning.cannot.continue")
-
-  private val inImprovementPeriodFollowingAWarning = "inImprovementPeriodFollowingAWarning"
-  private def inImprovementPeriodFollowingAWarningRequiredMsg(implicit messages: Messages) =
-    Messages("error.inImprovementPeriodFollowingAWarning.required")
-  private def inImprovementPeriodFollowingAWarningCannotContinueMsg(implicit messages: Messages) =
-    Messages("error.inImprovementPeriodFollowingAWarning.cannot.continue")
+  private val civilServantEligible = "civilServantEligible"
+  private def civilServantEligibleMsg(implicit messages: Messages) = Messages("error.civilServantEligible.required")
 
   private val edipInternshipYear = "edipYear"
   private def edipInternshipYearMsg(implicit messages: Messages) = Messages("error.edipInternshipYear.required")
@@ -97,9 +84,7 @@ object FastPassForm {
   case class Data(applicable: String,
                   civilServantAndInternshipTypes: Option[Seq[String]] = None,
                   civilServantDepartment: Option[String] = None,
-                  liveDisciplinaryWarning: Option[Boolean] = None,
-                  inReviewPeriodFollowingAWarning: Option[Boolean] = None,
-                  inImprovementPeriodFollowingAWarning: Option[Boolean] = None,
+                  civilServantEligible: Option[Boolean] = None,
                   edipYear: Option[String] = None,
                   sdipYear: Option[String] = None,
                   otherInternshipName: Option[String] = None,
@@ -112,9 +97,7 @@ object FastPassForm {
         s"applicable=$applicable," +
         s"civilServantAndInternshipTypes=$civilServantAndInternshipTypes," +
         s"civilServantDepartment=$civilServantDepartment," +
-        s"liveDisciplinaryWarning=$liveDisciplinaryWarning," +
-        s"inReviewPeriodFollowingAWarning=$inReviewPeriodFollowingAWarning," +
-        s"inImprovementPeriodFollowingAWarning=$inImprovementPeriodFollowingAWarning," +
+        s"civilServantEligible=$civilServantEligible," +
         s"edipYear=$edipYear," +
         s"sdipYear=$sdipYear," +
         s"otherInternshipName=$otherInternshipName," +
@@ -129,9 +112,7 @@ object FastPassForm {
       s"$formQualifier.applicable" -> nonemptyBooleanText("error.applicable.required"),
       s"$formQualifier.civilServantAndInternshipTypes" -> of(civilServantAndInternshipTypesFormatter),
       s"$formQualifier.civilServantDepartment" -> of(civilServantDepartmentFormatter),
-      s"$formQualifier.liveDisciplinaryWarning" -> of(liveDisciplinaryWarningFormatter),
-      s"$formQualifier.inReviewPeriodFollowingAWarning" -> of(inReviewPeriodFollowingAWarningFormatter),
-      s"$formQualifier.inImprovementPeriodFollowingAWarning" -> of(inImprovementPeriodFollowingAWarningFormatter),
+      s"$formQualifier.civilServantEligible" -> of(civilServantEligibleFormatter),
       s"$formQualifier.edipYear" -> of(edipInternshipYearFormatter),
       s"$formQualifier.sdipYear" -> of(sdipInternshipYearFormatter),
       s"$formQualifier.otherInternshipName" -> of(otherInternshipNameFormatter(otherInternshipNameMaxSize)),
@@ -229,37 +210,10 @@ object FastPassForm {
     def unbind(key: String, value: Option[String]): Map[String, String] = optionalParamToMap(key, value)
   }
 
-  private def liveDisciplinaryWarningFormatter(implicit messages: Messages) = new Formatter[Option[Boolean]] {
+  private def civilServantEligibleFormatter(implicit messages: Messages) = new Formatter[Option[Boolean]] {
     def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[Boolean]] = {
-      bindOptionalParam(
-        request.isCivilServantSelected,
-        request.isLiveDisciplinaryWarningValid, liveDisciplinaryWarningRequiredMsg,
-        request.hasLiveDisciplinaryWarning, liveDisciplinaryWarningCannotContinueMsg
-      )(key, request.liveDisciplinaryWarningParam.toBoolean)
-    }
-
-    def unbind(key: String, value: Option[Boolean]): Map[String, String] = optionalParamToMap(key, value)
-  }
-
-  private def inReviewPeriodFollowingAWarningFormatter(implicit messages: Messages) = new Formatter[Option[Boolean]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[Boolean]] = {
-      bindOptionalParam(
-        request.isCivilServantSelected,
-        request.isInReviewPeriodFollowingAWarningValid, inReviewPeriodFollowingAWarningRequiredMsg,
-        request.hasInReviewPeriodFollowingAWarningWarning, inReviewPeriodFollowingAWarningCannotContinueMsg
-      )(key, request.inReviewPeriodFollowingAWarningParam.toBoolean)
-    }
-
-    def unbind(key: String, value: Option[Boolean]): Map[String, String] = optionalParamToMap(key, value)
-  }
-
-  private def inImprovementPeriodFollowingAWarningFormatter(implicit messages: Messages) = new Formatter[Option[Boolean]] {
-    def bind(key: String, request: Map[String, String]): Either[Seq[FormError], Option[Boolean]] = {
-      bindOptionalParam(
-        request.isCivilServantSelected,
-        request.isInImprovementPeriodFollowingAWarningValid, inImprovementPeriodFollowingAWarningRequiredMsg,
-        request.hasInImprovementPeriodFollowingAWarningWarning, inImprovementPeriodFollowingAWarningCannotContinueMsg
-      )(key, request.inImprovementPeriodFollowingAWarningParam.toBoolean)
+      bindOptionalParam(request.isCivilServantSelected, request.isCivilServantEligibleValid, civilServantEligibleMsg
+      )(key, request.civilServantEligibleParam.toBoolean)
     }
 
     def unbind(key: String, value: Option[Boolean]): Map[String, String] = optionalParamToMap(key, value)
@@ -272,24 +226,6 @@ object FastPassForm {
       case (true, true) => Right(Some(value))
       case (false, _) => Right(None)
     }
-
-  // This version supports a validity check that checks the value submitted is correct, followed by 2nd a check
-  // to see if the candidate has a warning and so cannot continue their application
-  private def bindOptionalParam[T](dependencyCheck: Boolean,
-                                   validityCheck: Boolean, validityErrMsg: String,
-                                   hasWarning: Boolean, warningErrMsg: String)
-                                  (key: String, value: => T): Either[Seq[FormError], Option[T]] = {
-    (dependencyCheck, validityCheck) match {
-      case (true, false) => Left(List(FormError(key, validityErrMsg)))
-      case (true, true) =>
-        if (hasWarning) {
-          Left(List(FormError(key, warningErrMsg)))
-        } else {
-          Right(Some(value))
-        }
-      case (false, _) => Right(None)
-    }
-  }
 
   private def optionalParamToMap[T](key: String, optValue: Option[T]) = {
     optValue match {
@@ -327,25 +263,9 @@ object FastPassForm {
 
     def isCivilServantDepartmentValid: Boolean = CivilServantDepartments.departments.contains(civilServantDepartmentParam)
 
-    def liveDisciplinaryWarningParam: String = param(liveDisciplinaryWarning).getOrElse("")
+    def civilServantEligibleParam: String = param(civilServantEligible).getOrElse("")
 
-    def isLiveDisciplinaryWarningValid: Boolean = liveDisciplinaryWarningParam == "true" || liveDisciplinaryWarningParam == "false"
-
-    def hasLiveDisciplinaryWarning: Boolean = isCivilServantOrIntern && liveDisciplinaryWarningParam == "true"
-
-    def inReviewPeriodFollowingAWarningParam: String = param(inReviewPeriodFollowingAWarning).getOrElse("")
-
-    def isInReviewPeriodFollowingAWarningValid: Boolean =
-      inReviewPeriodFollowingAWarningParam == "true" || inReviewPeriodFollowingAWarningParam == "false"
-
-    def hasInReviewPeriodFollowingAWarningWarning: Boolean = isCivilServantOrIntern && inReviewPeriodFollowingAWarningParam == "true"
-
-    def inImprovementPeriodFollowingAWarningParam: String = param(inImprovementPeriodFollowingAWarning).getOrElse("")
-
-    def isInImprovementPeriodFollowingAWarningValid: Boolean =
-      inImprovementPeriodFollowingAWarningParam == "true" || inImprovementPeriodFollowingAWarningParam == "false"
-
-    def hasInImprovementPeriodFollowingAWarningWarning: Boolean = isCivilServantOrIntern && inImprovementPeriodFollowingAWarningParam == "true"
+    def isCivilServantEligibleValid: Boolean = civilServantEligibleParam == "true" || civilServantEligibleParam == "false"
 
     // Sdip
     def sdipInternshipYearParam: String = param(sdipInternshipYear).getOrElse("")
