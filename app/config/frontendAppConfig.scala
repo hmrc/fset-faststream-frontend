@@ -249,6 +249,8 @@ class FrontendAppConfig @Inject() (val config: Configuration, val environment: E
   lazy val qualtricsSurveyEnabled: Boolean = config.getOptional[Boolean]("qualtrics.survey.enabled").getOrElse(false)
   logger.warn(s"Qualtrics survey enabled=$qualtricsSurveyEnabled")
 
+  lazy val qualtricsBaseUrl: String = config.get[String]("qualtrics.base.url")
+
   lazy val applicationRoutesFrontend: Map[Value, ApplicationRouteState] = Map(
     Faststream -> loadAppRouteConfig("faststream"),
     Edip -> loadAppRouteConfig("edip"),
