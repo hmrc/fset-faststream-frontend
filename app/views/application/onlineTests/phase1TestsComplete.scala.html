@@ -15,9 +15,9 @@
  *@
 
 @import config.TrackingConsentConfig
-@(applicationId: String, qualtricsSurveyEnabled: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(applicationId: String, qualtricsSurveyEnabled: Boolean, qualtricsBaseUrl: String)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@surveyUrl = @{ s"https://civilserviceinsight.qualtrics.com/jfe/form/SV_eqv5D4m7OUM9Vga?Ref=1&UID=$applicationId" }
+@surveyUrl = @{ s"$qualtricsBaseUrl?Ref=1&UID=$applicationId" }
 
 @main_template(title = "Online exercises complete | Apply for the Civil Service Fast Stream") {
     <div class="success-banner">

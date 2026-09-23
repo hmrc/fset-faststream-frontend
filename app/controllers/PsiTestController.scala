@@ -110,9 +110,9 @@ class PsiTestController @Inject()(config: FrontendAppConfig,
 
   private def phase1TestsCompleteView(applicationId: String)(implicit request: Request[_], user: Option[CachedData]): Html =
     if (config.enablePlayHmrcPhase1TestsCompleteView) {
-      phase1TestsCompleteTemplate(applicationId, config.qualtricsSurveyEnabled)
+      phase1TestsCompleteTemplate(applicationId, config.qualtricsSurveyEnabled, config.qualtricsBaseUrl)
     } else {
-      views.html.application.onlineTests.phase1TestsComplete(applicationId, config.qualtricsSurveyEnabled)
+      views.html.application.onlineTests.phase1TestsComplete(applicationId, config.qualtricsSurveyEnabled, config.qualtricsBaseUrl)
     }
 
   // Note that we do not work with the applicationId in the cached user data because if we are dealing with an
