@@ -46,7 +46,7 @@
 }
 
 @wcagExternalLink(text: String) = {
-    @externalLink("https://www.w3.org/TR/WCAG21/", text)
+    @externalLink("https://www.w3.org/TR/WCAG22/", text)
 }
 
 @mainLayout(Title("Accessibility statement"), navigation = ServiceNavigationItems(user)) {
@@ -54,7 +54,7 @@
 
     <section class="govuk-body">
         <p>This accessibility statement applies to the ‘Apply for the Civil Service Fast Stream’ service.</p>
-        <p>This website is run by Cabinet Office, Civil Service Human Resources. We want as many people as possible
+        <p>This website is run by Cabinet Office, Government People Group. We want as many people as possible
             to be able to use this website. For example, that means you should be able to:
         </p>
         <ul class="govuk-list govuk-list--bullet">
@@ -68,41 +68,24 @@
 
     <section class="govuk-body">
         <p>We’ve also made the website text as simple as possible to understand.</p>
-        <p>AbilityNet has advice on making your device easier to use if you have a disability.</p>
-    </section>
-
-    @h2(content = Text("How accessible this website is"))
-    <section class="govuk-body">
-        <p>This website is partially compliant with the
-            @wcagExternalLink("Web Content Accessibility Guidelines version 2.1")
-            AA standard.
-        </p>
-        <p>Once an application has been submitted for the Fast Stream a candidate is directed to the PSI
+        <p>@externalLink("https://mcmw.abilitynet.org.uk/", "AbilityNet") has advice on making your device easier to use if you have a disability.</p>
+        <p>Once an application has been submitted for the Fast Stream a candidate is directed to the Talogy
             test platform to undertake online assessments.
         </p>
-        <p>The PSI accessibility statement can be viewed
-            @externalLink("https://www.psionline.com/en-gb/accessibility-statement", "here").
-        </p>
-        <p>If a candidate is successful at the earlier online assessments stages they will be directed to
-            undertake a video interview via the LaunchPad recruits test platform.
-        </p>
-        <p>The Launchpad recruits accessibility statement can be viewed
-            @externalLink("https://launchpadrecruits.com/accessibility-statement", "here").
+        <p>The Talogy accessibility statement can be viewed
+            @externalLink("https://talogy.com/en/legal/accessibility/", "here").
         </p>
     </section>
 
     @h2(content = Text("Feedback and contact information"))
     <section class="govuk-body">
-        <p>If you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille:</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>email us at: @faststreamEmail</li>
-        </ul>
+        <p>Please @contactUsFaststreamEmail if you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille.</p>
         <p>It will help us if you can tell us what assistive technology you use.</p>
     </section>
 
     @h2(content = Text("Reporting accessibility problems with this website"))
     <section class="govuk-body">
-        <p>We’re always looking to improve the accessibility of this website. If you find any problems not listed on this page or think we’re
+        <p>We’re always looking to improve the accessibility of this website. If you find any problems or think we’re
             not meeting accessibility requirements, @contactUsFaststreamEmail.
         </p>
     </section>
@@ -122,25 +105,19 @@
 
     @h2(content = Text("Compliance status"))
     <section class="govuk-body">
-        <p>This website is partially compliant with the
-            @wcagExternalLink("Web Content Accessibility Guidelines version 2.1") AA standard.
-            We plan to test and resolve any issues by March 2022.
+        <p>This website is partially compliant with the @wcagExternalLink("Web Content Accessibility Guidelines version 2.2") AA standard.
         </p>
     </section>
 
-    @h2(content = Text("Disproportionate burden"))
+    @h2(content = Text("How we tested this website"))
     <section class="govuk-body">
-        <p>At this time, we have not made any disproportionate burden claims.</p>
-    </section>
-
-    @h2(content = Text("Preparation of this accessibility statement"))
-    <section class="govuk-body">
-        <p>This statement was prepared on 22 September 2021.</p>
-        <p>It was last reviewed on 22 September 2021.</p>
-        <p>This website was last tested on 08 September 2021 and was checked for compliance with WCAG 2.1 AA.
-            Testing was carried out by our external supplier
+        <p>
+            The website is tested as it is developed by the team that maintains it, and periodically by external bodies. At time of publication,
+            it was last internally tested in September 2026 and externally tested in April 2026 by
             @externalLink("http://www.digitalaccessibilitycentre.org", "The Digital Accessibility Centre (DAC)").
         </p>
-        <p>We tested the service based on a user’s ability to complete key journeys.</p>
+        <p>The service was tested based on a user’s ability to complete key journeys.</p>
+        <p>This statement was prepared on 01 October 2019.</p>
+        <p>It was last updated on 01 October 2026.</p>
     </section>
 }
