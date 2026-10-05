@@ -66,8 +66,8 @@
 }
 
 @preGoLiveTestingMessage = {
-    <section class="panel-info standard-panel" id="preGoLiveTesting">
-        <div class="text" style="background-color: red;">
+    <section class="govuk-body" id="preGoLiveTesting">
+        <div style="background-color: red;">
             @h2(content = Text("The Fast Stream service is only open for pre go-live testing"))
             <p>Do not create an account unless you are authorised to do so by the service owner <a href="mailto:paul.wilson@@cabinetoffice.gov.uk">Paul Wilson</a>.</p>
             <P>Any accounts created will be deleted before the service goes live.</p>
@@ -81,8 +81,9 @@
     </section>
 }
 
-@mainLayout(pageTitle(signUpForm, Title("Create your account")).toString, navigation = ServiceNavigationItems(user)) {
-@*main_template(title = "Create your account", pageForms = Seq(signUpForm), notification = notification) {*@
+@title = @{ "Create your account" }
+
+@mainLayout(pageTitle(signUpForm, Title(title)).toString, navigation = ServiceNavigationItems(user)) {
 
     @if(signUpForm.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(signUpForm))
@@ -90,7 +91,7 @@
 
     @flashMessage2(notification)
 
-    @h1(content = Text("Create your account"))
+    @h1(content = Text(title))
 
     @if(!allAppRouteWindowsClosed) {
         @if(preGoLiveTestingEnabled) {
