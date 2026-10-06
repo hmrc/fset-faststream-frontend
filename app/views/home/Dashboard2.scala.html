@@ -107,7 +107,8 @@
     @sdipFaststreamBanner(usr)
 
     <div>
-        <span class="govuk-caption-l">@dashboardPage.fullName</span>
+        @* NOTE: the Pingdom checks look for the full-name class *@
+        <span class="govuk-caption-l full-name">@dashboardPage.fullName</span>
         @h1(content = Text("Your tasks"))
     </div>
 
