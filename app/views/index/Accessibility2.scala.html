@@ -34,8 +34,11 @@
     <a class="govuk-link" href="mailto:faststream.applicationsupport@@cabinetoffice.gov.uk">faststream.applicationsupport@@cabinetoffice.gov.uk</a>
 }
 
-@contactUsFaststreamEmail = {
-    <a class="govuk-link" href="mailto:faststream.applicationsupport@@cabinetoffice.gov.uk">contact us</a>
+@contactUs = {
+    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+        text = "contact us",
+        href = Some("https://cabinetofficefset.freshdesk.com/support/home")
+    ))
 }
 
 @externalLink(url: String, text: String) = {
@@ -79,14 +82,14 @@
 
     @h2(content = Text("Feedback and contact information"))
     <section class="govuk-body">
-        <p>Please @contactUsFaststreamEmail if you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille.</p>
+        <p>Please @contactUs if you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille.</p>
         <p>It will help us if you can tell us what assistive technology you use.</p>
     </section>
 
     @h2(content = Text("Reporting accessibility problems with this website"))
     <section class="govuk-body">
         <p>We’re always looking to improve the accessibility of this website. If you find any problems or think we’re
-            not meeting accessibility requirements, @contactUsFaststreamEmail.
+            not meeting accessibility requirements, @contactUs.
         </p>
     </section>
 
