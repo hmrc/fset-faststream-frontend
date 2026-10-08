@@ -26,7 +26,7 @@ object ServiceNavigationItems {
     user.map { data =>
       Seq(
         ServiceNavigationItem(Text("Your tasks"), routes.HomeController.present().url),
-        ServiceNavigationItem(Text("Sign out"), routes.SignInController.signOut.url)
+        ServiceNavigationItem(Text("Sign out"), routes.SignInController.signOut.url, attributes = Map("id" -> "btnSignOut"))
       )
     }.getOrElse {
       Seq(
