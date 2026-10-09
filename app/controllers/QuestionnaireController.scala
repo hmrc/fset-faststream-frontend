@@ -131,7 +131,7 @@ class QuestionnaireController @Inject()(config: FrontendAppConfig,
   private def thirdPageView(form: Form[ParentalOccupationQuestionnaireForm.Data],
                             isFsOrSdipFs: Boolean)(
                               implicit request: Request[_], user: CachedDataWithApp): Html = {
-    if (config.enablePlayHmrcQuestionnaireEducationView) {
+    if (config.enablePlayHmrcQuestionnaireParentsView) {
       thirdPageTemplate(form, isFsOrSdipFs)
     } else {
       views.html.questionnaire.thirdpage(form, isFsOrSdipFs)
