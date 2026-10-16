@@ -38,7 +38,7 @@ object CivilServantDepartments {
     "Defence Electronics and Components Agency",
     "Defence Equipment and Support",
     "Defence Science and Technology Laboratory",
-    "Department for Business and Trade",
+    "Department for Business, Innovation, Science and Trade",
     "Department for Culture, Media and Sport",
     "Department for Education",
     "Department for Energy Security and Net Zero",
