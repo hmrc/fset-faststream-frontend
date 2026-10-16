@@ -85,6 +85,7 @@ object CivilServantDepartments {
     "National Savings and Investments",
     "Northern Ireland Office",
     "Office for Budget Responsibility",
+    "Office for National Statistics",
     "Office for Standards in Education, Children's Services and Skills",
     "Office of Gas and Electricity Markets",
     "Office of Qualifications and Examinations Regulation",
