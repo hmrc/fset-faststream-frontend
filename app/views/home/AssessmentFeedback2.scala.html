@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.page.AssessmentFeedbackPage
+@import models.page.AssessmentFeedbackPage2
 @import config.TrackingConsentConfig
 
 @import helpers.{ServiceNavigationItems, Title}
@@ -25,42 +25,44 @@
         mainLayout: Layout,
         h1: Heading1,
         h2: Heading2,
-        h3: Heading3
+        h3: Heading3,
+        h4: Heading4
 )
 
-@(page: AssessmentFeedbackPage)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
+@(page: AssessmentFeedbackPage2)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
 @returnToHomePage = {
     <a href="@routes.HomeController.present()" class="govuk-link">Return to homepage</a>
 }
 
-@scoresDefinitions = {
-    <div class="grid grid-1-2 govuk-body">
-        @*<h2 class="heading-small">What the scores mean</h2>*@
-        @h3(content = Text("What the scores mean"))
-        <table class="scores-explanation-table">
-            <tr class="strong-candidate">
-                <td><span class="bold-small">4</span></td>
-                <td>Minor areas for development but provides strong indicators that the
-                    candidate would be suitable for the Fast Stream.</td>
+@scoreDefinitions = {
+    <table class="govuk-table">
+        <caption class="govuk-table__caption govuk-table__caption--m">What the scores mean</caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Score</th>
+                <th scope="col" class="govuk-table__header">What it means</th>
             </tr>
-            <tr class="good-candidate">
-                <td><span class="bold-small">3</span></td>
-                <td>Some areas for development but also provides indicators that the
-                    candidate would be suitable for the Fast Stream.</td>
+        </thead>
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">4</th>
+                <td class="govuk-table__cell">Minor areas for development but provides strong indicators that the candidate would be suitable for the Fast Stream.</td>
             </tr>
-            <tr class="ok-candidate">
-                <td><span class="bold-small">2</span></td>
-                <td>A number of areas for development needed to make the candidate suitable
-                    for the Fast Stream.</td>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">3</th>
+                <td class="govuk-table__cell">Some areas for development but also provides indicators that the candidate would be suitable for the Fast Stream.</td>
             </tr>
-            <tr class="unsuitable-candidate">
-                <td><span class="bold-small">1</span></td>
-                <td>Too many areas for development for the candidate to be suitable
-                    for the Fast Stream.</td>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">2</th>
+                <td class="govuk-table__cell">A number of areas for development needed to make the candidate suitable for the Fast Stream.</td>
             </tr>
-        </table>
-    </div>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">1</th>
+                <td class="govuk-table__cell">Too many areas for development for the candidate to be suitable for the Fast Stream.</td>
+            </tr>
+        </tbody>
+    </table>
 }
 
 @* Only used when the page is printed *@
@@ -70,13 +72,12 @@
     </div>
 }
 
-@mainLayout(Title("Sign in"), navigation = ServiceNavigationItems(user)) {
-@*main_template(title = "Your scores and feedback") {*@
+@title = @{ "Your assessment centre scores and feedback" }
+
+@mainLayout(Title(title), navigation = ServiceNavigationItems(user)) {
     <div class="grid-wrapper govuk-body">
         <div class="hgroup grid grid-2-3">
-            @h1(content = Text("Your scores and feedback"))
-            @*<h1 class="heading-xlarge">Your scores and feedback</h1>*@
-            <p class="subtitle">Assessment centre</p>
+            @h1(content = Text(title))
         </div>
         <div class="grid grid-1-3">
             <div class="page-link">
@@ -91,58 +92,289 @@
     </div>
 
     @h2(content = Text("Scores"))
-    @*<h2 class="heading-large">Scores</h2>*@
     <div class="govuk-inset-text">
         <p>
             Your performance is measured against the three assessment centre scenarios, reflecting a number of behaviours.
             We'll calculate an average score to measure your performance for each scenario, ranging from 1.00 to 4.00.
         </p>
     </div>
-    <div class="grid-wrapper">
-        <div class="grid grid-1-2">
-            <div class="inner-block-padr govuk-body">
-                @h3(content = Text("How you scored"))
-                @*<h2 class="heading-small">How you scored</h2>*@
-                <table>
-                    <tr>
-                        <td>Written advice exercise</td>
-                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.exercise1Average)</td>
-                    </tr>
-                    <tr>
-                        <td>Stakeholder communication exercise</td>
-                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.exercise2Average)</td>
-                    </tr>
-                    <tr>
-                        <td>Personal development conversation</td>
-                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.exercise3Average)</td>
-                    </tr>
-                    <tr>
-                        <td>Overall score</td>
-                        <td class="ta-right">@page.formatScore(page.exerciseAverageResults.overallScore)</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        @scoresDefinitions
-    </div>
 
-    @for(exercise <- page.exerciseFeedbackData) {
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <table class="govuk-table">
+        <caption class="govuk-table__caption govuk-table__caption--m">How you scored</caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Exercise</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Average score</th>
+            </tr>
+        </thead>
 
-        <section class="section-border break-before">
-            @*printOnlyCandidateName*@
-            @h2(content = Text(exercise.exerciseName))
-            @*<h2 class="heading-large">@exercise.exerciseName</h2>*@
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Written exercise</th>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@page.formatScore(page.exerciseAverageResults.exercise1Average)</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Oral briefing exercise</th>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@page.formatScore(page.exerciseAverageResults.exercise2Average)</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Personal development conversation</th>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@page.formatScore(page.exerciseAverageResults.exercise3Average)</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header"><strong>Overall score</strong></th>
+                <td class="govuk-table__cell govuk-table__cell--numeric"><strong>@page.formatScore(page.exerciseAverageResults.overallScore)</strong></td>
+            </tr>
+        </tbody>
+    </table>
 
-        @for(competencyData <- exercise.competencyFeedback) {
-            <article class="text">
-                @h3(content = Text(competencyData.competencyName))
-                @*<h3 class="heading-medium">@competencyData.competencyName</h3>*@
-                <p class="govuk-body">@competencyData.feedback</p>
-            </article>
-        }
-        </section>
-    }
+    @scoreDefinitions
+
+    @h2(content = Text("Feedback Report - Written Exercise"))
+    <section class="govuk-body">
+        <p>
+            The Written Exercise was designed to simulate an experience that any Fast Streamer may come across in their
+            time on the programme. In this fictional scenario you were provided with an information pack to review, and
+            then complete a range of written tasks. This exercise assessed your ability to analyse the information that
+            was presented to you, highlight key issues and suggest actions to resolve these. Additionally the exercise
+            allowed you to demonstrate your ability to communicate clearly and effectively in writing.
+        </p>
+    </section>
+
+    @h3(content = Text("Think"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated a grasp of the broader issues by connecting complex information to wider
+            organisational goals, and making decisions to address key priorities. Candidates identified relationships
+            between issues and data, allowing them to anticipate future challenges and consequences effectively.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Explicitly link specific tasks or data points to wider organizational goals to ensure your work supports the "big picture."</li>
+        <li>Use visual tools like mind maps to group related information, helping you spot trends rather than treating data as isolated facts.</li>
+        <li>When proposing actions, systematically list 2-3 potential downstream consequences to better anticipate future risks and outcomes.</li>
+        <li>Ask how new details influence other project areas to move beyond simple summary toward comprehensive analysis.</li>
+    </ul>
+
+    @h3(content = Text("Relate"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated high levels of awareness by carefully considering the impact of their actions in
+            complex situations. They maintained professionalism throughout, while communicating in a positive and constructive
+            manner. Furthermore, candidates communicated with clarity and influence, actively initiating and building relationships
+            to influence others.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>When approaching a complex problem, consider how your proposed solution might affect different stakeholders to demonstrate empathy and consideration of other perspectives.</li>
+        <li>When communicating, explicitly tailor your message to the audience's priorities, explaining the rationale behind your ideas to build consensus and guide their actions more effectively.</li>
+        <li>Look for opportunities to initiate collaborative discussions with colleagues early in a project to establish rapport and create stronger, more influential working relationships.</li>
+    </ul>
+
+    @h3(content = Text("Adapt"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated creative problem-solving by generating novel ideas and proactively seeking diverse inputs to
+            address challenges effectively. They displayed a strong learning orientation, consistently reflecting on situations to
+            understand what new learning opportunities would improve future performance.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Actively brainstorm alternative solutions for complex issues and intentionally seek input from colleagues to broaden your perspective.</li>
+        <li>After completing a task, set aside time to reflect on what worked well and what could be improved, ensuring these lessons are applied to future challenges.</li>
+        <li>Periodically review your past work to consolidate key learnings, helping you build a more robust knowledge base for tackling similar future tasks.</li>
+        <li>View feedback and new information as opportunities to refine your approach, rather than final judgments, to ensure continuous improvement.</li>
+    </ul>
+
+    @h3(content = Text("Strive"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated a positive and enthusiastic approach to the challenges of the project, actively showing a desire to achieve
+            key business objectives. They showed a strong goal-oriented approach, frequently stepping outside their comfort zone to tackle
+            challenging tasks and responsibilities that supported the success of the project and their own career.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Define ambitious personal objectives for each assignment to ensure you are consistently challenging your current capabilities.</li>
+        <li>Actively volunteer for tasks or projects that fall outside your immediate comfort zone to accelerate your professional skill development.</li>
+        <li>Regularly evaluate how your daily tasks directly impact the broader strategic goals of the business to maintain focus and motivation.</li>
+        <li>Proactively request constructive feedback after key milestones and use it to create specific, measurable plans for your future growth.</li>
+    </ul>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    @h2(content = Text("Feedback Report - Oral Briefing Exercise"))
+
+    <section class="govuk-body">
+        <p>
+            The Oral Briefing Exercise was designed to simulate an experience that any Fast Streamer may come across in their time
+            on the programme. In this fictional scenario you were provided with an information pack to review, and were then asked
+            to brief a senior colleague  followed by some questions. This exercise looked at your ability to analyse the information
+            that was presented to you, draw realistic and defensible conclusions from the information, persuade others and defend your
+            recommendations, and adapt to changes that may have affected your recommendation.
+        </p>
+    </section>
+
+    @h3(content = Text("Think"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated strong analytical and critical thinking by effectively processing complex information to
+            reach well-reasoned, defensible conclusions. They demonstrated an understanding of the wider impact of different
+            options, identifying patterns and interdependencies that allowed them to accurately envisage how events might unfold
+            and impact their recommendations.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Practice mapping specific information to the broader strategic landscape to ensure your recommendations account for long-term organisational impacts.</li>
+        <li>Use synthesis techniques, such as flowcharts or summary tables, to visually connect disparate sources of information and reveal hidden trends.</li>
+        <li>When evaluating options, create "if-then" scenarios to systematically test how different variables might alter outcomes and anticipate future challenges.</li>
+        <li>Regularly challenge your initial assumptions by asking what alternative explanations exist for the data, ensuring your final conclusions are robust and evidence-based.</li>
+    </ul>
+
+    @h3(content = Text("Relate"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated effective communication by delivering clear, concise, and articulate briefings that engaged the
+            audience from the start. They shaped their line of argument to resonate with the specific needs and motives of their
+            stakeholders, successfully influencing others' views and actions through persuasive, evidence-based reasoning.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Before your briefing, map out your audience's specific priorities and constraints, then adjust your language and emphasis to directly address their main concerns.</li>
+        <li>Clearly structure your points to guide the listener through your logic, ensuring your narrative flows logically and is easy to follow.</li>
+        <li>Practice backing up your recommendations by explicitly connecting your proposed actions to the listener's known motives or strategic goals.</li>
+        <li>After presentations, ask peers for feedback specifically on the clarity of your core message and the effectiveness of your influencing strategies.</li>
+    </ul>
+
+    @h3(content = Text("Adapt"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated high levels of flexibility by responding positively and rapidly to evolving requirements. They showed an
+            ability to quickly synthesise new information and adjust their recommendations accordingly, while maintaining a clear understanding
+            of the associated risks and impacts of these changes.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>View new information as an opportunity to refine your recommendation rather than a setback, ensuring you remain agile in your approach.</li>
+        <li>When requirements shift, quickly identify the primary risks associated with the new direction to demonstrate you have considered the implications.</li>
+        <li>Build 'Plan B' options into your initial analysis so you can pivot smoothly if circumstances change during the task.</li>
+        <li>After identifying a need for change, briefly explain your rationale for the amendment to demonstrate you have fully processed the new information.</li>
+    </ul>
+
+    @h3(content = Text("Strive"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            Candidates demonstrated a strong goal-oriented approach by consistently aligning their proposals with the wider
+            organisational objectives. They proactively took the initiative to pre-empt potential issues, demonstrating a
+            capacity to tackle root causes early rather than simply reacting to problems after they occurred.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Explicitly map your proposals against the organisation’s key objectives to ensure your recommendations directly support wider strategic outcomes.</li>
+        <li>When reviewing problems, shift your focus from treating symptoms to identifying root causes, enabling you to propose preventative measures at the earliest opportunity.</li>
+        <li>Clearly outline how you will measure success at different stages, ensuring you have tangible goals to track progress throughout the project lifecycle.</li>
+        <li>Proactively draft simple mitigation strategies alongside your main actions to demonstrate you have considered how to protect your objectives from setbacks.</li>
+    </ul>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    @h2(content = Text("Feedback Report - Personal Development Conversation"))
+    <section class="govuk-body">
+        <p>
+            The Personal Development Conversation was an assessment designed to give you the chance to let us know more
+            about you; your motivations, interests, goals, and what drives you throughout life. This assessment was used
+            to provide us an understanding of how you would fit with the Fast Stream.
+        </p>
+    </section>
+
+    @h3(content = Text("Strive"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            In their responses candidates demonstrated a clear drive to succeed within the Fast Stream by linking their personal
+            achievements or experiences to the programme's goals, and demonstrating an understanding of the challenges they would
+            face. Their commitment was further evidenced by a goal-oriented approach where they proactively sought out challenging
+            tasks outside their comfort zone to stretch their capabilities and consistently took personal responsibility for achieving
+            high standards.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Map your personal motivations against the core objectives of the Fast Stream programme to ensure they align with your long-term ambitions.</li>
+        <li>Break down large career goals into smaller, manageable achievements; this provides a sense of progress, and sustains high levels of effort over time.</li>
+        <li>Actively look for opportunities that push you outside your comfort zone, reinforcing your commitment to learn from setbacks.</li>
+    </ul>
+
+    @h3(content = Text("Adapt"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            In their examples candidates demonstrated high learning agility by proactively seeking out different development
+            activities and rapidly applying what they learnt to tasks, ensuring they effectively consolidated their learning
+            over time. They also displayed significant flexibility, maintaining an open mindset, adjusting their approach to
+            turn changes into opportunities for improvement.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Regularly seek out different methods—such as peer mentoring, online courses, or job shadowing—to accelerate your skill acquisition and broaden your knowledge base.</li>
+        <li>Schedule dedicated time to learn and develop and document how it can be practically applied to your current role or work.</li>
+        <li>When faced with changing requirements, prioritise understanding the "why" behind the change before identifying how you can adjust your behaviour to remain effective.</li>
+        <li>After mastering a new skill or completing a challenging task, ask others for specific feedback to help you identify refinements and accelerate your future development.</li>
+    </ul>
+
+    @h3(content = Text("Relate"))
+
+    @h4(content = Text("What High-Performing Responses Demonstrate"))
+    <section class="govuk-body">
+        <p>
+            In their examples candidates demonstrated high levels of self-awareness by acknowledging the perspectives of others and
+            managing their behaviour, even in challenging situations. They consistently projected a positive, professional impression,
+            whilst managing their own wellbeing. Throughout the exercise they communicated with clarity and structure, ensuring they
+            were easy to understand.
+        </p>
+    </section>
+
+    @h4(content = Text("Suggestion to Develop in This Area"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Periodically review how your reactions in high-pressure situations impacted others. Identify specific actions to obtain a different outcome for the next similar event.</li>
+        <li>When faced with a complex decision, actively invite opinions from individuals with different backgrounds or roles to ensure your final approach is both inclusive and thoroughly considered.</li>
+        <li>Before key interactions, outline your main points using a 'situation-action-result' format to ensure your message remains logical, concise, and easy to follow.</li>
+    </ul>
 
     <p class="hide-print govuk-body">@returnToHomePage</p>
 }
