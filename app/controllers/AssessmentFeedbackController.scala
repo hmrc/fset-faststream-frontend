@@ -20,7 +20,7 @@ import config.{FrontendAppConfig, SecurityEnvironment}
 import connectors.{ApplicationClient, AssessmentScoresClient}
 import helpers.NotificationTypeHelper
 import models.UniqueIdentifier
-import models.page.AssessmentFeedbackPage
+import models.page.{AssessmentFeedbackPage, AssessmentFeedbackPage2}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
 import security.Roles.ActiveUserRole
@@ -53,13 +53,15 @@ class AssessmentFeedbackController @Inject()(
         } yield {
           val name = s"${personalDetails.firstName} ${personalDetails.lastName}"
           val page = AssessmentFeedbackPage(reviewerScoresAndFeedback, evaluatedExerciseResults, name)
-          Ok(assessmentFeedbackView(page))
+          val page2 = AssessmentFeedbackPage2(evaluatedExerciseResults, name)
+          Ok(assessmentFeedbackView(page, page2))
         }
   }
 
-  private def assessmentFeedbackView(page: AssessmentFeedbackPage)(implicit request: Request[_], user: Option[models.CachedData]): Html =
+  private def assessmentFeedbackView(page: AssessmentFeedbackPage, page2: AssessmentFeedbackPage2)(
+    implicit request: Request[_], user: Option[models.CachedData]): Html =
     if (config.enablePlayHmrcAssessmentFeedbackView) {
-      assessmentFeedbackTemplate(page)
+      assessmentFeedbackTemplate(page2)
     } else {
       views.html.home.assessmentFeedback(page)
     }

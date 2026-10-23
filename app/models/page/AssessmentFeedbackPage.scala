@@ -21,6 +21,10 @@ import connectors.exchange.candidatescores.{AssessmentScoresAllExercises, Exerci
 case class ExerciseFeedback(exerciseName: String, competencyFeedback: Seq[CompetencyFeedback])
 case class CompetencyFeedback(competencyName: String, feedback: String)
 
+// As of campaign 2026/27, the assessors no longer enter candidate specific feedback.
+// This page is being used in the old version of the screen. The feedback in the report screen is now generic.
+// Leave this class here for now until we remove the old template.
+// IMPORTANT: when removing this class, copy the contents from the 2 class into here so we keep the history
 case class AssessmentFeedbackPage(
   exerciseFeedbackData: Seq[ExerciseFeedback],
   finalFeedback: String,
