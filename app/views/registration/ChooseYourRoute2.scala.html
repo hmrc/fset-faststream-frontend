@@ -71,12 +71,14 @@
             RadioItem(
                 content = Text("Civil Service Fast Stream"),
                 value = Some(ApplicationRoute.Faststream.toString),
+                id = Some("applicationRoute-Faststream"),
                 checked = ApplicationRoute.Faststream.toString.equals(form("applicationRoute").value.getOrElse("")),
                 conditionalHtml = Some(faststreamRouteHtml)
             ),
             RadioItem(
                 content = Text("Summer Internship Programme (SIP)"),
                 value = Some(ApplicationRoute.Sdip.toString),
+                id = Some("applicationRoute-Sdip"),
                 checked = ApplicationRoute.Sdip.toString.equals(form("applicationRoute").value.getOrElse("")),
                 conditionalHtml = Some(sdipRouteHtml)
             )
