@@ -19,7 +19,7 @@ import sbt.*
 
 object AppDependencies {
 
-  val bootstrapVersion  = "10.7.0"
+  val bootstrapVersion  = "10.8.0"
   val silhouetteVersion = "10.0.1"
   val playVersion       = "play-30"
 
