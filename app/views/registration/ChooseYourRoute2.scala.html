@@ -16,7 +16,7 @@
 
 @import controllers.ApplicationRouteState
 @import models.ApplicationRoute.*
-@import uk.gov.hmrc.govukfrontend.views.html.components.{Checkboxes, CheckboxItem, Fieldset, GovukCheckboxes, GovukRadios, Legend, RadioItem, Radios, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
@@ -26,7 +26,8 @@
         h2: Heading2,
         govukRadios: GovukRadios,
         govukCheckboxes: GovukCheckboxes,
-        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper,
+        govukNotificationBanner: GovukNotificationBanner
 )
 
 @(form: Form[forms.SignUpForm.Data], appRouteConfigMap: Map[ApplicationRoute, ApplicationRouteState], validAfterDeadlineSubmissionCode: Boolean)(implicit messages: Messages)
@@ -110,9 +111,9 @@
                 )
             ).withFormField(form("faststreamEligible")))
         } else {
-            <div class="panel-info standard-panel">
-                <p class="text">Unfortunately, applications for the Civil Service Fast Stream are now closed.</p>
-            </div>
+            @govukNotificationBanner(NotificationBanner(
+                content = HtmlContent("Unfortunately, applications for the Civil Service Fast Stream are now closed.")
+            ))
         }
         </div>
     }
@@ -145,9 +146,9 @@
                 )
             ).withFormField(form("sdipEligible")))
         } else {
-            <div class="panel-info standard-panel">
-                <p class="text">Unfortunately, applications for the Summer Internship Programme are now closed.</p>
-            </div>
+            @govukNotificationBanner(NotificationBanner(
+                content = HtmlContent("Unfortunately, applications for the Summer Internship Programme are now closed.")
+            ))
         }
         </div>
     }
