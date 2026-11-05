@@ -39,6 +39,7 @@
         withdrawSection2: WithdrawSection2,
         withdrawInformation2: WithdrawInformation2,
         onlineTestProgress2: OnlineTestProgress2,
+        submitDisabled2: submitDisabled2,
         renderSchemePreferences2: RenderSchemePreferences2,
         hmrcNewTabLinkHelper: HmrcNewTabLinkHelper,
         flashMessage2: FlashMessage2
@@ -72,7 +73,7 @@
 
 @displayLeadInformation = @{(cannotBeConsideredForSdip, submitApplicationsEnabled) match {
     case (true, _) => sdipEligibilityInfo(usr)
-    case (_, false) => submit_disabled(usr)
+    case (_, false) => submitDisabled2(usr)
     case _ if WithdrawnApplicationRole.isAuthorized(usr) => withdrawInformation2(usr)
     case _ => fastPassRejectedInfo(usr)
 }}
