@@ -19,14 +19,15 @@ package security
 import com.google.inject.Inject
 import play.silhouette.api.LoginInfo
 import connectors.ApplicationClient.ApplicationNotFound
-import connectors.exchange._
-import connectors.{ ApplicationClient, UserManagementFindUserClient }
+import connectors.exchange.*
+import connectors.{ApplicationClient, UserManagementFindUserClient}
+
 import javax.inject.Singleton
-import models.{ CachedData, SecurityUser, UniqueIdentifier }
+import models.{ApplicationData, CachedData, SecurityUser, UniqueIdentifier}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserCacheService @Inject()(
@@ -38,12 +39,19 @@ class UserCacheService @Inject()(
     Future.successful(Some(SecurityUser(userID = loginInfo.providerKey)))
 
   override def refreshCachedUser(userId: UniqueIdentifier)(implicit hc: HeaderCarrier, request: Request[_]): Future[CachedData] = {
-    userManagementClient.findByUserId(userId).flatMap { userData =>
-      applicationClient.findApplication(userId, FrameworkId).map { appData =>
-        CachedData(userData.toCached, Some(appData))
-      }.recover {
-        case _: ApplicationNotFound => CachedData(userData.toCached, None)
+    def getApplicationResponseOpt(userId: UniqueIdentifier, frameworkId: String) = {
+      (for {
+        appData <- applicationClient.findApplication(userId, FrameworkId)
+      } yield Some(appData)).recover {
+        case _: ApplicationNotFound => None
       }
+    }
+
+    for {
+      userData <- userManagementClient.findByUserId(userId)
+      appDataOpt <- getApplicationResponseOpt(userId, FrameworkId)
+    } yield {
+      CachedData(userData.toCached, appDataOpt.map(ad => ApplicationData.fromAppRespToAppData(ad)))
     }
   }
 }

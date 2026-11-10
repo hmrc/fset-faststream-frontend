@@ -77,10 +77,10 @@
 
         @inputHidden(signInForm("route"))
 
-        <p><a class="govuk-link" href="@routes.PasswordResetController.presentCode">I can't access my account</a></p>
+        <p><a class="govuk-link" id="cannotAccessAccount" href="@routes.PasswordResetController.presentCode">I can't access my account</a></p>
 
         @govukButton(Button(
-            id = Some("btnSignIn"),
+            id = Some("submit"),
             content = Text("Sign in"),
             inputType = Some("submit"),
             preventDoubleClick = Some(true)

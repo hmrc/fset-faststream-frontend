@@ -106,6 +106,7 @@
         @ethnicity(form, form("ethnicity"), Ethnicities.map, "Select one")
 
         @govukButton(Button(
+            id = Some("submit"),
             content = Text("Save and continue"),
             inputType = Some("submit"),
             preventDoubleClick = Some(true)

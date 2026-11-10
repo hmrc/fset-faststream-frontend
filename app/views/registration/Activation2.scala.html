@@ -67,6 +67,7 @@
             <p><a class="govuk-link" id="resend" href="#">Resend code</a></p>
 
             @govukButton(Button(
+                id = Some("submit"),
                 content = Text("Activate account"),
                 inputType = Some("submit"),
                 preventDoubleClick = Some(true)
