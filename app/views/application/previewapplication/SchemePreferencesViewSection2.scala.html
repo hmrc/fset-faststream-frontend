@@ -38,14 +38,14 @@
     </div>
 
     <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
+        <dl class="govuk-summary-list" id="schemePreferenceList">
 
             @for(position <- 0 to selectedSchemes.schemes.size - 1) {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         @getOrder(position + 1) preference
                     </dt>
-                    <dd class="govuk-summary-list__value">
+                    <dd class="govuk-summary-list__value" id="schemePreferenceChoice@{position+1}">
                         @Html(Messages("scheme." + selectedSchemes.schemes(position) + ".description"))
                     </dd>
                 </div>

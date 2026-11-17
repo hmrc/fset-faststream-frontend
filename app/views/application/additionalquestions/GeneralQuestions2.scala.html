@@ -131,13 +131,15 @@
     ).withFormField(page.form("postgradDegree.projectDetails")))
 }
 
-@mainLayout(pageTitle(page.form, Title("Nationality and higher education")).toString, navigation = ServiceNavigationItems(user)) {
+@title = @{ "Nationality and higher education" }
+
+@mainLayout(pageTitle(page.form, Title(title)).toString, navigation = ServiceNavigationItems(user)) {
 
     @if(page.form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(page.form))
     }
 
-    @h1(content = Text("Nationality and higher education"))
+    @h1(content = Text(title))
 
     @formWithCSRF(action = routes.SiftQuestionsController.saveGeneralQuestions) {
         @inputSelectAutoComplete(
@@ -215,6 +217,7 @@
 
         <div>
             @govukButton(Button(
+                id = Some(saveAndContinueAction),
                 name = Some("action"),
                 content = Text("Save and continue"),
                 inputType = Some("submit"),
@@ -222,6 +225,7 @@
                 preventDoubleClick = Some(true)
             ))
             @govukButton(Button(
+                id = Some(saveAndReturnAction),
                 name = Some("action"),
                 content = Text("Save and return home"),
                 inputType = Some("submit"),

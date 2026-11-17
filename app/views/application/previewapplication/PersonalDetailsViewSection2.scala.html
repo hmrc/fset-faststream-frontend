@@ -66,7 +66,7 @@
                 <dt class="govuk-summary-list__key">
                     Full name
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="govuk-summary-list__value" id="fullName">
                     @personalDetails.firstName @personalDetails.lastName
                 </dd>
             </div>
@@ -74,7 +74,7 @@
                 <dt class="govuk-summary-list__key">
                     Preferred name
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="govuk-summary-list__value" id="preferredName">
                     @personalDetails.preferredName
                 </dd>
             </div>
@@ -82,7 +82,7 @@
                 <dt class="govuk-summary-list__key">
                     Date of birth
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="govuk-summary-list__value" id="dateOfBirth">
                     @personalDetails.dateOfBirth.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
                 </dd>
             </div>
@@ -90,7 +90,7 @@
                 <dt class="govuk-summary-list__key">
                     Address
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="govuk-summary-list__value" id="address">
                     @personalDetails.address.line1
                     @maybeDisplayAddressLine(personalDetails.address.line2)
                     @maybeDisplayAddressLine(personalDetails.address.line3)
@@ -109,7 +109,7 @@
                 <dt class="govuk-summary-list__key">
                     Telephone number
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="govuk-summary-list__value" id="phone-input">
                     @personalDetails.phone.getOrElse("No phone number provided")
                 </dd>
             </div>

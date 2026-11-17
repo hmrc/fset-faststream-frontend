@@ -28,18 +28,12 @@
 
 @(isFastStream: Boolean)(implicit request: Request[_], flash: Flash, user: Option[CachedData], feedbackUrl: String, trackingConsentConfig: TrackingConsentConfig, messages: Messages)
 
-@mainLayout(Title("Before you continue"), navigation = ServiceNavigationItems(user)) {
-@*main_template(title = "Before you continue") {*@
+@title = @{ "Before you continue" }
 
-    @h1(content = Text("Before you continue"))
+@mainLayout(Title(title), navigation = ServiceNavigationItems(user)) {
+
+    @h1(content = Text(title))
     <p class="govuk-body-l">Diversity questions</p>
-
-    @*
-    <div class="hgroup">
-        <h1 class="heading-xlarge">Before you continue</h1>
-        <p class="subtitle">Diversity questions</p>
-    </div>
-    *@
 
     <section>
         <div class="govuk-body">
@@ -94,6 +88,7 @@
     }*@
     @formWithCSRF(action = routes.QuestionnaireController.submitContinue) {
         @govukButton(Button(
+            id = Some("btnStart"),
             content = Text("Continue questions"),
             inputType = Some("submit"),
             preventDoubleClick = Some(true)

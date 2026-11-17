@@ -72,6 +72,7 @@
 
         <div>
             @govukButton(Button(
+                id = Some(saveAndContinueAction),
                 name = Some("action"),
                 content = Text("Save and continue"),
                 inputType = Some("submit"),
@@ -79,6 +80,7 @@
                 preventDoubleClick = Some(true)
             ))
             @govukButton(Button(
+                id = Some(saveAndReturnAction),
                 name = Some("action"),
                 content = Text("Save and return home"),
                 inputType = Some("submit"),
