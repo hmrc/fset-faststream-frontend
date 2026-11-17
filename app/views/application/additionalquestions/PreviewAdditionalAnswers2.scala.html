@@ -173,10 +173,12 @@
                 )),
                 items = Seq(
                     RadioItem(
+                        id = Some("submit-yes"),
                         content = Text("Yes"),
                         conditionalHtml = Some(submitAnswersHtml)
                     ),
                     RadioItem(
+                        id = Some("submit-no"),
                         content = Text("No")
                     )
                 )

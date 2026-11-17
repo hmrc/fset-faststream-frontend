@@ -43,7 +43,7 @@
                 <dt class="govuk-summary-list__key">
                     Do you have a physical or mental health condition, illness, impairment or disability?
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="govuk-summary-list__value" id="hasDisability">
                     @assistanceDetails.hasDisability
                 </dd>
             </div>
@@ -64,7 +64,7 @@
                     <dt class="govuk-summary-list__key">
                         Will you need any support at the assessment centre?
                     </dt>
-                    <dd class="govuk-summary-list__value">
+                    <dd class="govuk-summary-list__value" id="needsSupportAtVenue">
                         @needsSupportAtVenue match {
                             case true => {
                                 Yes<br>

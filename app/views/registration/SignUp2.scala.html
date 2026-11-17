@@ -23,7 +23,7 @@
 @import models.ApplicationRoute.*
 @import models.view.CampaignReferrers
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
-@import uk.gov.hmrc.govukfrontend.views.html.components.{Button, CheckboxItem, Checkboxes, ErrorSummary, Fieldset, FormWithCSRF, GovukButton, GovukCheckboxes, GovukErrorSummary, GovukSelect, Hint, HtmlContent, Label, Legend, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.*
 @import views.html.components.{Heading1, Heading2, InputSelect, InputText, Layout, PageTitle}
@@ -230,6 +230,7 @@
             </section>
 
             @govukButton(Button(
+                id = Some("submit"),
                 content = Text("Create account"),
                 inputType = Some("submit"),
                 preventDoubleClick = Some(true)

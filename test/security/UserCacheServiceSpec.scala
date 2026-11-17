@@ -40,7 +40,7 @@ class UserCacheServiceSpec extends BaseSpec {
     "return a user and application CachedData when both are found" in new TestFixture {
       val result = userAndApplicationCacheService.refreshCachedUser(testUserId).futureValue
 
-      result mustBe an[CachedData]
+      result mustBe a[CachedData]
       result.user mustBe expectedCachedDataUser
       result.application mustBe Some(expectedCachedDataApplication)
     }
@@ -48,7 +48,7 @@ class UserCacheServiceSpec extends BaseSpec {
     "return a user only when no application is found" in new TestFixture {
       val result = userOnlyCacheService.refreshCachedUser(testUserId).futureValue
 
-      result mustBe an[CachedData]
+      result mustBe a[CachedData]
       result.application mustBe None
       result.user mustBe expectedCachedDataUser
     }
@@ -101,9 +101,9 @@ class UserCacheServiceSpec extends BaseSpec {
       ApplicationStatus.withName(testApplicationResponse.applicationStatus),
       ApplicationRoute.Faststream,
       Progress.fromProgressRespToAppProgress(testApplicationResponse.progressResponse),
-      None,
-      None,
-      None
+      civilServiceExperienceDetails = None,
+      edipCompleted = None,
+      overriddenSubmissionDeadline = None
     )
 
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, "")
